@@ -1,0 +1,24 @@
+#!/usr/bin/ruby
+
+require 'mcollective'
+
+oparser = MCollective::Optionparser.new({}, "filter")
+
+options = oparser.parse{|parser, options|
+    parser.define_head "Find hosts matching criteria"
+    parser.banner = "Usage: sh-find-hosts [options] [filters]"
+}
+
+begin
+    client = MCollective::Client.new(options[:config])
+
+    stats = client.req("ping", "discovery", options) do |resp|
+        puts resp[:senderid]
+    end
+rescue Exception => e
+    raise
+end
+
+client.display_stats(stats, options) if options[:verbose]
+
+# vi:tabstop=4:expandtab:ai

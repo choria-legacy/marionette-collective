@@ -1,0 +1,37 @@
+#!/usr/bin/ruby
+
+require 'mcollective'
+
+oparser = MCollective::Optionparser.new({:verbose => true})
+
+options = oparser.parse{|parser, options|
+    parser.define_head "Pings all hosts and report their names and some stats"
+}
+
+begin
+    client = MCollective::Client.new(options[:config])
+
+    start = Time.now.to_f
+    times = []
+
+    client.req("ping", "discovery", options) do |resp|
+        times << (Time.now.to_f - start) * 1000
+
+        if options[:verbose]
+            printf("%-40s time=%.2f ms\n", resp[:senderid], times.last)
+        else
+            printf(".")
+        end
+    end
+rescue Exception => e
+    raise e
+end
+
+puts("\n\n---- ping statistics ----")
+
+sum = times.inject(0){|acc,i|acc +i}
+avg = sum / times.length.to_f
+
+printf("%d replies max: %.2f min: %.2f avg: %.2f\n", times.size, times.max, times.min, avg)
+
+# vi:tabstop=4:expandtab:ai

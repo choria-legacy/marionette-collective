@@ -1,0 +1,53 @@
+#!/usr/bin/ruby
+
+require 'mcollective'
+
+oparser = MCollective::Optionparser.new
+
+options = oparser.parse{|parser, options|
+    parser.define_head "Report on usage for a specific fact"
+    parser.banner = "Usage: sh-facts [options] fact"
+}
+
+if ARGV.length > 0
+    fact = ARGV.shift
+else
+    puts("Please specify a fact to report")
+    exit 1
+end
+
+begin
+    client = MCollective::Client.new(options[:config])
+
+    facts = {}
+
+    stats = client.req("get_fact #{fact}", "discovery", options) do |resp|
+        next if resp == nil
+    
+        value = resp[:body]
+    
+        facts.include?(value) ? facts[value] << resp[:senderid] : facts[value] = [ resp[:senderid] ]
+    end
+rescue Exception => e
+    raise
+end
+
+puts("\rReport for fact: #{fact}                            \n\n")
+
+facts.keys.sort.each do |k|
+    printf("        %-40sfound %d times\n", k, facts[k].size)
+
+    if options[:verbose]
+        puts
+
+        facts[k].each do |f|
+            puts("            #{f}")
+        end
+
+        puts
+    end
+end
+
+client.display_stats(stats, options, "fact call stats")
+
+# vi:tabstop=4:expandtab:ai

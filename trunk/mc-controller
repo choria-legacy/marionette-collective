@@ -1,0 +1,76 @@
+#!/usr/bin/ruby
+
+require 'mcollective'
+require 'pp'
+
+oparser = MCollective::Optionparser.new({:verbose => true}, "filter")
+
+options = oparser.parse{|parser, options|
+    parser.define_head "Control the mcollective daemon"
+    parser.banner = "Usage: sh-controller [options] command"
+
+    parser.on('--arg', '--argument ARGUMENT', 'Argument to pass to agent') do |v|
+        options[:argument] = v
+    end
+}
+
+if ARGV.length > 0
+    command = ARGV.shift
+else
+    STDERR.puts("Please specify a command and optional arguments")
+    exit 1
+end
+
+STDOUT.sync = true
+
+received = 0
+expected = Array.new
+
+def printstats(id, stats)
+    printf("%30s> total=%d replies=%d valid=%d invalid=%d filtered=%d passed=%d\n", id, stats[:total], stats[:replies], stats[:validated],
+            stats[:unvalidated], stats[:filtered], stats[:passed])
+end
+
+# if we're asking for restarting an agent, make sure we have
+# an agent name in argument and set appropriate filters
+if command == "reload_agent"
+    unless options[:argument]
+        puts("Please specify an agent to relaod with --argument")
+        exit 1
+    end
+
+    options[:filter]["agent"] = options[:argument]
+end
+
+begin
+    client = MCollective::Client.new(options[:config])
+
+    command += " #{options[:argument]}" if options[:argument]
+    stats = client.discovered_req(command, "mcollective", options) do |resp|
+            next if resp == nil
+
+            case command
+                when "stats"
+                    printstats(resp[:senderid], resp[:body][:stats])
+
+                when /reload_agent/
+                    printf("%30s> %s\n", resp[:senderid], resp[:body])
+
+                else
+                    if options[:verbose]
+                        puts("#{resp[:senderid]}>")
+                        pp resp[:body]
+                    else
+                        puts if c % 4 == 1
+                        print("#{resp[:senderid]} ")
+                    end
+            end
+    end
+rescue Exception => e
+    raise
+end
+
+client.display_stats(stats, options)
+
+
+# vi:tabstop=4:expandtab:ai

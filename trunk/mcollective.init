@@ -1,0 +1,114 @@
+#!/bin/sh
+#
+# stomphost	Application Server for STOMP based agents
+#
+# chkconfig: 345 24 76
+#
+# description: stomphost lets you build powerful Stomp compatible middleware clients in ruby without having to worry too
+#              much about all the setup and management of a Stomp connection, it also provides stats, logging and so forth
+#              as a bonus.
+#
+
+stomphostd="/usr/sbin/stomphostd"
+
+# Lockfile
+lock="/var/lock/subsys/stomphost"
+
+# PID directory
+pidfile="/var/run/stomphostd.pid"
+
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+if [ ${NETWORKING} = "no" ]
+then
+  echo "Networking is down"
+  exit 0
+fi
+
+# Check that binary exists
+if ! [ -f  $stomphostd ] 
+then
+  echo "stomphostd binary not found"
+  exit 0
+fi
+
+# See how we were called.
+case "$1" in
+  start)
+	echo -n $"Starting stomphost: "
+
+	if [ -f ${lock} ]; then
+	    # we were not shut down correctly
+	    if [ -s ${pidfile} ]; then
+		kill `cat ${pidfile}` >/dev/null 2>&1
+	    fi
+	    rm -f ${pidfile}
+
+	    rm -f ${lock}
+	    sleep 2
+	fi
+
+	rm -f ${pidfile}
+
+	${stomphostd} --pid=${pidfile} --config="/etc/stomphost/server.cfg"
+	if [ $? = 0 ]; then
+	    success; echo
+	    touch $lock
+	    exit 0
+	else
+	    failure; echo
+            exit 1
+	fi
+	;;
+  stop)
+	echo -n $"Shutting down stomphost: "
+
+	if [ -s ${pidfile} ]; then
+	  kill `cat ${pidfile}` >/dev/null 2>&1
+	fi
+	rm -f ${pidfile}
+
+	success; echo
+	rm -f $lock
+	;;
+  restart)
+	$0 stop
+	sleep 2
+	$0 start
+	;;
+  condrestart)
+	if [ -f $lock ]; then
+	    $0 stop
+	    # avoid race
+	    sleep 2
+	    $0 start
+	fi
+	;;
+  status)
+	if [ -f ${lock} ]; then
+	    if [ -s ${pidfile} ]; then
+	       if [ -e /proc/`cat ${pidfile}` ]; then
+                  echo "stomphostd (`cat ${pidfile}`) is running"
+                  exit 0
+               else
+                  echo "stomphostd (`cat ${pidfile}`) is NOT running"
+                  exit 1
+               fi
+	    fi
+	else
+	    echo "stomphostd: service not started"
+	    exit 1
+	fi
+        ;;
+  *)
+	echo "Usage: stomphostd {start|stop|restart|condrestart|status}"
+	exit 1
+	;;
+esac
+exit 0
