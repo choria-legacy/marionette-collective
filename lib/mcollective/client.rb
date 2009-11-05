@@ -40,13 +40,17 @@ module MCollective
     
         # Blocking call that waits for ever for a message to arrive
         def receive(requestid = nil)
-            msg = @connection.receive
+            msg = nil
 
-            msg = @security.decodemsg(msg)
+            begin
+                msg = @connection.receive
 
-            if msg[:requestid] != requestid
+                msg = @security.decodemsg(msg)
+
+                raise(MsgDoesNotMatchRequestID, "Message reqid #{requestid} does not match our reqid #{msg[:requestid]}") if msg[:requestid] != requestid
+            rescue MCollective::MsgDoesNotMatchRequestID => e
                 @log.debug("Ignoring a message for some other client")
-                raise(MsgDoesNotMatchRequestID, "Message reqid #{requestid} does not match our reqid #{msg[:requestid]}")
+                retry
             end
 
             msg
@@ -62,12 +66,8 @@ module MCollective
                 hosts = []
                 Timeout.timeout(timeout) do
                     loop do
-                        begin
-                            msg = receive(reqid)
-                            hosts << msg[:senderid]
-                        rescue MCollective::MsgDoesNotMatchRequestID => e
-                            @log.debug("Ignoring a message for some other client")
-                        end
+                        msg = receive(reqid)
+                        hosts << msg[:senderid]
                     end
                 end
             rescue Timeout::Error => e
@@ -97,15 +97,11 @@ module MCollective
             begin
                 Timeout.timeout(options[:timeout]) do
                     loop do
-                        begin
-                            resp = receive(reqid)
+                        resp = receive(reqid)
     
-                            hosts_responded += 1
+                        hosts_responded += 1
 
-                            yield(resp)
-                        rescue MCollective::MsgDoesNotMatchRequestID => e
-                            @log.debug("Ignoring a message for some other client")
-                        end
+                        yield(resp)
                     end
                 end
             rescue Interrupt => e
