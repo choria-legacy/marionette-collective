@@ -53,11 +53,6 @@ module MCollective
                     msg = receive
                     dest = msg[:msgtarget]
 
-                    # keep track of the original request id in a way that
-                    # all the other members of this class can get hold of it
-                    # and tag it onto their replies, single threads ftw.
-                    @requestid = msg[:requestid]
-    
                     if dest =~ /#{controltopic}/
                         @log.debug("Handling message for mcollectived controller")
     
@@ -85,7 +80,7 @@ module MCollective
         def agentmsg(msg, target)
             @agents.dispatch(msg, target, @connection) do |replies|
                 dest = "#{@config.topicprefix}.#{target}/reply"
-                reply(target, dest, replies) unless replies == nil
+                reply(target, dest, replies, msg[:requestid]) unless replies == nil
             end
         end
 
@@ -93,21 +88,23 @@ module MCollective
         def controlmsg(msg)
             begin
                 body = msg[:body]
+                requestid = msg[:requestid]
+
                 replytopic = "#{@config.topicprefix}.mcollective/reply"
 
                 case body
                     when /^help (.+)$/
-                        reply("mcollective", replytopic, @agents.help($1))
+                        reply("mcollective", replytopic, @agents.help($1), requestid)
 
                     when /^stats$/
-                        reply("mcollective", replytopic, stats)
+                        reply("mcollective", replytopic, stats, requestid)
 
                     when /^reload_agent (.+)$/
-                        reply("mcollective", replytopic, "reloaded #{$1} agent") if @agents.loadagent($1)
+                        reply("mcollective", replytopic, "reloaded #{$1} agent", requestid) if @agents.loadagent($1)
 
                     when /^exit$/
                         @log.error("Exiting due to request to controller")
-                        reply("mcollective", replytopic, "exiting after request to controller")
+                        reply("mcollective", replytopic, "exiting after request to controller", requestid)
 
                         @connection.disconnect
                         exit!
@@ -159,8 +156,8 @@ module MCollective
         end
 
         # Sends a reply to a specific target topic
-        def reply(sender, target, msg)
-            reply = @security.encodereply(sender, target, msg, @requestid)
+        def reply(sender, target, msg, requestid)
+            reply = @security.encodereply(sender, target, msg, requestid)
 
             @connection.send(target, reply)
 
