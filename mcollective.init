@@ -1,21 +1,21 @@
 #!/bin/sh
 #
-# stomphost	Application Server for STOMP based agents
+# mcollective	Application Server for STOMP based agents
 #
 # chkconfig: 345 24 76
 #
-# description: stomphost lets you build powerful Stomp compatible middleware clients in ruby without having to worry too
+# description: mcollective lets you build powerful Stomp compatible middleware clients in ruby without having to worry too
 #              much about all the setup and management of a Stomp connection, it also provides stats, logging and so forth
 #              as a bonus.
 #
 
-stomphostd="/usr/sbin/stomphostd"
+mcollectived="/usr/sbin/mcollectived"
 
 # Lockfile
-lock="/var/lock/subsys/stomphost"
+lock="/var/lock/subsys/mcollective"
 
 # PID directory
-pidfile="/var/run/stomphostd.pid"
+pidfile="/var/run/mcollectived.pid"
 
 
 # Source function library.
@@ -32,16 +32,16 @@ then
 fi
 
 # Check that binary exists
-if ! [ -f  $stomphostd ] 
+if ! [ -f  $mcollectived ] 
 then
-  echo "stomphostd binary not found"
+  echo "mcollectived binary not found"
   exit 0
 fi
 
 # See how we were called.
 case "$1" in
   start)
-	echo -n $"Starting stomphost: "
+	echo -n $"Starting mcollective: "
 
 	if [ -f ${lock} ]; then
 	    # we were not shut down correctly
@@ -56,7 +56,7 @@ case "$1" in
 
 	rm -f ${pidfile}
 
-	${stomphostd} --pid=${pidfile} --config="/etc/stomphost/server.cfg"
+	${mcollectived} --pid=${pidfile} --config="/etc/mcollective/server.cfg"
 	if [ $? = 0 ]; then
 	    success; echo
 	    touch $lock
@@ -67,7 +67,7 @@ case "$1" in
 	fi
 	;;
   stop)
-	echo -n $"Shutting down stomphost: "
+	echo -n "Shutting down mcollective: "
 
 	if [ -s ${pidfile} ]; then
 	  kill `cat ${pidfile}` >/dev/null 2>&1
@@ -94,20 +94,20 @@ case "$1" in
 	if [ -f ${lock} ]; then
 	    if [ -s ${pidfile} ]; then
 	       if [ -e /proc/`cat ${pidfile}` ]; then
-                  echo "stomphostd (`cat ${pidfile}`) is running"
+                  echo "mcollectived (`cat ${pidfile}`) is running"
                   exit 0
                else
-                  echo "stomphostd (`cat ${pidfile}`) is NOT running"
+                  echo "mcollectived (`cat ${pidfile}`) is NOT running"
                   exit 1
                fi
 	    fi
 	else
-	    echo "stomphostd: service not started"
+	    echo "mcollectived: service not started"
 	    exit 1
 	fi
         ;;
   *)
-	echo "Usage: stomphostd {start|stop|restart|condrestart|status}"
+	echo "Usage: mcollectived {start|stop|restart|condrestart|status}"
 	exit 1
 	;;
 esac
