@@ -38,7 +38,12 @@ module MCollective
             reqid
         end
     
-        # Blocking call that waits for ever for a message to arrive
+        # Blocking call that waits for ever for a message to arrive.
+        #
+        # If you give it a requestid this means you've previously send a request
+        # with that ID and now you just want replies that matches that id, in that
+        # case the current connection will just ignore all messages not directed at it
+        # and keep waiting for more till it finds a matching message.
         def receive(requestid = nil)
             msg = nil
 
