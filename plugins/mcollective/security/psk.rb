@@ -24,13 +24,14 @@ module MCollective
             end
             
             # Encodes a reply
-            def encodereply(sender, target, msg, filter={})
+            def encodereply(sender, target, msg, requestid, filter={})
                 serialized  = Marshal.dump(msg)
                 digest = makehash(serialized)
     
-                @log.debug("Encoded a message with hash #{digest}")
+                @log.debug("Encoded a message with hash #{digest} for request #{requestid}")
     
                 Marshal.dump({:senderid => @config.identity,
+                              :requestid => requestid,
                               :senderagent => sender,
                               :msgtarget => target,
                               :msgtime => Time.now.to_i,
@@ -39,14 +40,15 @@ module MCollective
             end
     
             # Encodes a request msg
-            def encoderequest(sender, target, msg, filter={})
+            def encoderequest(sender, target, msg, requestid, filter={})
                 serialized = Marshal.dump(msg)
                 digest = makehash(serialized)
     
-                @log.debug("Encoding a request for '#{target}'")
+                @log.debug("Encoding a request for '#{target}' with request id #{requestid}")
                 Marshal.dump({:body => serialized,
                               :hash => digest,
                               :senderid => @config.identity,
+                              :requestid => requestid,
                               :msgtarget => target,
                               :filter => filter,
                               :msgtime => Time.now.to_i})

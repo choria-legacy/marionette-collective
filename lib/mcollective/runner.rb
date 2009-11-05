@@ -52,6 +52,11 @@ module MCollective
                 begin
                     msg = receive
                     dest = msg[:msgtarget]
+
+                    # keep track of the original request id in a way that
+                    # all the other members of this class can get hold of it
+                    # and tag it onto their replies, single threads ftw.
+                    @requestid = msg[:requestid]
     
                     if dest =~ /#{controltopic}/
                         @log.debug("Handling message for mcollectived controller")
@@ -155,7 +160,7 @@ module MCollective
 
         # Sends a reply to a specific target topic
         def reply(sender, target, msg)
-            reply = @security.encodereply(sender, target, msg)
+            reply = @security.encodereply(sender, target, msg, @requestid)
 
             @connection.send(target, reply)
 

@@ -1,8 +1,8 @@
 module MCollective
+    class MsgDoesNotMatchRequestID < RuntimeError; end
+
     # Helpers for writing clients that can talk to agents, do discovery and so forth
     class Client
-        attr_reader :stomp
-
 	    def initialize(configfile)
             @config = MCollective::Config.instance
             @config.loadconfig(configfile)
@@ -15,14 +15,16 @@ module MCollective
             @connection.connect
         end
 
-        # Sends a request and returns, doesn't wait for responses and doesn't execute
-        # any passed in code blocks for responses
+        # Sends a request and returns the generated request id, doesn't wait for 
+        # responses and doesn't execute any passed in code blocks for responses
         def sendreq(msg, agent, filter = {})
             target = "#{@config.topicprefix}.#{agent}/command"
 
-            req = @security.encoderequest(@config.identity, target, msg, filter)
+            reqid = Digest::MD5.hexdigest("#{@config.identity}-#{Time.now.to_f.to_s}-#{target}")
+
+            req = @security.encoderequest(@config.identity, target, msg, reqid, filter)
     
-            @log.debug("Sending request to #{target}")
+            @log.debug("Sending request #{reqid} to #{target}")
 
             unless @subscriptions.include?(agent)
                 @log.debug("Subscribing to #{@config.topicprefix}.#{agent}/reply")
@@ -32,26 +34,40 @@ module MCollective
             end
 
             @connection.send(target, req)
+
+            reqid
         end
     
         # Blocking call that waits for ever for a message to arrive
-        def receive
+        def receive(requestid = nil)
             msg = @connection.receive
 
-            @security.decodemsg(msg)
+            msg = @security.decodemsg(msg)
+
+            if msg[:requestid] != requestid
+                @log.debug("Ignoring a message for some other client")
+                raise(MsgDoesNotMatchRequestID, "Message reqid #{requestid} does not match our reqid #{msg[:requestid]}")
+            end
+
+            msg
         end
 
         # Performs a discovery of nodes matching the filter passed
         # returns an array of nodes
         def discover(filter, timeout)
             begin
-                sendreq("ping", "discovery", filter)
+                reqid = sendreq("ping", "discovery", filter)
+                @log.debug("Waiting for discovery replies to request #{reqid}")
 
                 hosts = []
                 Timeout.timeout(timeout) do
                     loop do
-                        msg = receive
-                        hosts << msg[:senderid]
+                        begin
+                            msg = receive(reqid)
+                            hosts << msg[:senderid]
+                        rescue MCollective::MsgDoesNotMatchRequestID => e
+                            @log.debug("Ignoring a message for some other client")
+                        end
                     end
                 end
             rescue Timeout::Error => e
@@ -63,7 +79,7 @@ module MCollective
 
         # Send a request, performs the passed block for each response
         # 
-        # times = discovered_req("status", "mcollectived", options, client) {|resp|
+        # times = req("status", "mcollectived", options, client) {|resp|
         #   pp resp
         # }
         #
@@ -74,18 +90,22 @@ module MCollective
 
             STDOUT.sync = true
 
-            sendreq(body, agent, options[:filter])
+            reqid = sendreq(body, agent, options[:filter])
 
             hosts_responded = 0
 
             begin
                 Timeout.timeout(options[:timeout]) do
                     loop do
-                        resp = receive
+                        begin
+                            resp = receive(reqid)
     
-                        hosts_responded += 1
+                            hosts_responded += 1
 
-                        yield(resp)
+                            yield(resp)
+                        rescue MCollective::MsgDoesNotMatchRequestID => e
+                            @log.debug("Ignoring a message for some other client")
+                        end
                     end
                 end
             rescue Interrupt => e
@@ -126,12 +146,12 @@ module MCollective
 
             raise("No matching clients found") if discovered == 0
 
-            sendreq(body, agent, options[:filter])
+            reqid = sendreq(body, agent, options[:filter])
 
             begin
                 Timeout.timeout(options[:timeout]) do
                     (1..discovered).each do |c|
-                        resp = receive
+                        resp = receive(reqid)
     
                         hosts_responded << resp[:senderid]
                         hosts_not_responded.delete(resp[:senderid]) if hosts_not_responded.include?(resp[:senderid])
