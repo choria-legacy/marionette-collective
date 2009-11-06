@@ -92,8 +92,8 @@ module MCollective
                         # Agents can decide if they wish to reply or not,
                         # returning nil will mean nothing goes back to the
                         # requestor
-                        if replies != nil
-                            yield(replies) unless replies == nil
+                        unless replies == nil
+                            yield(replies)
                         end
                     end
                 rescue Timeout::Error => e
