@@ -92,7 +92,7 @@ module MCollective
                         # Agents can decide if they wish to reply or not,
                         # returning nil will mean nothing goes back to the
                         # requestor
-                        if replies
+                        if replies != nil
                             yield(replies) unless replies == nil
                         end
                     end
