@@ -66,12 +66,13 @@ module MCollective
         def discover(filter, timeout)
             begin
                 reqid = sendreq("ping", "discovery", filter)
-                @log.debug("Waiting for discovery replies to request #{reqid}")
+                @log.debug("Waiting #{timeout} seconds for discovery replies to request #{reqid}")
 
                 hosts = []
                 Timeout.timeout(timeout) do
                     loop do
                         msg = receive(reqid)
+                        @log.debug("Got discovery reply from #{msg[:senderid]}")
                         hosts << msg[:senderid]
                     end
                 end
@@ -90,7 +91,7 @@ module MCollective
         #
         # It returns a hash of times and timeouts for discovery and total run is taken from the options
         # hash which in turn is generally built using MCollective::Optionparser
-        def req(body, agent, options)
+        def req(body, agent, options, waitfor=0)
             stat = {:starttime => Time.now.to_f, :discoverytime => 0, :blocktime => 0, :totaltime => 0}
 
             STDOUT.sync = true
@@ -107,6 +108,8 @@ module MCollective
                         hosts_responded += 1
 
                         yield(resp)
+
+                        break if (waitfor != 0 && hosts_responded >= waitfor)
                     end
                 end
             rescue Interrupt => e
