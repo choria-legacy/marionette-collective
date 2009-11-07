@@ -56,10 +56,10 @@ module MCollective
                             fact = filter[key]
     
                             if MCollective::Facts.has_fact?(fact[:fact], fact[:value]) 
-                                @log.debug("Passing based on fact #{fact} = #{filter[key]}")
+                                @log.debug("Passing based on fact #{fact[:fact]} = #{fact[:value]}")
                                 passed += 1
                             else
-                                @log.debug("Failing based on fact #{fact} = #{filter[key]}")
+                                @log.debug("Failing based on fact #{fact[:fact]} = #{fact[:value]}")
                                 failed += 1
                             end
     
