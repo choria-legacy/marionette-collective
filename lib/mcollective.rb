@@ -3,8 +3,9 @@ require 'stomp'
 require 'logger'
 require 'timeout'
 require 'digest/md5'
-require 'facter'
 require 'optparse'
+require 'singleton'
+require 'socket'
 
 # == The Marionette Collective
 #

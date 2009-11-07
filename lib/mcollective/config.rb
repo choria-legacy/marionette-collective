@@ -1,5 +1,3 @@
-require 'singleton'
-
 module MCollective
     # A pretty sucky config class, ripe for refactoring/improving
     class Config
@@ -20,6 +18,7 @@ module MCollective
             @connector = "Stomp"
             @securityprovider = "Psk"
             @factsource = "Facter"
+            @identity = Socket.gethostname
 
             if File.exists?(configfile)
                 File.open(configfile, "r").each do |line|
