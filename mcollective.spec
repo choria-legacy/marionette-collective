@@ -51,11 +51,12 @@ rm -rf %{buildroot}
 %{__install} -d -m0755  %{buildroot}/%{ruby_sitelib}/mcollective
 %{__install} -d -m0755  %{buildroot}/usr/sbin
 %{__install} -d -m0755  %{buildroot}/etc/init.d
-%{__install} -d -m0750  %{buildroot}/usr/libexec/mcollective/
+%{__install} -d -m0755  %{buildroot}/usr/libexec/mcollective/
 %{__install} -d -m0755  %{buildroot}/etc/mcollective
 %{__install} -m0755 mcollectived.rb %{buildroot}/usr/sbin/mcollectived
-%{__install} -m0440 etc/server.cfg %{buildroot}/etc/mcollective/server.cfg
-%{__install} -m0444 etc/client.cfg %{buildroot}/etc/mcollective/client.cfg
+%{__install} -m0440 etc/server.cfg.dist %{buildroot}/etc/mcollective/server.cfg
+%{__install} -m0444 etc/client.cfg.dist %{buildroot}/etc/mcollective/client.cfg
+%{__install} -m0444 etc/facts.yaml.dist %{buildroot}/etc/mcollective/facts.yaml
 %{__install} -m0755 mcollective.init %{buildroot}/etc/init.d/mcollective
 
 cp -R lib/* %{buildroot}/%{ruby_sitelib}/
@@ -94,6 +95,7 @@ fi
 /usr/libexec/mcollective
 /etc/init.d/mcollective
 %config(noreplace)/etc/mcollective/server.cfg
+%config(noreplace)/etc/mcollective/facts.yaml
 
 %changelog
 * Tue Nov 03 2009 R.I.Pienaar <rip@devco.net> 

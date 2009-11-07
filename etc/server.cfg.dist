@@ -1,13 +1,12 @@
 topicprefix = /topic/mcollective
 daemonize = 0
 libdir = plugins
-logfile = /dev/null
-loglevel = debug
-identity = devel.your.com
+logfile = /var/log/mcollective.log
+loglevel = info
 
 # Plugins 
 securityprovider = psk
-plugin.psk = sChookephe
+plugin.psk = unset
 
 connector = stomp
 plugin.stomp.host = stomp.your.com
@@ -16,7 +15,4 @@ plugin.stomp.user = mcollective
 plugin.stomp.password = marionette
 
 factsource = yaml
-plugin.yaml = etc/facts.yaml
-
-# Agent config
-plugin.nrpe.nrpe_dir = /etc/nagios/nrpe.d
+plugin.yaml = /etc/facts.yaml
