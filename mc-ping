@@ -10,11 +10,12 @@ options = oparser.parse{|parser, options|
 
 begin
     client = MCollective::Client.new(options[:config])
+    client.options = options
 
     start = Time.now.to_f
     times = []
 
-    client.req("ping", "discovery", options) do |resp|
+    client.req("ping", "discovery") do |resp|
         times << (Time.now.to_f - start) * 1000
 
         if options[:verbose]

@@ -27,10 +27,11 @@ begin
     options[:filter]["agent"] = options[:agent]
 
     client = MCollective::Client.new(options[:config])
+    client.options = options
 
     c = 0
 
-    stats = client.discovered_req(options[:argument], options[:agent], options) do |resp|
+    stats = client.discovered_req(options[:argument], options[:agent]) do |resp|
         next if resp == nil
 
         c += 1
@@ -47,6 +48,6 @@ rescue Exception => e
     raise
 end
 
-client.display_stats(stats, options)
+client.display_stats(stats)
 
 # vi:tabstop=4:expandtab:ai

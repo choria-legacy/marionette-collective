@@ -11,14 +11,15 @@ options = oparser.parse{|parser, options|
 
 begin
     client = MCollective::Client.new(options[:config])
+    client.options = options
 
-    stats = client.req("ping", "discovery", options) do |resp|
+    stats = client.req("ping", "discovery") do |resp|
         puts resp[:senderid]
     end
 rescue Exception => e
     raise
 end
 
-client.display_stats(stats, options) if options[:verbose]
+client.display_stats(stats) if options[:verbose]
 
 # vi:tabstop=4:expandtab:ai

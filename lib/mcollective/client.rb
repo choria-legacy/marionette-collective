@@ -3,12 +3,16 @@ module MCollective
 
     # Helpers for writing clients that can talk to agents, do discovery and so forth
     class Client
+        attr_accessor :options
+
 	    def initialize(configfile)
             @config = MCollective::Config.instance
             @config.loadconfig(configfile)
             @log = MCollective::Log.instance
             @connection = eval("MCollective::Connector::#{@config.connector}.new")
             @security = eval("MCollective::Security::#{@config.securityprovider}.new")
+
+            @options = nil
 
             @subscriptions = {}
 
@@ -91,8 +95,10 @@ module MCollective
         #
         # It returns a hash of times and timeouts for discovery and total run is taken from the options
         # hash which in turn is generally built using MCollective::Optionparser
-        def req(body, agent, options, waitfor=0)
+        def req(body, agent, options=false, waitfor=0)
             stat = {:starttime => Time.now.to_f, :discoverytime => 0, :blocktime => 0, :totaltime => 0}
+
+            options = @options unless options
 
             STDOUT.sync = true
 
@@ -132,8 +138,10 @@ module MCollective
         #
         # It returns a hash of times and timeouts for discovery and total run is taken from the options
         # hash which in turn is generally built using MCollective::Optionparser
-        def discovered_req(body, agent, options)
+        def discovered_req(body, agent, options=false)
             stat = {:starttime => Time.now.to_f, :discoverytime => 0, :blocktime => 0, :totaltime => 0}
+
+            options = @options unless options
 
             STDOUT.sync = true
 
@@ -178,7 +186,9 @@ module MCollective
         end
 
         # Prints out the stats returns from req and discovered_req in a nice way
-        def display_stats(stats, options, caption="stomp call summary")
+        def display_stats(stats, options=false, caption="stomp call summary")
+            options = @options unless options
+
             if options[:verbose]
                 puts("\n---- #{caption} ----")
 

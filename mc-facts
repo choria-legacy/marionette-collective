@@ -18,10 +18,11 @@ end
 
 begin
     client = MCollective::Client.new(options[:config])
+    client.options = options
 
     facts = {}
 
-    stats = client.req("get_fact #{fact}", "discovery", options) do |resp|
+    stats = client.req("get_fact #{fact}", "discovery") do |resp|
         next if resp == nil
     
         value = resp[:body]

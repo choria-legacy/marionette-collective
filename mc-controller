@@ -44,9 +44,10 @@ end
 
 begin
     client = MCollective::Client.new(options[:config])
+    client.options = options
 
     command += " #{options[:argument]}" if options[:argument]
-    stats = client.discovered_req(command, "mcollective", options) do |resp|
+    stats = client.discovered_req(command, "mcollective") do |resp|
             next if resp == nil
 
             case command
@@ -70,7 +71,7 @@ rescue Exception => e
     raise
 end
 
-client.display_stats(stats, options)
+client.display_stats(stats)
 
 
 # vi:tabstop=4:expandtab:ai
