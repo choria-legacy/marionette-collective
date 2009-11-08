@@ -84,6 +84,7 @@ fi
 %files common
 %{ruby_sitelib}/mcollective.rb
 %{ruby_sitelib}/mcollective
+/usr/libexec/mcollective
 %dir /etc/mcollective
 
 %files client
@@ -92,7 +93,6 @@ fi
 
 %files
 /usr/sbin/mcollectived
-/usr/libexec/mcollective
 /etc/init.d/mcollective
 %config(noreplace)/etc/mcollective/server.cfg
 %config(noreplace)/etc/mcollective/facts.yaml
