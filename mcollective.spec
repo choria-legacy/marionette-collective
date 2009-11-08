@@ -13,7 +13,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Requires: ruby
 Requires: rubygems
 Requires: rubygem-stomp
-Requires: mcollective-common = %{version}
+Requires: mcollective-common = %{version}-%{release}
 Packager: R.I.Pienaar <rip@devco.net>
 BuildArch: noarch
 
@@ -28,7 +28,7 @@ Common libraries for the mcollective clients and servers
 
 %package client
 Summary: Client tools for the mcollective Application Server
-Requires: mcollective-common = %{version}
+Requires: mcollective-common = %{version}-%{release}
 Group: System Tools
 
 %description client
