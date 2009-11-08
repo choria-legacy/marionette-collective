@@ -102,6 +102,9 @@ module MCollective
                     when /^reload_agent (.+)$/
                         reply("mcollective", replytopic, "reloaded #{$1} agent", requestid) if @agents.loadagent($1)
 
+                    when /^reload_agents$/
+                        reply("mcollective", replytopic, "reloaded all agents", requestid) if @agents.loadagents
+
                     when /^exit$/
                         @log.error("Exiting due to request to controller")
                         reply("mcollective", replytopic, "exiting after request to controller", requestid)
@@ -139,6 +142,7 @@ module MCollective
                 r[:threads] << "#{t.inspect}"
             end
 
+            r[:agents] = MCollective::Agents.agentlist
             r
         end
 

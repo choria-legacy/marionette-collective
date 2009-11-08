@@ -7,13 +7,13 @@ module MCollective
 
             @log = MCollective::Log.instance
 
-            @@agents = {}
-
             loadagents
         end
 
         # Loads all agents from disk
         def loadagents
+            @@agents = {}
+
             agentdir = "#{@config.libdir}/mcollective/agent"
             raise("Cannot find agents directory") unless File.directory?(agentdir)
 
