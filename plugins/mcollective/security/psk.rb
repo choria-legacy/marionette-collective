@@ -73,9 +73,14 @@ module MCollective
             private
             # Retrieves the value of plugin.psk and builds a hash with it and the passed body
             def makehash(body)
-                raise("No plugin.psk configuration option specified") unless @config.pluginconf.include?("psk")
+                if ENV.include?("MCOLLECTIVE_PSK")
+                    psk = ENV["MCOLLECTIVE_PSK"]
+                else
+                    raise("No plugin.psk configuration option specified") unless @config.pluginconf.include?("psk")
+                    psk = @config.pluginconf["psk"]
+                end
     
-                Digest::MD5.hexdigest(body.to_s + @config.pluginconf["psk"])
+                Digest::MD5.hexdigest(body.to_s + psk)
             end
         end
     end
