@@ -27,6 +27,7 @@ module MCollective
     autoload :Connector, "mcollective/connector"
     autoload :Security, "mcollective/security"
     autoload :Facts, "mcollective/facts"
+    autoload :Registration, "mcollective/registration"
 end
 
 # vi:tabstop=4:expandtab:ai

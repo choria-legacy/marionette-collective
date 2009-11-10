@@ -5,7 +5,7 @@ module MCollective
 
         attr_reader :topicprefix, :daemonize, :pluginconf, :libdir, :configured, :logfile, 
                     :keeplogs, :max_log_size, :loglevel, :identity, :daemonize, :connector,
-                    :securityprovider, :factsource
+                    :securityprovider, :factsource, :registration, :registerinterval
 
         def initialize
             @configured = false
@@ -19,6 +19,8 @@ module MCollective
             @securityprovider = "Psk"
             @factsource = "Facter"
             @identity = Socket.gethostname
+            @registration = "Agentlist"
+            @registerinterval = 0
 
             if File.exists?(configfile)
                 File.open(configfile, "r").each do |line|
@@ -28,6 +30,10 @@ module MCollective
                             val = $2
 
                             case key
+                                when "registration"
+                                    @registration = val.capitalize
+                                when "registerinterval"
+                                    @registerinterval = val.to_i
                                 when "topicprefix"
                                     @topicprefix = val
                                 when "logfile"
@@ -65,6 +71,7 @@ module MCollective
                 require("mcollective/facts/#{@factsource.downcase}")
                 require("mcollective/connector/#{@connector.downcase}")
                 require("mcollective/security/#{@securityprovider.downcase}")
+                require("mcollective/registration/#{@registration.downcase}")
 
                 @configured = true
             else

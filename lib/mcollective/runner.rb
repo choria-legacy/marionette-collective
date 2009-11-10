@@ -48,6 +48,12 @@ module MCollective
                 @connection.subscribe("#{@config.topicprefix}.#{agent}/command")
             end
 
+            # Start the registration plugin if interval isn't 0
+            unless @config.registerinterval == 0
+                registration = eval("MCollective::Registration::#{@config.registration}.new(@connection)")
+                registration.run
+            end
+
             loop do
                 begin
                     msg = receive
