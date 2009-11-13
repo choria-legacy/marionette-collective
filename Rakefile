@@ -17,9 +17,19 @@ ENV["BUILD_NUMBER"] ? CURRENT_RELEASE = ENV["BUILD_NUMBER"] : CURRENT_RELEASE = 
 CLEAN.include("build")
 
 def announce(msg='')
-  STDERR.puts "================"
-  STDERR.puts msg
-  STDERR.puts "================"
+    STDERR.puts "================"
+    STDERR.puts msg
+    STDERR.puts "================"
+end
+
+def mkdeb(pkg='')
+    FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/DEBIAN")
+
+    sh %{cp COPYING build/deb/#{PROJ_NAME}#{pkg}/DEBIAN/copyright}
+    sh %{cp ext/debian/#{PROJ_NAME}#{pkg}/* build/deb/#{PROJ_NAME}#{pkg}/DEBIAN}
+    sh %{echo "Version: #{CURRENT_VERSION}-#{CURRENT_RELEASE}" >> build/deb/#{PROJ_NAME}#{pkg}/DEBIAN/control}
+
+    sh %{fakeroot dpkg-deb --build build/deb/#{PROJ_NAME}#{pkg} build/#{PROJ_NAME}#{pkg}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}.deb}
 end
 
 def init
@@ -27,8 +37,7 @@ def init
 end
 
 desc "Build documentation, tar balls and rpms"
-task :default => [:clean, :doc, :archive, :rpm, :tag] do
-end
+task :default => [:clean, :doc, :archive, :rpm, :tag] 
 
 # taks for building docs
 rd = Rake::RDocTask.new(:doc) { |rdoc|
@@ -63,16 +72,16 @@ desc "Creates a RPM"
 task :rpm => [:archive] do
     announce("Building RPM for #{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}")
 
-    sourcedir = `/bin/rpm --eval '%_sourcedir'`.chomp
-    specsdir = `/bin/rpm --eval '%_specdir'`.chomp
-    srpmsdir = `/bin/rpm --eval '%_srcrpmdir'`.chomp
-    rpmdir = `/bin/rpm --eval '%_rpmdir'`.chomp
-    lsbdistrel = `/usr/bin/lsb_release -r -s|/bin/cut -d . -f1`.chomp
-    lsbdistro = `/usr/bin/lsb_release -i -s`.chomp
+    sourcedir = `rpm --eval '%_sourcedir'`.chomp
+    specsdir = `rpm --eval '%_specdir'`.chomp
+    srpmsdir = `rpm --eval '%_srcrpmdir'`.chomp
+    rpmdir = `rpm --eval '%_rpmdir'`.chomp
+    lsbdistrel = `lsb_release -r -s | cut -d . -f1`.chomp
+    lsbdistro = `lsb_release -i -s`.chomp
 
     case lsbdistro
         when 'CentOS'
-            rpmdist = "el#{lsbdistrel}"
+            rpmdist = ".el#{lsbdistrel}"
         else
             rpmdist = ""
     end
@@ -80,11 +89,56 @@ task :rpm => [:archive] do
     sh %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}.tgz #{sourcedir}}
     sh %{cp #{PROJ_NAME}.spec #{specsdir}}
 
-    sh %{cd #{specsdir} && rpmbuild -D 'version #{CURRENT_VERSION}' -D 'rpm_release #{CURRENT_RELEASE}' -D 'dist .#{rpmdist}' -ba #{PROJ_NAME}.spec}
+    sh %{cd #{specsdir} && rpmbuild -D 'version #{CURRENT_VERSION}' -D 'rpm_release #{CURRENT_RELEASE}' -D 'dist #{rpmdist}' -ba #{PROJ_NAME}.spec}
 
-    sh %{cp #{srpmsdir}/#{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}.#{rpmdist}.src.rpm build/}
+    sh %{cp #{srpmsdir}/#{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}#{rpmdist}.src.rpm build/}
 
-    sh %{cp #{rpmdir}/*/#{PROJ_NAME}*-#{CURRENT_VERSION}-#{CURRENT_RELEASE}.#{rpmdist}.*.rpm build/}
+    sh %{cp #{rpmdir}/*/#{PROJ_NAME}*-#{CURRENT_VERSION}-#{CURRENT_RELEASE}#{rpmdist}.*.rpm build/}
 end
+
+desc "Create the .debs"
+task :deb => [:deb_common, :deb_client, :deb_server] 
+
+desc "Create the common .deb"
+task :deb_common => [:archive] do
+    announce("Building common .deb for #{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}")
+    pkg = "-common"
+
+    FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/usr/local/lib/site_ruby/1.8")
+    sh %{rsync -qav --exclude ".svn" build/#{PROJ_NAME}-#{CURRENT_VERSION}/lib/* build/deb/#{PROJ_NAME}#{pkg}/usr/local/lib/site_ruby/1.8}
+    FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/usr/libexec/#{PROJ_NAME}/#{PROJ_NAME}")
+    sh %{rsync -aqv --exclude ".svn" build/#{PROJ_NAME}-#{CURRENT_VERSION}/plugins/#{PROJ_NAME} build/deb/#{PROJ_NAME}#{pkg}/usr/libexec/#{PROJ_NAME}}
+    mkdeb(pkg)
+end
+
+desc "Create the client .deb"
+task :deb_client => [:archive] do
+    announce("Building client .deb for #{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}")
+    pkg = "-client"
+
+    FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/etc/#{PROJ_NAME}")
+    sh %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/etc/client.cfg.dist build/deb/#{PROJ_NAME}#{pkg}/etc/#{PROJ_NAME}/client.cfg}
+    FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/usr/sbin")
+    sh %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/mc-* build/deb/#{PROJ_NAME}#{pkg}/usr/sbin}
+    mkdeb(pkg)
+end
+
+desc "Create the server .deb"
+task :deb_server => [:archive] do
+    announce("Building server .deb for #{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}")
+    pkg = ""
+
+    FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/etc/#{PROJ_NAME}")
+    sh %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/etc/server.cfg.dist build/deb/#{PROJ_NAME}#{pkg}/etc/#{PROJ_NAME}/server.cfg}
+    sh %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/etc/facts.yaml.dist build/deb/#{PROJ_NAME}#{pkg}/etc/#{PROJ_NAME}/facts.yaml}
+    FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/etc/init.d")
+    sh %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/mcollective.init build/deb/#{PROJ_NAME}#{pkg}/etc/init.d/#{PROJ_NAME}}
+    FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/usr/sbin")
+    sh %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/mcollectived.rb build/deb/#{PROJ_NAME}#{pkg}/usr/sbin/mcollectived}
+    mkdeb(pkg)
+end
+
+
+
 
 # vi:tabstop=4:expandtab:ai

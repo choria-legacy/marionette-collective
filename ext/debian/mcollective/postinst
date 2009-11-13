@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ "$1" = "abort-upgrade" ]; then
+    exit 0
+fi
+
+if [ "$1" = configure ]; then
+    #invoke-rc.d mcollective start
+    exit 0
+fi
+
+update-rc.d mcollective defaults 99 >/dev/null
+
