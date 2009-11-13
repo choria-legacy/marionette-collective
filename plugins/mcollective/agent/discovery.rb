@@ -47,7 +47,7 @@ module MCollective
                 Accepted Messages
                 -----------------
 
-                inventory     - returns a has with various bits of information like 
+                inventory     - returns a hash with various bits of information like 
                                 list of agents, threads, etc
 
                 ping          - simply responds with 'pong'
