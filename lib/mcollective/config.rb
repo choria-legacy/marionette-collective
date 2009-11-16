@@ -75,7 +75,7 @@ module MCollective
 
                 @configured = true
             else
-                raise("Cannot find config file")
+                raise("Cannot find config file '#{configfile}'")
             end
         end
     end
