@@ -9,6 +9,9 @@
 #              as a bonus.
 #
 
+RUBYLIB=/usr/local/lib/site_ruby/1.8:$RUBYLIB
+export RUBYLIB
+
 mcollectived="/usr/sbin/mcollectived"
 
 # Lockfile
@@ -17,19 +20,8 @@ lock="/var/lock/subsys/mcollective"
 # PID directory
 pidfile="/var/run/mcollectived.pid"
 
-
 # Source function library.
-. /etc/rc.d/init.d/functions
-
-# Source networking configuration.
-. /etc/sysconfig/network
-
-# Check that networking is up.
-if [ ${NETWORKING} = "no" ]
-then
-  echo "Networking is down"
-  exit 0
-fi
+. /lib/lsb/init-functions
 
 # Check that binary exists
 if ! [ -f  $mcollectived ] 
@@ -58,11 +50,11 @@ case "$1" in
 
 	${mcollectived} --pid=${pidfile} --config="/etc/mcollective/server.cfg"
 	if [ $? = 0 ]; then
-	    success; echo
+	    log_success_msg; echo
 	    touch $lock
 	    exit 0
 	else
-	    failure; echo
+	    log_failure_msg; echo
             exit 1
 	fi
 	;;
@@ -74,7 +66,7 @@ case "$1" in
 	fi
 	rm -f ${pidfile}
 
-	success; echo
+	log_success_msg; echo
 	rm -f $lock
 	;;
   restart)

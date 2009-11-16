@@ -1,7 +1,6 @@
 topicprefix = /topic/mcollective
-daemonize = 0
-libdir = plugins
-logfile = /dev/null
+libdir = /usr/libexec/mcollective
+logfile = /var/log/mcollective.log
 loglevel = info
 
 # Plugins 
@@ -14,7 +13,7 @@ plugin.stomp.port = 6163
 plugin.stomp.user = mcollective
 plugin.stomp.password = marionette
 
+# Facts
 factsource = yaml
-plugin.yaml = /etc/facts.yaml
+plugin.yaml = /etc/mcollective/facts.yaml
 
-# Agent config

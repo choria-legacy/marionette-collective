@@ -5,6 +5,7 @@ if [ "$1" = "abort-upgrade" ]; then
 fi
 
 if [ "$1" = configure ]; then
+    gem install stomp
     #invoke-rc.d mcollective start
     exit 0
 fi

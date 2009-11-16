@@ -1,8 +1,8 @@
 topicprefix = /topic/mcollective
-daemonize = 0
-libdir = plugins
-logfile = /var/log/mcollective.log
+libdir = /usr/libexec/mcollective
+logfile = /dev/stderr
 loglevel = info
+daemonize = 1
 
 # Plugins 
 securityprovider = psk
@@ -14,5 +14,7 @@ plugin.stomp.port = 6163
 plugin.stomp.user = mcollective
 plugin.stomp.password = marionette
 
+# Facts
 factsource = yaml
-plugin.yaml = /etc/facts.yaml
+plugin.yaml = /etc/mcollective/facts.yaml
+
