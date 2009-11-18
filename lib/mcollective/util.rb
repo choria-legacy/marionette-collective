@@ -27,6 +27,15 @@ module MCollective
         def self.has_fact?(fact, value)
             MCollective::Facts.has_fact?(fact, value)
         end
+
+        # Constructs the full target name based on topicprefix and topicsep config options
+        def self.make_target(agent, type)
+            config = MCollective::Config.instance
+
+            raise("Uknown target type #{type}") unless type == :command || type == :reply
+
+            [config.topicprefix, agent, type].join(config.topicsep)
+        end
     end
 end
 

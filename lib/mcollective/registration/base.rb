@@ -15,7 +15,7 @@ module MCollective
 
                 Thread.new do
                     loop do
-                        target = "#{@config.topicprefix}.registration/command"
+                        target = Util.make_target("registration", :command)
                         reqid = Digest::MD5.hexdigest("#{@config.identity}-#{Time.now.to_f.to_s}-#{target}")
                         filter = {"agent" => "registration"}
                         req = @security.encoderequest(@config.identity, target, body, reqid, filter)

@@ -5,7 +5,7 @@ module MCollective
 
         attr_reader :topicprefix, :daemonize, :pluginconf, :libdir, :configured, :logfile, 
                     :keeplogs, :max_log_size, :loglevel, :identity, :daemonize, :connector,
-                    :securityprovider, :factsource, :registration, :registerinterval
+                    :securityprovider, :factsource, :registration, :registerinterval, :topicsep
 
         def initialize
             @configured = false
@@ -21,6 +21,7 @@ module MCollective
             @identity = Socket.gethostname
             @registration = "Agentlist"
             @registerinterval = 0
+            @topicsep = "."
 
             if File.exists?(configfile)
                 File.open(configfile, "r").each do |line|
@@ -30,6 +31,8 @@ module MCollective
                             val = $2
 
                             case key
+                                when "topicsep"
+                                    @topicsep = val
                                 when "registration"
                                     @registration = val.capitalize
                                 when "registerinterval"

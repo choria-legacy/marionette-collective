@@ -41,11 +41,11 @@ module MCollective
 
         # Starts the main loop, before calling this you should initialize the MCollective::Config singleton.
         def run
-            controltopic = "#{@config.topicprefix}.mcollective/command"
+            controltopic = Util.make_target("mcollective", :command)
             @connection.subscribe(controltopic)
 
             MCollective::Agents.agentlist.each do |agent|
-                @connection.subscribe("#{@config.topicprefix}.#{agent}/command")
+                @connection.subscribe(Util.make_target(agent, :command))
             end
 
             # Start the registration plugin if interval isn't 0
@@ -63,7 +63,7 @@ module MCollective
                         @log.debug("Handling message for mcollectived controller")
     
                         controlmsg(msg) 
-                    elsif dest =~ /#{@config.topicprefix}.(.+)\/command/
+                    elsif dest =~ /#{@config.topicprefix}#{@config.topicsep}(.+)#{@config.topicsep}command/
                         target = $1
     
                         @log.debug("Handling message for #{target}")
@@ -85,7 +85,7 @@ module MCollective
         # Deals with messages directed to agents
         def agentmsg(msg, target)
             @agents.dispatch(msg, target, @connection) do |replies|
-                dest = "#{@config.topicprefix}.#{target}/reply"
+                dest = Util.make_target(target, :reply)
                 reply(target, dest, replies, msg[:requestid]) unless replies == nil
             end
         end
@@ -96,7 +96,7 @@ module MCollective
                 body = msg[:body]
                 requestid = msg[:requestid]
 
-                replytopic = "#{@config.topicprefix}.mcollective/reply"
+                replytopic = Util.make_target("mcollective", :reply)
 
                 case body
                     when /^help (.+)$/
