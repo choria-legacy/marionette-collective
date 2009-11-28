@@ -71,12 +71,12 @@ module MCollective
                     end
                 end
 
-                require("mcollective/facts/#{@factsource.downcase}")
-                require("mcollective/connector/#{@connector.downcase}")
-                require("mcollective/security/#{@securityprovider.downcase}")
-                require("mcollective/registration/#{@registration.downcase}")
-
                 @configured = true
+
+                PluginManager.loadclass("Mcollective::Facts::#{@factsource}")
+                PluginManager.loadclass("Mcollective::Connector::#{@connector}")
+                PluginManager.loadclass("Mcollective::Security::#{@securityprovider}")
+                PluginManager.loadclass("Mcollective::Registration::#{@registration}")
             else
                 raise("Cannot find config file '#{configfile}'")
             end

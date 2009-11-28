@@ -9,8 +9,8 @@ module MCollective
 
             @log = MCollective::Log.instance
 
-            @connection = eval("MCollective::Connector::#{@config.connector}.new")
-            @security = eval("MCollective::Security::#{@config.securityprovider}.new")
+            @connection = PluginManager["connector_plugin"]
+            @security = PluginManager["security_plugin"]
 
             @agents = MCollective::Agents.new 
 
@@ -50,8 +50,7 @@ module MCollective
 
             # Start the registration plugin if interval isn't 0
             unless @config.registerinterval == 0
-                registration = eval("MCollective::Registration::#{@config.registration}.new(@connection)")
-                registration.run
+                PluginManager["registration_plugin"].run(@connection)
             end
 
             loop do

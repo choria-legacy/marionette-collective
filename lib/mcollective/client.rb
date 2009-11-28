@@ -9,8 +9,8 @@ module MCollective
             @config = MCollective::Config.instance
             @config.loadconfig(configfile)
             @log = MCollective::Log.instance
-            @connection = eval("MCollective::Connector::#{@config.connector}.new")
-            @security = eval("MCollective::Security::#{@config.securityprovider}.new")
+            @connection = PluginManager["connector_plugin"]
+            @security = PluginManager["security_plugin"]
 
             @options = nil
 

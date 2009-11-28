@@ -6,6 +6,11 @@ module MCollective
         class Base
             attr_reader :stats
     
+            # Register plugins that inherits base
+            def self.inherited(klass)
+                MCollective::PluginManager << {:type => "security_plugin", :class => klass.to_s}
+            end
+
             # Initializes configuration and logging as well as prepare a zero'd hash of stats
             # various security methods and filter validators should increment stats, see MCollective::Security::Psk for a sample
             def initialize

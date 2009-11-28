@@ -28,6 +28,7 @@ module MCollective
     autoload :Security, "mcollective/security"
     autoload :Facts, "mcollective/facts"
     autoload :Registration, "mcollective/registration"
+    autoload :PluginManager, "mcollective/pluginmanager"
 end
 
 # vi:tabstop=4:expandtab:ai

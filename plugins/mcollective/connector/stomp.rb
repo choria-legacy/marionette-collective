@@ -3,11 +3,12 @@ require 'stomp'
 module MCollective
     module Connector
         # Handles sending and receiving messages over the Stomp protocol
-        class Stomp
+        class Stomp<Base
             attr_reader :connection
 
             def initialize
                 @config = MCollective::Config.instance
+
                 @log = MCollective::Log.instance
             end
 

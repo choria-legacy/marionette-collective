@@ -3,14 +3,18 @@ module MCollective
         # This is a base class that other registration plugins can use
         # to handle regular announcements to the mcollective
         class Base
-            def initialize(connection)
+            # Register plugins that inherits base
+            def self.inherited(klass)
+                MCollective::PluginManager << {:type => "registration_plugin", :class => klass.to_s}
+            end
+
+            def initialize
                 @config = MCollective::Config.instance
                 @log = MCollective::Log.instance
                 @security = eval("MCollective::Security::#{@config.securityprovider}.new")
-                @connection = connection
             end
 
-            def run
+            def run(connection)
                 return if @config.registerinterval == 0
 
                 Thread.new do
@@ -21,7 +25,7 @@ module MCollective
                         req = @security.encoderequest(@config.identity, target, body, reqid, filter)
                             
                         @log.debug("Sending registration #{reqid} to #{target}")
-                        @connection.send(target, req)
+                        connection.send(target, req)
     
                         sleep @config.registerinterval             
                     end
