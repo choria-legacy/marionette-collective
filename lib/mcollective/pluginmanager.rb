@@ -9,12 +9,16 @@ module MCollective
         #    {:type => "base",
         #     :class => foo.new}
         #
+	# or like:
+	#    {:type => "base",
+	#     :class => "Foo::Bar"}
+	#
         # In the event that we already have a class with the given type 
         # an exception will be raised.
 	#
-	# When the plugin first gets registered with the << method we dont
-	# actually instantiate it, this is because most likely the registration
-	# gets done by inherited() hooks, at which point the plugin class is not final.
+	# If the :class passed is a String then we will delay instantiation 
+	# till the first time someone asks for the plugin, this is because most likely 
+	# the registration gets done by inherited() hooks, at which point the plugin class is not final.
 	#
 	# If we were to do a .new here the Class initialize method would get called and not
 	# the plugins, we there for only initialize the classes when they get requested via []
@@ -24,9 +28,14 @@ module MCollective
     
             raise("Plugin #{type} already loaded") if @plugins.include?(type)
     
-	    Log.instance.debug("Registering plugin #{type} with class #{klass.class}")
 
-            @plugins[type] = {:loadtime => Time.now, :class => klass, :instance => nil}
+	    if klass.is_a?(String)
+	    	Log.instance.debug("Registering plugin #{type} with class #{klass}")
+            	@plugins[type] = {:loadtime => Time.now, :class => klass, :instance => nil}
+	    else
+	    	Log.instance.debug("Registering plugin #{type} with class #{klass.class}")
+            	@plugins[type] = {:loadtime => Time.now, :class => klass.class, :instance => klass}
+	    end
         end
     
         # Provides a list of plugins we know about
