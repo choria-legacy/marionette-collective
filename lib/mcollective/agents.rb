@@ -1,11 +1,12 @@
 module MCollective
     # A collection of agents, loads them, reloads them and dispatches messages to them.
+    # It uses the PluginManager to store, load and manage instances of plugins.
     class Agents
         def initialize
-            @config = MCollective::Config.instance
+            @config = Config.instance
             raise ("Configuration has not been loaded, can't load agents") unless @config.configured
 
-            @log = MCollective::Log.instance
+            @log = Log.instance
 
             loadagents
         end
@@ -26,34 +27,28 @@ module MCollective
         # Loads a specified agent from disk if available
         def loadagent(agentname)
             agentfile = "#{@config.libdir}/mcollective/agent/#{agentname}.rb"
-            @log.debug("Attempting to load agent #{agentname} from #{agentfile}")
+            classname = "MCollective::Agent::#{agentname.capitalize}"
 
             return false unless File.exist?(agentfile)
 
-            Kernel.load(agentfile)
+            PluginManager.loadclass(classname)
+            PluginManager << {:type => "#{agentname}_agent", :class => classname}
 
-            @@agents[agentname] = {:file => agentfile, 
-                                   :class => "MCollective::Agent::#{agentname.capitalize}",
-                                   :loaded => Time.new}
-
-            @@agents[agentname][:agent] = eval("MCollective::Agent::#{agentname.capitalize}.new")
-            @@agents[agentname][:timeout] = @@agents[agentname][:agent].timeout
-            @@agents[agentname][:meta] = @@agents[agentname][:agent].meta
-            @@agents[agentname][:help] = @@agents[agentname][:agent].help
+            @@agents[agentname] = {:file => agentfile}
 
             true
         end
 
         # Determines if we have an agent with a certain name
         def include?(agentname)
-            @@agents.include?(agentname)
+            PluginManager.include?("#{agentname}_agent")
         end
 
         # Sends a message to a specific agent
         def send(agentname, msg, connection)
             raise("No such agent") unless include?(agentname)
 
-            @@agents[agentname][:agent].handlemsg(msg, connection)
+            PluginManager["#{agentname}_agent"].handlemsg(msg, connection)
         end
 
         # Returns the help for an agent after first trying to get
@@ -61,7 +56,7 @@ module MCollective
         def help(agentname)
             raise("No such agent") unless include?(agentname)
 
-            body = @@agents[agentname][:help].split("\n")
+            body = PluginManager["#{agentname}_agent"].help.split("\n")
 
             if body.first =~ /^(\s+)\S/
                 indent = $1
@@ -76,7 +71,7 @@ module MCollective
         def timeout(agentname)
             raise("No such agent") unless include?(agentname)
 
-            @@agents[agentname][:timeout]
+            PluginManager["#{agentname}_agent"].timeout
         end
 
         # Dispatches a message to an agent, accepts a block that will get run if there are

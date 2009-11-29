@@ -7,7 +7,7 @@ module MCollective
             attr_reader :timeout, :meta
 
             def initialize
-                @log = MCollective::Log.instance
+                @log = Log.instance
 
                 @timeout = 5
                 @meta = {:license => "Apache License, Version 2",
@@ -28,7 +28,7 @@ module MCollective
                         reply = "pong"
 
                     when /^get_fact (.+)/
-                        reply = MCollective::Facts[$1]
+                        reply = Facts[$1]
 
                     else
                         reply = "Unknown Request: #{msg[:body]}"
@@ -57,7 +57,7 @@ module MCollective
 
             private
             def inventory
-                reply = {:agents => MCollective::Agents.agentlist,
+                reply = {:agents => Agents.agentlist,
                          :threads => [],
                          :times => Process.times}
 

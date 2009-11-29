@@ -23,20 +23,17 @@ module MCollective
 
 		# True if we know of a specific fact else false
 		def self.has_fact?(fact, value)
-			@@config = MCollective::Config.instance unless @@config
-			eval("#{@@config.factsource}").get_fact(fact) == value ? true : false
+			PluginManager["facts_plugin"].get_fact(fact) == value ? true : false
 		end
 
 		# Get the value of a fact
 		def self.get_fact(fact)
-			@@config = MCollective::Config.instance unless @@config
-			eval("#{@@config.factsource}").get_fact(fact)
+			PluginManager["facts_plugin"].get_fact(fact)
 		end
 
 		# Get the value of a fact
 		def self.[](fact)
-			@@config = MCollective::Config.instance unless @@config
-			eval("#{@@config.factsource}").get_fact(fact)
+			PluginManager["facts_plugin"].get_fact(fact)
 		end
 	end
 end

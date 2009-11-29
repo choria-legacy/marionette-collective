@@ -6,7 +6,7 @@ module MCollective
         @logger = nil
 
         def initialize
-            config = MCollective::Config.instance
+            config = Config.instance
             raise ("Configuration has not been loaded, can't start logger") unless config.configured
 
             @logger = Logger.new(config.logfile, config.keeplogs, config.max_log_size)

@@ -2,20 +2,33 @@ module MCollective
     module Security
         # This is a base class the other security modules should inherit from
         # it handles statistics and validation of messages that should in most 
-        # cases apply to all security models
+        # cases apply to all security models.
+        # 
+        # To create your own security plugin you should provide a plugin that inherits
+        # from this and provides the following methods:
+        #
+        # decodemsg      - Decodes a message that was received from the middleware
+        # encodereply    - Encodes a reply message to a previous request message
+        # encoderequest  - Encodes a new request message
+        # validrequest?  - Validates a request received from the middleware
+        # 
+        # Specifics of each of these are a bit fluid and the interfaces for this is not
+        # set in stone yet, specifically the encode methods will be provided with a helper
+        # that takes care of encoding the core requirements.  The best place to see how security
+        # works is by looking at the provided MCollective::Security::PSK plugin.
         class Base
             attr_reader :stats
     
             # Register plugins that inherits base
             def self.inherited(klass)
-                MCollective::PluginManager << {:type => "security_plugin", :class => klass.to_s}
+                PluginManager << {:type => "security_plugin", :class => klass.to_s}
             end
 
             # Initializes configuration and logging as well as prepare a zero'd hash of stats
             # various security methods and filter validators should increment stats, see MCollective::Security::Psk for a sample
             def initialize
-                @config = MCollective::Config.instance
-                @log = MCollective::Log.instance
+                @config = Config.instance
+                @log = Log.instance
     
                 @stats = {:passed => 0,
                           :filtered => 0,
@@ -31,6 +44,8 @@ module MCollective
             # - agent - Presence of a MCollective agent with a supplied name
             # - fact - The value of a fact avout this system
             # - identity - the configured identity of the system
+            #
+            # TODO: Support REGEX and/or multiple filter keys to be AND'd
             def validate_filter?(filter)
                 failed = 0
                 passed = 0

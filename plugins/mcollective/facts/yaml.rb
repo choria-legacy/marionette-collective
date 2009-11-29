@@ -4,8 +4,8 @@ module MCollective
 
         # A factsource that reads a hash of facts from a YAML file
         class Yaml<Base
-            def self.get_facts
-                config = MCollective::Config.instance
+            def get_facts
+                config = Config.instance
 
                 YAML.load_file(config.pluginconf["yaml"])
             end

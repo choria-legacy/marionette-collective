@@ -6,9 +6,9 @@ module MCollective
         attr_accessor :options
 
 	    def initialize(configfile)
-            @config = MCollective::Config.instance
+            @config = Config.instance
             @config.loadconfig(configfile)
-            @log = MCollective::Log.instance
+            @log = Log.instance
             @connection = PluginManager["connector_plugin"]
             @security = PluginManager["security_plugin"]
 
@@ -58,7 +58,7 @@ module MCollective
                 msg = @security.decodemsg(msg)
 
                 raise(MsgDoesNotMatchRequestID, "Message reqid #{requestid} does not match our reqid #{msg[:requestid]}") if msg[:requestid] != requestid
-            rescue MCollective::MsgDoesNotMatchRequestID => e
+            rescue MsgDoesNotMatchRequestID => e
                 @log.debug("Ignoring a message for some other client")
                 retry
             end

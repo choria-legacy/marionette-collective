@@ -7,9 +7,9 @@ module MCollective
             attr_reader :connection
 
             def initialize
-                @config = MCollective::Config.instance
+                @config = Config.instance
 
-                @log = MCollective::Log.instance
+                @log = Log.instance
             end
 
             # Connects to the Stomp middleware

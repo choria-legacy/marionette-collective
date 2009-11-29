@@ -4,15 +4,15 @@ module MCollective
     # all this information
     class Runner
         def initialize(configfile)
-            @config = MCollective::Config.instance
+            @config = Config.instance
             @config.loadconfig(configfile) unless @config.configured
 
-            @log = MCollective::Log.instance
+            @log = Log.instance
 
             @connection = PluginManager["connector_plugin"]
             @security = PluginManager["security_plugin"]
 
-            @agents = MCollective::Agents.new 
+            @agents = Agents.new 
 
             @stats = {:starttime => Time.now.to_i,
                       :validated => 0, 
@@ -44,7 +44,7 @@ module MCollective
             controltopic = Util.make_target("mcollective", :command)
             @connection.subscribe(controltopic)
 
-            MCollective::Agents.agentlist.each do |agent|
+            Agents.agentlist.each do |agent|
                 @connection.subscribe(Util.make_target(agent, :command))
             end
 
@@ -147,7 +147,7 @@ module MCollective
                 r[:threads] << "#{t.inspect}"
             end
 
-            r[:agents] = MCollective::Agents.agentlist
+            r[:agents] = Agents.agentlist
             r
         end
 
