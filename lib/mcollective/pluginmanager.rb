@@ -58,7 +58,11 @@ module MCollective
 
             # Create an instance of the class if one hasn't been done before
             if @plugins[plugin][:instance] == nil
-                @plugins[plugin][:instance] = eval("#{klass}.new")
+                begin
+                    @plugins[plugin][:instance] = eval("#{klass}.new")
+                rescue Exception => e
+                    raise("Could not create instance of plugin #{plugin}: #{e}")
+                end
             end
 
             Log.instance.debug("Returning plugin #{plugin} with class #{klass}")
