@@ -2,6 +2,9 @@ module MCollective
     # Some basic utility helper methods useful to clients, agents, runner etc.
     class Util
         # Finds out if this MCollective has an agent by the name passed
+        #
+        # If the passed name starts with a / it's assumed to be regex
+        # and will use regex to match
         def self.has_agent?(agent)
             agent = Regexp.new(agent.gsub("\/", "")) if agent.match("^/")
 
@@ -20,6 +23,9 @@ module MCollective
 
         # Checks if this node has a puppet class by parsing the 
         # puppet classes.txt
+        #
+        # If the passed name starts with a / it's assumed to be regex
+        # and will use regex to match
         def self.has_puppet_class?(klass)
             klass = Regexp.new(klass.gsub("\/", "")) if klass.match("^/")
 
@@ -35,18 +41,31 @@ module MCollective
         end
 
         # Gets the value of a specific fact, mostly just a duplicate of MCollective::Facts.get_fact
-        # bt it kind of goes with the other classes here
+        # but it kind of goes with the other classes here
         def self.get_fact(fact)
             Facts.get_fact(fact)
         end
 
-        # Compares fact == value, mostly just a duplicate of MCollective::Facts.get_fact
-        # bt it kind of goes with the other classes here
+        # Compares fact == value,
+        #
+        # If the passed value starts with a / it's assumed to be regex
+        # and will use regex to match
         def self.has_fact?(fact, value)
-            Facts.has_fact?(fact, value)
+            value = Regexp.new(value.gsub("\/", "")) if value.match("^/")
+
+            if value.is_a?(Regexp)
+                return true if Facts.get_fact(fact).match(value)
+            else
+                return true if Facts.get_fact(fact) == value
+            end
+
+            false
         end
 
-        # Checks if the configured identity matches the one supplied, supports regex
+        # Checks if the configured identity matches the one supplied
+        #
+        # If the passed name starts with a / it's assumed to be regex
+        # and will use regex to match
         def self.has_identity?(identity)
             identity = Regexp.new(identity.gsub("\/", "")) if identity.match("^/")
 
