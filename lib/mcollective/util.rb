@@ -3,7 +3,19 @@ module MCollective
     class Util
         # Finds out if this MCollective has an agent by the name passed
         def self.has_agent?(agent)
-            Agents.agentlist.include?(agent)
+            agent = Regexp.new(agent.gsub("\/", "")) if agent.match("^/")
+
+            if agent.is_a?(Regexp)
+                if Agents.agentlist.grep(agent).size > 0
+                    return true
+                else
+                    return false
+                end
+            else
+                return Agents.agentlist.include?(agent)
+            end
+
+            false
         end
 
         # Checks if this node has a puppet class by parsing the 
