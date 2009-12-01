@@ -84,7 +84,7 @@ module MCollective
                             end
     
                         when "identity"
-                            if @config.identity == filter[key]
+                            if Util.has_identity?(filter[key])
                                 @log.debug("Passing based on identity = #{filter[key]}")
                                 passed += 1
                             else

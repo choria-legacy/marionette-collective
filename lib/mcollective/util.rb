@@ -46,6 +46,19 @@ module MCollective
             Facts.has_fact?(fact, value)
         end
 
+        # Checks if the configured identity matches the one supplied, supports regex
+        def self.has_identity?(identity)
+            identity = Regexp.new(identity.gsub("\/", "")) if identity.match("^/")
+
+            if identity.is_a?(Regexp)
+                return Config.instance.identity.match(identity)
+            else
+                return true if Config.instance.identity == identity
+            end
+            
+            false
+        end
+
         # Constructs the full target name based on topicprefix and topicsep config options
         def self.make_target(agent, type)
             config = Config.instance
