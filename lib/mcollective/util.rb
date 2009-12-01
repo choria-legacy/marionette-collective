@@ -9,8 +9,14 @@ module MCollective
         # Checks if this node has a puppet class by parsing the 
         # puppet classes.txt
         def self.has_puppet_class?(klass)
+            klass = Regexp.new(klass.gsub("\/", "")) if klass.match("^/")
+
             File.readlines("/var/lib/puppet/classes.txt").each do |k|
-                return true if k.chomp == klass
+                if klass.is_a?(Regexp)
+                    return true if k.chomp.match(klass)
+                else
+                    return true if k.chomp == klass
+                end
             end
 
             false
