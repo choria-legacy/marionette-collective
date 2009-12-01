@@ -55,7 +55,7 @@ module MCollective
                 filter.keys.each do |key|
                     case key
                         when "puppet_class"
-                            if MCollective::Util.has_puppet_class?(filter[key]) then
+                            if Util.has_puppet_class?(filter[key]) then
                                 @log.debug("Passing based on puppet class #{filter[key]}")
                                 passed += 1
                             else
@@ -64,7 +64,7 @@ module MCollective
                             end
             
                         when "agent"
-                            if MCollective::Util.has_agent?(filter[key]) || filter[key] == "mcollective"
+                            if Util.has_agent?(filter[key]) || filter[key] == "mcollective"
                                 @log.debug("Passing based on agent #{filter[key]}")
                                 passed += 1
                             else
@@ -75,7 +75,7 @@ module MCollective
                         when "fact"
                             fact = filter[key]
     
-                            if MCollective::Facts.has_fact?(fact[:fact], fact[:value]) 
+                            if Util.has_fact?(fact[:fact], fact[:value]) 
                                 @log.debug("Passing based on fact #{fact[:fact]} = #{fact[:value]}")
                                 passed += 1
                             else
