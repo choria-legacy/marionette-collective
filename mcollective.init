@@ -15,7 +15,14 @@ export RUBYLIB
 mcollectived="/usr/sbin/mcollectived"
 
 # Lockfile
-lock="/var/lock/subsys/mcollective"
+if [ -d /var/lock/subsys ]; then
+  # RedHat/CentOS/etc who use subsys
+  lock="/var/lock/subsys/mcollective"
+else
+  # The rest of them
+  lock="/var/lock/mcollective"
+fi
+
 
 # PID directory
 pidfile="/var/run/mcollectived.pid"
