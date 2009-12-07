@@ -25,11 +25,11 @@ end
 def mkdeb(pkg='')
     FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/DEBIAN")
 
-    sh %{cp COPYING build/deb/#{PROJ_NAME}#{pkg}/DEBIAN/copyright}
-    sh %{cp ext/debian/#{PROJ_NAME}#{pkg}/* build/deb/#{PROJ_NAME}#{pkg}/DEBIAN}
-    sh %{echo "Version: #{CURRENT_VERSION}-#{CURRENT_RELEASE}" >> build/deb/#{PROJ_NAME}#{pkg}/DEBIAN/control}
+    system %{cp COPYING build/deb/#{PROJ_NAME}#{pkg}/DEBIAN/copyright}
+    system %{cp ext/debian/#{PROJ_NAME}#{pkg}/* build/deb/#{PROJ_NAME}#{pkg}/DEBIAN}
+    system %{echo "Version: #{CURRENT_VERSION}-#{CURRENT_RELEASE}" >> build/deb/#{PROJ_NAME}#{pkg}/DEBIAN/control}
 
-    sh %{fakeroot dpkg-deb --build build/deb/#{PROJ_NAME}#{pkg} build/#{PROJ_NAME}#{pkg}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}.deb}
+    system %{fakeroot dpkg-deb --build build/deb/#{PROJ_NAME}#{pkg} build/#{PROJ_NAME}#{pkg}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}.deb}
 end
 
 def init
@@ -65,7 +65,7 @@ task :tag => [:rpm] do
     raise("Need to specify a SVN url for tags using the TAGS_URL environment variable") unless TAGS_URL
 
     announce "Tagging the release for version #{CURRENT_VERSION}-#{CURRENT_RELEASE}"
-    sh %{svn copy -m 'Hudson adding release tag #{CURRENT_VERSION}-#{CURRENT_RELEASE}' ../#{PROJ_NAME}/ #{TAGS_URL}/#{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}}
+    system %{svn copy -m 'Hudson adding release tag #{CURRENT_VERSION}-#{CURRENT_RELEASE}' ../#{PROJ_NAME}/ #{TAGS_URL}/#{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}}
 end
 
 desc "Creates a RPM"
@@ -86,14 +86,14 @@ task :rpm => [:archive] do
             rpmdist = ""
     end
 
-    sh %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}.tgz #{sourcedir}}
-    sh %{cp #{PROJ_NAME}.spec #{specsdir}}
+    system %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}.tgz #{sourcedir}}
+    system %{cp #{PROJ_NAME}.spec #{specsdir}}
 
-    sh %{cd #{specsdir} && rpmbuild -D 'version #{CURRENT_VERSION}' -D 'rpm_release #{CURRENT_RELEASE}' -D 'dist #{rpmdist}' -ba #{PROJ_NAME}.spec}
+    system %{cd #{specsdir} && rpmbuild -D 'version #{CURRENT_VERSION}' -D 'rpm_release #{CURRENT_RELEASE}' -D 'dist #{rpmdist}' -ba #{PROJ_NAME}.spec}
 
-    sh %{cp #{srpmsdir}/#{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}#{rpmdist}.src.rpm build/}
+    system %{cp #{srpmsdir}/#{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}#{rpmdist}.src.rpm build/}
 
-    sh %{cp #{rpmdir}/*/#{PROJ_NAME}*-#{CURRENT_VERSION}-#{CURRENT_RELEASE}#{rpmdist}.*.rpm build/}
+    system %{cp #{rpmdir}/*/#{PROJ_NAME}*-#{CURRENT_VERSION}-#{CURRENT_RELEASE}#{rpmdist}.*.rpm build/}
 end
 
 desc "Create the .debs"
@@ -105,9 +105,9 @@ task :deb_common => [:archive] do
     pkg = "-common"
 
     FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/usr/local/lib/site_ruby/1.8")
-    sh %{rsync -qav --exclude ".svn" build/#{PROJ_NAME}-#{CURRENT_VERSION}/lib/* build/deb/#{PROJ_NAME}#{pkg}/usr/local/lib/site_ruby/1.8}
+    system %{rsync -qav --exclude ".svn" build/#{PROJ_NAME}-#{CURRENT_VERSION}/lib/* build/deb/#{PROJ_NAME}#{pkg}/usr/local/lib/site_ruby/1.8}
     FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/usr/libexec/#{PROJ_NAME}/#{PROJ_NAME}")
-    sh %{rsync -aqv --exclude ".svn" build/#{PROJ_NAME}-#{CURRENT_VERSION}/plugins/#{PROJ_NAME} build/deb/#{PROJ_NAME}#{pkg}/usr/libexec/#{PROJ_NAME}}
+    system %{rsync -aqv --exclude ".svn" build/#{PROJ_NAME}-#{CURRENT_VERSION}/plugins/#{PROJ_NAME} build/deb/#{PROJ_NAME}#{pkg}/usr/libexec/#{PROJ_NAME}}
     mkdeb(pkg)
 end
 
@@ -117,9 +117,9 @@ task :deb_client => [:archive] do
     pkg = "-client"
 
     FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/etc/#{PROJ_NAME}")
-    sh %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/etc/client.cfg.dist build/deb/#{PROJ_NAME}#{pkg}/etc/#{PROJ_NAME}/client.cfg}
+    system %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/etc/client.cfg.dist build/deb/#{PROJ_NAME}#{pkg}/etc/#{PROJ_NAME}/client.cfg}
     FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/usr/sbin")
-    sh %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/mc-* build/deb/#{PROJ_NAME}#{pkg}/usr/sbin}
+    system %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/mc-* build/deb/#{PROJ_NAME}#{pkg}/usr/sbin}
     mkdeb(pkg)
 end
 
@@ -129,12 +129,12 @@ task :deb_server => [:archive] do
     pkg = ""
 
     FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/etc/#{PROJ_NAME}")
-    sh %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/etc/server.cfg.dist build/deb/#{PROJ_NAME}#{pkg}/etc/#{PROJ_NAME}/server.cfg}
-    sh %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/etc/facts.yaml.dist build/deb/#{PROJ_NAME}#{pkg}/etc/#{PROJ_NAME}/facts.yaml}
+    system %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/etc/server.cfg.dist build/deb/#{PROJ_NAME}#{pkg}/etc/#{PROJ_NAME}/server.cfg}
+    system %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/etc/facts.yaml.dist build/deb/#{PROJ_NAME}#{pkg}/etc/#{PROJ_NAME}/facts.yaml}
     FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/etc/init.d")
-    sh %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/mcollective.init build/deb/#{PROJ_NAME}#{pkg}/etc/init.d/#{PROJ_NAME}}
+    system %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/mcollective.init build/deb/#{PROJ_NAME}#{pkg}/etc/init.d/#{PROJ_NAME}}
     FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/usr/sbin")
-    sh %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/mcollectived.rb build/deb/#{PROJ_NAME}#{pkg}/usr/sbin/mcollectived}
+    system %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/mcollectived.rb build/deb/#{PROJ_NAME}#{pkg}/usr/sbin/mcollectived}
     mkdeb(pkg)
 end
 

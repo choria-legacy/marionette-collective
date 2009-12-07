@@ -4,6 +4,7 @@ require 'mcollective'
 require 'getoptlong'
 
 opts = GetoptLong.new(
+    [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
     [ '--config', '-c', GetoptLong::REQUIRED_ARGUMENT],
     [ '--pidfile', '-p', GetoptLong::REQUIRED_ARGUMENT]
 )
@@ -13,6 +14,9 @@ pid = ""
 
 opts.each do |opt, arg|
     case opt
+        when '--help'
+            puts "Usage: mcollectived.rb [--config /path/to/config] [--pidfile /path/to/pid]"
+            exit 
         when '--config'
             configfile = arg
         when '--pidfile'
