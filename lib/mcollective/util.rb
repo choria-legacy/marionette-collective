@@ -1,6 +1,6 @@
 module MCollective
     # Some basic utility helper methods useful to clients, agents, runner etc.
-    class Util
+    module Util
         # Finds out if this MCollective has an agent by the name passed
         #
         # If the passed name starts with a / it's assumed to be regex
