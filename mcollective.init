@@ -40,7 +40,7 @@ fi
 # See how we were called.
 case "$1" in
   start)
-	echo -n $"Starting mcollective: "
+	echo -n "Starting mcollective: "
 
 	if [ -f ${lock} ]; then
 	    # we were not shut down correctly
