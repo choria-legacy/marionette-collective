@@ -86,6 +86,11 @@ module MCollective
 
             [config.topicprefix, agent, type].join(config.topicsep)
         end
+
+        # Wrapper around PluginManager.loadclass
+        def self.loadclass(klass)
+            PluginManager.loadclass(klass)
+        end
     end
 end
 
