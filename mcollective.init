@@ -57,11 +57,11 @@ case "$1" in
 
 	${mcollectived} --pid=${pidfile} --config="/etc/mcollective/server.cfg"
 	if [ $? = 0 ]; then
-	    log_success_msg; echo
+	    log_success_msg
 	    touch $lock
 	    exit 0
 	else
-	    log_failure_msg; echo
+	    log_failure_msg
             exit 1
 	fi
 	;;
@@ -73,7 +73,7 @@ case "$1" in
 	fi
 	rm -f ${pidfile}
 
-	log_success_msg; echo
+	log_success_msg
 	rm -f $lock
 	;;
   restart)
