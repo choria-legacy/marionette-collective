@@ -30,6 +30,11 @@ config.loadconfig(configfile) unless config.configured
 
 log = MCollective::Log.instance
 
+Signal.trap("TERM") do
+    log.info("Received TERM signal, terminating")
+    exit!
+end
+
 if config.daemonize
     log.debug("Starting in the background (#{config.daemonize})")
     MCollective::Runner.daemonize do
