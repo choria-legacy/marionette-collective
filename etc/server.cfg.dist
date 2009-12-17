@@ -1,6 +1,6 @@
 topicprefix = /topic/mcollective
 libdir = /usr/libexec/mcollective
-logfile = /dev/stderr
+logfile = /var/log/mcollective.log
 loglevel = info
 daemonize = 1
 
