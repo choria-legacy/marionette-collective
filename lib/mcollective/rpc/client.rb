@@ -4,29 +4,30 @@ module MCollective
             attr_accessor :discovery_timeout, :timeout, :verbose, :filter, :config
             attr_reader :stats, :client
 
-            def initialize(agent, configfile="/etc/mcollective/client.cfg")
-                @agent = agent
-
-                oparser = MCollective::Optionparser.new({:config => configfile, :verbose => false}, "filter")
+            def initialize(agent, flags = {})
+                if flags.include?(:options)
+                    options = flags[:options]
+                else
+                    oparser = MCollective::Optionparser.new({:verbose => false}, "filter")
                     
-                options = oparser.parse do |parser, options|
-                    if block_given?
-                        yield(parser, options) 
+                    options = oparser.parse do |parser, options|
+                        if block_given?
+                            yield(parser, options) 
+                        end 
                     end
                 end
 
+                @agent = agent
                 @discovery_timeout = options[:disctimeout]
                 @timeout = options[:timeout]
                 @verbose = options[:verbose]
                 @filter = options[:filter]
+                @filter["agent"] = agent
                 @config = options[:config]
+                @discovered_agents = nil
 
                 @client = client = MCollective::Client.new(@config)
                 @client.options = options
-
-                @filter["agent"] = agent
-
-                @discovered_agents = nil
 
                 STDERR.sync = true
                 STDOUT.sync = true
@@ -39,34 +40,41 @@ module MCollective
                        :data   => args[0]}
 
                 result = []
-                @stats = @client.req(req, @agent, options, discover.size) do |resp|
+                @client.req(req, @agent, options, discover.size) do |resp|
                     if block_given?
-                        if resp[:body][:statuscode] == 0
+                        if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
                             yield(resp)
                         else
                             case resp[:body][:statuscode]
-                                when 1
-                                    raise UnknownRPCAction, resp[:body][:statusmsg]
                                 when 2
-                                    raise MissingRPCData, resp[:body][:statusmsg]
+                                    raise UnknownRPCAction, resp[:body][:statusmsg]
                                 when 3
-                                    raise InvalidRPCData, resp[:body][:statusmsg]
+                                    raise MissingRPCData, resp[:body][:statusmsg]
                                 when 4
+                                    raise InvalidRPCData, resp[:body][:statusmsg]
+                                when 5
                                     raise UnknownRPCError, resp[:body][:statusmsg]
                             end
                         end
-
-                        return @stats
                     else
-                        if resp[:body][:statuscode] == 0
-                            result << {:sender => resp[:senderid], :status => resp[:body][:statuscode], :statusmsg => resp[:body][:statusmsg], :data => resp[:body][:data]}
+                        if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
+                            result << {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode], 
+                                       :statusmsg => resp[:body][:statusmsg], :data => resp[:body][:data]}
                         else
-                            result << {:sender => resp[:senderid], :status => resp[:body][:statuscode], :statusmsg => resp[:body][:statusmsg], :data => nil}
+                            result << {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode], 
+                                       :statusmsg => resp[:body][:statusmsg], :data => nil}
                         end
-
-                        return [result].flatten
                     end
                 end
+
+                RPC.stats  @client.stats
+
+                if block_given?
+                    return @client.stats
+                else
+                    return [result].flatten
+                end
+
             end
 
             # Sets the class filter
