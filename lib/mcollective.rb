@@ -17,6 +17,13 @@ require 'socket'
 # For an overview of the idea behind this and what it enables please see:
 #   http://www.devco.net/archives/2009/10/18/middleware_for_systems_administration.php
 module MCollective
+    # Exceptions for the RPC system
+    class RPCError<StandardError;end
+    class UnknownRPCAction<RPCError;end
+    class MissingRPCData<RPCError;end
+    class InvalidRPCData<RPCError;end
+    class UnknownRPCError<RPCError;end
+
     autoload :Config, "mcollective/config"    
     autoload :Log, "mcollective/log"    
     autoload :Runner, "mcollective/runner"    
