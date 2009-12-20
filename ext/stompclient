@@ -1,0 +1,152 @@
+#!/usr/bin/ruby
+# == Synopsis
+#
+# stompclient: Generic client to consume and produce STOMP queues and topics, tested against
+# Apache Active MQ
+#
+# == Description
+# A simple client that can connect to an STOMP server, subscribe to topics and queues and also
+# send to topics and queues.
+#
+# == Usage
+# stompclient [OPTIONS]
+#
+# --help, -h:
+#   Show Help
+#
+# --server, -s
+#   The server to connect to, can also be set in STOMP_SERVER environment variable
+#
+# --port, -p
+#   The port to connect to, default to 6163
+# 
+# --user, -u
+#   The user to connect as, can also be set in STOMP_USER environment variable
+#
+# --password, -P
+#   The password to use, can also be set in STOMP_PASSWORD environment variable
+#
+# When connected to a server, use the 'help' command to see further information about
+# using the client, common commands that can be issued are:
+#
+# - subscribe /topic/foo: Subscribes to topic 'foo'
+# - /topic/foo bar: Sends 'bar' to the topic 'foo'
+# - details: Toggle the display or timestamp and topic or queue information for each message
+#
+#
+# == Changelog
+# - 20 December 2009 Include into MCollective
+# - 17 March 2009 Initial release
+#
+# R.I.Pienaar <rip@devco.net> more information at www.devco.net
+#
+# Licensed under the Apache License, Version 2.0
+
+require 'rubygems'
+require 'stomp'
+require 'readline'
+require 'thread'
+require 'getoptlong'
+
+opts = GetoptLong.new(
+    [ '--server', '-s', GetoptLong::REQUIRED_ARGUMENT],
+    [ '--port', '-p', GetoptLong::REQUIRED_ARGUMENT],
+    [ '--user', '-u', GetoptLong::REQUIRED_ARGUMENT],
+    [ '--password', '-P', GetoptLong::REQUIRED_ARGUMENT],
+    [ '--help', '-h', GetoptLong::NO_ARGUMENT]
+)
+
+@user = ENV["STOMP_USER"];
+@password = ENV["STOMP_PASSWORD"]
+@server = ENV["STOMP_SERVER"]
+@port = 6163
+
+opts.each { |opt, arg|
+  case opt
+    when '--help'
+      begin
+        require 'rdoc/ri/ri_paths'
+        require 'rdoc/usage'
+        RDoc::usage
+        exit
+      rescue Exception => e
+        puts("Install RDoc::usage or view the comments in the top of the script to get detailed help") if e.to_str != "exit"
+      end
+
+      exit
+    when '--server'
+      @server = arg
+    when '--port'
+      @port = arg
+    when '--user'
+      @user = arg
+    when '--password'
+      @password = arg
+  end
+}
+
+@conn = Stomp::Connection.open(@user, @password, @server, @port, true)
+
+STDOUT.sync = true
+
+def showhelp
+    puts("List of commands:")
+    puts("\n\t- subscribe /(topic|queue)/foo    subscribes to topic of queue 'foo'")
+    puts("\t- /(topic|queue|/foo bar          sends msg 'bar' to topic of queue 'foo'")
+    puts("\t- quit|exit|q|^d                  exit")
+    puts("\t- detail                          show/dont show time and topic a msg was received on")
+    puts("\t- help                            show this help")
+end
+
+@showdetails = true
+
+Thread.new(@conn) do |amq|
+    while true
+        msg = amq.receive
+        dest = msg.headers["destination"]
+        time = Time.now.strftime('%H:%M:%S')
+
+        if @showdetails 
+            msg = "\r#{time}:#{dest} > #{msg.body.chomp}\n"
+        else
+            msg = "\r#{msg.body.chomp}\n"
+        end
+
+        puts (msg)
+    end
+end
+
+loop do
+    line = Readline::readline('AMQ> ')
+    if line
+        Readline::HISTORY.push(line) if line != ""
+    else
+        exit
+    end
+
+    if (line =~ /^(\/(topic|queue)\/\S+)\s+(.+)$/)
+        puts("Sending '#{$3}' to #{$1}")
+        @conn.send($1, $3)
+    elsif (line =~ /^sub\S* (\/(topic|queue)\/\S+)$/)
+        puts("Subscribing to #{$1}")
+
+        @conn.subscribe($1)
+    elsif (line =~ /^det(ail)*$/)
+        if @showdetails
+            @showdetails = false
+            puts("No longer showing details")
+        else
+            @showdetails = true
+            puts("Showing time and topic for each msg")
+        end
+    elsif (line =~ /^(quit|exit|q)$/)
+        exit
+    elsif (line =~ /^(help|h|\?)$/)
+        showhelp
+    elsif (line =~ /^$/)
+    else
+        puts("ERROR: unrecognised input: #{line}")
+    end
+end
+
+# vi:tabstop=4:expandtab:ai
