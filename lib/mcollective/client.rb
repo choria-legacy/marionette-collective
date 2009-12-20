@@ -3,7 +3,7 @@ module MCollective
 
     # Helpers for writing clients that can talk to agents, do discovery and so forth
     class Client
-        attr_accessor :options
+        attr_accessor :options, :stats
 
 	    def initialize(configfile)
             @config = Config.instance
@@ -128,7 +128,8 @@ module MCollective
             stat[:responses] = hosts_responded
             stat[:noresponsefrom] = []
 
-            stat
+            @stats = stat
+            return stat
         end
 
         # Performs a discovery and then send a request, performs the passed block for each response
@@ -183,7 +184,8 @@ module MCollective
             stat[:noresponsefrom] = hosts_not_responded
             stat[:discovered] = discovered
 
-            stat
+            @stats = stat
+            return stat
         end
 
         # Prints out the stats returns from req and discovered_req in a nice way
