@@ -1,3 +1,5 @@
+require 'pp'
+
 module MCollective
     # Toolset to create a standard interface of client and agent using
     # an RPC metaphor, standard compliant agents will make it easier
@@ -43,11 +45,16 @@ module MCollective
             configfile = flags[:configfile] || "/etc/mcollective/client.cfg"
             options = flags[:options] || nil
 
-            if options
-                rpc = Client.new(agent, :configfile => configfile, :options => options)
-            else
-                rpc = Client.new(agent, :configfile => configfile)
-                @options = rpc.options
+            begin
+                if options
+                    rpc = Client.new(agent, :configfile => configfile, :options => options)
+                else
+                    rpc = Client.new(agent, :configfile => configfile)
+                    @options = rpc.options
+                end
+            rescue Exception => e
+                puts("Could not create RPC client: #{e}")
+                exit!
             end
 
             if block_given?
@@ -128,6 +135,7 @@ module MCollective
         #
         # Takes flags:
         #    printrpc exim.mailq, :flatten => true
+        #    printrpc exim.mailq, :verbose => true
         #
         # If you've asked it to flatten the result it will not print sender 
         # hostnames, it will just print the result as if it's one huge result, 
@@ -140,6 +148,8 @@ module MCollective
         # To get details of each result run with the -v command line option.
         def printrpc(result, flags = {})
             verbose = @options[:verbose] rescue verbose = false
+
+            verbose = flags[:verbose] || verbose
             flatten = flags[:flatten] || false
 
             if flatten
@@ -147,9 +157,9 @@ module MCollective
                     puts if count == 0
 
                     if r[:statuscode] == 0
-                        result.each {|r| puts r[:data][:message]}
-                    elsif r[:statuscode] == 1
-                        result.each {|r| puts r[:statusmsg]}
+                        puts r[:data][:message]
+                    else
+                        puts r[:statusmsg]
                     end
                 end
                 
@@ -162,22 +172,27 @@ module MCollective
                         puts(r[:sender])
 
                         if r[:statuscode] == 0
-                            r[:data][:message].split("\n").each {|m| puts("     #{m}")}
-                        elsif r[:statuscode] == 1
-                            puts("    #{r[:statusmsg]}")
+                            msg = r[:data][:message]
+
+                            if msg.is_a?(Array)
+                                msg.each {|m| puts("     #{m}")}
+
+                            elsif msg.is_a?(String)
+                                r[:data][:message].split("\n").each {|m| puts("     #{m}")}
+
+                            else
+                                msg.pretty_inspect.split("\n").each {|m| puts("    #{m}")}
+
+                            end
                         else
-                            r.pretty_inspect.split("\n").each {|m| puts("    #{m}")}
+                            puts("    #{r[:statusmsg]}")
                         end
                     else
                         if r[:statuscode] == 0
                             puts(".")
-                        elsif r[:statuscode] == 1
-                            puts if count > 0
-                            puts("#{r[:sender]}: #{r[:statusmsg]}")
                         else
                             puts if count > 0
-                            puts(r[:sender])
-                            r.pretty_inspect.split("\n").each {|m| puts("    #{m}")}
+                            puts("#{r[:sender]}: #{r[:statusmsg]}")
                         end
 
                     end
