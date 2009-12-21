@@ -1,7 +1,7 @@
 module MCollective
     module RPC 
         class Client
-            attr_accessor :discovery_timeout, :timeout, :verbose, :filter, :config
+            attr_accessor :discovery_timeout, :timeout, :verbose, :filter, :config, :progress
             attr_reader :stats, :client
 
             def initialize(agent, flags = {})
@@ -25,6 +25,7 @@ module MCollective
                 @filter["agent"] = agent
                 @config = options[:config]
                 @discovered_agents = nil
+                @progress = true
 
                 @client = client = MCollective::Client.new(@config)
                 @client.options = options
@@ -39,8 +40,15 @@ module MCollective
                        :action => method_name.to_s,
                        :data   => args[0]}
 
+                twirl = ['|', '/', '-', "\\", '|', '/', '-', "\\"]
+                twirldex = 0
+
                 result = []
+                respcount = 0
+
                 @client.req(req, @agent, options, discover.size) do |resp|
+                    respcount += 1
+
                     if block_given?
                         if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
                             yield(resp)
@@ -57,6 +65,11 @@ module MCollective
                             end
                         end
                     else
+                        if @progress
+                            STDERR.print("\r #{twirl[twirldex]} [ #{respcount} / #{discover.size} ]")
+                            twirldex == 7 ? twirldex = 0 : twirldex += 1
+                        end
+
                         if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
                             result << {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode], 
                                        :statusmsg => resp[:body][:statusmsg], :data => resp[:body][:data]}
@@ -67,14 +80,17 @@ module MCollective
                     end
                 end
 
-                RPC.stats  @client.stats
+                RPC.stats @client.stats
+
+                if @progress
+                    STDERR.print("\r                                        ")
+                end
 
                 if block_given?
                     return @client.stats
                 else
                     return [result].flatten
                 end
-
             end
 
             # Sets the class filter
@@ -107,13 +123,20 @@ module MCollective
             # Does discovery based on the filters set, i a discovery was
             # previously done return that else do a new discovery.
             #
+            # Will show a message indicating its doing discovery if running
+            # verbose or if the :verbose flag is passed in.
+            #
             # Use reset to force a new discovery
-            def discover
+            def discover(flags={})
+                verbose = flags[:verbose] rescue verbose = @verbose
+
                 if @discovered_agents == nil
-                    STDERR.print("Determining the amount of hosts matching filter for #{discovery_timeout} seconds .... ") if @verbose
+                    STDERR.print("Determining the amount of hosts matching filter for #{discovery_timeout} seconds .... ") if verbose
                     @discovered_agents = @client.discover(@filter, @discovery_timeout)
-                    STDERR.puts(@discovered_agents.size) if @verbose
+                    STDERR.puts(@discovered_agents.size) if verbose
                 end
+
+                RPC.discovered  @discovered_agents
 
                 @discovered_agents
             end
