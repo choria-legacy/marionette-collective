@@ -66,10 +66,18 @@ module MCollective
 
         # means for other classes to drop stats into this module
         # its a bit hacky but needed so that the mixin methods like
-        # printrpcstats can easily get access to stats without 
+        # printrpcstats can easily get access to it without 
         # users having to pass it around in params.
         def self.stats(stats)
             @@stats = stats
+        end
+
+        # means for other classes to drop discovered hosts into this module
+        # its a bit hacky but needed so that the mixin methods like
+        # printrpcstats can easily get access to it without 
+        # users having to pass it around in params.
+        def self.discovered(discovered)
+            @@discovered = discovered
         end
 
         # Prints stats, requires stats to be saved from elsewhere
@@ -88,6 +96,9 @@ module MCollective
         def printrpcstats(flags={})
             verbose = @options[:verbose] rescue verbose = false
             caption = flags[:caption] || "rpc stats"
+
+            STDOUT.sync = true
+            STDERR.sync = true
 
             begin
                 stats = @@stats
@@ -141,9 +152,8 @@ module MCollective
         # hostnames, it will just print the result as if it's one huge result, 
         # handy for things like showing a combined mailq.
         #
-        # If you're not flattening the result and not running in verbose it will 
-        # just print a "." for each OK result received, it will only print details
-        # of the result if the agent said something was not OK.
+        # In the default quiet mode - no flattening or verbose - only results
+        # that produce an error will be printed
         #
         # To get details of each result run with the -v command line option.
         def printrpc(result, flags = {})
@@ -156,10 +166,16 @@ module MCollective
                 result.each_with_index do |r, count|
                     puts if count == 0
 
-                    if r[:statuscode] == 0
-                        puts r[:data][:message]
+                    if r[:statuscode] <= 1
+                        data = r[:data]
+
+                        if r[:data].is_a?(Array)
+                            pp data
+                        else
+                            puts data
+                        end
                     else
-                        puts r[:statusmsg]
+                        pp r
                     end
                 end
                 
@@ -171,34 +187,27 @@ module MCollective
                     if verbose
                         puts(r[:sender])
 
-                        if r[:statuscode] == 0
-                            msg = r[:data][:message]
+                        if r[:statuscode] <= 1
+                            puts = r[:statusmsg]
 
-                            if msg.is_a?(Array)
-                                msg.each {|m| puts("     #{m}")}
+                            r[:data].pretty_inspect.split("\n").each {|m| puts("    #{m}")}
 
-                            elsif msg.is_a?(String)
-                                r[:data][:message].split("\n").each {|m| puts("     #{m}")}
-
-                            else
-                                msg.pretty_inspect.split("\n").each {|m| puts("    #{m}")}
-
-                            end
+                            puts "\n"
                         else
                             puts("    #{r[:statusmsg]}")
+                            puts "\n"
                         end
                     else
-                        if r[:statuscode] == 0
-                            puts(".")
-                        else
+                        unless r[:statuscode] == 0
                             puts if count > 0
-                            puts("#{r[:sender]}: #{r[:statusmsg]}")
+                            printf("%-40s %s\n", r[:sender], r[:statusmsg])
                         end
-
                     end
 
-                    puts
+                    STDOUT.flush
                 end
+
+                puts
             end
         end
     end
