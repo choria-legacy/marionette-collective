@@ -6,6 +6,9 @@ module MCollective
     # to create generic clients like web interfaces etc
     module RPC
         autoload :Client, "mcollective/rpc/client"
+        autoload :Agent, "mcollective/rpc/agent"
+        autoload :Reply, "mcollective/rpc/reply"
+        autoload :Request, "mcollective/rpc/request"
         
         # Creates a standard options hash, pass in a block to add extra headings etc
         # see Optionparser
@@ -185,14 +188,20 @@ module MCollective
                     puts if count == 0
 
                     if verbose
-                        puts(r[:sender])
+                        printf("%-40s: %s\n", r[:sender], r[:statusmsg])
 
                         if r[:statuscode] <= 1
-                            puts = r[:statusmsg]
-
                             r[:data].pretty_inspect.split("\n").each {|m| puts("    #{m}")}
-
                             puts "\n"
+                        elsif r[:statuscode] == 2
+                            # dont print anything, no useful data to display
+                            # past what was already shown
+                        elsif r[:statuscode] == 3
+                            # dont print anything, no useful data to display
+                            # past what was already shown
+                        elsif r[:statuscode] == 4
+                            # dont print anything, no useful data to display
+                            # past what was already shown
                         else
                             puts("    #{r[:statusmsg]}")
                             puts "\n"
@@ -206,9 +215,20 @@ module MCollective
 
                     STDOUT.flush
                 end
-
-                puts
             end
+            puts
+        end
+
+        # Factory for RPC::Request messages, only really here to make agents
+        # a bit easier to understand
+        def self.request(msg)
+            RPC::Request.new(msg)
+        end
+
+        # Factory for RPC::Reply messages, only really here to make agents
+        # a bit easier to understand
+        def self.reply
+            RPC::Reply.new
         end
     end
 end

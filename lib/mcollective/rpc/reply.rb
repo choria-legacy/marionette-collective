@@ -10,6 +10,12 @@ module MCollective
                 @statusmsg = "OK"
             end
 
+            # Helper to fill in statusmsg and code on failure
+            def fail(msg, code)
+                @statusmsg = msg
+                @statuscode = code
+            end
+
             # Write to the data hash
             def []=(key, val)
                 @data[key] = val
