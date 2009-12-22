@@ -172,7 +172,7 @@ module MCollective
                     if r[:statuscode] <= 1
                         data = r[:data]
 
-                        if r[:data].is_a?(Array)
+                        unless data.is_a?(String)
                             pp data
                         else
                             puts data

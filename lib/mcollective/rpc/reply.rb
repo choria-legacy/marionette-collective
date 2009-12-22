@@ -11,7 +11,7 @@ module MCollective
             end
 
             # Helper to fill in statusmsg and code on failure
-            def fail(msg, code)
+            def fail(msg, code=1)
                 @statusmsg = msg
                 @statuscode = code
             end
