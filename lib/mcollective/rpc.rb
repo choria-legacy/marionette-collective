@@ -50,7 +50,8 @@ module MCollective
 
             begin
                 if options
-                    rpc = Client.new(agent, :configfile => configfile, :options => options)
+                    rpc = Client.new(agent, :configfile => options[:config], :options => options)
+                    @options = rpc.options
                 else
                     rpc = Client.new(agent, :configfile => configfile)
                     @options = rpc.options
