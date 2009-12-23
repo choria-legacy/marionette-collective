@@ -102,7 +102,7 @@ module MCollective
 
             @parser.on('-h', '--help', 'Display this screen') do
                 puts @parser
-                exit 1
+                exit! 1
             end
         end
     end
