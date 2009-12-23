@@ -1,6 +1,6 @@
 topicprefix = /topic/mcollective
 libdir = /usr/libexec/mcollective
-logfile = /var/log/mcollective.log
+logfile = /dev/null
 loglevel = info
 
 # Plugins 
