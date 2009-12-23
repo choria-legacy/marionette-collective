@@ -11,6 +11,12 @@ require 'json'
 
 include MCollective::RPC
 
+# http://<your box>/mcollective/rpctest/echo/msg=hello%20world
+#
+# Creates a new Simple RPC client for the 'rpctest' agent, calls
+# the echo action with a message 'hello world'. 
+#
+# Returns all the answers as a JSON data block
 get '/mcollective/:agent/:action/*' do
     mc = rpcclient(params[:agent])
     mc.discover
