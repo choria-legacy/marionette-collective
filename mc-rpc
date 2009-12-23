@@ -1,0 +1,46 @@
+#!/usr/bin/ruby
+
+# Generic client for MCollective Simple RPC
+#
+# http://code.google.com/p/mcollective/wiki/SimpleRPCIntroduction
+
+require 'mcollective'
+
+include MCollective::RPC
+
+begin
+    options = rpcoptions do |parser, options|
+        parser.define_head "Generic Simple RPC client"
+        parser.banner = "Usage: mc-rpc [options] [filters] --agent <agent> --action <action> [--argument <key=val>,--argument ...]"
+    
+        options[:arguments] = {}
+    
+        parser.on('-a', '--agent AGENT', 'Agent to call') do |v|
+            options[:agent] = v
+        end
+    
+        parser.on('--action ACTION', 'Action to call') do |v|
+            options[:action] = v
+        end
+    
+        parser.on('--arg', '--argument ARGUMENT', 'Arguments to pass to agent') do |v|
+            if v =~ /^(.+?)=(.+)$/
+                options[:arguments][$1.to_sym] = $2
+            else
+                STDERR.puts("Could not parse --arg #{v}")
+            end
+        end
+    end
+
+    mc = rpcclient(options[:agent], {:options => options})
+
+    mc.discover :verbose => true
+
+    printrpc mc.send(options[:action], options[:arguments])
+
+    printrpcstats :caption => "#{options[:agent]}##{options[:action]} call stats"
+rescue Exception => e
+    STDERR.puts("Could not call agent: #{e}")
+end
+
+# vi:tabstop=4:expandtab:ai
