@@ -34,6 +34,7 @@ begin
 
     mc = rpcclient(options[:agent], {:options => options})
 
+    mc.agent_filter(options[:agent])
     mc.discover :verbose => true
 
     printrpc mc.send(options[:action], options[:arguments])
