@@ -1,9 +1,19 @@
 module MCollective
     module RPC 
+        # The main component of the Simple RPC client system, this wraps around MCollective::Client
+        # and just brings in a lot of convention and standard approached.
         class Client
             attr_accessor :discovery_timeout, :timeout, :verbose, :filter, :config, :progress
             attr_reader :stats, :client
 
+            # Creates a stub for a remote agent, you can pass in an options array in the flags
+            # which will then be used else it will just create a default options array with
+            # filtering enabled based on the standard command line use.
+            #
+            #   rpc = RPC::Client.new("rpctest", :configfile => "client.cfg", :options => options)
+            #
+            # You typically would not call this directly you'd use MCollective::RPC#rpcclient instead
+            # which is a wrapper around this that can be used as a Mixin
             def initialize(agent, flags = {})
                 if flags.include?(:options)
                     options = flags[:options]
@@ -35,6 +45,47 @@ module MCollective
             end
 
             # Magic handler to invoke remote methods
+            #
+            # Once the stub is created using the constructor or the RPC#rpcclient helper you can 
+            # call remote actions easily:
+            #
+            #   ret = rpc.echo(:msg => "hello world")
+            #
+            # This will call the 'echo' action of the 'rpctest' agent and return the result as an array,
+            # the array will be a simplified result set from the usual full MCollective::Client#req with
+            # additional error codes and error text:
+            #
+            # {
+            #   :sender => "remote.box.com",
+            #   :statuscode => 0,
+            #   :statusmsg => "OK",
+            #   :data => "hello world"
+            # }
+            #
+            # If :statuscode is 0 then everything went find, if it's 1 then you supplied the correct arguments etc
+            # but the request could not be completed, you'll find a human parsable reason in :statusmsg then.
+            #  
+            # Codes 2 to 5 maps directly to UnknownRPCAction, MissingRPCData, InvalidRPCData and UnknownRPCError
+            # see below for a description of those, in each case :statusmsg would be the reason for failure.
+            #
+            # To get access to the full result of the MCollective::Client#req calls you can pass in a block:
+            #
+            #   rpc.echo(:msg => "hello world") do |resp|
+            #      pp resp
+            #   end
+            #
+            # In this case resp will the result from MCollective::Client#req.  Instead of returning simple 
+            # text and codes as above you'll also need to handle the following exceptions:
+            #
+            # UnknownRPCAction - There is no matching action on the agent
+            # MissingRPCData - You did not supply all the needed parameters for the action
+            # InvalidRPCData - The data you did supply did not pass validation
+            # UnknownRPCError - Some other error prevented the agent from running
+            #
+            # During calls a progress indicator will be shown of how many results we've received against
+            # how many nodes were discovered, you can disable this by setting progress to false:
+            #
+            #   rpc.progress = false
             def method_missing(method_name, *args)
                 req = {:agent  => @agent,
                        :action => method_name.to_s,

@@ -1,5 +1,25 @@
 module MCollective
     module RPC
+        # A wrapper around the traditional agent, it takes care of a lot of the tedious setup
+        # you would do for each agent allowing you to just create methods following a naming 
+        # standard leaving the heavy lifting up to this clas.
+        #
+        # It only really makes sense to use this with a Simple RPC client on the other end, basic
+        # usage would be:
+        #
+        #    module MCollective
+        #       module Agent
+        #          class Helloworld<RPC::Agent
+        #              def echo_action
+        #                  validate :msg, String
+        #                  
+        #                  @reply.data = @request[:msg]              
+        #              end
+        #          end
+        #       end
+        #    end
+        #
+        # We also currently have the validation code in here, this will be moved to plugins soon.
         class Agent
             attr_accessor :timeout, :meta
 
