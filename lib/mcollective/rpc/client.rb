@@ -134,7 +134,7 @@ module MCollective
                 RPC.stats @client.stats
 
                 if @progress
-                    STDERR.print("\r                                        ")
+                    STDERR.print("\r                                        \r")
                 end
 
                 if block_given?
