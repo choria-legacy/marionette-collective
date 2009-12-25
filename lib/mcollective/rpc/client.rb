@@ -179,7 +179,7 @@ module MCollective
             #
             # Use reset to force a new discovery
             def discover(flags={})
-                verbose = flags[:verbose] rescue verbose = @verbose
+                flags.include?(:verbose) ? verbose = flags[:verbose] : verbose = @verbose
 
                 if @discovered_agents == nil
                     STDERR.print("Determining the amount of hosts matching filter for #{discovery_timeout} seconds .... ") if verbose
