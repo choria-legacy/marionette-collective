@@ -21,7 +21,7 @@ module MCollective
         #
         # We also currently have the validation code in here, this will be moved to plugins soon.
         class Agent
-            attr_accessor :timeout, :meta
+            attr_accessor :timeout, :meta, :reply, :request
 
             def initialize
                 @timeout = 10
