@@ -55,41 +55,48 @@ module MCollective
                 filter.keys.each do |key|
                     case key
                         when "puppet_class"
-                            if Util.has_puppet_class?(filter[key]) then
-                                @log.debug("Passing based on puppet class #{filter[key]}")
-                                passed += 1
-                            else
-                                @log.debug("Failing based on puppet class #{filter[key]}")
-                                failed += 1
+                            filter[key].each do |f|
+                                @log.debug("Checking for class #{f}")
+                                if Util.has_puppet_class?(f) then
+                                    @log.debug("Passing based on puppet class #{f}")
+                                    passed += 1
+                                else
+                                    @log.debug("Failing based on puppet class #{f}")
+                                    failed += 1
+                                end
                             end
             
                         when "agent"
-                            if Util.has_agent?(filter[key]) || filter[key] == "mcollective"
-                                @log.debug("Passing based on agent #{filter[key]}")
-                                passed += 1
-                            else
-                                @log.debug("Failing based on agent #{filter[key]}")
-                                failed += 1
+                            filter[key].each do |f|
+                                if Util.has_agent?(f) || f == "mcollective"
+                                    @log.debug("Passing based on agent #{f}")
+                                    passed += 1
+                                else
+                                    @log.debug("Failing based on agent #{f}")
+                                    failed += 1
+                                end
                             end
             
                         when "fact"
-                            fact = filter[key]
-    
-                            if Util.has_fact?(fact[:fact], fact[:value]) 
-                                @log.debug("Passing based on fact #{fact[:fact]} = #{fact[:value]}")
-                                passed += 1
-                            else
-                                @log.debug("Failing based on fact #{fact[:fact]} = #{fact[:value]}")
-                                failed += 1
+                            filter[key].each do |f|
+                                if Util.has_fact?(f[:fact], f[:value]) 
+                                    @log.debug("Passing based on fact #{f[:fact]} = #{f[:value]}")
+                                    passed += 1
+                                else
+                                    @log.debug("Failing based on fact #{f[:fact]} = #{f[:value]}")
+                                    failed += 1
+                                end
                             end
     
                         when "identity"
-                            if Util.has_identity?(filter[key])
-                                @log.debug("Passing based on identity = #{filter[key]}")
-                                passed += 1
-                            else
-                                @log.debug("Failed based on identity = #{filter[key]}")
-                                failed += 1
+                            filter[key].each do |f|
+                                if Util.has_identity?(f)
+                                    @log.debug("Passing based on identity = #{f}")
+                                    passed += 1
+                                else
+                                    @log.debug("Failed based on identity = #{f}")
+                                    failed += 1
+                                end
                             end
                     end
                 end

@@ -18,7 +18,10 @@ module MCollective
             @options = {:disctimeout => 2,
                         :timeout     => 5,
                         :verbose     => false,
-                        :filter      => {},
+                        :filter      => {"fact" => [],
+                                         "puppet_class" => [],
+                                         "agent" => [],
+                                         "identity" => []},
                         :config      => "/etc/mcollective/client.cfg"}
 
             @options.merge!(defaults)
@@ -59,19 +62,19 @@ module MCollective
             @parser.separator "Host Filters"
 
             @parser.on('--wf', '--with-fact fact=val', 'Match hosts with a certain fact') do |f|
-                @options[:filter]["fact"] = {:fact => $1, :value => $2} if f =~ /^(.+?)=(.+)/
+                @options[:filter]["fact"] << {:fact => $1, :value => $2} if f =~ /^(.+?)=(.+)/
             end
 
             @parser.on('--wc', '--with-class CLASS', 'Match hosts with a certain puppet class') do |f|
-                @options[:filter]["puppet_class"] = f
+                @options[:filter]["puppet_class"] << f
             end
 
             @parser.on('--wa', '--with-agent AGENT', 'Match hosts with a certain agent') do |a|
-                @options[:filter]["agent"] = a
+                @options[:filter]["agent"] << a
             end
 
             @parser.on('--wi', '--with-identity IDENT', 'Match hosts with a certain configured identity') do |a|
-                @options[:filter]["identity"] = a
+                @options[:filter]["identity"] << a
             end
         end
 
