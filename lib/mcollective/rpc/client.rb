@@ -96,6 +96,8 @@ module MCollective
 
                 result = []
                 respcount = 0
+                okcount = 0
+                failcount = 0
 
                 @client.req(req, @agent, options, discover.size) do |resp|
                     respcount += 1
@@ -122,23 +124,36 @@ module MCollective
                         end
 
                         if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
+                            okcount += 1 if resp[:body][:statuscode] == 0
+                            failcount += 1 if resp[:body][:statuscode] == 1
+
                             result << {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode], 
                                        :statusmsg => resp[:body][:statusmsg], :data => resp[:body][:data]}
                         else
+                            failcount += 1
+
                             result << {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode], 
                                        :statusmsg => resp[:body][:statusmsg], :data => nil}
                         end
                     end
                 end
 
-                RPC.stats @client.stats
+                @stats = @client.stats
+
+                # Fiddle the stats to be relevant to how we use the client
+                @stats[:discoverytime] = @discovery_time
+                @stats[:okcount] = okcount
+                @stats[:failcount] = failcount
+                @stats[:totaltime] = @stats[:blocktime] + @stats[:discoverytime]
+
+                RPC.stats stats
 
                 if @progress
                     STDERR.print("\r                                        \r")
                 end
 
                 if block_given?
-                    return @client.stats
+                    return @stats
                 else
                     return [result].flatten
                 end
@@ -168,7 +183,6 @@ module MCollective
             # out the cached discovery
             def reset
                 @discovered_agents = nil
-                @stats = nil
             end
 
             # Does discovery based on the filters set, i a discovery was
@@ -181,13 +195,19 @@ module MCollective
             def discover(flags={})
                 flags.include?(:verbose) ? verbose = flags[:verbose] : verbose = @verbose
 
+                starttime = Time.now.to_f
+
                 if @discovered_agents == nil
+
                     STDERR.print("Determining the amount of hosts matching filter for #{discovery_timeout} seconds .... ") if verbose
                     @discovered_agents = @client.discover(@filter, @discovery_timeout)
                     STDERR.puts(@discovered_agents.size) if verbose
+
+                    @discovery_time = Time.now.to_f - starttime
                 end
 
                 RPC.discovered  @discovered_agents
+
 
                 @discovered_agents
             end

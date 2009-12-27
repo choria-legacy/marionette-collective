@@ -112,7 +112,7 @@ module MCollective
             end
 
             if verbose
-                puts("\n---- #{caption} ----")
+                puts("---- #{caption} ----")
 
                 if stats[:discovered]
                     puts("           Nodes: #{stats[:discovered]} / #{stats[:responses]}")
@@ -120,6 +120,7 @@ module MCollective
                     puts("           Nodes: #{stats[:responses]}")
                 end
 
+                printf("     Pass / Fail: %d / %d\n", stats[:okcount], stats[:failcount])
                 printf("      Start Time: %s\n", Time.at(stats[:starttime]))
                 printf("  Discovery Time: %.2fms\n", stats[:discoverytime] * 1000)
                 printf("      Agent Time: %.2fms\n", stats[:blocktime] * 1000)
@@ -127,9 +128,9 @@ module MCollective
     
             else
                 if stats[:discovered]
-                    printf("\nFinished processing %d / %d hosts in %.2f ms\n\n", stats[:responses], stats[:discovered], stats[:blocktime] * 1000)
+                    printf("Finished processing %d / %d hosts in %.2f ms\n\n", stats[:responses], stats[:discovered], stats[:blocktime] * 1000)
                 else
-                    printf("\nFinished processing %d hosts in %.2f ms\n\n", stats[:responses], stats[:blocktime] * 1000)
+                    printf("Finished processing %d hosts in %.2f ms\n\n", stats[:responses], stats[:blocktime] * 1000)
                 end
             end
 
@@ -209,7 +210,6 @@ module MCollective
                         end
                     else
                         unless r[:statuscode] == 0
-                            puts if count > 0
                             printf("%-40s %s\n", r[:sender], r[:statusmsg])
                         end
                     end
