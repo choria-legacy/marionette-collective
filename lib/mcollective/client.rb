@@ -219,8 +219,10 @@ module MCollective
     
                 stats[:noresponsefrom].each do |c|
                     puts if c % 4 == 1
-                    printf("%-30s", c)
+                    printf("%30s", c)
                 end
+
+                puts
             end
         end
     end
