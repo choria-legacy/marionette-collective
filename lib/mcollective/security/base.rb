@@ -50,7 +50,7 @@ module MCollective
                 failed = 0
                 passed = 0
     
-                passed = 1 if filter == {"identity"=>[], "puppet_class"=>[], "fact"=>[], "agent"=>[]}
+                passed = 1 if Util.empty_filter?(filter)
     
                 filter.keys.each do |key|
                     case key

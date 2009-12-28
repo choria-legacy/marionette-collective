@@ -78,6 +78,11 @@ module MCollective
             false
         end
 
+        # Checks if the passed in filter is an empty one
+        def self.empty_filter?(filter)
+            filter == {"identity"=>[], "puppet_class"=>[], "fact"=>[], "agent"=>[]}
+        end
+
         # Constructs the full target name based on topicprefix and topicsep config options
         def self.make_target(agent, type)
             config = Config.instance
