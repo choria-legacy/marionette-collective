@@ -19,7 +19,7 @@ module MCollective
                         :timeout     => 5,
                         :verbose     => false,
                         :filter      => {"fact" => [],
-                                         "puppet_class" => [],
+                                         "cf_class" => [],
                                          "agent" => [],
                                          "identity" => []},
                         :config      => "/etc/mcollective/client.cfg"}
@@ -65,8 +65,8 @@ module MCollective
                 @options[:filter]["fact"] << {:fact => $1, :value => $2} if f =~ /^(.+?)=(.+)/
             end
 
-            @parser.on('--wc', '--with-class CLASS', 'Match hosts with a certain puppet class') do |f|
-                @options[:filter]["puppet_class"] << f
+            @parser.on('--wc', '--with-class CLASS', 'Match hosts with a certain config management class') do |f|
+                @options[:filter]["cf_class"] << f
             end
 
             @parser.on('--wa', '--with-agent AGENT', 'Match hosts with a certain agent') do |a|

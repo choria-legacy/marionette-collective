@@ -21,15 +21,19 @@ module MCollective
             false
         end
 
-        # Checks if this node has a puppet class by parsing the 
-        # puppet classes.txt
+        # Checks if this node has a configuration management class by parsing the 
+        # a text file with just a list of classes, recipes, roles etc.  This is
+        # ala the classes.txt from puppet.
         #
         # If the passed name starts with a / it's assumed to be regex
         # and will use regex to match
-        def self.has_puppet_class?(klass)
+        def self.has_cf_class?(klass)
             klass = Regexp.new(klass.gsub("\/", "")) if klass.match("^/")
+            cfile = Config.instance.classesfile
 
-            File.readlines("/var/lib/puppet/classes.txt").each do |k|
+            Log.instance.debug("Looking for configuration management classes in #{cfile}")
+
+            File.readlines(cfile).each do |k|
                 if klass.is_a?(Regexp)
                     return true if k.chomp.match(klass)
                 else
@@ -80,7 +84,7 @@ module MCollective
 
         # Checks if the passed in filter is an empty one
         def self.empty_filter?(filter)
-            filter == {"identity"=>[], "puppet_class"=>[], "fact"=>[], "agent"=>[]} || filter == {}
+            filter == {"identity"=>[], "cf_class"=>[], "fact"=>[], "agent"=>[]} || filter == {}
         end
 
         # Constructs the full target name based on topicprefix and topicsep config options

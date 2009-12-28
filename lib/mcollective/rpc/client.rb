@@ -180,7 +180,7 @@ module MCollective
 
             # Sets the class filter
             def class_filter(klass)
-                @filter["puppet_class"] << klass
+                @filter["cf_class"] << klass
             end
 
             # Sets the fact filter

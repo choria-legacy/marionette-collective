@@ -5,7 +5,8 @@ module MCollective
 
         attr_reader :topicprefix, :daemonize, :pluginconf, :libdir, :configured, :logfile, 
                     :keeplogs, :max_log_size, :loglevel, :identity, :daemonize, :connector,
-                    :securityprovider, :factsource, :registration, :registerinterval, :topicsep
+                    :securityprovider, :factsource, :registration, :registerinterval, :topicsep,
+                    :classesfile
 
         def initialize
             @configured = false
@@ -22,6 +23,7 @@ module MCollective
             @registration = "Agentlist"
             @registerinterval = 0
             @topicsep = "."
+            @classesfile = "/var/lib/puppet/classes.txt"
 
             if File.exists?(configfile)
                 File.open(configfile, "r").each do |line|
@@ -62,6 +64,8 @@ module MCollective
                                     @factsource = val.capitalize
                                 when "connector"
                                     @connector = val.capitalize
+                                when "classesfile"
+                                    @classesfile = val
                                 when /^plugin.(.+)$/
                                     @pluginconf[$1] = val
                                 else

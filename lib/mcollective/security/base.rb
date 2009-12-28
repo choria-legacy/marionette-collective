@@ -40,7 +40,8 @@ module MCollective
             #
             # At present this supports filter matches against the following criteria:
             #
-            # - puppet_class - Presence of a Puppet class in classes.txt
+            # - puppet_class|cf_class - Presence of a configuration management class in
+            #                           the file configured with classesfile
             # - agent - Presence of a MCollective agent with a supplied name
             # - fact - The value of a fact avout this system
             # - identity - the configured identity of the system
@@ -54,14 +55,14 @@ module MCollective
     
                 filter.keys.each do |key|
                     case key
-                        when "puppet_class"
+                        when /puppet_class|cf_class/
                             filter[key].each do |f|
                                 @log.debug("Checking for class #{f}")
-                                if Util.has_puppet_class?(f) then
-                                    @log.debug("Passing based on puppet class #{f}")
+                                if Util.has_cf_class?(f) then
+                                    @log.debug("Passing based on configuration management class #{f}")
                                     passed += 1
                                 else
-                                    @log.debug("Failing based on puppet class #{f}")
+                                    @log.debug("Failing based on configuration management class #{f}")
                                     failed += 1
                                 end
                             end
