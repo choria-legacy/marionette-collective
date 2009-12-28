@@ -39,7 +39,7 @@ if command == "reload_agent"
         exit 1
     end
 
-    options[:filter]["agent"] = options[:argument]
+    options[:filter]["agent"] << options[:argument]
 end
 
 begin

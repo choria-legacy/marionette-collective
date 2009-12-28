@@ -32,7 +32,7 @@ module MCollective
                 @timeout = options[:timeout]
                 @verbose = options[:verbose]
                 @filter = options[:filter]
-                @filter["agent"] = agent
+                @filter["agent"] << agent
                 @config = options[:config]
                 @discovered_agents = nil
                 @progress = true
@@ -173,22 +173,22 @@ module MCollective
 
             # Sets the class filter
             def class_filter(klass)
-                @filter["puppet_class"] = klass
+                @filter["puppet_class"] << klass
             end
 
             # Sets the fact filter
             def fact_filter(fact, value)
-                @filter["fact"] = {:fact => fact, :value => value}
+                @filter["fact"] << {:fact => fact, :value => value}
             end
 
             # Sets the agent filter
             def agent_filter(agent)
-                @filter["agent"] = agent
+                @filter["agent"] << agent
             end
 
             # Sets the identity filter
             def identity_filter(identity)
-                @filter["identity"] = identity
+                @filter["identity"] << identity
             end
 
             # Resets various internal parts of the class, most importantly it clears

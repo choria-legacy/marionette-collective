@@ -24,7 +24,7 @@ if options[:agent] == nil || options[:argument] == nil
 end
 
 begin
-    options[:filter]["agent"] = options[:agent]
+    options[:filter]["agent"] << options[:agent]
 
     client = MCollective::Client.new(options[:config])
     client.options = options
