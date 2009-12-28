@@ -30,9 +30,13 @@ end
 
 puts("\n\n---- ping statistics ----")
 
-sum = times.inject(0){|acc,i|acc +i}
-avg = sum / times.length.to_f
+if times.size > 0
+    sum = times.inject(0){|acc,i|acc +i}
+    avg = sum / times.length.to_f
 
-printf("%d replies max: %.2f min: %.2f avg: %.2f\n", times.size, times.max, times.min, avg)
+    printf("%d replies max: %.2f min: %.2f avg: %.2f\n", times.size, times.max, times.min, avg)
+else
+    puts("No responses received")
+end
 
 # vi:tabstop=4:expandtab:ai
