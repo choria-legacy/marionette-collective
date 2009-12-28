@@ -96,11 +96,13 @@ module MCollective
 
                 result = []
                 respcount = 0
+                respfrom = []
                 okcount = 0
                 failcount = 0
 
                 @client.req(req, @agent, options, discover.size) do |resp|
                     respcount += 1
+                    respfrom << resp[:senderid]
 
                     if block_given?
                         if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
@@ -159,6 +161,11 @@ module MCollective
                 @stats[:okcount] = okcount
                 @stats[:failcount] = failcount
                 @stats[:totaltime] = @stats[:blocktime] + @stats[:discoverytime]
+
+                # Figure out the list of hosts we have not had responses from
+                dhosts = @discovered_agents
+                respfrom.each {|r| dhosts.delete(r)}
+                @stats[:noresponsefrom] = dhosts
 
                 RPC.stats stats
 
