@@ -119,7 +119,21 @@ module MCollective
                         end
                     else
                         if @progress
-                            STDERR.print("\r #{twirl[twirldex]} [ #{respcount} / #{discover.size} ]")
+                            puts if respcount == 1
+
+                            dashes = ((respcount.to_f / discover.size) * 60).round
+
+                            if respcount == discover.size
+                                STDERR.print("\r * [ ")
+                            else
+                                STDERR.print("\r #{twirl[twirldex]} [ ")
+                            end
+
+                            dashes.times { STDERR.print("=") }
+                            STDERR.print(">")
+                            (60 - dashes).times { STDERR.print(" ") }
+                            STDERR.print(" ] #{respcount} / #{discover.size}")
+
                             twirldex == 7 ? twirldex = 0 : twirldex += 1
                         end
 
@@ -148,9 +162,7 @@ module MCollective
 
                 RPC.stats stats
 
-                if @progress
-                    STDERR.print("\r                                        \r")
-                end
+                puts if @progress
 
                 if block_given?
                     return @stats
