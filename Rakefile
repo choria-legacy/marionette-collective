@@ -7,7 +7,7 @@ PROJ_NAME = "mcollective"
 PROJ_FILES = ["build/doc", "#{PROJ_NAME}.spec", "#{PROJ_NAME}.init", "mcollectived.rb", "etc", "lib", "plugins"]
 PROJ_FILES << Dir.glob("mc-*")
 PROJ_DOC_TITLE = "The Marionette Collective"
-PROJ_VERSION = "0.3.0"
+PROJ_VERSION = "0.4.0"
 PROJ_RELEASE = "1"
 PROJ_RPM_NAMES = [PROJ_NAME]
 
