@@ -137,8 +137,8 @@ module MCollective
             if stats[:noresponsefrom].size > 0
                 puts("\nNo response from:\n")
     
-                stats[:noresponsefrom].each do |c|
-                    puts if c % 4 == 1
+                stats[:noresponsefrom].each_with_index do |c,i|
+                    puts if i % 4 == 0
                     printf("%30s", c)
                 end
 
