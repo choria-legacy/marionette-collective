@@ -100,61 +100,67 @@ module MCollective
                 okcount = 0
                 failcount = 0
 
-                @client.req(req, @agent, options, discover.size) do |resp|
-                    respcount += 1
-                    respfrom << resp[:senderid]
+                @stats = {:starttime => Time.now.to_f, :discoverytime => 0, :blocktime => 0, :totaltime => 0}
 
-                    if block_given?
-                        if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
-                            yield(resp)
-                        else
-                            case resp[:body][:statuscode]
-                                when 2
-                                    raise UnknownRPCAction, resp[:body][:statusmsg]
-                                when 3
-                                    raise MissingRPCData, resp[:body][:statusmsg]
-                                when 4
-                                    raise InvalidRPCData, resp[:body][:statusmsg]
-                                when 5
-                                    raise UnknownRPCError, resp[:body][:statusmsg]
-                            end
-                        end
-                    else
-                        if @progress
-                            puts if respcount == 1
-
-                            dashes = ((respcount.to_f / discover.size) * 60).round
-
-                            if respcount == discover.size
-                                STDERR.print("\r * [ ")
+                if discover.size > 0
+                    @client.req(req, @agent, options, discover.size) do |resp|
+                        respcount += 1
+                        respfrom << resp[:senderid]
+    
+                        if block_given?
+                            if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
+                                yield(resp)
                             else
-                                STDERR.print("\r #{twirl[twirldex]} [ ")
+                                case resp[:body][:statuscode]
+                                    when 2
+                                        raise UnknownRPCAction, resp[:body][:statusmsg]
+                                    when 3
+                                        raise MissingRPCData, resp[:body][:statusmsg]
+                                    when 4
+                                        raise InvalidRPCData, resp[:body][:statusmsg]
+                                    when 5
+                                        raise UnknownRPCError, resp[:body][:statusmsg]
+                                end
                             end
-
-                            dashes.times { STDERR.print("=") }
-                            STDERR.print(">")
-                            (60 - dashes).times { STDERR.print(" ") }
-                            STDERR.print(" ] #{respcount} / #{discover.size}")
-
-                            twirldex == 7 ? twirldex = 0 : twirldex += 1
-                        end
-
-                        if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
-                            okcount += 1 if resp[:body][:statuscode] == 0
-                            failcount += 1 if resp[:body][:statuscode] == 1
-
-                            result << {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode], 
-                                       :statusmsg => resp[:body][:statusmsg], :data => resp[:body][:data]}
                         else
-                            failcount += 1
-
-                            result << {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode], 
-                                       :statusmsg => resp[:body][:statusmsg], :data => nil}
+                            if @progress
+                                puts if respcount == 1
+    
+                                dashes = ((respcount.to_f / discover.size) * 60).round
+    
+                                if respcount == discover.size
+                                    STDERR.print("\r * [ ")
+                                else
+                                    STDERR.print("\r #{twirl[twirldex]} [ ")
+                                end
+    
+                                dashes.times { STDERR.print("=") }
+                                STDERR.print(">")
+                                (60 - dashes).times { STDERR.print(" ") }
+                                STDERR.print(" ] #{respcount} / #{discover.size}")
+    
+                                twirldex == 7 ? twirldex = 0 : twirldex += 1
+                            end
+    
+                            if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
+                                okcount += 1 if resp[:body][:statuscode] == 0
+                                failcount += 1 if resp[:body][:statuscode] == 1
+    
+                                result << {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode], 
+                                           :statusmsg => resp[:body][:statusmsg], :data => resp[:body][:data]}
+                            else
+                                failcount += 1
+    
+                                result << {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode], 
+                                           :statusmsg => resp[:body][:statusmsg], :data => nil}
+                            end
                         end
                     end
+    
+                    @stats = @client.stats
+                else
+                    print("\nNo request sent, we did not discovered any nodes.")
                 end
-
-                @stats = @client.stats
 
                 # Fiddle the stats to be relevant to how we use the client
                 @stats[:discoverytime] = @discovery_time
