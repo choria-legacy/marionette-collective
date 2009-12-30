@@ -5,7 +5,7 @@ module MCollective
     class Client
         attr_accessor :options, :stats
 
-	    def initialize(configfile)
+        def initialize(configfile)
             @config = Config.instance
             @config.loadconfig(configfile)
             @log = Log.instance
