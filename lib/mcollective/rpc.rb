@@ -222,6 +222,16 @@ module MCollective
             puts
         end
 
+        # Wrapper for MCollective::Util.empty_filter? to make clients less fugly
+        # to write - ticket #18
+        def empty_filter?(options)
+            if options.include?(:filter)
+                Util.empty_filter?(options[:filter])
+            else
+                Util.empty_filter?(options)
+            end
+        end
+
         # Factory for RPC::Request messages, only really here to make agents
         # a bit easier to understand
         def self.request(msg)
