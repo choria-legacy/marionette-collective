@@ -169,7 +169,7 @@ module MCollective
 
                 RPC.stats stats
 
-                puts if @progress
+                print("\n\n") if @progress
 
                 if block_given?
                     return @stats
