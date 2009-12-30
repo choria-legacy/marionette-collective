@@ -158,6 +158,8 @@ module MCollective
 
                 # Fiddle the stats to be relevant to how we use the client
                 @stats[:discoverytime] = @discovery_time
+                @stats[:discovered] = @discovered_agents.size
+                @stats[:discovered_nodes] = @discovered_agents
                 @stats[:okcount] = okcount
                 @stats[:failcount] = failcount
                 @stats[:totaltime] = @stats[:blocktime] + @stats[:discoverytime]
