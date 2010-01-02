@@ -4,6 +4,8 @@ module MCollective
         # you would do for each agent allowing you to just create methods following a naming 
         # standard leaving the heavy lifting up to this clas.
         #
+        # See http://code.google.com/p/mcollective/wiki/SimpleRPCAgents
+        #
         # It only really makes sense to use this with a Simple RPC client on the other end, basic
         # usage would be:
         #
@@ -13,7 +15,7 @@ module MCollective
         #              def echo_action
         #                  validate :msg, String
         #                  
-        #                  @reply.data = @request[:msg]              
+        #                  reply.data = request[:msg]              
         #              end
         #          end
         #       end
@@ -32,6 +34,7 @@ module MCollective
                          :author => "Unknown",
                          :url => "Unknown"}
 
+                startup_hook
             end
                 
             def handlemsg(msg, connection)
@@ -39,6 +42,8 @@ module MCollective
                 @reply = RPC.reply
 
                 begin
+                    before_processing_hook(msg, connection)
+
                     if respond_to?("#{@request.action}_action")
                         send("#{@request.action}_action")
                     else
@@ -57,6 +62,8 @@ module MCollective
                     @reply.fail e.to_s, 5
 
                 end
+
+                after_processing_hook
 
                 @reply.to_hash
             end
@@ -118,6 +125,30 @@ module MCollective
                 rescue Exception => e
                     raise UnknownRPCError, "Failed to validate #{key}: #{e}"
                 end
+            end
+
+            # Called at the end of the RPC::Agent standard initialize method
+            # use this to adjust meta parameters, timeouts and any setup you 
+            # need to do
+            def startup_hook
+            end
+
+            # Called just after a message was received from the middleware before
+            # it gets passed to the handlers.  @request and @reply will already be
+            # set, the msg passed is the message as received from the normal
+            # mcollective runner and the connection is the actual connector.
+            def before_processing_hook(msg, connection)
+            end
+
+            # Called at the end of processing just before the response gets sent
+            # to the middleware.
+            #
+            # This gets run outside of the main exception handling block of the agent
+            # so you should handle any exceptions you could raise yourself.  The reason 
+            # it is outside of the block is so you'll have access to even status codes
+            # set by the exception handlers.  If you do raise an exception it will just
+            # be passed onto the runner and processing will fail.
+            def after_processing_hook
             end
         end
     end
