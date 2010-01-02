@@ -23,8 +23,8 @@ module MCollective
         #
         # We also currently have the validation code in here, this will be moved to plugins soon.
         class Agent
-            attr_accessor :timeout, :meta, :reply, :request
-            attr_reader :logger, :config
+            attr_accessor :meta, :reply, :request
+            attr_reader :logger, :config, :timeout
 
             def initialize
                 @timeout = 10
@@ -33,6 +33,7 @@ module MCollective
 
                 @meta = {:license => "Unknown",
                          :author => "Unknown",
+                         :version => "Unknown",
                          :url => "Unknown"}
 
                 startup_hook
@@ -130,7 +131,11 @@ module MCollective
 
             # Called at the end of the RPC::Agent standard initialize method
             # use this to adjust meta parameters, timeouts and any setup you 
-            # need to do
+            # need to do.
+            #
+            # This will not be called right when the daemon starts up, we use
+            # lazy loading and initialization so it will only be called the first
+            # time a request for this agent arrives.
             def startup_hook
             end
 
