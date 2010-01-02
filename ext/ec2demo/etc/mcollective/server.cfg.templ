@@ -1,0 +1,29 @@
+# main config
+topicprefix = /topic/mcollective
+libdir = /usr/libexec/mcollective
+logfile = /var/log/mcollective.log
+daemonize = 1
+keeplogs = 1
+max_log_size = 10240
+loglevel = debug
+identity = @@hostname@@
+registerinterval = 300
+registration = Meta
+
+# connector plugin config
+connector = stomp
+plugin.stomp.host = @@server@@
+plugin.stomp.port = 6163
+plugin.stomp.user = mcollective
+plugin.stomp.password = @@mcollective_password@@
+
+# security plugin config
+securityprovider = psk
+plugin.psk = @@psk@@
+
+# fact source config
+factsource = facter
+
+# misc plugins
+plugin.service.hasstatus = 1
+plugin.service.hasrestart = 1
