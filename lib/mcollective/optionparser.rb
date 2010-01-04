@@ -15,8 +15,11 @@ module MCollective
             @parser = OptionParser.new
             @include = include
 
-            @options = {:disctimeout => 2,
-                        :timeout     => 5,
+            timeout = ENV["MCOLLECTIVE_TIMEOUT"].to_i || 5
+            dtimeout = ENV["MCOLLECTIVE_DTIMEOUT"].to_i || 2
+
+            @options = {:disctimeout => dtimeout,
+                        :timeout     => timeout,
                         :verbose     => false,
                         :filter      => {"fact" => [],
                                          "cf_class" => [],
