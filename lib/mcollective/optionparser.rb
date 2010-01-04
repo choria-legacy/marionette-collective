@@ -61,6 +61,16 @@ module MCollective
             @parser.separator ""
             @parser.separator "Host Filters"
 
+            @parser.on('-W', '--with FILTER', 'Combined classes and facts filter') do |f|
+                f.split(" ").each do |filter|
+                    if filter =~ /^(.+?)=(.+)/
+                        @options[:filter]["fact"] << {:fact => $1, :value => $2}
+                    else
+                        @options[:filter]["cf_class"] << filter
+                    end
+                end
+            end
+
             @parser.on('-F', '--wf', '--with-fact fact=val', 'Match hosts with a certain fact') do |f|
                 @options[:filter]["fact"] << {:fact => $1, :value => $2} if f =~ /^(.+?)=(.+)/
             end
