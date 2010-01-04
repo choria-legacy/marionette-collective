@@ -82,6 +82,7 @@ if [ "$1" = 0 ] ; then
 fi
 
 %files common
+%doc COPYING
 %{ruby_sitelib}/mcollective.rb
 %{ruby_sitelib}/mcollective
 /usr/libexec/mcollective
@@ -89,9 +90,11 @@ fi
 
 %files client
 %attr(0755, root, root)/usr/sbin/mc-*
+%doc COPYING
 %config(noreplace)/etc/mcollective/client.cfg
 
 %files
+%doc COPYING
 /usr/sbin/mcollectived
 /etc/init.d/mcollective
 %config(noreplace)/etc/mcollective/server.cfg
