@@ -111,6 +111,8 @@ module MCollective
                 return
             end
 
+            puts
+
             if verbose
                 puts("---- #{caption} ----")
 
