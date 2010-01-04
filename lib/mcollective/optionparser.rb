@@ -61,19 +61,19 @@ module MCollective
             @parser.separator ""
             @parser.separator "Host Filters"
 
-            @parser.on('--wf', '--with-fact fact=val', 'Match hosts with a certain fact') do |f|
+            @parser.on('-F', '--wf', '--with-fact fact=val', 'Match hosts with a certain fact') do |f|
                 @options[:filter]["fact"] << {:fact => $1, :value => $2} if f =~ /^(.+?)=(.+)/
             end
 
-            @parser.on('--wc', '--with-class CLASS', 'Match hosts with a certain config management class') do |f|
+            @parser.on('-C', '--wc', '--with-class CLASS', 'Match hosts with a certain config management class') do |f|
                 @options[:filter]["cf_class"] << f
             end
 
-            @parser.on('--wa', '--with-agent AGENT', 'Match hosts with a certain agent') do |a|
+            @parser.on('-A', '--wa', '--with-agent AGENT', 'Match hosts with a certain agent') do |a|
                 @options[:filter]["agent"] << a
             end
 
-            @parser.on('--wi', '--with-identity IDENT', 'Match hosts with a certain configured identity') do |a|
+            @parser.on('-I', '--wi', '--with-identity IDENT', 'Match hosts with a certain configured identity') do |a|
                 @options[:filter]["identity"] << a
             end
         end
