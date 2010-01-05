@@ -4,7 +4,7 @@ require 'rake/rdoctask'
 require 'rake/clean'
 
 PROJ_NAME = "mcollective"
-PROJ_FILES = ["build/doc", "#{PROJ_NAME}.spec", "#{PROJ_NAME}.init", "mcollectived.rb", "etc", "lib", "plugins", "COPYING"]
+PROJ_FILES = ["build/doc", "#{PROJ_NAME}.spec", "#{PROJ_NAME}.init", "mcollectived.rb", "etc", "lib", "plugins", "COPYING", "ext"]
 PROJ_FILES << Dir.glob("mc-*")
 PROJ_DOC_TITLE = "The Marionette Collective"
 PROJ_VERSION = "0.4.1"
