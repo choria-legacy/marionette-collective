@@ -171,7 +171,7 @@ module MCollective
                 @stats[:totaltime] = @stats[:blocktime] + @stats[:discoverytime]
 
                 # Figure out the list of hosts we have not had responses from
-                dhosts = @discovered_agents
+                dhosts = @discovered_agents.clone
                 respfrom.each {|r| dhosts.delete(r)}
                 @stats[:noresponsefrom] = dhosts
 
@@ -225,7 +225,6 @@ module MCollective
                 starttime = Time.now.to_f
 
                 if @discovered_agents == nil
-
                     STDERR.print("Determining the amount of hosts matching filter for #{discovery_timeout} seconds .... ") if verbose
                     @discovered_agents = @client.discover(@filter, @discovery_timeout)
                     STDERR.puts(@discovered_agents.size) if verbose
@@ -234,7 +233,6 @@ module MCollective
                 end
 
                 RPC.discovered  @discovered_agents
-
 
                 @discovered_agents
             end
