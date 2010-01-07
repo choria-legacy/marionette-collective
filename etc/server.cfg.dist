@@ -9,7 +9,7 @@ securityprovider = psk
 plugin.psk = unset
 
 connector = stomp
-plugin.stomp.host = stomp.your.com
+plugin.stomp.host = stomp.example.com
 plugin.stomp.port = 6163
 plugin.stomp.user = mcollective
 plugin.stomp.password = marionette
