@@ -107,6 +107,7 @@ task :deb => [:archive] do
 
         Dir.chdir("#{PROJ_NAME}-#{CURRENT_VERSION}") do
             system %{cp -R ext/debian .}
+            system %{cp -R ext/Makefile .}
             system %{debuild -i -us -uc -b}
         end
 
