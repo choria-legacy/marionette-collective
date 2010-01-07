@@ -97,48 +97,22 @@ task :rpm => [:archive] do
 end
 
 desc "Create the .debs"
-task :deb => [:deb_common, :deb_client, :deb_server] 
+task :deb => [:archive] do
+    announce("Building debian packages")
 
-desc "Create the common .deb"
-task :deb_common => [:archive] do
-    announce("Building common .deb for #{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}")
-    pkg = "-common"
+    FileUtils.mkdir_p("build/deb")
+    Dir.chdir("build/deb") do
+        system %{tar -xzf ../#{PROJ_NAME}-#{CURRENT_VERSION}.tgz}
+        system %{cp ../#{PROJ_NAME}-#{CURRENT_VERSION}.tgz #{PROJ_NAME}_#{CURRENT_VERSION}.orig.tar.gz}
 
-    FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/usr/local/lib/site_ruby/1.8")
-    system %{rsync -qav --exclude ".svn" build/#{PROJ_NAME}-#{CURRENT_VERSION}/lib/* build/deb/#{PROJ_NAME}#{pkg}/usr/local/lib/site_ruby/1.8}
-    FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/usr/libexec/#{PROJ_NAME}/#{PROJ_NAME}")
-    system %{rsync -aqv --exclude ".svn" build/#{PROJ_NAME}-#{CURRENT_VERSION}/plugins/#{PROJ_NAME} build/deb/#{PROJ_NAME}#{pkg}/usr/libexec/#{PROJ_NAME}}
-    mkdeb(pkg)
+        Dir.chdir("#{PROJ_NAME}-#{CURRENT_VERSION}") do
+            system %{cp -R ext/debian .}
+            system %{debuild -i -us -uc -b}
+        end
+
+        system %{cp *.deb ..}
+    end
+
 end
-
-desc "Create the client .deb"
-task :deb_client => [:archive] do
-    announce("Building client .deb for #{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}")
-    pkg = "-client"
-
-    FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/etc/#{PROJ_NAME}")
-    system %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/etc/client.cfg.dist build/deb/#{PROJ_NAME}#{pkg}/etc/#{PROJ_NAME}/client.cfg}
-    FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/usr/sbin")
-    system %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/mc-* build/deb/#{PROJ_NAME}#{pkg}/usr/sbin}
-    mkdeb(pkg)
-end
-
-desc "Create the server .deb"
-task :deb_server => [:archive] do
-    announce("Building server .deb for #{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}")
-    pkg = ""
-
-    FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/etc/#{PROJ_NAME}")
-    system %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/etc/server.cfg.dist build/deb/#{PROJ_NAME}#{pkg}/etc/#{PROJ_NAME}/server.cfg}
-    system %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/etc/facts.yaml.dist build/deb/#{PROJ_NAME}#{pkg}/etc/#{PROJ_NAME}/facts.yaml}
-    FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/etc/init.d")
-    system %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/mcollective.init build/deb/#{PROJ_NAME}#{pkg}/etc/init.d/#{PROJ_NAME}}
-    FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/usr/sbin")
-    system %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}/mcollectived.rb build/deb/#{PROJ_NAME}#{pkg}/usr/sbin/mcollectived}
-    mkdeb(pkg)
-end
-
-
-
 
 # vi:tabstop=4:expandtab:ai
