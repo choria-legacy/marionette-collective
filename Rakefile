@@ -1,15 +1,26 @@
 # Rakefile to build a project using HUDSON
 
 require 'rake/rdoctask'
+require 'rake/packagetask'
 require 'rake/clean'
+require 'find'
 
-PROJ_NAME = "mcollective"
-PROJ_FILES = ["build/doc", "#{PROJ_NAME}.spec", "#{PROJ_NAME}.init", "mcollectived.rb", "etc", "lib", "plugins", "COPYING", "ext"]
-PROJ_FILES << Dir.glob("mc-*")
 PROJ_DOC_TITLE = "The Marionette Collective"
 PROJ_VERSION = "0.4.1"
 PROJ_RELEASE = "1"
+PROJ_NAME = "mcollective"
 PROJ_RPM_NAMES = [PROJ_NAME]
+PROJ_FILES = ["#{PROJ_NAME}.spec", "#{PROJ_NAME}.init", "mcollectived.rb", "COPYING"]
+PROJ_SUBDIRS = ["etc", "lib", "plugins", "ext"]
+PROJ_FILES.concat(Dir.glob("mc-*"))
+
+Find.find("etc", "lib", "plugins", "ext") do |f|
+    if FileTest.directory?(f) and f =~ /\.svn/
+        Find.prune
+    else
+        PROJ_FILES << f
+    end
+end
 
 ENV["RPM_VERSION"] ? CURRENT_VERSION = ENV["RPM_VERSION"] : CURRENT_VERSION = PROJ_VERSION
 ENV["BUILD_NUMBER"] ? CURRENT_RELEASE = ENV["BUILD_NUMBER"] : CURRENT_RELEASE = PROJ_RELEASE
@@ -22,40 +33,36 @@ def announce(msg='')
     STDERR.puts "================"
 end
 
-def mkdeb(pkg='')
-    FileUtils.mkdir_p("build/deb/#{PROJ_NAME}#{pkg}/DEBIAN")
-
-    system %{cp COPYING build/deb/#{PROJ_NAME}#{pkg}/DEBIAN/copyright}
-    system %{cp ext/debian/#{PROJ_NAME}#{pkg}/* build/deb/#{PROJ_NAME}#{pkg}/DEBIAN}
-    system %{echo "Version: #{CURRENT_VERSION}-#{CURRENT_RELEASE}" >> build/deb/#{PROJ_NAME}#{pkg}/DEBIAN/control}
-
-    system %{fakeroot dpkg-deb --build build/deb/#{PROJ_NAME}#{pkg} build/#{PROJ_NAME}#{pkg}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}.deb}
-end
-
 def init
     FileUtils.mkdir("build") unless File.exist?("build")
 end
 
 desc "Build documentation, tar balls and rpms"
-task :default => [:clean, :doc, :archive, :rpm, :tag] 
+task :default => [:clean, :doc, :package, :rpm, :tag] 
 
-# taks for building docs
+# task for building docs
 rd = Rake::RDocTask.new(:doc) { |rdoc|
     announce "Building documentation for #{CURRENT_VERSION}"
 
-    rdoc.rdoc_dir = 'build/doc'
+    rdoc.rdoc_dir = 'doc'
     rdoc.template = 'html'
     rdoc.title    = "#{PROJ_DOC_TITLE} version #{CURRENT_VERSION}"
     rdoc.options << '--line-numbers' << '--inline-source' << '--main' << 'MCollective'
 }
 
-desc "Create a tarball for this release"
-task :archive => [:clean, :doc] do
-    announce "Creating #{PROJ_NAME}-#{CURRENT_VERSION}.tgz"
+Rake::PackageTask.new(PROJ_NAME, CURRENT_VERSION) do |p|
+    announce "Building tar file for #{CURRENT_VERSION}"
 
-    FileUtils.mkdir_p("build/#{PROJ_NAME}-#{CURRENT_VERSION}")
-    system("cp -R #{PROJ_FILES.join(' ')} build/#{PROJ_NAME}-#{CURRENT_VERSION}")
-    system("cd build && /bin/tar --exclude .svn -cvzf #{PROJ_NAME}-#{CURRENT_VERSION}.tgz #{PROJ_NAME}-#{CURRENT_VERSION}")
+    # A bit hacky, we only build docs dynamically 
+    # so we have to add them to the PROJ_FILES list
+    # here before building the tar
+    Find.find("doc") do |f|
+        PROJ_FILES << f
+    end
+
+    p.need_tar = true
+    p.package_files = PROJ_FILES
+    p.package_dir = "build"
 end
 
 desc "Tag the release in SVN"
@@ -69,7 +76,7 @@ task :tag => [:rpm] do
 end
 
 desc "Creates a RPM"
-task :rpm => [:archive] do
+task :rpm => [:clean, :doc, :package] do
     announce("Building RPM for #{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}")
 
     sourcedir = `rpm --eval '%_sourcedir'`.chomp
@@ -97,7 +104,7 @@ task :rpm => [:archive] do
 end
 
 desc "Create the .debs"
-task :deb => [:archive] do
+task :deb => [:clean, :doc, :package] do
     announce("Building debian packages")
 
     FileUtils.mkdir_p("build/deb")
