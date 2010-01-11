@@ -1,7 +1,0 @@
-#!/bin/bash
-set -e
-
-if [ -x "/etc/init.d/mcollective" ]; then
-    invoke-rc.d mcollective stop || true
-fi
-
