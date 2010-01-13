@@ -6,7 +6,7 @@ require 'rake/clean'
 require 'find'
 
 PROJ_DOC_TITLE = "The Marionette Collective"
-PROJ_VERSION = "0.4.4"
+PROJ_VERSION = "0.4.2"
 PROJ_RELEASE = "1"
 PROJ_NAME = "mcollective"
 PROJ_RPM_NAMES = [PROJ_NAME]
