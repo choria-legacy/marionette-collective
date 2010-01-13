@@ -1,9 +1,0 @@
-Package: mcollective-client
-Section: base
-Priority: optional
-Architecture: all
-Depends: mcollective-common, ruby, rubygems
-Maintainer: Chris Read <chris.read@gmail.com>
-Description: Application Server for hosting Ruby code on any capable middleware
-  The Marionette Collective:
-  Client tools for the mcollective Application Server
