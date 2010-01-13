@@ -1,0 +1,18 @@
+#!/usr/bin/make -f
+
+DEB_MAKE_CLEAN_TARGET    := 
+DEB_MAKE_INSTALL_TARGET  := install DESTDIR=$(CURDIR)/debian/tmp
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/rules/dpatch.mk
+include /usr/share/cdbs/1/class/makefile.mk
+DEB_MAKE_INVOKE = $(DEB_MAKE_ENVVARS) make -f ext/Makefile -C $(DEB_BUILDDIR)
+
+install/mcollective::
+	mv $(CURDIR)/debian/tmp/etc/mcollective/server.cfg.dist $(CURDIR)/debian/tmp/etc/mcollective/server.cfg
+	mv $(CURDIR)/debian/tmp/etc/mcollective/client.cfg.dist $(CURDIR)/debian/tmp/etc/mcollective/client.cfg
+	mv $(CURDIR)/debian/tmp/etc/mcollective/facts.yaml.dist $(CURDIR)/debian/tmp/etc/mcollective/facts.yaml
+#	dh_installinit -pmcollective -o
+
+binary-fixup/mcollective::
+	chmod 640 $(CURDIR)/debian/mcollective/etc/mcollective/server.cfg

@@ -1,0 +1,2 @@
+usr/sbin/mc-* usr/sbin/
+etc/mcollective/client.cfg etc/mcollective

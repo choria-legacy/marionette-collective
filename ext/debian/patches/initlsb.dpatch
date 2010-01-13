@@ -1,0 +1,38 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## initlsb.dpatch by  <giskard@debian.org
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Init func.
+
+@DPATCH@
+diff -urNad mcollective-0.4.1~/mcollective.init mcollective-0.4.1/mcollective.init
+--- mcollective-0.4.1~/mcollective.init	2010-01-02 14:54:25.000000000 +0000
++++ mcollective-0.4.1/mcollective.init	2010-01-07 10:52:38.000000000 +0000
+@@ -8,6 +8,15 @@
+ #              much about all the setup and management of a Stomp connection, it also provides stats, logging and so forth
+ #              as a bonus.
+ #
++### BEGIN INIT INFO
++# Provides:          scriptname
++# Required-Start:    $remote_fs $syslog
++# Required-Stop:     $remote_fs $syslog
++# Default-Start:     2 3 4 5
++# Default-Stop:      0 1 6
++# Short-Description: Start daemon at boot time
++# Description:       Enable service provided by daemon.
++### END INIT INFO
+ 
+ RUBYLIB=/usr/local/lib/site_ruby/1.8:$RUBYLIB
+ export RUBYLIB
+@@ -104,7 +113,10 @@
+ 	    echo "mcollectived: service not started"
+ 	    exit 1
+ 	fi
+-        ;;
++  ;;
++	force-reload)
++		echo "not implemented"
++	;;
+   *)
+ 	echo "Usage: mcollectived {start|stop|restart|condrestart|status}"
+ 	exit 1

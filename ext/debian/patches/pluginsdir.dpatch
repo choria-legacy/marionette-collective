@@ -1,0 +1,27 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## pluginsdir.dpatch by  <gisakrd@debian.org>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: fix plugins dir
+
+@DPATCH@
+diff -urNad mcollective-0.4.1~/etc/client.cfg.dist mcollective-0.4.1/etc/client.cfg.dist
+--- mcollective-0.4.1~/etc/client.cfg.dist	2010-01-08 10:35:55.000000000 +0000
++++ mcollective-0.4.1/etc/client.cfg.dist	2010-01-12 15:06:34.000000000 +0000
+@@ -1,5 +1,5 @@
+ topicprefix = /topic/mcollective
+-libdir = /usr/libexec/mcollective
++libdir = /usr/share/mcollective/plugins
+ logfile = /dev/null
+ loglevel = info
+ 
+diff -urNad mcollective-0.4.1~/etc/server.cfg.dist mcollective-0.4.1/etc/server.cfg.dist
+--- mcollective-0.4.1~/etc/server.cfg.dist	2010-01-08 10:35:55.000000000 +0000
++++ mcollective-0.4.1/etc/server.cfg.dist	2010-01-12 15:08:51.000000000 +0000
+@@ -1,5 +1,5 @@
+ topicprefix = /topic/mcollective
+-libdir = /usr/libexec/mcollective
++libdir = /usr/share/mcollective/plugins
+ logfile = /var/log/mcollective.log
+ loglevel = info
+ daemonize = 1

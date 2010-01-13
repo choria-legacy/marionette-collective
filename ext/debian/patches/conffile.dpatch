@@ -1,0 +1,113 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## conffile.dpatch by  <giskard@debian.org
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: default config options
+
+@DPATCH@
+diff -urNad mcollective-0.4.1~/etc/client.cfg mcollective-0.4.1/etc/client.cfg
+--- mcollective-0.4.1~/etc/client.cfg	1970-01-01 00:00:00.000000000 +0000
++++ mcollective-0.4.1/etc/client.cfg	2010-01-06 14:37:24.000000000 +0000
+@@ -0,0 +1,19 @@
++topicprefix = /topic/mcollective
++libdir = /usr/share/mcollective/plugins
++logfile = /dev/null
++loglevel = info
++
++# Plugins 
++securityprovider = psk
++plugin.psk = unset
++
++connector = stomp
++plugin.stomp.host = stomp.example.com
++plugin.stomp.port = 6163
++plugin.stomp.user = mcollective
++plugin.stomp.password = marionette
++
++# Facts
++factsource = yaml
++plugin.yaml = /etc/mcollective/facts.yaml
++
+diff -urNad mcollective-0.4.1~/etc/client.cfg.dist mcollective-0.4.1/etc/client.cfg.dist
+--- mcollective-0.4.1~/etc/client.cfg.dist	2010-01-02 14:54:25.000000000 +0000
++++ mcollective-0.4.1/etc/client.cfg.dist	1970-01-01 00:00:00.000000000 +0000
+@@ -1,19 +0,0 @@
+-topicprefix = /topic/mcollective
+-libdir = /usr/libexec/mcollective
+-logfile = /dev/null
+-loglevel = info
+-
+-# Plugins 
+-securityprovider = psk
+-plugin.psk = unset
+-
+-connector = stomp
+-plugin.stomp.host = stomp.your.com
+-plugin.stomp.port = 6163
+-plugin.stomp.user = mcollective
+-plugin.stomp.password = marionette
+-
+-# Facts
+-factsource = yaml
+-plugin.yaml = /etc/mcollective/facts.yaml
+-
+diff -urNad mcollective-0.4.1~/etc/facts.yaml mcollective-0.4.1/etc/facts.yaml
+--- mcollective-0.4.1~/etc/facts.yaml	1970-01-01 00:00:00.000000000 +0000
++++ mcollective-0.4.1/etc/facts.yaml	2010-01-06 14:37:27.000000000 +0000
+@@ -0,0 +1,2 @@
++---
++mcollective: 1
+diff -urNad mcollective-0.4.1~/etc/facts.yaml.dist mcollective-0.4.1/etc/facts.yaml.dist
+--- mcollective-0.4.1~/etc/facts.yaml.dist	2010-01-02 14:54:25.000000000 +0000
++++ mcollective-0.4.1/etc/facts.yaml.dist	1970-01-01 00:00:00.000000000 +0000
+@@ -1,2 +0,0 @@
+----
+-mcollective: 1
+diff -urNad mcollective-0.4.1~/etc/server.cfg mcollective-0.4.1/etc/server.cfg
+--- mcollective-0.4.1~/etc/server.cfg	1970-01-01 00:00:00.000000000 +0000
++++ mcollective-0.4.1/etc/server.cfg	2010-01-06 14:37:50.000000000 +0000
+@@ -0,0 +1,20 @@
++topicprefix = /topic/mcollective
++libdir = /usr/share/mcollective/plugins
++logfile = /var/log/mcollective.log
++loglevel = info
++daemonize = 1
++
++# Plugins 
++securityprovider = psk
++plugin.psk = unset
++
++connector = stomp
++plugin.stomp.host = stomp.example.com
++plugin.stomp.port = 6163
++plugin.stomp.user = mcollective
++plugin.stomp.password = marionette
++
++# Facts
++factsource = yaml
++plugin.yaml = /etc/mcollective/facts.yaml
++
+diff -urNad mcollective-0.4.1~/etc/server.cfg.dist mcollective-0.4.1/etc/server.cfg.dist
+--- mcollective-0.4.1~/etc/server.cfg.dist	2010-01-02 14:54:25.000000000 +0000
++++ mcollective-0.4.1/etc/server.cfg.dist	1970-01-01 00:00:00.000000000 +0000
+@@ -1,20 +0,0 @@
+-topicprefix = /topic/mcollective
+-libdir = /usr/libexec/mcollective
+-logfile = /var/log/mcollective.log
+-loglevel = info
+-daemonize = 1
+-
+-# Plugins 
+-securityprovider = psk
+-plugin.psk = unset
+-
+-connector = stomp
+-plugin.stomp.host = stomp.your.com
+-plugin.stomp.port = 6163
+-plugin.stomp.user = mcollective
+-plugin.stomp.password = marionette
+-
+-# Facts
+-factsource = yaml
+-plugin.yaml = /etc/mcollective/facts.yaml
+-
