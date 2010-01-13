@@ -35,8 +35,6 @@ begin
         end
     end
 
-    mc = rpcclient(options[:agent], {:options => options})
-
     # Parse the alternative command line 
     unless options.include?(:agent) && options.include?(:action) && options.include?(:arguments)
         if ARGV.length > 2
@@ -58,6 +56,8 @@ begin
             exit!
         end
     end
+
+    mc = rpcclient(options[:agent], {:options => options})
 
     mc.agent_filter(options[:agent])
     mc.discover :verbose => true
