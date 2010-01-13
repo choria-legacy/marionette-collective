@@ -6,7 +6,7 @@ require 'rake/clean'
 require 'find'
 
 PROJ_DOC_TITLE = "The Marionette Collective"
-PROJ_VERSION = "0.4.1"
+PROJ_VERSION = "0.4.4"
 PROJ_RELEASE = "1"
 PROJ_NAME = "mcollective"
 PROJ_RPM_NAMES = [PROJ_NAME]
@@ -106,6 +106,16 @@ end
 desc "Create the .debs"
 task :deb => [:clean, :doc, :package] do
     announce("Building debian packages")
+
+    File.open("ext/debian/changelog", "w") do |f|
+        f.puts("mcollective (#{CURRENT_VERSION}-#{CURRENT_RELEASE}) unstable; urgency=low")
+        f.puts
+        f.puts("  * Automated release for #{CURRENT_VERSION}-#{CURRENT_RELEASE} by rake deb")
+        f.puts
+        f.puts("    See http://code.google.com/p/mcollective/wiki/ReleaseNotes for full details")
+        f.puts
+        f.puts(" -- The Marionette Collective <mcollective-dev@googlegroups.com>  #{Time.new.strftime('%a, %d %b %Y %H:%M:%S %z')}")
+    end
 
     FileUtils.mkdir_p("build/deb")
     Dir.chdir("build/deb") do
