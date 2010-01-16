@@ -1,7 +1,7 @@
 Summary: Apache ActiveMQ
 Name: activemq
 Version: 5.3.0
-Release: 0
+Release: 1%{?dist}
 License: Apache
 Group: Network/Daemons
 Source0: apache-activemq-%{version}-bin.tar.gz
@@ -58,6 +58,8 @@ install --directory ${RPM_BUILD_ROOT}/etc/httpd/conf.d
 
 # Config files
 install conf/activemq.xml ${RPM_BUILD_ROOT}/etc/%{name}
+install conf/credentials.properties ${RPM_BUILD_ROOT}/etc/%{name}
+install conf/jetty.xml ${RPM_BUILD_ROOT}/etc/%{name}
 install conf/log4j.properties ${RPM_BUILD_ROOT}/etc/%{name}
 install conf/activemq-wrapper.conf ${RPM_BUILD_ROOT}/etc/%{name}
 install conf/activemq-httpd.conf ${RPM_BUILD_ROOT}/etc/httpd/conf.d
@@ -116,7 +118,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%attr(755,-,-) /usr/bin/activemq-admin
+%attr(755,root,root) /usr/bin/activemq-admin
 %{homedir}
 %docdir %{docsdir}
 %{docsdir}
@@ -127,6 +129,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) /etc/init.d/activemq
 %config(noreplace) /etc/httpd/conf.d/activemq-httpd.conf
 %config(noreplace) /etc/%{name}/activemq.xml
+%config(noreplace) %attr(750,root,activemq) /etc/%{name}/credentials.properties
+%config(noreplace) /etc/%{name}/jetty.xml
 %config(noreplace) /etc/%{name}/activemq-wrapper.conf
 %config(noreplace) /etc/%{name}/log4j.properties
 
@@ -135,8 +139,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{libexecdir}/info-provider-activemq
 
 %changelog
-* Tue Dec 01 2009 R.I.Pienaar <rip@devco.net> 5.3.0-0
-- update to release 5.3.0
+* Sat Jan 16 2010 R.I.Pienaar <rip@devco.net> 5.3.0
+- Adjusted for ActiveMQ 5.3.0 
 
 * Wed Oct 29 2008 James Casey <james.casey@cern.ch> 5.2.0-2
 - fixed defattr on subpackages 
