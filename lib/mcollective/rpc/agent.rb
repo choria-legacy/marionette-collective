@@ -90,7 +90,7 @@ module MCollective
 
                 begin
                     if validation.is_a?(Regexp)
-                        raise InvalidRPCData, "#{key} should match #{regex}" unless @request[key].match(validation)
+                        raise InvalidRPCData, "#{key} should match #{validation}" unless @request[key].match(validation)
 
                     elsif validation.is_a?(Symbol)
                         case validation
