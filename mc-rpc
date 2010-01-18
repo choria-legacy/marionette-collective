@@ -36,8 +36,8 @@ begin
     end
 
     # Parse the alternative command line 
-    unless options.include?(:agent) && options.include?(:action) && options.include?(:arguments)
-        if ARGV.length > 2
+    unless options.include?(:agent) && options.include?(:action) 
+        if ARGV.length >= 2
             options[:agent] = ARGV[0]
             ARGV.delete_at(0)
 
