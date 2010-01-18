@@ -51,6 +51,9 @@ module MCollective
                     else
                         raise UnknownRPCAction, "Unknown action: #{@request.action}"
                     end
+                rescue RPCAborted => e
+                    @reply.fail e.to_s, 1
+
                 rescue UnknownRPCAction => e
                     @reply.fail e.to_s, 2
 
