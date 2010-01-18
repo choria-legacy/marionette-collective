@@ -19,6 +19,7 @@ require 'socket'
 module MCollective
     # Exceptions for the RPC system
     class RPCError<StandardError;end
+    class RPCAborted<RPCError;end
     class UnknownRPCAction<RPCError;end
     class MissingRPCData<RPCError;end
     class InvalidRPCData<RPCError;end
