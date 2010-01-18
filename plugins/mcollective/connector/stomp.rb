@@ -36,15 +36,13 @@ module MCollective
                     if ENV.include?("STOMP_USER") 
                         user = ENV["STOMP_USER"]
                     else
-                        raise("No STOMP_USER environment or plugin.stomp.user configuration option given") unless @config.pluginconf.include?("stomp.user")
-                        user = @config.pluginconf["stomp.user"]
+                        user = @config.pluginconf["stomp.user"] if @config.pluginconf.include?("stomp.user") 
                     end
 
                     if ENV.include?("STOMP_PASSWORD") 
                         password = ENV["STOMP_PASSWORD"]
                     else
-                        raise("No STOMP_PASSWORD environment or plugin.stomp.password configuration option given") unless @config.pluginconf.include?("stomp.password")
-                        password = @config.pluginconf["stomp.password"]
+                        password = @config.pluginconf["stomp.password"] if @config.pluginconf.include?("stomp.password")
                     end
 
 
