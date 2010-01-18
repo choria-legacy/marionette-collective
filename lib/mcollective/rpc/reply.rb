@@ -16,6 +16,29 @@ module MCollective
                 @statuscode = code
             end
 
+            # Helper that fills in statusmsg and code but also raises an appropriate error
+            def fail!(msg, code=1)
+                @statusmsg = msg
+                @statuscode = code
+
+                case code
+                    when 1
+                        raise RPCAborted, msg
+
+                    when 2
+                        raise UnknownRPCAction, msg
+
+                    when 3
+                        raise MissingRPCData, msg
+
+                    when 4
+                        raise InvalidRPCData, msg
+
+                    else
+                        raise UnknownRPCError, msg
+                end
+            end
+
             # Write to the data hash
             def []=(key, val)
                 @data[key] = val
