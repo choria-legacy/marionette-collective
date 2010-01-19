@@ -6,8 +6,6 @@ module MCollective
         #
         #   plugin.logfile_audit.logfile
         class Logfile<Base
-            require 'pp'
-
             def audit_request(request, connection)
                 logfile = Config.instance.pluginconf["logfile_audit.logfile"] || "/var/log/mcollective-audit.log"
 
