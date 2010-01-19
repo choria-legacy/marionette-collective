@@ -4,10 +4,10 @@ module MCollective
         #
         # You can configure which file it logs to with the setting
         #
-        #   plugin.logfile_audit.logfile
+        #   plugin.audit.logfile
         class Logfile<Base
             def audit_request(request, connection)
-                logfile = Config.instance.pluginconf["logfile_audit.logfile"] || "/var/log/mcollective-audit.log"
+                logfile = Config.instance.pluginconf["audit.logfile"] || "/var/log/mcollective-audit.log"
 
                 Log.instance.debug("Logging to '#{logfile}' - #{logfile.class}")
                 File.open(logfile, "w") do |f|
