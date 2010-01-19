@@ -2,7 +2,7 @@ module MCollective
     module RPC 
         # Simple class to manage compliant requests for MCollective::RPC agents
         class Request
-            attr_accessor :time, :action, :data, :sender, :agent
+            attr_accessor :time, :action, :data, :sender, :agent, :uniqid
 
             def initialize(msg)
                 @time = msg[:msgtime]
@@ -10,6 +10,7 @@ module MCollective
                 @data = msg[:body][:data]
                 @sender = msg[:senderid]
                 @agent = msg[:body][:agent]
+                @uniqid = msg[:requestid]
             end
 
             # If data is a hash, quick helper to get access to it's include? method

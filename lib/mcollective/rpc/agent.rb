@@ -43,6 +43,15 @@ module MCollective
                 @request = RPC.request(msg)
                 @reply = RPC.reply
 
+                # Audits the request, currently continues processing the message
+                # we should make this a configurable so that an audit failure means
+                # a message wont be processed by this node depending on config
+                begin
+                    audit_request(@request, connection)
+                rescue Exception => e
+                    @logger.warn("Audit failed - #{e} - continuing to process message")
+                end
+
                 begin
                     before_processing_hook(msg, connection)
 
@@ -158,6 +167,12 @@ module MCollective
             # set by the exception handlers.  If you do raise an exception it will just
             # be passed onto the runner and processing will fail.
             def after_processing_hook
+            end
+
+            # Gets called right after a request was received and calls audit plugins
+            def audit_request(msg, connection)
+                @logger.debug("Doing audit: #{@config.audit}")
+                PluginManager["audit_plugin"].audit_request(msg, connection) if @config.audit
             end
         end
     end
