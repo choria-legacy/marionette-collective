@@ -9,7 +9,6 @@ module MCollective
             def audit_request(request, connection)
                 logfile = Config.instance.pluginconf["audit.logfile"] || "/var/log/mcollective-audit.log"
 
-                Log.instance.debug("Logging to '#{logfile}' - #{logfile.class}")
                 File.open(logfile, "w") do |f|
                     f.puts("#{request.uniqid}: #{request.time} caller=#{request.caller}@#{request.sender} agent=#{request.agent} action=#{request.action}")
                     f.puts("#{request.uniqid}: #{request.data.pretty_print_inspect}")
