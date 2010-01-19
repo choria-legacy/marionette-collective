@@ -89,6 +89,7 @@ module MCollective
             def method_missing(method_name, *args)
                 req = {:agent  => @agent,
                        :action => method_name.to_s,
+                       :caller => "uid=#{Process.uid}",
                        :data   => args[0]}
 
                 twirl = ['|', '/', '-', "\\", '|', '/', '-', "\\"]

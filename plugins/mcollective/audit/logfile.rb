@@ -14,7 +14,7 @@ module MCollective
                 Log.instance.debug("Logging to '#{logfile}' - #{logfile.class}")
                 File.open(logfile, "w") do |f|
                     msg = "#{request.uniqid}: #{request.time} "
-                    msg << "caller=#{request.data[:caller]} " if request.data[:caller]
+                    msg << "caller=#{request.caller} "
                     msg << "agent=#{request.agent} action=#{request.action} sendernode=#{request.sender}"
 
                     f.puts(msg)
