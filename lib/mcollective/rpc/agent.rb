@@ -171,8 +171,7 @@ module MCollective
 
             # Gets called right after a request was received and calls audit plugins
             def audit_request(msg, connection)
-                @logger.debug("Doing audit: #{@config.audit}")
-                PluginManager["audit_plugin"].audit_request(msg, connection) if @config.audit
+                PluginManager["rpcaudit_plugin"].audit_request(msg, connection) if @config.rpcaudit
             end
         end
     end

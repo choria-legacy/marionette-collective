@@ -6,7 +6,7 @@ module MCollective
         attr_reader :topicprefix, :daemonize, :pluginconf, :libdir, :configured, :logfile, 
                     :keeplogs, :max_log_size, :loglevel, :identity, :daemonize, :connector,
                     :securityprovider, :factsource, :registration, :registerinterval, :topicsep,
-                    :classesfile, :auditprovider, :audit
+                    :classesfile, :rpcauditprovider, :rpcaudit
 
         def initialize
             @configured = false
@@ -24,8 +24,8 @@ module MCollective
             @registerinterval = 0
             @topicsep = "."
             @classesfile = "/var/lib/puppet/classes.txt"
-            @audit = false
-            @auditprovider = ""
+            @rpcaudit = false
+            @rpcauditprovider = ""
 
             if File.exists?(configfile)
                 File.open(configfile, "r").each do |line|
@@ -70,10 +70,10 @@ module MCollective
                                     @classesfile = val
                                 when /^plugin.(.+)$/
                                     @pluginconf[$1] = val
-                                when "audit"
-                                    val =~ /^1|y/i ? @audit = true : @audit = false
-                                when "auditprovider"
-                                    @auditprovider = val.capitalize
+                                when "rpcaudit"
+                                    val =~ /^1|y/i ? @rpcaudit = true : @rpcaudit = false
+                                when "rpcauditprovider"
+                                    @rpcauditprovider = val.capitalize
 
                                 else
                                     raise("Unknown config parameter #{key}")
@@ -88,7 +88,7 @@ module MCollective
                 PluginManager.loadclass("Mcollective::Connector::#{@connector}")
                 PluginManager.loadclass("Mcollective::Security::#{@securityprovider}")
                 PluginManager.loadclass("Mcollective::Registration::#{@registration}")
-                PluginManager.loadclass("Mcollective::Audit::#{@auditprovider}") if @audit
+                PluginManager.loadclass("Mcollective::Audit::#{@rpcauditprovider}") if @rpcaudit
             else
                 raise("Cannot find config file '#{configfile}'")
             end

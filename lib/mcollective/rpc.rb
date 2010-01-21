@@ -9,6 +9,7 @@ module MCollective
         autoload :Agent, "mcollective/rpc/agent"
         autoload :Reply, "mcollective/rpc/reply"
         autoload :Request, "mcollective/rpc/request"
+        autoload :Audit, "mcollective/rpc/audit"
         
         # Creates a standard options hash, pass in a block to add extra headings etc
         # see Optionparser
