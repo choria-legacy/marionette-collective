@@ -73,7 +73,7 @@ module MCollective
                                 when "audit"
                                     val =~ /^1|y/i ? @audit = true : @audit = false
                                 when "auditprovider"
-                                    @auditprovider = val
+                                    @auditprovider = val.capitalize
 
                                 else
                                     raise("Unknown config parameter #{key}")
