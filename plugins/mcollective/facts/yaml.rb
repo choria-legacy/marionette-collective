@@ -7,7 +7,13 @@ module MCollective
             def get_facts
                 config = Config.instance
 
-                YAML.load_file(config.pluginconf["yaml"])
+                facts = {}
+
+                YAML.load_file(config.pluginconf["yaml"]).each_pair do |k, v|
+                    facts[k] = v.to_s
+                end
+
+                facts
             end
         end
     end
