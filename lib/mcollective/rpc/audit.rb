@@ -9,7 +9,7 @@ module MCollective
         #
         # Create a class in plugins/mcollective/audit/<yourplugin>.rb
         #
-        # You must inherit from MCollective::Audit::Base which will take
+        # You must inherit from MCollective::RPC::Audit which will take
         # care of registering you with the plugin system.
         #
         # Your plugin must provide audit_request(request, connection) 
@@ -17,8 +17,8 @@ module MCollective
         #
         # To enable auditing you should set:
         #
-        # audit = 1 
-        # auditprovider = Logfile
+        # rpcaudit = 1 
+        # rpcauditprovider = Logfile
         #
         # in the config file this will enable logging using the 
         # MCollective::Audit::Logile class
