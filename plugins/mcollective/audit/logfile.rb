@@ -12,7 +12,7 @@ module MCollective
 
                 logfile = Config.instance.pluginconf["rpcaudit.logfile"] || "/var/log/mcollective-audit.log"
 
-                File.open(logfile, "w") do |f|
+                File.open(logfile, "a") do |f|
                     f.puts("#{request.uniqid}: #{request.time} caller=#{request.caller}@#{request.sender} agent=#{request.agent} action=#{request.action}")
                     f.puts("#{request.uniqid}: #{request.data.pretty_print_inspect}")
                 end
