@@ -149,14 +149,19 @@ module MCollective
 
             print("Determining the amount of hosts matching filter for #{options[:disctimeout]} seconds .... ")
 
-            discovered_hosts = discover(options[:filter], options[:disctimeout])
-            discovered = discovered_hosts.size
-            hosts_responded = []
-            hosts_not_responded = discovered_hosts
+            begin
+                discovered_hosts = discover(options[:filter], options[:disctimeout])
+                discovered = discovered_hosts.size
+                hosts_responded = []
+                hosts_not_responded = discovered_hosts
 
-            stat[:discoverytime] = Time.now.to_f - stat[:starttime]
+                stat[:discoverytime] = Time.now.to_f - stat[:starttime]
 
-            puts("#{discovered}\n\n")
+                puts("#{discovered}\n\n")
+            rescue Interrupt
+                puts("Discovery interrupted.")
+                exit!
+            end
 
             raise("No matching clients found") if discovered == 0
 
