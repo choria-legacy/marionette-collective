@@ -12,8 +12,6 @@ module MCollective
             @connection = PluginManager["connector_plugin"]
             @security = PluginManager["security_plugin"]
 
-            @agents = Agents.new 
-
             @stats = {:starttime => Time.now.to_i,
                       :validated => 0, 
                       :unvalidated => 0, 
@@ -23,6 +21,8 @@ module MCollective
                       :replies => 0}
 
             @connection.connect
+
+            @agents = Agents.new 
         end
 
         # Daemonize the current process
@@ -43,10 +43,6 @@ module MCollective
         def run
             controltopic = Util.make_target("mcollective", :command)
             @connection.subscribe(controltopic)
-
-            Agents.agentlist.each do |agent|
-                @connection.subscribe(Util.make_target(agent, :command))
-            end
 
             # Start the registration plugin if interval isn't 0
             unless @config.registerinterval == 0

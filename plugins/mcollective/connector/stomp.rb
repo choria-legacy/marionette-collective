@@ -71,6 +71,12 @@ module MCollective
                 @connection.subscribe(source)
             end
 
+            # Subscribe to a topic or queue
+            def unsubscribe(source)
+                @log.debug("Unsubscribing from #{source}")
+                @connection.unsubscribe(source)
+            end
+
             # Disconnects from the Stomp connection
             def disconnect
                 @log.debug("Disconnecting from Stomp")

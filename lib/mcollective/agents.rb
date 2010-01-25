@@ -7,12 +7,21 @@ module MCollective
             raise ("Configuration has not been loaded, can't load agents") unless @config.configured
 
             @log = Log.instance
+            @@agents = {}
 
             loadagents
         end
 
         # Loads all agents from disk
         def loadagents
+            @log.debug("Reloading all agents from disk")
+
+            # We're loading all agents so just nuke all the old agents and unsubscribe
+            connector = PluginManager["connector_plugin"]
+            @@agents.each_key do |agent|
+                connector.unsubscribe(Util.make_target(agent, :command))
+            end
+
             @@agents = {}
 
             agentdir = "#{@config.libdir}/mcollective/agent"
@@ -31,11 +40,13 @@ module MCollective
 
             return false unless File.exist?(agentfile)
 
+            PluginManager.delete("#{agentname}_agent") 
             PluginManager.loadclass(classname)
             PluginManager << {:type => "#{agentname}_agent", :class => classname}
 
-            @@agents[agentname] = {:file => agentfile}
+            PluginManager["connector_plugin"].subscribe(Util.make_target(agentname, :command)) unless @@agents.include?(agentname)
 
+            @@agents[agentname] = {:file => agentfile}
             true
         end
 

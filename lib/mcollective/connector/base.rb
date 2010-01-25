@@ -3,12 +3,13 @@ module MCollective
     # to something other than Stomp, your plugins must inherit from MCollective::Connector::Base and should
     # provide the following methods:
     #
-    # connect    - Creates a connection to the middleware, no arguments should get its parameters from the config
-    # receive    - Receive data from the middleware, should act like a blocking call only returning if/when data
-    #              was received.  It should get data from all subscribed channels/topics
-    # send       - Takes a target and msg, should send the message to the supplied target topic or destination
-    # subscribe  - Adds a subscription to a specific message source
-    # disconnect - Disconnects from the middleware
+    # connect       - Creates a connection to the middleware, no arguments should get its parameters from the config
+    # receive       - Receive data from the middleware, should act like a blocking call only returning if/when data
+    #                 was received.  It should get data from all subscribed channels/topics
+    # send          - Takes a target and msg, should send the message to the supplied target topic or destination
+    # subscribe     - Adds a subscription to a specific message source
+    # unsubscribe   - Removes a subscription to a specific message source
+    # disconnect    - Disconnects from the middleware
     #
     # These methods are all that's needed for a new connector protocol and should hopefully be simple
     # enough to not have tied us to Stomp.

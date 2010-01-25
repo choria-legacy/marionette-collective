@@ -40,6 +40,11 @@ module MCollective
             end
         end
     
+        # Removes a plugim the list
+        def self.delete(plugin)
+            @plugins.delete(plugin) if @plugins.include?(plugin)
+        end
+
         # Finds out if we have a plugin with the given name
         def self.include?(plugin)
             @plugins.include?(plugin)
