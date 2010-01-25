@@ -10,7 +10,7 @@ PROJ_VERSION = "0.4.3"
 PROJ_RELEASE = "1"
 PROJ_NAME = "mcollective"
 PROJ_RPM_NAMES = [PROJ_NAME]
-PROJ_FILES = ["#{PROJ_NAME}.spec", "#{PROJ_NAME}.init", "mcollectived.rb", "COPYING"]
+PROJ_FILES = ["#{PROJ_NAME}.spec", "#{PROJ_NAME}.init", "mcollectived.rb", "COPYING", "doc"]
 PROJ_SUBDIRS = ["etc", "lib", "plugins", "ext"]
 PROJ_FILES.concat(Dir.glob("mc-*"))
 
@@ -38,7 +38,7 @@ def init
 end
 
 desc "Build documentation, tar balls and rpms"
-task :default => [:clean, :doc, :package, :rpm, :tag] 
+task :default => [:clean, :doc, :package, :rpm] 
 
 # task for building docs
 rd = Rake::RDocTask.new(:doc) { |rdoc|
@@ -50,19 +50,13 @@ rd = Rake::RDocTask.new(:doc) { |rdoc|
     rdoc.options << '--line-numbers' << '--inline-source' << '--main' << 'MCollective'
 }
 
-Rake::PackageTask.new(PROJ_NAME, CURRENT_VERSION) do |p|
-    announce "Building tar file for #{CURRENT_VERSION}"
+desc "Create a tarball for this release"
+task :package => [:clean, :doc] do
+    announce "Creating #{PROJ_NAME}-#{CURRENT_VERSION}.tgz"
 
-    # A bit hacky, we only build docs dynamically 
-    # so we have to add them to the PROJ_FILES list
-    # here before building the tar
-    Find.find("doc") do |f|
-        PROJ_FILES << f
-    end
-
-    p.need_tar = true
-    p.package_files = PROJ_FILES
-    p.package_dir = "build"
+    FileUtils.mkdir_p("build/#{PROJ_NAME}-#{CURRENT_VERSION}")
+    system("cp -R #{PROJ_FILES.join(' ')} build/#{PROJ_NAME}-#{CURRENT_VERSION}")
+    system("cd build && tar --exclude .svn -cvzf #{PROJ_NAME}-#{CURRENT_VERSION}.tgz #{PROJ_NAME}-#{CURRENT_VERSION}")
 end
 
 desc "Tag the release in SVN"
