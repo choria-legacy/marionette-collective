@@ -26,7 +26,7 @@ module MCollective
             attr_accessor :meta, :reply, :request
             attr_reader :logger, :config, :timeout
 
-	        @@actions = {}
+            @@actions = {}
 
             def initialize
                 @timeout = 10
@@ -96,23 +96,23 @@ module MCollective
             end
 
             # Returns the interface for a specific action
-	        def self.action_interface(name)
-		        @@actions[name] || {}
-	        end
+            def self.action_interface(name)
+                @@actions[name] || {}
+            end
 
             private
             # Registers an action into the introspection hash
             #
             # register_action(:name => "service")
-        	def self.register_action(args)
-        		raise "Please specify a :name for register_action" unless args.include?(:name)
+            def self.register_action(args)
+                raise "Please specify a :name for register_action" unless args.include?(:name)
         
-        		name = args[:name]
+                name = args[:name]
         
-        		@@actions[name] = {}
-        		@@actions[name][:name] = name
-        		@@actions[name][:input] = {}
-        	end
+                @@actions[name] = {}
+                @@actions[name][:name] = name
+                @@actions[name][:input] = {}
+            end
 
             # Registers an input argument for a given action
             #
@@ -122,32 +122,32 @@ module MCollective
             #                :description => "The action to perform",
             #                :type => :list,
             #                :list => ["start", "stop", "restart", "status"])
-        	def self.register_input(input)
-        		raise "Input needs a :name" unless input.include?(:name)
-        		raise "Input needs a :prompt" unless input.include?(:prompt)
-        		raise "Input needs a :description" unless input.include?(:description)
-        		raise "Input needs a :type" unless input.include?(:type)
+            def self.register_input(input)
+                raise "Input needs a :name" unless input.include?(:name)
+                raise "Input needs a :prompt" unless input.include?(:prompt)
+                raise "Input needs a :description" unless input.include?(:description)
+                raise "Input needs a :type" unless input.include?(:type)
         
-        		name = input[:action]
-        		inputname = input[:name]
-        		@@actions[name][:input][inputname] = {:prompt => input[:prompt],
-        				                      :description => input[:description],
-        				                      :type => input[:type]}
+                name = input[:action]
+                inputname = input[:name]
+                @@actions[name][:input][inputname] = {:prompt => input[:prompt],
+                                                      :description => input[:description],
+                                                      :type => input[:type]}
         
-        		case input[:type]
-        			when :string
-        				raise "Input type :string needs a :validation" unless input.include?(:validation)
-        				raise "String inputs need a :maxlength" unless input.include?(:validation)
+                case input[:type]
+                    when :string
+                        raise "Input type :string needs a :validation" unless input.include?(:validation)
+                        raise "String inputs need a :maxlength" unless input.include?(:validation)
         
-        				@@actions[name][:input][inputname][:validation] = input[:validation]
-        				@@actions[name][:input][inputname][:maxlength] = input[:maxlength]
+                        @@actions[name][:input][inputname][:validation] = input[:validation]
+                        @@actions[name][:input][inputname][:maxlength] = input[:maxlength]
         
-        			when :list
-        				raise "Input type :list needs a :list argument" unless input.include?(:list)
+                    when :list
+                        raise "Input type :list needs a :list argument" unless input.include?(:list)
         
-        				@@actions[name][:input][inputname][:list] = input[:list]
-        		end
-        	end
+                        @@actions[name][:input][inputname][:list] = input[:list]
+                end
+            end
 
             # Validates a data member, if validation is a regex then it will try to match it
             # else it supports testing object types only:
