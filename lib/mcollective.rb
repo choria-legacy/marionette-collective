@@ -6,6 +6,7 @@ require 'digest/md5'
 require 'optparse'
 require 'singleton'
 require 'socket'
+require 'erb'
 
 # == The Marionette Collective
 #

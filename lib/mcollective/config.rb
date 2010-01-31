@@ -6,7 +6,7 @@ module MCollective
         attr_reader :topicprefix, :daemonize, :pluginconf, :libdir, :configured, :logfile, 
                     :keeplogs, :max_log_size, :loglevel, :identity, :daemonize, :connector,
                     :securityprovider, :factsource, :registration, :registerinterval, :topicsep,
-                    :classesfile, :rpcauditprovider, :rpcaudit
+                    :classesfile, :rpcauditprovider, :rpcaudit, :configdir
 
         def initialize
             @configured = false
@@ -26,6 +26,7 @@ module MCollective
             @classesfile = "/var/lib/puppet/classes.txt"
             @rpcaudit = false
             @rpcauditprovider = ""
+            @configdir = File.dirname(configfile)
 
             if File.exists?(configfile)
                 File.open(configfile, "r").each do |line|

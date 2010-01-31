@@ -26,17 +26,14 @@ module MCollective
             attr_accessor :meta, :reply, :request
             attr_reader :logger, :config, :timeout
 
+            # introspection variables
             @@actions = {}
+            @@meta = {}
 
             def initialize
-                @timeout = 10
+                @timeout = @@meta[:timeout] || 10
                 @logger = Log.instance
                 @config = Config.instance
-
-                @meta = {:license => "Unknown",
-                         :author => "Unknown",
-                         :version => "Unknown",
-                         :url => "Unknown"}
 
                 startup_hook
             end
@@ -84,6 +81,17 @@ module MCollective
                 @reply.to_hash
             end
 
+            # Generates help using the template based on the data
+            # created with register_meta and register_input
+            def self.help(template)
+                template = IO.readlines(template).join
+                meta = @@meta
+                actions = @@actions
+
+                erb = ERB.new(template, 0, '%')
+                erb.result(binding)
+            end
+
             def help
                 "Unconfigure MCollective::RPC::Agent"
             end
@@ -100,18 +108,15 @@ module MCollective
                 @@actions[name] || {}
             end
 
+            # Returns the meta data for an agent
+            def self.meta
+                @@meta
+            end
+
             private
-            # Registers an action into the introspection hash
-            #
-            # register_action(:name => "service")
-            def self.register_action(args)
-                raise "Please specify a :name for register_action" unless args.include?(:name)
-        
-                name = args[:name]
-        
-                @@actions[name] = {}
-                @@actions[name][:name] = name
-                @@actions[name][:input] = {}
+            # Registers meta data for the introspection hash
+            def self.register_meta(meta)
+                @@meta = meta
             end
 
             # Registers an input argument for a given action
@@ -129,6 +134,13 @@ module MCollective
                 raise "Input needs a :type" unless input.include?(:type)
         
                 name = input[:action]
+
+                unless @@actions.include?(name)
+                    @@actions[name] = {}
+                    @@actions[name][:name] = name
+                    @@actions[name][:input] = {}
+                end
+
                 inputname = input[:name]
                 @@actions[name][:input][inputname] = {:prompt => input[:prompt],
                                                       :description => input[:description],
