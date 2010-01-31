@@ -86,6 +86,13 @@ module MCollective
                 "Unconfigure MCollective::RPC::Agent"
             end
 
+            # Returns an array of actions this agent support
+            def self.actions
+                public_instance_methods.sort.grep(/_action$/).map do |method|
+                    $1 if method =~ /(.+)_action/
+                end
+            end
+
             private
             # Validates a data member, if validation is a regex then it will try to match it
             # else it supports testing object types only:
