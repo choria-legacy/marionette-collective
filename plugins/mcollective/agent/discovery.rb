@@ -9,7 +9,9 @@ module MCollective
             def initialize
                 @log = Log.instance
 
-                @timeout = 5
+                @timeout = Config.instance.pluginconf["discovery.timeout"] || 5
+                @log.debug("Discovery timeout set to #{@timeout}")
+
                 @meta = {:license => "Apache License, Version 2",
                          :author => "R.I.Pienaar <rip@devco.net>"}
             end
