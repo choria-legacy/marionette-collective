@@ -57,6 +57,8 @@ module MCollective
 
                 msg = @security.decodemsg(msg)
 
+                msg[:senderid] = Digest::MD5.hexdigest(msg[:senderid]) if ENV.include?("MCOLLECTIVE_ANON")
+
                 raise(MsgDoesNotMatchRequestID, "Message reqid #{requestid} does not match our reqid #{msg[:requestid]}") if msg[:requestid] != requestid
             rescue MsgDoesNotMatchRequestID => e
                 @log.debug("Ignoring a message for some other client")
