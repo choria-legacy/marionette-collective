@@ -127,7 +127,7 @@ module MCollective
             #                :description => "The action to perform",
             #                :type => :list,
             #                :list => ["start", "stop", "restart", "status"])
-            def self.register_input(input)
+            def self.register_input(input, &block)
                 raise "Input needs a :name" unless input.include?(:name)
                 raise "Input needs a :prompt" unless input.include?(:prompt)
                 raise "Input needs a :description" unless input.include?(:description)
@@ -137,7 +137,7 @@ module MCollective
 
                 unless @@actions.include?(name)
                     @@actions[name] = {}
-                    @@actions[name][:name] = name
+                    @@actions[name][:action] = name
                     @@actions[name][:input] = {}
                 end
 
@@ -159,6 +159,11 @@ module MCollective
         
                         @@actions[name][:input][inputname][:list] = input[:list]
                 end
+
+                # If a block was passed use it to create the action 
+                # but this is optional and a user can just use 
+                # def to create the method later on still
+                self.module_eval { define_method("#{name}_action", &block) } if block_given?
             end
 
             # Validates a data member, if validation is a regex then it will try to match it
