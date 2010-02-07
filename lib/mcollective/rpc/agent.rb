@@ -83,7 +83,7 @@ module MCollective
             end
 
             # Generates help using the template based on the data
-            # created with register_meta and register_input
+            # created with metadata and input
             def self.help(template)
                 template = IO.readlines(template).join
                 meta = @@meta
@@ -116,16 +116,16 @@ module MCollective
 
             private
             # Registers meta data for the introspection hash
-            def self.register_meta(meta)
+            def self.metadata(meta)
                 @@meta = meta
             end
 
             # Creates a new action wit the block passed and sets some defaults
             #
-            # new_action(:description => "Restarts a Service") do
+            # action(:description => "Restarts a Service") do
             #    # logic here to restart service
             # end
-            def self.new_action(input, &block)
+            def self.action(input, &block)
                 raise "Action needs a :name" unless input.include?(:name)
                 raise "Action needs a :description" unless input.include?(:description)
 
@@ -146,13 +146,13 @@ module MCollective
 
             # Registers an input argument for a given action
             #
-            # register_input(:action => "foo",
-            #                :name => "action",
-            #                :prompt => "Service Action",
-            #                :description => "The action to perform",
-            #                :type => :list,
-            #                :list => ["start", "stop", "restart", "status"])
-            def self.register_input(input, &block)
+            # input(:action => "foo",
+            #       :name => "action",
+            #       :prompt => "Service Action",
+            #       :description => "The action to perform",
+            #       :type => :list,
+            #       :list => ["start", "stop", "restart", "status"])
+            def self.input(input, &block)
                 raise "Input needs a :name" unless input.include?(:name)
                 raise "Input needs a :prompt" unless input.include?(:prompt)
                 raise "Input needs a :description" unless input.include?(:description)
