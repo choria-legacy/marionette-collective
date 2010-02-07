@@ -34,6 +34,7 @@ module MCollective
                 @timeout = @@meta[:timeout] || 10
                 @logger = Log.instance
                 @config = Config.instance
+                @meta = {}
 
                 startup_hook
             end
