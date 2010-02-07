@@ -94,7 +94,7 @@ module MCollective
             end
 
             def help
-                self.help
+                self.help("#{@config[:configdir]}/rpc-help.erb")
             end
 
             # Returns an array of actions this agent support
