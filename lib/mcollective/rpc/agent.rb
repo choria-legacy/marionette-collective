@@ -94,7 +94,7 @@ module MCollective
             end
 
             def help
-                "Unconfigure MCollective::RPC::Agent"
+                self.help
             end
 
             # Returns an array of actions this agent support
@@ -118,6 +118,30 @@ module MCollective
             # Registers meta data for the introspection hash
             def self.register_meta(meta)
                 @@meta = meta
+            end
+
+            # Creates a new action wit the block passed and sets some defaults
+            #
+            # new_action(:description => "Restarts a Service") do
+            #    # logic here to restart service
+            # end
+            def self.new_action(input, &block)
+                raise "Action needs a :name" unless input.include?(:name)
+                raise "Action needs a :description" unless input.include?(:description)
+
+                name = input[:name]
+
+                unless @@actions.include?(name)
+                    @@actions[name] = {}
+                    @@actions[name][:action] = name
+                    @@actions[name][:input] = {}
+                    @@actions[name][:description] = input[:description]
+                end
+
+                # If a block was passed use it to create the action 
+                # but this is optional and a user can just use 
+                # def to create the method later on still
+                self.module_eval { define_method("#{name}_action", &block) } if block_given?
             end
 
             # Registers an input argument for a given action
@@ -160,11 +184,6 @@ module MCollective
         
                         @@actions[name][:input][inputname][:list] = input[:list]
                 end
-
-                # If a block was passed use it to create the action 
-                # but this is optional and a user can just use 
-                # def to create the method later on still
-                self.module_eval { define_method("#{name}_action", &block) } if block_given?
             end
 
             # Validates a data member, if validation is a regex then it will try to match it

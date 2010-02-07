@@ -17,6 +17,11 @@ INPUT:
 ======
 % actions.keys.sort.each do |action|
    <%= action %> action:
+   <% (action.size + 8).times do %>=<% end %>
+%    if actions[action].include?(:description)
+   <%= actions[action][:description] %>
+
+%    end
 %    actions[action][:input].keys.sort.each do |input|
            <%= input %>:
 	        Description: <%= actions[action][:input][input][:description] %>

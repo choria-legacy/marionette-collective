@@ -1,0 +1,22 @@
+#!/usr/bin/ruby
+
+# Shows help for introspection enabled SimpleRPC agents
+#
+# http://code.google.com/p/mcollective/
+
+require 'mcollective'
+
+include MCollective::RPC
+
+if ARGV.length == 1
+    agent = ARGV[0]
+else
+    puts("Please specify an agent to get help for")
+    exit
+end
+
+require "mcollective/agent/#{agent}"
+
+puts eval("MCollective::Agent::#{agent.capitalize}.help('etc/rpc-help.erb')")
+
+# vi:tabstop=4:expandtab:ai
