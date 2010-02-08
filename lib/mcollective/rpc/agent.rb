@@ -12,14 +12,30 @@ module MCollective
         #    module MCollective
         #       module Agent
         #          class Helloworld<RPC::Agent
-        #              def echo_action
-        #                  validate :msg, String
-        #                  
-        #                  reply.data = request[:msg]              
-        #              end
+        #             matadata :name        => "Test SimpleRPC Agent",
+        #                      :description => "A simple test",
+        #                      :author      => "You",
+        #                      :license     => "1.1",
+        #                      :url         => "http://your.com/,
+        #                      :timeout     => 60
+        #
+        #             action "hello", :description => "Hello action" do
+        #                 reply[:msg] = "Hello #{request[:name]}"
+        #             end
+        #
+        #             input "name", "hello",
+        #                :prompt      => "Name",
+        #                :description => "The name of the user",
+        #                :type        => :string,
+        #                :validation  => '/./',
+        #                :maxlength   => 50
         #          end
         #       end
         #    end
+        #
+        # The mata data, input definitions and descriptions are there to help web UI's 
+        # auto generate user interfaces for your client as well as to provide automagical
+        # validation of inputs etc.
         #
         # We also currently have the validation code in here, this will be moved to plugins soon.
         class Agent
@@ -35,6 +51,9 @@ module MCollective
                 @logger = Log.instance
                 @config = Config.instance
                 @meta = {}
+
+                # if we're using the new meta data, use that for the timeout
+                @meta[:timeout] = @@meta[:timeout] if @@meta.include?(:timeout)
 
                 startup_hook
             end
@@ -93,6 +112,9 @@ module MCollective
                 erb.result(binding)
             end
 
+            # Compatibility layer for help as currently implimented in the
+            # normal non SimpleRPC agent, it uses our introspection data
+            # to auto generate help
             def help
                 self.help("#{@config[:configdir]}/rpc-help.erb")
             end
@@ -117,6 +139,10 @@ module MCollective
             private
             # Registers meta data for the introspection hash
             def self.metadata(meta)
+                [:name, :description, :author, :license, :version, :url, :timeout].each do |arg|
+                    raise "Metadata needs a :#{arg}" unless meta.include?(arg)
+                end
+
                 @@meta = meta
             end
 
@@ -125,11 +151,8 @@ module MCollective
             # action(:description => "Restarts a Service") do
             #    # logic here to restart service
             # end
-            def self.action(input, &block)
-                raise "Action needs a :name" unless input.include?(:name)
+            def self.action(name, input, &block)
                 raise "Action needs a :description" unless input.include?(:description)
-
-                name = input[:name]
 
                 unless @@actions.include?(name)
                     @@actions[name] = {}
@@ -146,43 +169,38 @@ module MCollective
 
             # Registers an input argument for a given action
             #
-            # input(:action => "foo",
-            #       :name => "action",
+            # input "foo", "action",
             #       :prompt => "Service Action",
             #       :description => "The action to perform",
             #       :type => :list,
-            #       :list => ["start", "stop", "restart", "status"])
-            def self.input(input, &block)
-                raise "Input needs a :name" unless input.include?(:name)
-                raise "Input needs a :prompt" unless input.include?(:prompt)
-                raise "Input needs a :description" unless input.include?(:description)
-                raise "Input needs a :type" unless input.include?(:type)
+            #       :list => ["start", "stop", "restart", "status"]
+            def self.input(argument, action, properties, &block)
+                [:prompt, :description, :type].each do |arg|
+                    raise "Input needs a :#{arg}" unless properties.include?(arg)
+                end
         
-                name = input[:action]
-
-                unless @@actions.include?(name)
-                    @@actions[name] = {}
-                    @@actions[name][:action] = name
-                    @@actions[name][:input] = {}
+                # in case a user is making the action using a traditional 
+                # def we will just create an empty description with no block
+                unless @@actions.include?(action)
+                    action action, :description => ""
                 end
 
-                inputname = input[:name]
-                @@actions[name][:input][inputname] = {:prompt => input[:prompt],
-                                                      :description => input[:description],
-                                                      :type => input[:type]}
+                @@actions[action][:input][argument] = {:prompt => properties[:prompt],
+                                                       :description => properties[:description],
+                                                       :type => properties[:type]}
         
-                case input[:type]
+                case properties[:type]
                     when :string
-                        raise "Input type :string needs a :validation" unless input.include?(:validation)
-                        raise "String inputs need a :maxlength" unless input.include?(:validation)
+                        raise "Input type :string needs a :validation" unless properties.include?(:validation)
+                        raise "String inputs need a :maxlength" unless properties.include?(:validation)
         
-                        @@actions[name][:input][inputname][:validation] = input[:validation]
-                        @@actions[name][:input][inputname][:maxlength] = input[:maxlength]
+                        @@actions[action][:input][argument][:validation] = properties[:validation]
+                        @@actions[action][:input][argument][:maxlength] = properties[:maxlength]
         
                     when :list
-                        raise "Input type :list needs a :list argument" unless input.include?(:list)
+                        raise "Input type :list needs a :list argument" unless properties.include?(:list)
         
-                        @@actions[name][:input][inputname][:list] = input[:list]
+                        @@actions[action][:input][argument][:list] = properties[:list]
                 end
             end
 
@@ -191,6 +209,12 @@ module MCollective
             #
             # validate :msg, String
             # validate :msg, /^[\w\s]+$/
+            #
+            # There are also some special helper validators:
+            #
+            # validate :command, :shellsafe
+            # validate :command, :ipv6address
+            # validate :command, :ipv4address
             #
             # It will raise appropriate exceptions that the RPC system understand
             #
@@ -269,6 +293,10 @@ module MCollective
             end
 
             # Gets called right after a request was received and calls audit plugins
+            #
+            # Agents can disable auditing by just overriding this method with a noop one
+            # this might be useful for agents that gets a lot of requests or simply if you
+            # do not care for the auditing in a specific agent.
             def audit_request(msg, connection)
                 PluginManager["rpcaudit_plugin"].audit_request(msg, connection) if @config.rpcaudit
             end
