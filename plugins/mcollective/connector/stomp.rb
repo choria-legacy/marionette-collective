@@ -56,7 +56,12 @@ module MCollective
             # Receives a message from the Stomp connection
             def receive
                 @log.debug("Waiting for a message from Stomp")
-                @connection.receive
+                msg = @connection.receive
+
+                # STOMP puts the payload in the body variable, pass that
+                # into the payload of MCollective::Request and discard all the 
+                # other headers etc that stomp provides
+                Request.new(msg.body)
             end
 
             # Sends a message to the Stomp connection

@@ -39,6 +39,7 @@ module MCollective
     autoload :Registration, "mcollective/registration"
     autoload :PluginManager, "mcollective/pluginmanager"
     autoload :RPC, "mcollective/rpc"
+    autoload :Request, "mcollective/request"
 end
 
 # vi:tabstop=4:expandtab:ai

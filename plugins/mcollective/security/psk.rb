@@ -13,7 +13,7 @@ module MCollective
             # Decodes a message by unserializing all the bits etc, it also validates
             # it as valid using the psk etc
             def decodemsg(msg)
-                body = Marshal.load(msg.body)
+                body = Marshal.load(msg.payload)
     
                 if validrequest?(body)
                     body[:body] = Marshal.load(body[:body])
