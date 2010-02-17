@@ -45,7 +45,7 @@ module MCollective
             @connection.subscribe(controltopic)
 
             # Start the registration plugin if interval isn't 0
-            PluginManager["registration_plugin"].run(@connection) unless @config.registerinterval == 
+            PluginManager["registration_plugin"].run(@connection) unless @config.registerinterval == 0
 
             loop do
                 begin
@@ -92,9 +92,6 @@ module MCollective
                 replytopic = Util.make_target("mcollective", :reply)
 
                 case body
-                    when /^help (.+)$/
-                        reply("mcollective", replytopic, @agents.help($1), requestid)
-
                     when /^stats$/
                         reply("mcollective", replytopic, stats, requestid)
 

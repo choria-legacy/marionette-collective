@@ -7,7 +7,14 @@ oparser = MCollective::Optionparser.new({:verbose => true}, "filter")
 
 options = oparser.parse{|parser, options|
     parser.define_head "Control the mcollective daemon"
-    parser.banner = "Usage: sh-controller [options] command"
+    parser.banner = "Usage: mc-controller [options] command"
+    parser.separator ""
+    parser.separator "command can be one of:"
+    parser.separator ""
+    parser.separator "   stats         - retrieve statistics from the mcollectived"
+    parser.separator "   reload_agents - reloads all agents"
+    parser.separator "   reload_agent  - reloads an agent, needs an argument"
+    parser.separator ""
 
     parser.on('--arg', '--argument ARGUMENT', 'Argument to pass to agent') do |v|
         options[:argument] = v
@@ -71,7 +78,7 @@ rescue Exception => e
     raise
 end
 
-client.display_stats(stats)
+client.display_stats(stats, false, "mcollectived controller summary")
 
 
 # vi:tabstop=4:expandtab:ai
