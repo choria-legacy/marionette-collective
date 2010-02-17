@@ -78,11 +78,11 @@ module MCollective
         # Loads a class from file by doing some simple search/replace
         # on class names and then doing a require.
         def self.loadclass(klass)
-            fname = klass.gsub("::", "/").downcase
+            fname = klass.gsub("::", "/").downcase + ".rb"
 
             Log.instance.debug("Loading #{klass} from #{fname}")
     
-            require fname
+            load fname
         end
 
         # Grep's over the plugin list and returns the list found
