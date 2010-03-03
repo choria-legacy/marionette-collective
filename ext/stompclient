@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 # == Synopsis
 #
 # stompclient: Generic client to consume and produce STOMP queues and topics, tested against

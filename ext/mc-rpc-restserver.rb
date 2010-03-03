@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 # A very simple demonstration of writing a REST server
 # for Simple RPC clients that takes requests over HTTP

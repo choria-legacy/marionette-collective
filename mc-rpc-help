@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 # Shows help for introspection enabled SimpleRPC agents
 #
