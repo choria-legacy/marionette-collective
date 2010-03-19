@@ -22,15 +22,19 @@ module MCollective
 
                 Thread.new do
                     loop do
-                        target = Util.make_target("registration", :command)
-                        reqid = Digest::MD5.hexdigest("#{config.identity}-#{Time.now.to_f.to_s}-#{target}")
-                        filter = {"agent" => "registration"}
-                        req = PluginManager["security_plugin"].encoderequest(config.identity, target, body, reqid, filter)
+                        begin
+                            target = Util.make_target("registration", :command)
+                            reqid = Digest::MD5.hexdigest("#{config.identity}-#{Time.now.to_f.to_s}-#{target}")
+                            filter = {"agent" => "registration"}
+                            req = PluginManager["security_plugin"].encoderequest(config.identity, target, body, reqid, filter)
                             
-                        Log.instance.debug("Sending registration #{reqid} to #{target}")
-                        connection.send(target, req)
+                            Log.instance.debug("Sending registration #{reqid} to #{target}")
+                            connection.send(target, req)
     
-                        sleep config.registerinterval             
+                            sleep config.registerinterval             
+                        rescue Exception => e
+                            Log.instance.error("Sending registration message failed: #{e}")
+                        end
                     end
                 end
             end
