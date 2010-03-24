@@ -10,6 +10,7 @@ module MCollective
             raise ("Configuration has not been loaded, can't start logger") unless config.configured
 
             @logger = Logger.new(config.logfile, config.keeplogs, config.max_log_size)
+            @logger.formatter = Logger::Formatter.new
 
             case config.loglevel
                 when "info"
