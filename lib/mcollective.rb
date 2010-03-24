@@ -25,6 +25,7 @@ module MCollective
     class MissingRPCData<RPCError;end
     class InvalidRPCData<RPCError;end
     class UnknownRPCError<RPCError;end
+    class NotTargettedAtUs<RuntimeError;end
 
     autoload :Config, "mcollective/config"    
     autoload :Log, "mcollective/log"    

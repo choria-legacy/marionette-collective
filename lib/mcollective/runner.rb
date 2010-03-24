@@ -67,6 +67,10 @@ module MCollective
                     @log.warn("Exiting after interrupt signal")
                     @connection.disconnect
                     exit!
+
+                rescue NotTargettedAtUs => e
+                    @log.warn("Message is does not pass filters, ignoring")
+
                 rescue Exception => e
                     @log.warn("Failed to handle message: #{e} - #{e.class}\n")
                     @log.warn(e.backtrace.join("\n\t"))
@@ -150,7 +154,7 @@ module MCollective
 
             msg = @security.decodemsg(msg)
 
-            raise("Received message is not targetted to us")  unless @security.validate_filter?(msg[:filter])
+            raise(NotTargettedAtUs, "Received message is not targetted to us")  unless @security.validate_filter?(msg[:filter])
 
             msg
         end
