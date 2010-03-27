@@ -44,6 +44,32 @@ module MCollective
                 STDOUT.sync = true
             end
 
+            # Creates a suitable request hash for the SimpleRPC agent.
+            #
+            # You'd use this if you ever wanted to take care of sending 
+            # requests on your own - perhaps via Client#sendreq if you
+            # didn't care for responses.
+            #
+            # In that case you can just do:
+            #
+            #   msg = your_rpc.new_request("some_action", :foo => :bar)
+            #   filter = your_rpc.filter
+            #
+            #   your_rpc.client.sendreq(msg, msg[:agent], filter)
+            #
+            # This will send a SimpleRPC request to the action some_action
+            # with arguments :foo = :bar, it will return immediately and 
+            # you will have no indication at all if the request was receieved or not
+            #
+            # Clearly the use of this technique should be limited and done only
+            # if your code requires such a thing
+            def new_request(action, data)
+                {:agent  => @agent,
+                 :action => action,
+                 :caller => "uid=#{Process.uid}",
+                 :data   => data}
+            end
+            
             # Magic handler to invoke remote methods
             #
             # Once the stub is created using the constructor or the RPC#rpcclient helper you can 
@@ -87,10 +113,7 @@ module MCollective
             #
             #   rpc.progress = false
             def method_missing(method_name, *args)
-                req = {:agent  => @agent,
-                       :action => method_name.to_s,
-                       :caller => "uid=#{Process.uid}",
-                       :data   => args[0]}
+                req = new_request(method_name.to_s, args[0])
 
                 twirl = ['|', '/', '-', "\\", '|', '/', '-', "\\"]
                 twirldex = 0
