@@ -69,7 +69,7 @@ module MCollective
                     exit!
 
                 rescue NotTargettedAtUs => e
-                    @log.warn("Message is does not pass filters, ignoring")
+                    @log.info("Message is does not pass filters, ignoring")
 
                 rescue Exception => e
                     @log.warn("Failed to handle message: #{e} - #{e.class}\n")
