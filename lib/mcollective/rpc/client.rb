@@ -190,21 +190,25 @@ module MCollective
             # Sets the class filter
             def class_filter(klass)
                 @filter["cf_class"] << klass
+                reset
             end
 
             # Sets the fact filter
             def fact_filter(fact, value)
                 @filter["fact"] << {:fact => fact, :value => value}
+                reset
             end
 
             # Sets the agent filter
             def agent_filter(agent)
                 @filter["agent"] << agent
+                reset
             end
 
             # Sets the identity filter
             def identity_filter(identity)
                 @filter["identity"] << identity
+                reset
             end
 
             # Resets various internal parts of the class, most importantly it clears
