@@ -72,6 +72,8 @@ module MCollective
                 end
 
                 begin
+                    authorization_hook(msg) if respond_to?("authorization_hook")
+
                     before_processing_hook(msg, connection)
 
                     if respond_to?("#{@request.action}_action")
@@ -202,6 +204,19 @@ module MCollective
         
                         @@actions[action][:input][argument][:list] = properties[:list]
                 end
+            end
+
+            # Helper that creates a method on the class that will call your authorization
+            # plugin.  If your plugin raises an exception that will abort the request
+            def self.authorized_by(plugin)
+                pluginname = "MCollective::Util::#{plugin.to_s.capitalize}"
+                PluginManager.loadclass(pluginname)
+
+                class_eval("
+                    def authorization_hook(msg)
+                        #{pluginname}.authorize(msg)
+                    end
+                ")
             end
 
             # Validates a data member, if validation is a regex then it will try to match it
