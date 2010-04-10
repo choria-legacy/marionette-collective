@@ -72,7 +72,7 @@ module MCollective
                 end
 
                 begin
-                    authorization_hook(msg, msg[:body], msg[:body][:caller]) if respond_to?("authorization_hook")
+                    authorization_hook(@request) if respond_to?("authorization_hook")
 
                     before_processing_hook(msg, connection)
 
@@ -209,12 +209,17 @@ module MCollective
             # Helper that creates a method on the class that will call your authorization
             # plugin.  If your plugin raises an exception that will abort the request
             def self.authorized_by(plugin)
-                pluginname = "MCollective::Util::#{plugin.to_s.capitalize}"
+                plugin = plugin.to_s.capitalize
+
+                # turns foo_bar into FooBar
+                plugin = plugin.to_s.split("_").map {|v| v.capitalize}.join
+
+                pluginname = "MCollective::Util::#{plugin}"
                 PluginManager.loadclass(pluginname)
 
                 class_eval("
-                    def authorization_hook(msg, body, caller)
-                        #{pluginname}.authorize(msg, body, caller)
+                    def authorization_hook(request)
+                        #{pluginname}.authorize(request)
                     end
                 ")
             end
