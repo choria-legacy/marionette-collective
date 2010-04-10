@@ -72,7 +72,7 @@ module MCollective
                 end
 
                 begin
-                    authorization_hook(msg) if respond_to?("authorization_hook")
+                    authorization_hook(msg, msg[:body], msg[:body][:caller]) if respond_to?("authorization_hook")
 
                     before_processing_hook(msg, connection)
 
@@ -213,8 +213,8 @@ module MCollective
                 PluginManager.loadclass(pluginname)
 
                 class_eval("
-                    def authorization_hook(msg)
-                        #{pluginname}.authorize(msg)
+                    def authorization_hook(msg, body, caller)
+                        #{pluginname}.authorize(msg, body, caller)
                     end
                 ")
             end
