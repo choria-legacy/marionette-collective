@@ -62,17 +62,16 @@ module MCollective
                 @request = RPC.request(msg)
                 @reply = RPC.reply
 
-                # Audits the request, currently continues processing the message
-                # we should make this a configurable so that an audit failure means
-                # a message wont be processed by this node depending on config
                 begin
-                    audit_request(@request, connection)
-                rescue Exception => e
-                    @logger.warn("Audit failed - #{e} - continuing to process message")
-                end
-
-                begin
+                    # Calls the authorization plugin if any is defined
+                    # if this raises an exception we wil just skip processing this 
+                    # message
                     authorization_hook(@request) if respond_to?("authorization_hook")
+
+                    # Audits the request, currently continues processing the message
+                    # we should make this a configurable so that an audit failure means
+                    # a message wont be processed by this node depending on config
+                    audit_request(@request, connection)
 
                     before_processing_hook(msg, connection)
 
@@ -319,6 +318,8 @@ module MCollective
             # do not care for the auditing in a specific agent.
             def audit_request(msg, connection)
                 PluginManager["rpcaudit_plugin"].audit_request(msg, connection) if @config.rpcaudit
+            rescue Exception => e
+                @logger.warn("Audit failed - #{e} - continuing to process message")
             end
         end
     end
