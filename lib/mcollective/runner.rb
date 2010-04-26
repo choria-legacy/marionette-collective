@@ -23,6 +23,11 @@ module MCollective
             @connection.connect
 
             @agents = Agents.new 
+
+            Signal.trap("USR1") do
+                @log.info("Reloading all agents after receiving USR1 signal")
+                @agents.loadagents
+            end
         end
 
         # Daemonize the current process
