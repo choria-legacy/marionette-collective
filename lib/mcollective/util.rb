@@ -84,7 +84,15 @@ module MCollective
 
         # Checks if the passed in filter is an empty one
         def self.empty_filter?(filter)
-            filter == {"identity"=>[], "cf_class"=>[], "fact"=>[], "agent"=>[]} || filter == {}
+            filter == empty_filter || filter == {}
+        end
+
+        # Creates an empty filter 
+        def self.empty_filter
+            {"fact" => [],
+             "cf_class" => [],
+             "agent" => [],
+             "identity" => []}
         end
 
         # Constructs the full target name based on topicprefix and topicsep config options

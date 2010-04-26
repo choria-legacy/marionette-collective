@@ -240,6 +240,12 @@ module MCollective
                 @discovered_agents = nil
             end
 
+            # Reet the filter to an empty one
+            def reset_filter
+                @filter = Util.empty_filter
+                reset
+            end
+
             # Does discovery based on the filters set, i a discovery was
             # previously done return that else do a new discovery.
             #

@@ -22,10 +22,7 @@ module MCollective
             @options = {:disctimeout => dtimeout.to_i,
                         :timeout     => timeout.to_i,
                         :verbose     => false,
-                        :filter      => {"fact" => [],
-                                         "cf_class" => [],
-                                         "agent" => [],
-                                         "identity" => []},
+                        :filter      => Util.empty_filter,
                         :config      => "/etc/mcollective/client.cfg"}
 
             @options.merge!(defaults)
