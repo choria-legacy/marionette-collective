@@ -243,6 +243,8 @@ module MCollective
             # Reet the filter to an empty one
             def reset_filter
                 @filter = Util.empty_filter
+                @filter["agent"] << @agent
+
                 reset
             end
 
