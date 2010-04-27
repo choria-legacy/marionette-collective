@@ -59,7 +59,7 @@ opts = GetoptLong.new(
 @user = ENV["STOMP_USER"];
 @password = ENV["STOMP_PASSWORD"]
 @server = ENV["STOMP_SERVER"]
-@port = 6163
+@port = ENV["STOMP_PORT"] || 6163
 
 opts.each { |opt, arg|
   case opt
