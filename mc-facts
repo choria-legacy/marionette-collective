@@ -6,7 +6,7 @@ oparser = MCollective::Optionparser.new
 
 options = oparser.parse{|parser, options|
     parser.define_head "Report on usage for a specific fact"
-    parser.banner = "Usage: sh-facts [options] fact"
+    parser.banner = "Usage: mc-facts [options] fact"
 }
 
 if ARGV.length > 0

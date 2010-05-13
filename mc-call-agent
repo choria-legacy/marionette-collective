@@ -7,7 +7,7 @@ oparser = MCollective::Optionparser.new({:verbose => true}, "filter")
 
 options = oparser.parse{|parser, options|
     parser.define_head "Call an agent parsing an argument to it"
-    parser.banner = "Usage: sh-call-agent [options] --agent agent --argument arg"
+    parser.banner = "Usage: mc-call-agent [options] --agent agent --argument arg"
 
     parser.on('-a', '--agent AGENT', 'Agent to call') do |v|
         options[:agent] = v
