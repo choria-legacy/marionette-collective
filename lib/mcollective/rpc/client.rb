@@ -112,8 +112,32 @@ module MCollective
             # how many nodes were discovered, you can disable this by setting progress to false:
             #
             #   rpc.progress = false
+            #
+            # This supports a 2nd mode where it will send the SimpleRPC request and never handle the 
+            # responses.  It's a bit like UDP, it sends the request with the filter attached and you
+            # only get back the requestid, you have no indication about results.
+            #
+            # You can invoke this using:
+            #
+            #   puts rpc.echo(:process_results => false)
+            #
+            # This will output just the request id.
             def method_missing(method_name, *args)
                 req = new_request(method_name.to_s, args[0])
+
+                # for requests that do not care for results just 
+                # return the request id and don't do any of the
+                # response processing.
+                #
+                # We send the :process_results flag with to the 
+                # nodes so they can make decisions based on that.
+                if args[0].include?(:process_results)
+                    if req[:data][:process_results] == false
+                        return @client.sendreq(req, @agent, @filter) 
+                    end
+                else
+                    args[0][:process_results] = true
+                end
 
                 twirl = ['|', '/', '-', "\\", '|', '/', '-', "\\"]
                 twirldex = 0
