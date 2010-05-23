@@ -20,6 +20,9 @@ BuildArch: noarch
 %package common
 Summary: Common libraries for the mcollective clients and servers
 Group: System Tools
+Requires: ruby
+Requires: rubygems
+Requires: rubygem-stomp
 
 %description common
 The Marionette Collective:
@@ -29,6 +32,9 @@ Common libraries for the mcollective clients and servers
 %package client
 Summary: Client tools for the mcollective Application Server
 Requires: mcollective-common = %{version}-%{release}
+Requires: ruby
+Requires: rubygems
+Requires: rubygem-stomp
 Group: System Tools
 
 %description client
