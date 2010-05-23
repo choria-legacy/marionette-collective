@@ -18,6 +18,10 @@ begin
     
         options[:arguments] = {}
     
+        parser.on('--no-results', '--nr') do |v|
+            options[:process_results] = false
+        end
+
         parser.on('-a', '--agent AGENT', 'Agent to call') do |v|
             options[:agent] = v
         end
@@ -57,14 +61,23 @@ begin
         end
     end
 
+    # handle fire and forget mode
+    options[:process_results] = true unless options.include?(:process_results)
+    options[:arguments][:process_results] = options[:process_results]
+
     mc = rpcclient(options[:agent], {:options => options})
 
     mc.agent_filter(options[:agent])
-    mc.discover :verbose => true
 
-    printrpc mc.send(options[:action], options[:arguments])
+    if options[:process_results]
+        mc.discover :verbose => true
 
-    printrpcstats :caption => "#{options[:agent]}##{options[:action]} call stats"
+        printrpc mc.send(options[:action], options[:arguments])
+
+        printrpcstats :caption => "#{options[:agent]}##{options[:action]} call stats"
+    else
+        puts "Request sent with id: " + mc.send(options[:action], options[:arguments])
+    end
 rescue Exception => e
     STDERR.puts("Could not call agent: #{e}")
 end
