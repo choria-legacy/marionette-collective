@@ -123,6 +123,9 @@ module MCollective
             #
             # This will output just the request id.
             def method_missing(method_name, *args)
+                # set some defaults
+                args[0] = {:process_results => true} if args.size == 0
+
                 req = new_request(method_name.to_s, args[0])
 
                 # for requests that do not care for results just 
@@ -135,8 +138,6 @@ module MCollective
                     if req[:data][:process_results] == false
                         return @client.sendreq(req, @agent, @filter) 
                     end
-                else
-                    args[0][:process_results] = true
                 end
 
                 twirl = ['|', '/', '-', "\\", '|', '/', '-', "\\"]
