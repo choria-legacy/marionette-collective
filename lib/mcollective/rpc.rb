@@ -14,12 +14,17 @@ module MCollective
         # Creates a standard options hash, pass in a block to add extra headings etc
         # see Optionparser
         def rpcoptions
-            oparser = MCollective::Optionparser.new({:verbose => false}, "filter")
+            oparser = MCollective::Optionparser.new({:verbose => false, :progress_bar => true}, "filter")
                     
             options = oparser.parse do |parser, options|
                 if block_given?
                     yield(parser, options) 
                 end 
+
+                # add SimpleRPC specific options to all clients that use our library
+                parser.on('--np', '--no-progress', 'Do not show the progress bar') do |v|
+                    options[:progress_bar] = false
+                end
             end
 
             return options
