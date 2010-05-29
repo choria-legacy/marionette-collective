@@ -114,26 +114,26 @@ module MCollective
                     return false
                 end
             end
-        end
 
-        # Security providers should provide this, see MCollective::Security::Psk
-        def validrequest?(req)
-            @log.error("validrequest? is not implimented in #{this.class}")
-        end
-
-        # Security providers should provide this, see MCollective::Security::Psk
-        def encoderequest(sender, target, msg, filter={})
-            @log.error("encoderequest is not implimented in #{this.class}")
-        end
-
-        # Security providers should provide this, see MCollective::Security::Psk
-        def encodereply(sender, target, msg, filter={})
-            @log.error("encodereply is not implimented in #{this.class}")
-        end
-
-        # Security providers should provide this, see MCollective::Security::Psk
-        def decodemsg(msg)
-            @log.error("decodemsg is not implimented in #{this.class}")
+            # Security providers should provide this, see MCollective::Security::Psk
+            def validrequest?(req)
+                @log.error("validrequest? is not implimented in #{this.class}")
+            end
+    
+            # Security providers should provide this, see MCollective::Security::Psk
+            def encoderequest(sender, target, msg, filter={})
+                @log.error("encoderequest is not implimented in #{this.class}")
+            end
+    
+            # Security providers should provide this, see MCollective::Security::Psk
+            def encodereply(sender, target, msg, filter={})
+                @log.error("encodereply is not implimented in #{this.class}")
+            end
+    
+            # Security providers should provide this, see MCollective::Security::Psk
+            def decodemsg(msg)
+                @log.error("decodemsg is not implimented in #{this.class}")
+            end
         end
     end
 end
