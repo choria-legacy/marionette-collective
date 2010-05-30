@@ -109,9 +109,6 @@ module MCollective
             verbose = @options[:verbose] rescue verbose = false
             caption = flags[:caption] || "rpc stats"
 
-            STDOUT.sync = true
-            STDERR.sync = true
-
             begin
                 stats = @@stats
             rescue
@@ -120,43 +117,25 @@ module MCollective
             end
 
             puts
-
-            if verbose
-                puts("---- #{caption} ----")
-
-                if stats[:discovered]
-                    puts("           Nodes: #{stats[:discovered]} / #{stats[:responses]}")
-                else
-                    puts("           Nodes: #{stats[:responses]}")
-                end
-
-                printf("     Pass / Fail: %d / %d\n", stats[:okcount], stats[:failcount])
-                printf("      Start Time: %s\n", Time.at(stats[:starttime]))
-                printf("  Discovery Time: %.2fms\n", stats[:discoverytime] * 1000)
-                printf("      Agent Time: %.2fms\n", stats[:blocktime] * 1000)
-                printf("      Total Time: %.2fms\n", stats[:totaltime] * 1000)
-    
-            else
-                if stats[:discovered]
-                    printf("Finished processing %d / %d hosts in %.2f ms\n\n", stats[:responses], stats[:discovered], stats[:blocktime] * 1000)
-                else
-                    printf("Finished processing %d hosts in %.2f ms\n\n", stats[:responses], stats[:blocktime] * 1000)
-                end
-            end
-
-            if stats[:noresponsefrom].size > 0
-                puts("\nNo response from:\n")
-    
-                stats[:noresponsefrom].each_with_index do |c,i|
-                    puts if i % 4 == 0
-                    printf("%30s", c)
-                end
-
-                puts
-            end
+            puts stats.report(caption, verbose)
         end
 
         # Prints the result of an RPC call.
+        #
+        # In the default quiet mode - no flattening or verbose - only results
+        # that produce an error will be printed
+        #
+        # To get details of each result run with the -v command line option.
+        def printrpc(result, flags = {})
+            verbose = @options[:verbose] rescue verbose = false
+            verbose = flags[:verbose] || verbose
+            flatten = flags[:flatten] || false
+
+            puts
+            puts rpcresults(result, {:verbose => verbose, :flatten => flatten})
+        end
+
+        # Returns a blob of text representing the results in a standard way
         #
         # It tries hard to do sane things so you often
         # should not need to write your own display functions
@@ -168,45 +147,35 @@ module MCollective
         # If you've asked it to flatten the result it will not print sender 
         # hostnames, it will just print the result as if it's one huge result, 
         # handy for things like showing a combined mailq.
-        #
-        # In the default quiet mode - no flattening or verbose - only results
-        # that produce an error will be printed
-        #
-        # To get details of each result run with the -v command line option.
-        def printrpc(result, flags = {})
-            verbose = @options[:verbose] rescue verbose = false
+        def rpcresults(result, flags = {})
+            flags = {:verbose => false, :flatten => false}.merge(flags)
 
-            verbose = flags[:verbose] || verbose
-            flatten = flags[:flatten] || false
+            result_text = ""
 
-            if flatten
-                result.each_with_index do |r, count|
-                    puts if count == 0
-
+            if flags[:flatten]
+                result.each do |r|
                     if r[:statuscode] <= 1
                         data = r[:data]
 
                         unless data.is_a?(String)
-                            pp data
+                            result_text << data.pretty_inspect
                         else
-                            puts data
+                            result_text << data
                         end
                     else
-                        pp r
+                        result_text << r.pretty_inspect
                     end
                 end
                 
-                puts
+                result_text << ""
             else
-                result.each_with_index do |r, count|
-                    puts if count == 0
-
-                    if verbose
-                        printf("%-40s: %s\n", r[:sender], r[:statusmsg])
+                result.each do |r|
+                    if flags[:verbose]
+                        result_text << "%-40s: %s\n" % [r[:sender], r[:statusmsg]]
 
                         if r[:statuscode] <= 1
-                            r[:data].pretty_inspect.split("\n").each {|m| puts("    #{m}")}
-                            puts "\n"
+                            r[:data].pretty_inspect.split("\n").each {|m| result_text += "    #{m}"}
+                            result_text += "\n"
                         elsif r[:statuscode] == 2
                             # dont print anything, no useful data to display
                             # past what was already shown
@@ -217,19 +186,17 @@ module MCollective
                             # dont print anything, no useful data to display
                             # past what was already shown
                         else
-                            puts("    #{r[:statusmsg]}")
-                            puts "\n"
+                            result_text << "    #{r[:statusmsg]}"
                         end
                     else
                         unless r[:statuscode] == 0
-                            printf("%-40s %s\n", r[:sender], r[:statusmsg])
+                            result_text << "%-40s %s\n" % [r[:sender], r[:statusmsg]]
                         end
                     end
-
-                    STDOUT.flush
                 end
             end
-            puts
+
+            result_text << ""
         end
 
         # Wrapper for MCollective::Util.empty_filter? to make clients less fugly

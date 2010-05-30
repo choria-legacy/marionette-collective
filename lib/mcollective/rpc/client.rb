@@ -4,7 +4,7 @@ module MCollective
         # and just brings in a lot of convention and standard approached.
         class Client
             attr_accessor :discovery_timeout, :timeout, :verbose, :filter, :config, :progress
-            attr_reader :client
+            attr_reader :client, :stats
 
             # Creates a stub for a remote agent, you can pass in an options array in the flags
             # which will then be used else it will just create a default options array with
@@ -124,7 +124,7 @@ module MCollective
             #
             # This will output just the request id.
             def method_missing(method_name, *args, &block)
-                @stats = Stats.new
+                @stats.reset
 
                 # Normal agent requests as per client.action(args)
                 if block_given?
@@ -161,7 +161,7 @@ module MCollective
             # This will do runonce action on just 'your.box.com', no discovery will be 
             # done and after receiving just one response it will stop waiting for responses
             def custom_request(action, args, expected_agents, filter = {}, &block)
-                @stats = Stats.new
+                @stats.reset
 
                 custom_filter = Util.empty_filter
                 custom_options = options.clone
@@ -250,9 +250,9 @@ module MCollective
 
                     @stats.time_discovery :end
 
-                    @stats.discovered_agents(@discovered_agents)
                 end
 
+                @stats.discovered_agents(@discovered_agents)
                 RPC.discovered(@discovered_agents)
 
                 @discovered_agents
@@ -268,11 +268,6 @@ module MCollective
                  :config => @config}
             end
             
-            # Returns the stats object in a way that is backward compatible
-            def stats
-                @stats.to_hash
-            end
-
             private
             # for requests that do not care for results just 
             # return the request id and don't do any of the
@@ -333,7 +328,7 @@ module MCollective
 
                 @stats.finish_request
 
-                RPC.stats(stats)
+                RPC.stats(@stats)
 
                 print("\n\n") if @progress
 
