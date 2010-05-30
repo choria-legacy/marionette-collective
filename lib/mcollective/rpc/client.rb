@@ -4,7 +4,7 @@ module MCollective
         # and just brings in a lot of convention and standard approached.
         class Client
             attr_accessor :discovery_timeout, :timeout, :verbose, :filter, :config, :progress
-            attr_reader :stats, :client
+            attr_reader :client
 
             # Creates a stub for a remote agent, you can pass in an options array in the flags
             # which will then be used else it will just create a default options array with
@@ -27,6 +27,7 @@ module MCollective
                     end
                 end
 
+                @stats = Stats.new
                 @agent = agent
                 @discovery_timeout = options[:disctimeout]
                 @timeout = options[:timeout]
@@ -122,116 +123,73 @@ module MCollective
             #   puts rpc.echo(:process_results => false)
             #
             # This will output just the request id.
-            def method_missing(method_name, *args)
-                # set some defaults
-                args[0] = {:process_results => true} if args.size == 0
+            def method_missing(method_name, *args, &block)
+                @stats = Stats.new
 
-                req = new_request(method_name.to_s, args[0])
-
-                # for requests that do not care for results just 
-                # return the request id and don't do any of the
-                # response processing.
-                #
-                # We send the :process_results flag with to the 
-                # nodes so they can make decisions based on that.
-                if args[0].include?(:process_results)
-                    if req[:data][:process_results] == false
-                        return @client.sendreq(req, @agent, @filter) 
-                    end
-                end
-
-                twirl = ['|', '/', '-', "\\", '|', '/', '-', "\\"]
-                twirldex = 0
-
-                result = []
-                respcount = 0
-                respfrom = []
-                okcount = 0
-                failcount = 0
-
-                @stats = {:starttime => Time.now.to_f, :discoverytime => 0, :blocktime => 0, :totaltime => 0}
-
-                if discover.size > 0
-                    @client.req(req, @agent, options, discover.size) do |resp|
-                        respcount += 1
-                        respfrom << resp[:senderid]
-    
-                        if block_given?
-                            if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
-                                yield(resp)
-                            else
-                                case resp[:body][:statuscode]
-                                    when 2
-                                        raise UnknownRPCAction, resp[:body][:statusmsg]
-                                    when 3
-                                        raise MissingRPCData, resp[:body][:statusmsg]
-                                    when 4
-                                        raise InvalidRPCData, resp[:body][:statusmsg]
-                                    when 5
-                                        raise UnknownRPCError, resp[:body][:statusmsg]
-                                end
-                            end
-                        else
-                            if @progress
-                                puts if respcount == 1
-    
-                                dashes = ((respcount.to_f / discover.size) * 60).round
-    
-                                if respcount == discover.size
-                                    STDERR.print("\r * [ ")
-                                else
-                                    STDERR.print("\r #{twirl[twirldex]} [ ")
-                                end
-    
-                                dashes.times { STDERR.print("=") }
-                                STDERR.print(">")
-                                (60 - dashes).times { STDERR.print(" ") }
-                                STDERR.print(" ] #{respcount} / #{discover.size}")
-    
-                                twirldex == 7 ? twirldex = 0 : twirldex += 1
-                            end
-    
-                            if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
-                                okcount += 1 if resp[:body][:statuscode] == 0
-                                failcount += 1 if resp[:body][:statuscode] == 1
-    
-                                result << {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode], 
-                                           :statusmsg => resp[:body][:statusmsg], :data => resp[:body][:data]}
-                            else
-                                failcount += 1
-    
-                                result << {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode], 
-                                           :statusmsg => resp[:body][:statusmsg], :data => nil}
-                            end
-                        end
-                    end
-    
-                    @stats = @client.stats
-                else
-                    print("\nNo request sent, we did not discovered any nodes.")
-                end
-
-                # Fiddle the stats to be relevant to how we use the client
-                @stats[:discoverytime] = @discovery_time
-                @stats[:discovered] = @discovered_agents.size
-                @stats[:discovered_nodes] = @discovered_agents
-                @stats[:okcount] = okcount
-                @stats[:failcount] = failcount
-                @stats[:totaltime] = @stats[:blocktime] + @stats[:discoverytime]
-
-                # Figure out the list of hosts we have not had responses from
-                dhosts = @discovered_agents.clone
-                respfrom.each {|r| dhosts.delete(r)}
-                @stats[:noresponsefrom] = dhosts
-
-                RPC.stats stats
-
-                print("\n\n") if @progress
-
+                # Normal agent requests as per client.action(args)
                 if block_given?
-                    return @stats
+                    call_agent(method_name, args, options, discover) do |r|
+                        block.call(r)
+                    end
                 else
-                    return [result].flatten
+                    call_agent(method_name, args, options, discover) 
+                end
+            end
+
+            # Constructs custom requests with custom filters and discovery data
+            # the idea is that this would be used in web applications where you
+            # might be using a cached copy of data provided by a registration agent
+            # to figure out on your own what nodes will be responding and what your
+            # filter would be.
+            #
+            # This will help you essentially short circuit the traditional cycle of:
+            #
+            # mc discover / call / wait for discovered nodes
+            #
+            # by doing discovery however you like, contructing a filter and a list of
+            # nodes you expect responses from.
+            #
+            # Other than that it will work exactly like a normal call, blocks will behave
+            # the same way, stats will be handled the same way etcetc
+            #
+            # If you just wanted to contact one machine for example with a client that
+            # already has other filter options setup you can do:
+            #
+            # puppet.custom_request("runonce", {}, {:identity => "your.box.com"},
+            #                       ["your.box.com"])
+            #
+            # This will do runonce action on just 'your.box.com', no discovery will be 
+            # done and after receiving just one response it will stop waiting for responses
+            def custom_request(action, args, expected_agents, filter = {}, &block)
+                @stats = Stats.new
+
+                custom_filter = Util.empty_filter
+                custom_options = options.clone
+
+                # merge the supplied filter with the standard empty one
+                # we could just use the merge method but I want to be sure
+                # we dont merge in stuff that isnt actually valid
+                ["identity", "fact", "agent", "cf_class"].each do |ftype|
+                    if filter.include?(ftype)
+                        custom_filter[ftype] = [filter[ftype], custom_filter[ftype]].flatten
+                    end
+                end
+
+                # ensure that all filters at least restrict the call to the agent we're a proxy for
+                custom_filter["agent"] << @agent unless custom_filter["agent"].include?(@agent)
+                custom_options[:filter] = custom_filter
+
+                # Fake out the stats discovery would have put there
+                @stats.discovered_agents([expected_agents].flatten)
+
+                # Now do a call pretty much exactly like in method_missing except with our own
+                # options and discovery magic
+                if block_given?
+                    call_agent(action, [args], custom_options, [expected_agents].flatten) do |r|
+                        block.call(r)
+                    end
+                else
+                    call_agent(action, [args], custom_options, [expected_agents].flatten) 
                 end
             end
 
@@ -283,17 +241,19 @@ module MCollective
             def discover(flags={})
                 flags.include?(:verbose) ? verbose = flags[:verbose] : verbose = @verbose
 
-                starttime = Time.now.to_f
-
                 if @discovered_agents == nil
+                    @stats.time_discovery :start
+
                     STDERR.print("Determining the amount of hosts matching filter for #{discovery_timeout} seconds .... ") if verbose
                     @discovered_agents = @client.discover(@filter, @discovery_timeout)
                     STDERR.puts(@discovered_agents.size) if verbose
 
-                    @discovery_time = Time.now.to_f - starttime
+                    @stats.time_discovery :end
+
+                    @stats.discovered_agents(@discovered_agents)
                 end
 
-                RPC.discovered  @discovered_agents
+                RPC.discovered(@discovered_agents)
 
                 @discovered_agents
             end
@@ -307,6 +267,128 @@ module MCollective
                  :filter => @filter,
                  :config => @config}
             end
+            
+            # Returns the stats object in a way that is backward compatible
+            def stats
+                @stats.to_hash
+            end
+
+            private
+            # for requests that do not care for results just 
+            # return the request id and don't do any of the
+            # response processing.
+            #
+            # We send the :process_results flag with to the 
+            # nodes so they can make decisions based on that.
+            #
+            # Should only be called via method_missing
+            def fire_and_forget_request(action, args)
+                req = new_request(action.to_s, args[0])
+                return @client.sendreq(req, @agent, @filter) 
+            end
+
+            # Handles traditional calls to the remote agents with full stats
+            # blocks, non blocks and everything else supported.
+            #
+            # Other methods of calling the nodes can reuse this code by 
+            # for example specifying custom options and discovery data
+            def call_agent(action, args, opts, disc, &block)
+                # Handle fire and forget requests and make sure
+                # the :process_results value is set appropriately
+                if args[0].include?(:process_results)
+                    if args[0][:process_results] == false
+                        return fire_and_forget_request(action, args)
+                    end
+                else
+                    args[0][:process_results] = true
+                end
+
+                req = new_request(action.to_s, args[0])
+
+                twirl = Progress.new(60)
+
+                result = []
+                respcount = 0
+
+                if disc.size > 0
+                    @client.req(req, @agent, opts, disc.size) do |resp|
+                        respcount += 1
+    
+                        if block_given?
+                            process_results_with_block(resp, block)
+                        else
+                            if @progress
+                                puts if respcount == 1
+                                print twirl.twirl(respcount, disc.size)
+                            end
+    
+                            result << process_results_without_block(resp)
+                        end
+                    end
+    
+                    @stats.client_stats = @client.stats
+                else
+                    print("\nNo request sent, we did not discovered any nodes.")
+                end
+
+                @stats.finish_request
+
+                RPC.stats(stats)
+
+                print("\n\n") if @progress
+
+                if block_given?
+                    return stats
+                else
+                    return [result].flatten
+                end
+            end
+
+            # Handles result sets that has no block associated, sets fails and ok
+            # in the stats object and return a hash of the response to send to the 
+            # caller
+            def process_results_without_block(resp)
+                @stats.node_responded(resp[:senderid])
+
+                if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
+                    @stats.ok if resp[:body][:statuscode] == 0
+                    @stats.fail if resp[:body][:statuscode] == 1
+    
+                    return {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode], 
+                            :statusmsg => resp[:body][:statusmsg], :data => resp[:body][:data]}
+                else
+                    @stats.fail
+    
+                    return {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode], 
+                            :statusmsg => resp[:body][:statusmsg], :data => nil}
+                end
+            end
+
+            # process client requests by calling a block on each result
+            # in this mode we do not do anything fancy with the result 
+            # objects and we raise exceptions if there are problems with
+            # the data
+            def process_results_with_block(resp, block)
+                @stats.node_responded(resp[:senderid])
+
+                if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
+                    @stats.time_block_execution :start
+                    block.call(resp)
+                    @stats.time_block_execution :end
+                else
+                    case resp[:body][:statuscode]
+                        when 2
+                            raise UnknownRPCAction, resp[:body][:statusmsg]
+                        when 3
+                            raise MissingRPCData, resp[:body][:statusmsg]
+                        when 4
+                            raise InvalidRPCData, resp[:body][:statusmsg]
+                        when 5
+                            raise UnknownRPCError, resp[:body][:statusmsg]
+                    end
+                end
+            end
+
         end
     end
 end
