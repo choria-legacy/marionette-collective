@@ -128,11 +128,11 @@ module MCollective
 
                 # Normal agent requests as per client.action(args)
                 if block_given?
-                    call_agent(method_name, args, options, discover) do |r|
+                    call_agent(method_name, args, options) do |r|
                         block.call(r)
                     end
                 else
-                    call_agent(method_name, args, options, discover) 
+                    call_agent(method_name, args, options) 
                 end
             end
 
@@ -287,7 +287,7 @@ module MCollective
             #
             # Other methods of calling the nodes can reuse this code by 
             # for example specifying custom options and discovery data
-            def call_agent(action, args, opts, disc, &block)
+            def call_agent(action, args, opts, disc=:auto, &block)
                 # Handle fire and forget requests and make sure
                 # the :process_results value is set appropriately
                 if args[0].include?(:process_results)
@@ -297,6 +297,10 @@ module MCollective
                 else
                     args[0][:process_results] = true
                 end
+
+                # Do discovery when no specific discovery
+                # array is given
+                disc = discover if disc == :auto
 
                 req = new_request(action.to_s, args[0])
 

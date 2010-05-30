@@ -18,7 +18,7 @@ begin
     
         options[:arguments] = {}
     
-        parser.on('--no-results', '--nr') do |v|
+        parser.on('--no-results', '--nr', "Do not process results, just send request") do |v|
             options[:process_results] = false
         end
 
