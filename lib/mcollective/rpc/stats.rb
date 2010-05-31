@@ -44,17 +44,24 @@ module MCollective
         # Fake hash access to keep things backward compatible
         def [](key)
             to_hash[key]
+        rescue
+             nil
         end
 
         # increment the count of ok hosts
         def ok 
             @okcount += 1
+        rescue
+            @okcount = 1
         end
 
         # increment the count of failed hosts
         def fail
             @failcount += 1
+        rescue
+            @failcount = 1
         end
+
         # Re-initializes the object with stats from the basic client
         def client_stats=(stats)
             @noresponsefrom = stats[:noresponsefrom]
@@ -74,6 +81,8 @@ module MCollective
             else
                 raise("Uknown discovery action #{action}")
             end
+        rescue
+            @discoverytime = 0
         end
 
         # helper to time block execution time
@@ -85,6 +94,8 @@ module MCollective
             else
                 raise("Uknown block action #{action}")
             end
+        rescue
+            @blocktime = 0
         end
 
         # Update discovered and discovered_nodes based on 
@@ -102,11 +113,16 @@ module MCollective
             dhosts = @discovered_nodes.clone
             @responsesfrom.each {|r| dhosts.delete(r)}
             @noresponsefrom = dhosts
+        rescue
+            @totaltime = 0
+            @noresponsefrom = []
         end
 
         # Helper to keep track of who we received responses from
         def node_responded(node)
             @responsesfrom << node
+        rescue
+            @responsesfrom = [node]
         end
 
         # Returns a blob of text representing the request status based on the 
