@@ -60,7 +60,16 @@ module MCollective
             def inventory
                 reply = {:agents => Agents.agentlist,
                          :threads => [],
+                         :facts => {},
+                         :classes => [],
                          :times => Process.times}
+
+                reply[:facts] = PluginManager["facts_plugin"].get_facts
+
+                cfile = Config.instance.classesfile
+                if File.exist?(cfile)
+                    reply[:classes] = File.readlines(cfile).map {|i| i.chomp}
+                end
 
                 Thread.list.each do |t|
                     reply[:threads] << "#{t.inspect}"
