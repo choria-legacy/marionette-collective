@@ -221,7 +221,6 @@ module MCollective
         # Add SimpleRPC common options
         def add_simplerpc_options(parser, options)
             parser.separator ""
-            parser.separator "SimpleRPC Options"
 
             # add SimpleRPC specific options to all clients that use our library
             parser.on('--np', '--no-progress', 'Do not show the progress bar') do |v|

@@ -10,6 +10,7 @@ include MCollective::RPC
 
 begin
     options = rpcoptions do |parser, options|
+        parser.banner = ""
         parser.define_head "Generic Simple RPC client"
         parser.separator ""
         parser.separator "Usage: mc-rpc [options] [filters] --agent <agent> --action <action> [--argument <key=val> --argument ...]"
