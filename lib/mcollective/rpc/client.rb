@@ -126,6 +126,10 @@ module MCollective
             def method_missing(method_name, *args, &block)
                 @stats.reset
 
+                # set args to an empty hash if nothings given
+                args = args[0]
+                args = {} if args.nil?
+
                 # Normal agent requests as per client.action(args)
                 if block_given?
                     call_agent(method_name, args, options) do |r|
@@ -185,11 +189,11 @@ module MCollective
                 # Now do a call pretty much exactly like in method_missing except with our own
                 # options and discovery magic
                 if block_given?
-                    call_agent(action, [args], custom_options, [expected_agents].flatten) do |r|
+                    call_agent(action, args, custom_options, [expected_agents].flatten) do |r|
                         block.call(r)
                     end
                 else
-                    call_agent(action, [args], custom_options, [expected_agents].flatten) 
+                    call_agent(action, args, custom_options, [expected_agents].flatten) 
                 end
             end
 
@@ -278,7 +282,7 @@ module MCollective
             #
             # Should only be called via method_missing
             def fire_and_forget_request(action, args)
-                req = new_request(action.to_s, args[0])
+                req = new_request(action.to_s, args)
                 return @client.sendreq(req, @agent, @filter) 
             end
 
@@ -290,19 +294,19 @@ module MCollective
             def call_agent(action, args, opts, disc=:auto, &block)
                 # Handle fire and forget requests and make sure
                 # the :process_results value is set appropriately
-                if args[0].include?(:process_results)
-                    if args[0][:process_results] == false
+                if args.include?(:process_results)
+                    if args[:process_results] == false
                         return fire_and_forget_request(action, args)
                     end
                 else
-                    args[0][:process_results] = true
+                    args[:process_results] = true
                 end
 
                 # Do discovery when no specific discovery
                 # array is given
                 disc = discover if disc == :auto
 
-                req = new_request(action.to_s, args[0])
+                req = new_request(action.to_s, args)
 
                 twirl = Progress.new(60)
 
