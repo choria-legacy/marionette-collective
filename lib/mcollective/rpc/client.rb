@@ -36,7 +36,7 @@ module MCollective
                 @filter["agent"] << agent
                 @config = options[:config]
                 @discovered_agents = nil
-                @progress = options[:progress_bar]
+                @progress = options[:progress_bar] || true
 
                 @client = client = MCollective::Client.new(@config)
                 @client.options = options
