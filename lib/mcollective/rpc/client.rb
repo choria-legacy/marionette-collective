@@ -18,12 +18,14 @@ module MCollective
                 if flags.include?(:options)
                     options = flags[:options]
                 else
-                    oparser = MCollective::Optionparser.new({:verbose => false}, "filter")
+                    oparser = MCollective::Optionparser.new({:verbose => false, :progress_bar => true}, "filter")
                     
                     options = oparser.parse do |parser, options|
                         if block_given?
                             yield(parser, options) 
                         end 
+
+                        RPC.add_simplerpc_options(parser, options)
                     end
                 end
 
@@ -36,7 +38,7 @@ module MCollective
                 @filter["agent"] << agent
                 @config = options[:config]
                 @discovered_agents = nil
-                @progress = options[:progress_bar] || true
+                @progress = options[:progress_bar]
 
                 @client = client = MCollective::Client.new(@config)
                 @client.options = options

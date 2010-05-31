@@ -23,10 +23,7 @@ module MCollective
                     yield(parser, options) 
                 end 
 
-                # add SimpleRPC specific options to all clients that use our library
-                parser.on('--np', '--no-progress', 'Do not show the progress bar') do |v|
-                    options[:progress_bar] = false
-                end
+                add_simplerpc_options(parser, options)
             end
 
             return options
@@ -220,6 +217,18 @@ module MCollective
         def self.reply
             RPC::Reply.new
         end
+
+        # Add SimpleRPC common options
+        def add_simplerpc_options(parser, options)
+            parser.separator ""
+            parser.separator "SimpleRPC Options"
+
+            # add SimpleRPC specific options to all clients that use our library
+            parser.on('--np', '--no-progress', 'Do not show the progress bar') do |v|
+                options[:progress_bar] = false
+            end
+        end
+
     end
 end
 # vi:tabstop=4:expandtab:ai
