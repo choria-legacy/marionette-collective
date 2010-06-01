@@ -10,7 +10,9 @@ module MCollective
             @log = Log.instance
 
             @connection = PluginManager["connector_plugin"]
+
             @security = PluginManager["security_plugin"]
+            @security.initiated_by = :node
 
             @stats = {:starttime => Time.now.to_i,
                       :validated => 0, 

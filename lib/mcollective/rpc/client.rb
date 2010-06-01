@@ -67,9 +67,11 @@ module MCollective
             # Clearly the use of this technique should be limited and done only
             # if your code requires such a thing
             def new_request(action, data)
+                callerid = PluginManager["security_plugin"].callerid
+
                 {:agent  => @agent,
                  :action => action,
-                 :caller => "uid=#{Process.uid}",
+                 :caller => callerid,
                  :data   => data}
             end
             

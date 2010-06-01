@@ -12,12 +12,21 @@ module MCollective
         # encoderequest  - Encodes a new request message
         # validrequest?  - Validates a request received from the middleware
         # 
+        # Optionally if you are identifying users by some other means like certificate name
+        # you can provide your own callerid method that can provide the rest of the system 
+        # with an id, and you would see this id being usable in SimpleRPC authorization methods
+        #
+        # The @initiated_by variable will be set to either :client or :node depending on
+        # who is using this plugin.  This is to help security providers that operate in an
+        # asymetric mode like public/private key based systems.
+        #
         # Specifics of each of these are a bit fluid and the interfaces for this is not
         # set in stone yet, specifically the encode methods will be provided with a helper
         # that takes care of encoding the core requirements.  The best place to see how security
         # works is by looking at the provided MCollective::Security::PSK plugin.
         class Base
             attr_reader :stats
+            attr_accessor :initiated_by
     
             # Register plugins that inherits base
             def self.inherited(klass)
@@ -29,7 +38,7 @@ module MCollective
             def initialize
                 @config = Config.instance
                 @log = Log.instance
-    
+
                 @stats = {:passed => 0,
                           :filtered => 0,
                           :validated => 0,
@@ -115,6 +124,12 @@ module MCollective
                 end
             end
 
+            # Returns a unique id for the caller, by default we just use the unix 
+            # user id, security plugins can provide their own means of doing ids.
+            def callerid
+                "uid=#{Process.uid}"
+            end
+    
             # Security providers should provide this, see MCollective::Security::Psk
             def validrequest?(req)
                 @log.error("validrequest? is not implimented in #{this.class}")

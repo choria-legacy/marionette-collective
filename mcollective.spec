@@ -59,6 +59,8 @@ rm -rf %{buildroot}
 %{__install} -d -m0755  %{buildroot}/etc/init.d
 %{__install} -d -m0755  %{buildroot}/usr/libexec/mcollective/
 %{__install} -d -m0755  %{buildroot}/etc/mcollective
+%{__install} -d -m0755  %{buildroot}/etc/mcollective/ssl
+%{__install} -d -m0755  %{buildroot}/etc/mcollective/ssl/clients
 %{__install} -m0755 mcollectived.rb %{buildroot}/usr/sbin/mcollectived
 %{__install} -m0440 etc/server.cfg.dist %{buildroot}/etc/mcollective/server.cfg
 %{__install} -m0444 etc/client.cfg.dist %{buildroot}/etc/mcollective/client.cfg
@@ -93,6 +95,7 @@ fi
 %{ruby_sitelib}/mcollective
 /usr/libexec/mcollective
 %dir /etc/mcollective
+%dir /etc/mcollective/ssl
 
 %files client
 %attr(0755, root, root)/usr/sbin/mc-*
@@ -105,6 +108,7 @@ fi
 /etc/init.d/mcollective
 %config(noreplace)/etc/mcollective/server.cfg
 %config(noreplace)/etc/mcollective/facts.yaml
+%dir /etc/mcollective/ssl/clients
 
 %changelog
 * Tue Nov 03 2009 R.I.Pienaar <rip@devco.net> 

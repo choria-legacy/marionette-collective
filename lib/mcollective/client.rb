@@ -10,7 +10,9 @@ module MCollective
             @config.loadconfig(configfile)
             @log = Log.instance
             @connection = PluginManager["connector_plugin"]
+
             @security = PluginManager["security_plugin"]
+            @security.initiated_by = :client
 
             @options = nil
 
