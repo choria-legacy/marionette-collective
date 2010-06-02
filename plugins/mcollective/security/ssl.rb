@@ -41,6 +41,13 @@ module MCollective
         #
         #   /etc/mcollective/ssl/clients/john-public.pem
         #
+        # If you wish to use registration or auditing that sends connections over MC to a 
+        # central host you will need also put the server-public.pem in the clients directory.
+        #
+        # You should be aware if you do add the node public key to the clients dir you will in 
+        # effect be weakening your overall security.  You should consider doing this only if 
+        # you also set up an Authorization method that limits the requests the nodes can make.
+        #
         # client.cfg:
         #
         #   securityprovider = ssl
@@ -112,7 +119,7 @@ module MCollective
                            :msgtime => Time.now.to_i}
 
                 # if we're in use by a client add the callerid to the main client hashes
-                request[:callerid] = callerid if @initiated_by == :client
+                request[:callerid] = callerid
 
                 Marshal.dump(request)
             end
@@ -138,7 +145,14 @@ module MCollective
     
             # sets the caller id to the md5 of the public key
             def callerid
-                "cert=#{File.basename(client_public_key).gsub(/\.pem$/, '')}"
+                if @initiated_by == :client
+                    "cert=#{File.basename(client_public_key).gsub(/\.pem$/, '')}"
+                else
+                    # servers need to set callerid as well, not usually needed but
+                    # would be if you're doing registration or auditing or generating
+                    # requests for some or other reason
+                    "cert=#{File.basename(server_public_key).gsub(/\.pem$/, '')}"
+                end
             end
 
             private
@@ -217,6 +231,8 @@ module MCollective
 
             # Retrieves the value of plugin.psk and builds a hash with it and the passed body
             def makehash(body)
+                @log.debug("Creating message hash using #{private_key_file}")
+
                 private_key = File.read(private_key_file) 
             
                 sign(private_key, body.to_s)
