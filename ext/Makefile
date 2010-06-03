@@ -22,6 +22,8 @@ install-conf:
 	install -d $(DESTDIR)/etc/init.d
 	cp -r etc/* $(DESTDIR)/etc/mcollective/
 	cp mcollective.init $(DESTDIR)/etc/init.d/mcollective
+	rm $(DESTDIR)/etc/mcollective/ssl/PLACEHOLDER
+	rm $(DESTDIR)/etc/mcollective/ssl/clients/PLACEHOLDER
 
 install-plugins:
 	install -d $(DESTDIR)/usr/share/mcollective/
