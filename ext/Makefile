@@ -20,7 +20,7 @@ install-lib:
 install-conf:
 	install -d $(DESTDIR)/etc/mcollective/
 	install -d $(DESTDIR)/etc/init.d
-	cp etc/* $(DESTDIR)/etc/mcollective/
+	cp -r etc/* $(DESTDIR)/etc/mcollective/
 	cp mcollective.init $(DESTDIR)/etc/init.d/mcollective
 
 install-plugins:

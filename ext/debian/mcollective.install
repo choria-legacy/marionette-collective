@@ -1,5 +1,6 @@
 usr/sbin/mcollectived usr/sbin
 etc/mcollective/facts.yaml etc/mcollective
 etc/mcollective/server.cfg etc/mcollective
+etc/mcollective/ssl etc/mcollective/ssl/clients
 etc/init.d	etc/
 etc/mcollective/ssl
