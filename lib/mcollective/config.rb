@@ -6,7 +6,8 @@ module MCollective
         attr_reader :topicprefix, :daemonize, :pluginconf, :libdir, :configured, :logfile, 
                     :keeplogs, :max_log_size, :loglevel, :identity, :daemonize, :connector,
                     :securityprovider, :factsource, :registration, :registerinterval, :topicsep,
-                    :classesfile, :rpcauditprovider, :rpcaudit, :configdir
+                    :classesfile, :rpcauditprovider, :rpcaudit, :configdir, :rpcauthprovider,
+                    :rpcauthorization
 
         def initialize
             @configured = false
@@ -26,6 +27,8 @@ module MCollective
             @classesfile = "/var/lib/puppet/classes.txt"
             @rpcaudit = false
             @rpcauditprovider = ""
+            @rpcauthorization = false
+            @rpcauthprovider = ""
             @configdir = File.dirname(configfile)
 
             if File.exists?(configfile)
@@ -75,6 +78,10 @@ module MCollective
                                     val =~ /^1|y/i ? @rpcaudit = true : @rpcaudit = false
                                 when "rpcauditprovider"
                                     @rpcauditprovider = val.capitalize
+                                when "rpcauthorization"
+                                    val =~ /^1|y/i ? @rpcauthorization = true : @rpcauthorization = false
+                                when "rpcauthprovider"
+                                    @rpcauthprovider = val.capitalize
 
                                 else
                                     raise("Unknown config parameter #{key}")

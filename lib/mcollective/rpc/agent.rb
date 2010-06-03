@@ -55,6 +55,10 @@ module MCollective
                 # if we're using the new meta data, use that for the timeout
                 @meta[:timeout] = @@meta[:timeout] if @@meta.include?(:timeout)
 
+                # if we have a global authorization provider enable it
+                # plugins can still override it per plugin
+                self.class.authorized_by(@config.rpcauthprovider) if @config.rpcauthorization
+                
                 startup_hook
             end
                 
@@ -67,6 +71,7 @@ module MCollective
                     # if this raises an exception we wil just skip processing this 
                     # message
                     authorization_hook(@request) if respond_to?("authorization_hook")
+
 
                     # Audits the request, currently continues processing the message
                     # we should make this a configurable so that an audit failure means
@@ -212,8 +217,8 @@ module MCollective
 
                 # turns foo_bar into FooBar
                 plugin = plugin.to_s.split("_").map {|v| v.capitalize}.join
-
                 pluginname = "MCollective::Util::#{plugin}"
+
                 PluginManager.loadclass(pluginname)
 
                 class_eval("
