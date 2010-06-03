@@ -11,7 +11,7 @@ module MCollective
                 @sender = msg[:senderid]
                 @agent = msg[:body][:agent]
                 @uniqid = msg[:requestid]
-                @caller = msg[:body][:caller] || "unknown"
+                @caller = msg[:callerid] || "unknown"
             end
 
             # If data is a hash, quick helper to get access to it's include? method
