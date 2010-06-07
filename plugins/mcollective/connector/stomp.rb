@@ -67,7 +67,12 @@ module MCollective
             # Sends a message to the Stomp connection
             def send(target, msg)
                 @log.debug("Sending a message to Stomp target '#{target}'")
-                @connection.send(target, msg)
+                # deal with deprecation warnings in newer stomp gems
+                if @connection.respond_to?("publish")
+                    @connection.publish(target, msg)
+                else
+                    @connection.send(target, msg)
+                end
             end
 
             # Subscribe to a topic or queue
