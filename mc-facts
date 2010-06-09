@@ -41,7 +41,7 @@ facts.keys.sort.each do |k|
     if options[:verbose]
         puts
 
-        facts[k].each do |f|
+        facts[k].sort.each do |f|
             puts("            #{f}")
         end
 
