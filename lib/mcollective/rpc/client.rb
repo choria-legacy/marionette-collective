@@ -35,10 +35,11 @@ module MCollective
                 @timeout = options[:timeout]
                 @verbose = options[:verbose]
                 @filter = options[:filter]
-                @filter["agent"] << agent
                 @config = options[:config]
                 @discovered_agents = nil
                 @progress = options[:progress_bar]
+
+                agent_filter agent
 
                 @client = client = MCollective::Client.new(@config)
                 @client.options = options
@@ -204,24 +205,28 @@ module MCollective
             # Sets the class filter
             def class_filter(klass)
                 @filter["cf_class"] << klass
+                @filter["cf_class"].compact!
                 reset
             end
 
             # Sets the fact filter
             def fact_filter(fact, value)
                 @filter["fact"] << {:fact => fact, :value => value}
+                @filter["fact"].compact!
                 reset
             end
 
             # Sets the agent filter
             def agent_filter(agent)
                 @filter["agent"] << agent
+                @filter["agent"].compact!
                 reset
             end
 
             # Sets the identity filter
             def identity_filter(identity)
                 @filter["identity"] << identity
+                @filter["identity"].compact!
                 reset
             end
 
@@ -234,9 +239,7 @@ module MCollective
             # Reet the filter to an empty one
             def reset_filter
                 @filter = Util.empty_filter
-                @filter["agent"] << @agent
-
-                reset
+                agent_filter @agent
             end
 
             # Does discovery based on the filters set, i a discovery was
