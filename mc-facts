@@ -2,7 +2,7 @@
 
 require 'mcollective'
 
-oparser = MCollective::Optionparser.new
+oparser = MCollective::Optionparser.new({}, "filter")
 
 options = oparser.parse{|parser, options|
     parser.define_head "Report on usage for a specific fact"
