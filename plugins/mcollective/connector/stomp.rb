@@ -3,6 +3,41 @@ require 'stomp'
 module MCollective
     module Connector
         # Handles sending and receiving messages over the Stomp protocol
+        #
+        # This plugin supports version 1.1 or 1.1.6 and newer of the Stomp rubygem
+        # the versions between those had multi threading issues.
+        #
+        # For all versions you can configure it as follows:
+        #
+        #    connector = stomp
+        #    plugin.stomp.host = stomp.your.net
+        #    plugin.stomp.port = 6163
+        #    plugin.stomp.user = you
+        #    plugin.stomp.password = secret
+        #
+        # All of these can be overriden per user using environment variables:
+        #
+        #    STOMP_SERVER, STOMP_PORT, STOMP_USER, STOMP_PASSWORD
+        #
+        # Version 1.1.6 onward support supplying multiple connections and it will
+        # do failover between these servers, you can configure it as follows:
+        #
+        #     connector = stomp
+        #     plugin.stomp.pool.size = 2
+        #
+        #     plugin.stomp.pool.host1 = stomp1.your.net
+        #     plugin.stomp.pool.port1 = 6163
+        #     plugin.stomp.pool.user1 = you
+        #     plugin.stomp.pool.password1 = secret
+        #
+        #     plugin.stomp.pool.host2 = stomp2.your.net
+        #     plugin.stomp.pool.port2 = 6163
+        #     plugin.stomp.pool.user2 = you
+        #     plugin.stomp.pool.password2 = secret
+        #
+        # Using this method you can supply just STOMP_USER and STOMP_PASSWORD
+        # you have to supply the hostname for each pool member in the config.
+        # The port will default to 6163 if not specified.
         class Stomp<Base
             attr_reader :connection
 
@@ -20,36 +55,37 @@ module MCollective
                     user = nil
                     password = nil
 
-                    if ENV.include?("STOMP_SERVER") 
-                        host = ENV["STOMP_SERVER"]
+                    # Maintain backward compat for older stomps
+                    unless @config.pluginconf.include?("stomp.pool.size")
+                        host = get_env_or_option("STOMP_SERVER", "stomp.host")
+                        port = get_env_or_option("STOMP_PORT", "stomp.port", 6163).to_i
+                        user = get_env_or_option("STOMP_USER", "stomp.user")
+                        password = get_env_or_option("STOMP_PASSWORD", "stomp.password")
+
+                        @log.debug("Connecting to #{host}:#{port}")
+                        @connection = ::Stomp::Connection.new(user, password, host, port, true)
                     else
-                        raise("No STOMP_SERVER environment or plugin.stomp.host configuration option given") unless @config.pluginconf.include?("stomp.host")
-                        host = @config.pluginconf["stomp.host"]
+                        pools = @config.pluginconf["stomp.pool.size"].to_i
+                        hosts = []
+
+                        1.upto(pools) do |poolnum|
+                            host = {}
+
+                            host[:host] = get_option("stomp.pool.host#{poolnum}")
+                            host[:port] = get_option("stomp.pool.port#{poolnum}", 6163).to_i
+                            host[:login] = get_env_or_option("STOMP_USER", "stomp.pool.user#{poolnum}")
+                            host[:passcode] = get_env_or_option("STOMP_PASSWORD", "stomp.pool.password#{poolnum}")
+
+                            @log.debug("Adding #{host[:host]}:#{host[:port]} to the connection pool")
+                            hosts << host
+                        end
+
+                        raise "No hosts found for the STOMP connection pool" if hosts.size == 0
+
+                        @connection = ::Stomp::Connection.new({:hosts => hosts})
                     end
-
-                    if ENV.include?("STOMP_PORT") 
-                        port = ENV["STOMP_PORT"]
-                    else
-                        @config.pluginconf.include?("stomp.port") ? port = @config.pluginconf["stomp.port"].to_i : port = 6163
-                    end
-
-                    if ENV.include?("STOMP_USER") 
-                        user = ENV["STOMP_USER"]
-                    else
-                        user = @config.pluginconf["stomp.user"] if @config.pluginconf.include?("stomp.user") 
-                    end
-
-                    if ENV.include?("STOMP_PASSWORD") 
-                        password = ENV["STOMP_PASSWORD"]
-                    else
-                        password = @config.pluginconf["stomp.password"] if @config.pluginconf.include?("stomp.password")
-                    end
-
-
-                    @log.debug("Connecting to #{host}:#{port}")
-                    @connection = ::Stomp::Connection.new(user, password, host, port, true)
                 rescue Exception => e
-                    raise("Could not connect to Stomp Server '#{host}:#{port}' #{e}")
+                    raise("Could not connect to Stomp Server: #{e}")
                 end
             end
 
@@ -91,6 +127,29 @@ module MCollective
             def disconnect
                 @log.debug("Disconnecting from Stomp")
                 @connection.disconnect
+            end
+
+            private
+            # looks in the environment first then in the config file
+            # for a specific option, accepts an optional default.
+            #
+            # raises an exception when it cant find a value anywhere
+            def get_env_or_option(env, opt, default=nil)
+                return ENV[env] if ENV.include?(env)
+                return @config.pluginconf[opt] if @config.pluginconf.include?(opt)
+                return default if default
+
+                raise("No #{env} environment or plugin.#{opt} configuration option given")
+            end
+
+            # looks for a config option, accepts an optional default
+            #
+            # raises an exception when it cant find a value anywhere
+            def get_option(opt, default=nil)
+                return @config.pluginconf[opt] if @config.pluginconf.include?(opt)
+                return default if default
+
+                raise("No plugin.#{opt} configuration option given")
             end
         end
     end
