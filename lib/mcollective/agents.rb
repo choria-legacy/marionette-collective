@@ -106,6 +106,7 @@ module MCollective
                     @log.warn("Timeout while handling message for #{target}")
                 rescue Exception => e
                     @log.error("Execution of #{target} failed: #{e}")
+                    @log.error(e.backtrace.join("\n\t\t"))
                 end
             end
         end

@@ -15,6 +15,7 @@ begin
         parser.separator ""
         parser.separator "Usage: mc-rpc [options] [filters] --agent <agent> --action <action> [--argument <key=val> --argument ...]"
         parser.separator "Alternate Usage: mc-rpc [options] [filters] <agent> <action> [<key=val> <key=val> ...]"
+        parser.separator "Alternate Usage: mc-rpc --agent-help agent"
         parser.separator ""
     
         options[:arguments] = {}
@@ -31,6 +32,10 @@ begin
             options[:action] = v
         end
     
+        parser.on("--ah", "--agent-help AGENT", "Get help for an agent") do |v|
+            options[:agent_help] = v
+        end
+
         parser.on('--arg', '--argument ARGUMENT', 'Arguments to pass to agent') do |v|
             if v =~ /^(.+?)=(.+)$/
                 options[:arguments][$1.to_sym] = $2
@@ -41,7 +46,7 @@ begin
     end
 
     # Parse the alternative command line 
-    unless options.include?(:agent) && options.include?(:action) 
+    unless (options.include?(:agent) && options.include?(:action)) || options.include?(:agent_help)
         if ARGV.length >= 2
             options[:agent] = ARGV[0]
             ARGV.delete_at(0)
@@ -66,11 +71,17 @@ begin
     options[:process_results] = true unless options.include?(:process_results)
     options[:arguments][:process_results] = options[:process_results]
 
-    mc = rpcclient(options[:agent], {:options => options})
+    if options[:agent_help]
+        config = MCollective::Config.instance
+        config.loadconfig(options[:config])
 
-    mc.agent_filter(options[:agent])
+        ddl = MCollective::RPC::DDL.new(options[:agent_help])
 
-    if options[:process_results]
+        puts ddl.help("#{config.configdir}/rpc-help.erb")
+    elsif options[:process_results]
+        mc = rpcclient(options[:agent], {:options => options})
+
+        mc.agent_filter(options[:agent])
         mc.discover :verbose => true
 
         printrpc mc.send(options[:action], options[:arguments])

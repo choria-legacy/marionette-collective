@@ -26,6 +26,7 @@ module MCollective
     class InvalidRPCData<RPCError;end
     class UnknownRPCError<RPCError;end
     class NotTargettedAtUs<RuntimeError;end
+    class DDLValidationError<RuntimeError;end
 
     autoload :Config, "mcollective/config"    
     autoload :Log, "mcollective/log"    

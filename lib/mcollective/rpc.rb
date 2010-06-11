@@ -12,6 +12,7 @@ module MCollective
         autoload :Audit, "mcollective/rpc/audit"
         autoload :Progress, "mcollective/rpc/progress"
         autoload :Stats, "mcollective/rpc/stats"
+        autoload :DDL, "mcollective/rpc/ddl"
         
         # Creates a standard options hash, pass in a block to add extra headings etc
         # see Optionparser

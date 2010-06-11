@@ -4,7 +4,7 @@ module MCollective
         # and just brings in a lot of convention and standard approached.
         class Client
             attr_accessor :discovery_timeout, :timeout, :verbose, :filter, :config, :progress
-            attr_reader :client, :stats
+            attr_reader :client, :stats, :ddl
 
             # Creates a stub for a remote agent, you can pass in an options array in the flags
             # which will then be used else it will just create a default options array with
@@ -44,8 +44,32 @@ module MCollective
                 @client = client = MCollective::Client.new(@config)
                 @client.options = options
 
+                # if we can find a DDL for the service override
+                # the timeout of the client so we always magically
+                # wait appropriate amounts of time.
+                #
+                # We do this only if the timeout is the default 5
+                # seconds, so that users cli overrides will still
+                # get applied
+                begin
+                    @ddl = DDL.new(agent)
+                    @timeout = @ddl.meta[:timeout] if @timeout == 5
+                rescue Exception => e
+                    Log.instance.debug("Could not find DDL: #{e}")
+                    @ddl = nil
+                end
+
                 STDERR.sync = true
                 STDOUT.sync = true
+            end
+
+            # Returns help for an agent if a DDL was found
+            def help(template)
+                if @ddl
+                    @ddl.help(template)
+                else
+                    return "Can't find DDL for agent '#{@agent}'"
+                end
             end
 
             # Creates a suitable request hash for the SimpleRPC agent.
@@ -129,11 +153,15 @@ module MCollective
             #
             # This will output just the request id.
             def method_missing(method_name, *args, &block)
-                @stats.reset
-
                 # set args to an empty hash if nothings given
                 args = args[0]
                 args = {} if args.nil?
+
+                action = method_name.to_s
+
+                @stats.reset
+
+                @ddl.validate_request(action, args) if @ddl
 
                 # Normal agent requests as per client.action(args)
                 if block_given?
@@ -170,6 +198,8 @@ module MCollective
             # This will do runonce action on just 'your.box.com', no discovery will be 
             # done and after receiving just one response it will stop waiting for responses
             def custom_request(action, args, expected_agents, filter = {}, &block)
+                @ddl.validate_request(action, args) if @ddl
+
                 @stats.reset
 
                 custom_filter = Util.empty_filter
@@ -289,6 +319,8 @@ module MCollective
             #
             # Should only be called via method_missing
             def fire_and_forget_request(action, args)
+                @ddl.validate_request(action, args) if @ddl
+
                 req = new_request(action.to_s, args)
                 return @client.sendreq(req, @agent, @filter) 
             end

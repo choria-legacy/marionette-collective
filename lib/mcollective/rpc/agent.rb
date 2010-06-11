@@ -19,31 +19,18 @@ module MCollective
         #                      :url         => "http://your.com/,
         #                      :timeout     => 60
         #
-        #             action "hello", :description => "Hello action" do
+        #             action "hello" do
         #                 reply[:msg] = "Hello #{request[:name]}"
         #             end
-        #
-        #             input "name", "hello",
-        #                :prompt      => "Name",
-        #                :description => "The name of the user",
-        #                :type        => :string,
-        #                :validation  => '/./',
-        #                :maxlength   => 50
         #          end
         #       end
         #    end
         #
-        # The mata data, input definitions and descriptions are there to help web UI's 
-        # auto generate user interfaces for your client as well as to provide automagical
-        # validation of inputs etc.
-        #
         # We also currently have the validation code in here, this will be moved to plugins soon.
         class Agent
             attr_accessor :meta, :reply, :request
-            attr_reader :logger, :config, :timeout
+            attr_reader :logger, :config, :timeout, :ddl
 
-            # introspection variables
-            @@actions = {}
             @@meta = {}
 
             def initialize
@@ -51,6 +38,15 @@ module MCollective
                 @logger = Log.instance
                 @config = Config.instance
                 @meta = {}
+                @agent_name = self.class.to_s.split("::").last.downcase
+
+                # Loads the DDL so we can later use it for validation
+                # and help generation
+                begin
+                    @ddl = DDL.new(@agent_name)
+                rescue
+                    @ddl = nil
+                end
 
                 # if we're using the new meta data, use that for the timeout
                 @meta[:timeout] = @@meta[:timeout] if @@meta.include?(:timeout)
@@ -110,16 +106,13 @@ module MCollective
             # Generates help using the template based on the data
             # created with metadata and input
             def self.help(template)
-                template = IO.readlines(template).join
-                meta = @@meta
-                actions = @@actions
-
-                erb = ERB.new(template, 0, '%')
-                erb.result(binding)
+                if @ddl
+                    @ddl.help(template)
+                else
+                    "No DDL defined"
+                end
             end
 
-            # Compatibility layer for help as currently implimented in the
-            # normal non SimpleRPC agent, it uses our introspection data
             # to auto generate help
             def help
                 self.help("#{@config[:configdir]}/rpc-help.erb")
@@ -130,11 +123,6 @@ module MCollective
                 public_instance_methods.sort.grep(/_action$/).map do |method|
                     $1 if method =~ /(.+)_action$/
                 end
-            end
-
-            # Returns the interface for a specific action
-            def self.action_interface(name)
-                @@actions[name] || {}
             end
 
             # Returns the meta data for an agent
@@ -154,60 +142,13 @@ module MCollective
 
             # Creates a new action wit the block passed and sets some defaults
             #
-            # action(:description => "Restarts a Service") do
+            # action "status" do
             #    # logic here to restart service
             # end
-            def self.action(name, input, &block)
-                raise "Action needs a :description" unless input.include?(:description)
+            def self.action(name, &block)
+                raise "Need to pass a body for the action" unless block_given?
 
-                unless @@actions.include?(name)
-                    @@actions[name] = {}
-                    @@actions[name][:action] = name
-                    @@actions[name][:input] = {}
-                    @@actions[name][:description] = input[:description]
-                end
-
-                # If a block was passed use it to create the action 
-                # but this is optional and a user can just use 
-                # def to create the method later on still
-                self.module_eval { define_method("#{name}_action", &block) } if block_given?
-            end
-
-            # Registers an input argument for a given action
-            #
-            # input "foo", "action",
-            #       :prompt => "Service Action",
-            #       :description => "The action to perform",
-            #       :type => :list,
-            #       :list => ["start", "stop", "restart", "status"]
-            def self.input(argument, action, properties, &block)
-                [:prompt, :description, :type].each do |arg|
-                    raise "Input needs a :#{arg}" unless properties.include?(arg)
-                end
-        
-                # in case a user is making the action using a traditional 
-                # def we will just create an empty description with no block
-                unless @@actions.include?(action)
-                    action action, :description => ""
-                end
-
-                @@actions[action][:input][argument] = {:prompt => properties[:prompt],
-                                                       :description => properties[:description],
-                                                       :type => properties[:type]}
-        
-                case properties[:type]
-                    when :string
-                        raise "Input type :string needs a :validation" unless properties.include?(:validation)
-                        raise "String inputs need a :maxlength" unless properties.include?(:validation)
-        
-                        @@actions[action][:input][argument][:validation] = properties[:validation]
-                        @@actions[action][:input][argument][:maxlength] = properties[:maxlength]
-        
-                    when :list
-                        raise "Input type :list needs a :list argument" unless properties.include?(:list)
-        
-                        @@actions[action][:input][argument][:list] = properties[:list]
-                end
+                self.module_eval { define_method("#{name}_action", &block) }
             end
 
             # Helper that creates a method on the class that will call your authorization
