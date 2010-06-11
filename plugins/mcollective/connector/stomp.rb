@@ -29,15 +29,28 @@ module MCollective
         #     plugin.stomp.pool.port1 = 6163
         #     plugin.stomp.pool.user1 = you
         #     plugin.stomp.pool.password1 = secret
+        #     plugin.stomp.pool.ssl1 = true
         #
         #     plugin.stomp.pool.host2 = stomp2.your.net
         #     plugin.stomp.pool.port2 = 6163
         #     plugin.stomp.pool.user2 = you
         #     plugin.stomp.pool.password2 = secret
+        #     plugin.stomp.pool.ssl2 = false
         #
         # Using this method you can supply just STOMP_USER and STOMP_PASSWORD
         # you have to supply the hostname for each pool member in the config.
         # The port will default to 6163 if not specified.
+        #
+        # In addition you can set the following options but only when using
+        # pooled configuration:
+        #     
+        #     plugin.stomp.pool.initial_reconnect_delay = 0.01
+        #     plugin.stomp.pool.max_reconnect_delay = 30.0
+        #     plugin.stomp.pool.use_exponential_back_off = true
+        #     plugin.stomp.pool.back_off_multiplier = 2
+        #     plugin.stomp.pool.max_reconnect_attempts = 0
+        #     plugin.stomp.pool.randomize = false
+        #     plugin.stomp.pool.timeout = -1
         class Stomp<Base
             attr_reader :connection
 
@@ -75,12 +88,26 @@ module MCollective
                             host[:port] = get_option("stomp.pool.port#{poolnum}", 6163).to_i
                             host[:login] = get_env_or_option("STOMP_USER", "stomp.pool.user#{poolnum}")
                             host[:passcode] = get_env_or_option("STOMP_PASSWORD", "stomp.pool.password#{poolnum}")
+                            host[:ssl] = get_bool_option("stomp.pool.ssl#{poolnum}", false)
 
                             @log.debug("Adding #{host[:host]}:#{host[:port]} to the connection pool")
                             hosts << host
                         end
 
                         raise "No hosts found for the STOMP connection pool" if hosts.size == 0
+
+                        connection = {:hosts => hosts}
+
+                        # Various STOMP gem options, defaults here matches defaults for 1.1.6 the meaning of
+                        # these can be guessed, the documentation isn't clear
+                        connection[:initial_reconnect_delay] = get_option("stomp.pool.initial_reconnect_delay", 0.01).to_f
+                        connection[:max_reconnect_delay] = get_option("stomp.pool.max_reconnect_delay", 30.0).to_f
+                        connection[:use_exponential_back_off] = get_bool_option("stomp.pool.use_exponential_back_off", true)
+                        connection[:back_off_multiplier] = get_bool_option("stomp.pool.back_off_multiplier", 2).to_i
+                        connection[:max_reconnect_attempts] = get_option("stomp.pool.max_reconnect_attempts", 0)
+                        connection[:randomize] = get_bool_option("stomp.pool.randomize", false)
+                        connection[:backup] = get_bool_option("stomp.pool.backup", false)
+                        connection[:timeout] = get_option("stomp.pool.timeout", -1).to_i
 
                         @connection = ::Stomp::Connection.new({:hosts => hosts})
                     end
@@ -150,6 +177,21 @@ module MCollective
                 return default if default
 
                 raise("No plugin.#{opt} configuration option given")
+            end
+
+            # gets a boolean option from the config, supports y/n/true/false/1/0
+            def get_bool_option(opt, default)
+                return default unless @config.pluginconf.include?(opt)
+
+                val = @config.pluginconf[opt]
+
+                if val =~ /^1|yes|true/
+                    return true
+                elsif val =~ /^0|no|false/
+                    return false
+                else
+                    return default
+                end
             end
         end
     end
