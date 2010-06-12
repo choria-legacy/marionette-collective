@@ -62,7 +62,7 @@ module MCollective
                          :threads => [],
                          :facts => {},
                          :classes => [],
-                         :times => Process.times}
+                         :times => ::Process.times}
 
                 reply[:facts] = PluginManager["facts_plugin"].get_facts
 
