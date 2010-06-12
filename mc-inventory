@@ -68,8 +68,8 @@ begin
         puts
 
         puts "   Facts:"
-        resp[:body][:facts].each_pair do |k,v|
-            puts "      #{k} => #{v}" if k
+        resp[:body][:facts].sort_by{|f| f[0]}.each do |f|
+            puts "      #{f[0]} => #{f[1]}"
         end
 
         break
