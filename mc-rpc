@@ -88,6 +88,9 @@ begin
 
         printrpcstats :caption => "#{options[:agent]}##{options[:action]} call stats"
     else
+        mc = rpcclient(options[:agent], {:options => options})
+        mc.agent_filter(options[:agent])
+
         puts "Request sent with id: " + mc.send(options[:action], options[:arguments])
     end
 rescue Exception => e
