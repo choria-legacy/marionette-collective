@@ -1,0 +1,5 @@
+Simple single broker setup for ActiveMQ 5.3.0.
+
+Provides 2 users, one admin and one for mcollective.
+Admin user can create all sorts of queues and topics,
+mcollective user is restricted.
