@@ -96,6 +96,9 @@ module MCollective
                 rescue UnknownRPCError => e
                     @reply.fail e.to_s, 5
 
+                rescue Exception => e
+                    @reply.fail e.to_s, 5
+
                 end
 
                 after_processing_hook
