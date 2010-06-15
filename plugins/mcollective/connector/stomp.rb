@@ -56,6 +56,7 @@ module MCollective
 
             def initialize
                 @config = Config.instance
+                @subscriptions = []
 
                 @log = Log.instance
             end
@@ -140,14 +141,18 @@ module MCollective
 
             # Subscribe to a topic or queue
             def subscribe(source)
-                @log.debug("Subscribing to #{source}")
-                @connection.subscribe(source)
+                unless @subscriptions.include?(source)
+                    @log.debug("Subscribing to #{source}")
+                    @connection.subscribe(source)
+                    @subscriptions << source
+                end
             end
 
             # Subscribe to a topic or queue
             def unsubscribe(source)
                 @log.debug("Unsubscribing from #{source}")
                 @connection.unsubscribe(source)
+                @subscriptions.delete(source)
             end
 
             # Disconnects from the Stomp connection
