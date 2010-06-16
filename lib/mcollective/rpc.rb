@@ -13,16 +13,17 @@ module MCollective
         autoload :Progress, "mcollective/rpc/progress"
         autoload :Stats, "mcollective/rpc/stats"
         autoload :DDL, "mcollective/rpc/ddl"
-        
+        autoload :Result, "mcollective/rpc/result"
+
         # Creates a standard options hash, pass in a block to add extra headings etc
         # see Optionparser
         def rpcoptions
             oparser = MCollective::Optionparser.new({:verbose => false, :progress_bar => true}, "filter")
-                    
+
             options = oparser.parse do |parser, options|
                 if block_given?
-                    yield(parser, options) 
-                end 
+                    yield(parser, options)
+                end
 
                 add_simplerpc_options(parser, options)
             end
@@ -30,7 +31,7 @@ module MCollective
             return options
         end
 
-        # Wrapper to create clients, supposed to be used as 
+        # Wrapper to create clients, supposed to be used as
         # a mixin:
         #
         # include MCollective::RPC
@@ -49,7 +50,7 @@ module MCollective
         #    :options => options
         #
         # Options would be a build up options hash from the Optionparser
-        # you can use the rpcoptions helper to create this 
+        # you can use the rpcoptions helper to create this
         def rpcclient(agent, flags = {})
             configfile = flags[:configfile] || "/etc/mcollective/client.cfg"
             options = flags[:options] || nil
@@ -76,7 +77,7 @@ module MCollective
 
         # means for other classes to drop stats into this module
         # its a bit hacky but needed so that the mixin methods like
-        # printrpcstats can easily get access to it without 
+        # printrpcstats can easily get access to it without
         # users having to pass it around in params.
         def self.stats(stats)
             @@stats = stats
@@ -84,7 +85,7 @@ module MCollective
 
         # means for other classes to drop discovered hosts into this module
         # its a bit hacky but needed so that the mixin methods like
-        # printrpcstats can easily get access to it without 
+        # printrpcstats can easily get access to it without
         # users having to pass it around in params.
         def self.discovered(discovered)
             @@discovered = discovered
@@ -96,7 +97,7 @@ module MCollective
         # If you've passed -v on the command line a detailed stat block
         # will be printed, else just a one liner.
         #
-        # You can pass flags into it, at the moment only one flag is 
+        # You can pass flags into it, at the moment only one flag is
         # supported:
         #
         # printrpcstats :caption => "Foo"
@@ -138,16 +139,112 @@ module MCollective
         # It tries hard to do sane things so you often
         # should not need to write your own display functions
         #
-        # Takes flags:
+        # If the agent you are getting results for has a DDL
+        # it will use the hints in there to do the right thing specifically
+        # it will look at the values of display in the DDL to choose
+        # when to show results
+        #
+        # If you do not have a DDL you can pass these flags:
+        #
         #    printrpc exim.mailq, :flatten => true
         #    printrpc exim.mailq, :verbose => true
         #
-        # If you've asked it to flatten the result it will not print sender 
-        # hostnames, it will just print the result as if it's one huge result, 
+        # If you've asked it to flatten the result it will not print sender
+        # hostnames, it will just print the result as if it's one huge result,
         # handy for things like showing a combined mailq.
         def rpcresults(result, flags = {})
             flags = {:verbose => false, :flatten => false}.merge(flags)
 
+            result_text = ""
+
+            # if running in verbose mode, just use the old style print
+            # no need for all the DDL helpers obfuscating the result
+            if flags[:verbose]
+                result_text = old_rpcresults(result, flags)
+            else
+                result.each do |r|
+                    begin
+                        ddl = DDL.new(r.agent).action_interface(r.action.to_s)
+
+                        sender = r[:sender]
+                        status = r[:statuscode]
+                        message = r[:statusmsg]
+                        display = ddl[:display]
+                        result = r[:data]
+
+                        # appand the results only according to what the DDL says
+                        case display
+                            when :ok
+                                if status == 0
+                                    result_text << text_for_result(sender, status, message, result, ddl)
+                                end
+
+                            when :failed
+                                if status > 0
+                                    result_text << text_for_result(sender, status, message, result, ddl)
+                                end
+
+                            when :always
+                                result_text << text_for_result(sender, status, message, result, ddl)
+
+                            when :flatten
+                                result_text << text_for_flattened_result(status, result)
+
+                        end
+                    rescue Exception => e
+                        # no DDL so just do the old style print unchanged for
+                        # backward compat
+                        result_text = old_rpcresults(result, flags)
+                    end
+                end
+            end
+
+            result_text
+        end
+
+        # Return text representing a result
+        def text_for_result(sender, status, msg, result, ddl)
+            statusses = ["Request OK", "Request Aborted", "Unknown Action", "Missing Request Data", "Invalid Request Data", "Unknown Request Status"]
+
+            result_text = "%-40s: %s\n" % [sender, statusses[status]]
+            result_text << "%41s %s\n" % ["", msg] unless msg == "OK"
+
+            # only print good data, ignore data that results from failure
+            if [0, 1].include?(status)
+                if result.is_a?(Hash)
+                    result.keys.each do |k|
+                        result_text << "\n   #{ddl[:output][k][:display_as]}:"
+
+                        if result[k].is_a?(String)
+                            result_text << " #{result[k]}\n"
+                        else
+                            result_text << "\n\t" + result[k].pretty_inspect.split("\n").join("\n\t") + "\n"
+                        end
+                    end
+                else
+                    result_text << "\n\t" + result.pretty_inspect.split("\n").join("\n\t")
+                end
+            end
+
+            result_text << "\n"
+            result_text
+        end
+
+        # Returns text representing a flattened result of only good data
+        def text_for_flattened_result(status, result)
+            result_text = ""
+
+            if status <= 1
+                unless result.is_a?(String)
+                    result_text << result.pretty_inspect
+                else
+                    result_text << result
+                end
+            end
+        end
+
+        # Backward compatible display block for results without a DDL
+        def old_rpcresults(result, flags = {})
             result_text = ""
 
             if flags[:flatten]
@@ -164,10 +261,11 @@ module MCollective
                         result_text << r.pretty_inspect
                     end
                 end
-                
+
                 result_text << ""
             else
                 result.each do |r|
+
                     if flags[:verbose]
                         result_text << "%-40s: %s\n" % [r[:sender], r[:statusmsg]]
 

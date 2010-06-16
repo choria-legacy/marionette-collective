@@ -364,7 +364,7 @@ module MCollective
                                 print twirl.twirl(respcount, disc.size)
                             end
     
-                            result << process_results_without_block(resp)
+                            result << process_results_without_block(resp, action)
                         end
                     end
     
@@ -389,20 +389,20 @@ module MCollective
             # Handles result sets that has no block associated, sets fails and ok
             # in the stats object and return a hash of the response to send to the 
             # caller
-            def process_results_without_block(resp)
+            def process_results_without_block(resp, action)
                 @stats.node_responded(resp[:senderid])
 
                 if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
                     @stats.ok if resp[:body][:statuscode] == 0
                     @stats.fail if resp[:body][:statuscode] == 1
     
-                    return {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode], 
-                            :statusmsg => resp[:body][:statusmsg], :data => resp[:body][:data]}
+                    return Result.new(@agent, action, {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode], 
+                                                       :statusmsg => resp[:body][:statusmsg], :data => resp[:body][:data]})
                 else
                     @stats.fail
     
-                    return {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode], 
-                            :statusmsg => resp[:body][:statusmsg], :data => nil}
+                    return Result.new(@agent, action, {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode], 
+                                                       :statusmsg => resp[:body][:statusmsg], :data => nil})
                 end
             end
 
