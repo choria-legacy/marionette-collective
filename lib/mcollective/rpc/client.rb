@@ -4,7 +4,7 @@ module MCollective
         # and just brings in a lot of convention and standard approached.
         class Client
             attr_accessor :discovery_timeout, :timeout, :verbose, :filter, :config, :progress
-            attr_reader :client, :stats, :ddl
+            attr_reader :client, :stats, :ddl, :agent
 
             # Creates a stub for a remote agent, you can pass in an options array in the flags
             # which will then be used else it will just create a default options array with
