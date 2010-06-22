@@ -40,14 +40,20 @@ module MCollective
 
             return false unless File.exist?(agentfile)
 
-            PluginManager.delete("#{agentname}_agent") 
-            PluginManager.loadclass(classname)
-            PluginManager << {:type => "#{agentname}_agent", :class => classname}
+            PluginManager.delete("#{agentname}_agent")
 
-            PluginManager["connector_plugin"].subscribe(Util.make_target(agentname, :command)) unless @@agents.include?(agentname)
+            begin
+                PluginManager.loadclass(classname)
+                PluginManager << {:type => "#{agentname}_agent", :class => classname}
 
-            @@agents[agentname] = {:file => agentfile}
-            true
+                PluginManager["connector_plugin"].subscribe(Util.make_target(agentname, :command)) unless @@agents.include?(agentname)
+
+                @@agents[agentname] = {:file => agentfile}
+                return true
+            rescue Exception => e
+                @log.error("Loading agent #{agentname} failed: #{e}")
+                PluginManager.delete("#{agentname}_agent")
+            end
         end
 
         # Determines if we have an agent with a certain name
