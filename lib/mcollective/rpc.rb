@@ -14,6 +14,7 @@ module MCollective
         autoload :Stats, "mcollective/rpc/stats"
         autoload :DDL, "mcollective/rpc/ddl"
         autoload :Result, "mcollective/rpc/result"
+        autoload :Util, "mcollective/rpc/util"
 
         # Creates a standard options hash, pass in a block to add extra headings etc
         # see Optionparser
@@ -204,18 +205,34 @@ module MCollective
 
         # Return text representing a result
         def text_for_result(sender, status, msg, result, ddl)
-            statusses = ["Request OK", "Request Aborted", "Unknown Action", "Missing Request Data", "Invalid Request Data", "Unknown Request Status"]
+            statusses = ["",
+                         Util.colorize(:red, "Request Aborted"),
+                         Util.colorize(:yellow, "Unknown Action"),
+                         Util.colorize(:yellow, "Missing Request Data"),
+                         Util.colorize(:yellow, "Invalid Request Data"),
+                         Util.colorize(:red, "Unknown Request Status")]
 
-            result_text = "%-40s: %s\n" % [sender, statusses[status]]
-            result_text << "%41s %s\n" % ["", msg] unless msg == "OK"
+            result_text = "%-40s %s\n" % [sender, statusses[status]]
+            result_text << "%40s %s\n" % ["", Util.colorize(:yellow, msg)] unless msg == "OK"
 
             # only print good data, ignore data that results from failure
             if [0, 1].include?(status)
                 if result.is_a?(Hash)
-                    result.keys.each do |k|
-                        result_text << "\n   #{ddl[:output][k][:display_as]}:"
+                    # figure out the lengths of the display as strings, we'll use
+                    # it later to correctly justify the output
+                    lengths = result.keys.map{|k| ddl[:output][k][:display_as].size}
 
-                        if result[k].is_a?(String)
+                    result.keys.each do |k|
+                        # get all the output fields nicely lined up with a
+                        # 3 space front padding
+                        display_as = ddl[:output][k][:display_as]
+                        display_length = display_as.size
+                        padding = lengths.max - display_length + 3
+                        result_text << " " * padding
+
+                        result_text << "#{display_as}:"
+
+                        if result[k].is_a?(String) || result[k].is_a?(Numeric)
                             result_text << " #{result[k]}\n"
                         else
                             result_text << "\n\t" + result[k].pretty_inspect.split("\n").join("\n\t") + "\n"
@@ -286,7 +303,7 @@ module MCollective
                         end
                     else
                         unless r[:statuscode] == 0
-                            result_text << "%-40s %s\n" % [r[:sender], r[:statusmsg]]
+                            result_text << "%-40s %s\n" % [r[:sender], Util.colorize(:red, r[:statusmsg])]
                         end
                     end
                 end
