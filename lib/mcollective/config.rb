@@ -3,7 +3,7 @@ module MCollective
     class Config
         include Singleton
 
-        attr_reader :topicprefix, :daemonize, :pluginconf, :libdir, :configured, :logfile, 
+        attr_reader :topicprefix, :daemonize, :pluginconf, :libdir, :configured, :logfile,
                     :keeplogs, :max_log_size, :loglevel, :identity, :daemonize, :connector,
                     :securityprovider, :factsource, :registration, :registerinterval, :topicsep,
                     :classesfile, :rpcauditprovider, :rpcaudit, :configdir, :rpcauthprovider,
@@ -33,6 +33,10 @@ module MCollective
 
             if File.exists?(configfile)
                 File.open(configfile, "r").each do |line|
+
+                    # strip blank spaces, tabs etc off the end of all lines
+                    line.gsub!(/\s*$/, "")
+
                     unless line =~ /^#|^$/
                         if (line =~ /(.+?)\s*=\s*(.+)/)
                             key = $1
