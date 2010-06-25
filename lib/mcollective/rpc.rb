@@ -213,7 +213,7 @@ module MCollective
                          Helpers.colorize(:red, "Unknown Request Status")]
 
             result_text = "%-40s %s\n" % [sender, statusses[status]]
-            result_text << "   %s\n" % [Util.colorize(:yellow, msg)] unless msg == "OK"
+            result_text << "   %s\n" % [Helpers.colorize(:yellow, msg)] unless msg == "OK"
 
             # only print good data, ignore data that results from failure
             if [0, 1].include?(status)
