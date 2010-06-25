@@ -206,14 +206,14 @@ module MCollective
         # Return text representing a result
         def text_for_result(sender, status, msg, result, ddl)
             statusses = ["",
-                         Util.colorize(:red, "Request Aborted"),
-                         Util.colorize(:yellow, "Unknown Action"),
-                         Util.colorize(:yellow, "Missing Request Data"),
-                         Util.colorize(:yellow, "Invalid Request Data"),
-                         Util.colorize(:red, "Unknown Request Status")]
+                         Helpers.colorize(:red, "Request Aborted"),
+                         Helpers.colorize(:yellow, "Unknown Action"),
+                         Helpers.colorize(:yellow, "Missing Request Data"),
+                         Helpers.colorize(:yellow, "Invalid Request Data"),
+                         Helpers.colorize(:red, "Unknown Request Status")]
 
             result_text = "%-40s %s\n" % [sender, statusses[status]]
-            result_text << "%40s %s\n" % ["", Util.colorize(:yellow, msg)] unless msg == "OK"
+            result_text << "%40s %s\n" % ["", Helpers.colorize(:yellow, msg)] unless msg == "OK"
 
             # only print good data, ignore data that results from failure
             if [0, 1].include?(status)
@@ -303,7 +303,7 @@ module MCollective
                         end
                     else
                         unless r[:statuscode] == 0
-                            result_text << "%-40s %s\n" % [r[:sender], Util.colorize(:red, r[:statusmsg])]
+                            result_text << "%-40s %s\n" % [r[:sender], Helpers.colorize(:red, r[:statusmsg])]
                         end
                     end
                 end
