@@ -43,7 +43,7 @@ module MCollective
         #
         # In addition you can set the following options but only when using
         # pooled configuration:
-        #     
+        #
         #     plugin.stomp.pool.initial_reconnect_delay = 0.01
         #     plugin.stomp.pool.max_reconnect_delay = 30.0
         #     plugin.stomp.pool.use_exponential_back_off = true
@@ -63,6 +63,11 @@ module MCollective
 
             # Connects to the Stomp middleware
             def connect
+                if @connection
+                    @log.debug("Already connection, not re-initializing connection")
+                    return
+                end
+
                 begin
                     host = nil
                     port = nil
@@ -123,7 +128,7 @@ module MCollective
                 msg = @connection.receive
 
                 # STOMP puts the payload in the body variable, pass that
-                # into the payload of MCollective::Request and discard all the 
+                # into the payload of MCollective::Request and discard all the
                 # other headers etc that stomp provides
                 Request.new(msg.body)
             end
