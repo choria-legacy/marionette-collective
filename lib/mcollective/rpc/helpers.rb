@@ -1,7 +1,7 @@
 module MCollective
     module RPC
         # Various utilities for the RPC system
-        class Util
+        class Helpers
             # Return color codes, if the config color= option is false
             # just return a empty string
             def self.color(code)

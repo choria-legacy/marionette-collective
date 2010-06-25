@@ -16,7 +16,7 @@ module MCollective
 
             def twirl(current, total)
                 if current == total
-                    txt = "\r " + Util.colorize(:green, "*") + " [ "
+                    txt = "\r " + Helpers.colorize(:green, "*") + " [ "
                 else
                     txt = "\r #{@twirl[@twirldex]} [ "
                 end

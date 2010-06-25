@@ -14,7 +14,7 @@ module MCollective
         autoload :Stats, "mcollective/rpc/stats"
         autoload :DDL, "mcollective/rpc/ddl"
         autoload :Result, "mcollective/rpc/result"
-        autoload :Util, "mcollective/rpc/util"
+        autoload :Helpers, "mcollective/rpc/helpers"
 
         # Creates a standard options hash, pass in a block to add extra headings etc
         # see Optionparser

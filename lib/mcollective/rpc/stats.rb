@@ -131,18 +131,18 @@ module MCollective
             result_text = []
 
             if verbose
-                result_text << Util.colorize(:yellow, "---- #{caption} ----")
+                result_text << Helpers.colorize(:yellow, "---- #{caption} ----")
 
                 if @discovered
                     @responses < @discovered ? color = :red : color = :reset
-                    result_text << "           Nodes: %s / %s" % [ Util.colorize(color, @discovered), Util.colorize(color, @responses) ]
+                    result_text << "           Nodes: %s / %s" % [ Helpers.colorize(color, @discovered), Helpers.colorize(color, @responses) ]
                 else
                     result_text << "           Nodes: #{@responses}"
                 end
 
                 @failcount < 0 ? color = :red : color = :reset
 
-                result_text << "     Pass / Fail: %s / %s" % [Util.colorize(color, @okcount), Util.colorize(color, @failcount) ]
+                result_text << "     Pass / Fail: %s / %s" % [Helpers.colorize(color, @okcount), Helpers.colorize(color, @failcount) ]
                 result_text << "      Start Time: %s"      % [Time.at(@starttime)]
                 result_text << "  Discovery Time: %.2fms"  % [@discoverytime * 1000]
                 result_text << "      Agent Time: %.2fms"  % [@blocktime * 1000]
@@ -151,9 +151,9 @@ module MCollective
                 if @discovered
                     @responses < @discovered ? color = :red : color = :green
 
-                    result_text << "Finished processing %s / %s hosts in %.2f ms" % [Util.colorize(color, @responses), Util.colorize(color, @discovered), @blocktime * 1000]
+                    result_text << "Finished processing %s / %s hosts in %.2f ms" % [Helpers.colorize(color, @responses), Helpers.colorize(color, @discovered), @blocktime * 1000]
                 else
-                    result_text << "Finished processing %s hosts in %.2f ms" % [Util.colorize(:bold, @responses), @blocktime * 1000]
+                    result_text << "Finished processing %s hosts in %.2f ms" % [Helpers.colorize(:bold, @responses), @blocktime * 1000]
                 end
             end
 
@@ -169,7 +169,7 @@ module MCollective
             result_text = []
 
             if @noresponsefrom.size > 0
-                result_text << Util.colorize(:red, "\nNo response from:\n")
+                result_text << Helpers.colorize(:red, "\nNo response from:\n")
 
                 @noresponsefrom.each_with_index do |c,i|
                     result_text << "" if i % 4 == 0
