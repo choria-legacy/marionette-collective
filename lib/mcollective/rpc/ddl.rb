@@ -200,15 +200,17 @@ module MCollective
                     # be optional.  We validate the presense of the argument earlier so
                     # this is a safe assumption, just to skip them.
                     #
-                    # :string can have maxlength and regex
+                    # :string can have maxlength and regex.  A maxlength of 0 will bypasss checks
                     # :list has a array of valid values
                     if arguments.keys.include?(key)
                         case input[key][:type]
                             when :string
                                 raise DDLValidationError, "Input #{key} should be a string" unless arguments[key].is_a?(String)
 
-                                if arguments[key].size > input[key][:maxlength].to_i
-                                    raise DDLValidationError, "Input #{key} is longer than #{input[key][:maxlength]}"
+                                if input[key][:maxlength].to_i > 0
+                                    if arguments[key].size > input[key][:maxlength].to_i
+                                        raise DDLValidationError, "Input #{key} is longer than #{input[key][:maxlength]}"
+                                    end
                                 end
 
                                 unless arguments[key].match(Regexp.new(input[key][:validation]))
