@@ -19,7 +19,7 @@ module MCollective
             @pluginconf = Hash.new
             @connector = "Stomp"
             @securityprovider = "Psk"
-            @factsource = "Facter"
+            @factsource = "Yaml"
             @identity = Socket.gethostname
             @registration = "Agentlist"
             @registerinterval = 0
