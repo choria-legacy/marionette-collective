@@ -1,10 +1,10 @@
 module MCollective
-    module RPC 
-        # Class that shows a progress bar, currently only supports a twirling 
+    module RPC
+        # Class that shows a progress bar, currently only supports a twirling
         # progress bar.
         #
         # p = Progress.new(60)
-        # 100.times {|i| print p.twirl(i+1, 100) + "\r"};puts       
+        # 100.times {|i| print p.twirl(i+1, 100) + "\r"};puts
         #
         #  * [ ==================================================> ] 100 / 100
         class Progress
@@ -16,7 +16,7 @@ module MCollective
 
             def twirl(current, total)
                 if current == total
-                    txt = "\r * [ "
+                    txt = "\r " + Helpers.colorize(:green, "*") + " [ "
                 else
                     txt = "\r #{@twirl[@twirldex]} [ "
                 end

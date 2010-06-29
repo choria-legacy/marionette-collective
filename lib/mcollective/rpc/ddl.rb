@@ -19,6 +19,8 @@ module MCollective
         #             :timeout     => 60
         #
         #    action "status", :description => "Gets the status of a service" do
+        #       display :always
+        #
         #       input "service",
         #             :prompt      => "Service Name",
         #             :description => "The service to get the status for",
@@ -61,7 +63,9 @@ module MCollective
             # Creates the definition for an action, you can nest input definitions inside the
             # action to attach inputs and validation to the actions
             #
-            #    action(:description => "Restarts a Service") do
+            #    action "status", :description => "Restarts a Service" do
+            #       display :always
+            #
             #       input "service",
             #            :prompt => "Service Action",
             #            :description => "The action to perform",
@@ -81,6 +85,7 @@ module MCollective
                     @actions[name][:action] = name
                     @actions[name][:input] = {}
                     @actions[name][:output] = {}
+                    @actions[name][:display] = :failed
                     @actions[name][:description] = input[:description]
                 end
 
@@ -138,6 +143,18 @@ module MCollective
                                                        :display_as  => properties[:display_as]}
             end
 
+            # Sets the display preference to either :ok, :failed, :flatten or :always
+            # operates on action level
+            def display(pref)
+                # defaults to old behavior, complain if its supplied and invalid
+                unless [:ok, :failed, :always].include?(pref)
+                    raise "Display preference #{pref} :ok, :failed, :flatten or :always"
+                end
+
+                action = @current_action
+                @actions[action][:display] = pref
+            end
+
             # Generates help using the template based on the data
             # created with metadata and input
             def help(template)
@@ -159,7 +176,7 @@ module MCollective
                 @actions[name] || {}
             end
 
-            # Helper to use the DDL to figure out if the remote call should be 
+            # Helper to use the DDL to figure out if the remote call should be
             # allowed based on action name and inputs.
             def validate_request(action, arguments)
                 # is the action known?
@@ -176,22 +193,24 @@ module MCollective
                         end
                     end
 
-                    # validate strings and lists, we'll add more types of validators when 
+                    # validate strings and lists, we'll add more types of validators when
                     # all the use cases are clear
                     #
-                    # only does validation for arguments actually given, since some might 
-                    # be optional.  We validate the presense of the argument earlier so 
+                    # only does validation for arguments actually given, since some might
+                    # be optional.  We validate the presense of the argument earlier so
                     # this is a safe assumption, just to skip them.
                     #
-                    # :string can have maxlength and regex
+                    # :string can have maxlength and regex.  A maxlength of 0 will bypasss checks
                     # :list has a array of valid values
                     if arguments.keys.include?(key)
                         case input[key][:type]
                             when :string
                                 raise DDLValidationError, "Input #{key} should be a string" unless arguments[key].is_a?(String)
 
-                                if arguments[key].size > input[key][:maxlength].to_i
-                                    raise DDLValidationError, "Input #{key} is longer than #{input[key][:maxlength]}"
+                                if input[key][:maxlength].to_i > 0
+                                    if arguments[key].size > input[key][:maxlength].to_i
+                                        raise DDLValidationError, "Input #{key} is longer than #{input[key][:maxlength]}"
+                                    end
                                 end
 
                                 unless arguments[key].match(Regexp.new(input[key][:validation]))

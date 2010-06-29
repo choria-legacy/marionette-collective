@@ -65,6 +65,7 @@ rm -rf %{buildroot}
 %{__install} -m0440 etc/server.cfg.dist %{buildroot}/etc/mcollective/server.cfg
 %{__install} -m0444 etc/client.cfg.dist %{buildroot}/etc/mcollective/client.cfg
 %{__install} -m0444 etc/facts.yaml.dist %{buildroot}/etc/mcollective/facts.yaml
+%{__install} -m0444 etc/rpc-help.erb %{buildroot}/etc/mcollective/rpc-help.erb
 %{__install} -m0755 mcollective.init %{buildroot}/etc/init.d/mcollective
 
 cp -R lib/* %{buildroot}/%{ruby_sitelib}/
@@ -101,6 +102,7 @@ fi
 %attr(0755, root, root)/usr/sbin/mc-*
 %doc COPYING
 %config(noreplace)/etc/mcollective/client.cfg
+%config/etc/mcollective/rpc-help.erb
 
 %files
 %doc COPYING

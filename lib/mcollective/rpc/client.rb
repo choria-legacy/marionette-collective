@@ -1,10 +1,10 @@
 module MCollective
-    module RPC 
+    module RPC
         # The main component of the Simple RPC client system, this wraps around MCollective::Client
         # and just brings in a lot of convention and standard approached.
         class Client
             attr_accessor :discovery_timeout, :timeout, :verbose, :filter, :config, :progress
-            attr_reader :client, :stats, :ddl
+            attr_reader :client, :stats, :ddl, :agent
 
             # Creates a stub for a remote agent, you can pass in an options array in the flags
             # which will then be used else it will just create a default options array with
@@ -19,11 +19,11 @@ module MCollective
                     options = flags[:options]
                 else
                     oparser = MCollective::Optionparser.new({:verbose => false, :progress_bar => true}, "filter")
-                    
+
                     options = oparser.parse do |parser, options|
                         if block_given?
-                            yield(parser, options) 
-                        end 
+                            yield(parser, options)
+                        end
 
                         RPC.add_simplerpc_options(parser, options)
                     end
@@ -74,7 +74,7 @@ module MCollective
 
             # Creates a suitable request hash for the SimpleRPC agent.
             #
-            # You'd use this if you ever wanted to take care of sending 
+            # You'd use this if you ever wanted to take care of sending
             # requests on your own - perhaps via Client#sendreq if you
             # didn't care for responses.
             #
@@ -86,7 +86,7 @@ module MCollective
             #   your_rpc.client.sendreq(msg, msg[:agent], filter)
             #
             # This will send a SimpleRPC request to the action some_action
-            # with arguments :foo = :bar, it will return immediately and 
+            # with arguments :foo = :bar, it will return immediately and
             # you will have no indication at all if the request was receieved or not
             #
             # Clearly the use of this technique should be limited and done only
@@ -99,10 +99,10 @@ module MCollective
                  :caller => callerid,
                  :data   => data}
             end
-            
+
             # Magic handler to invoke remote methods
             #
-            # Once the stub is created using the constructor or the RPC#rpcclient helper you can 
+            # Once the stub is created using the constructor or the RPC#rpcclient helper you can
             # call remote actions easily:
             #
             #   ret = rpc.echo(:msg => "hello world")
@@ -120,7 +120,7 @@ module MCollective
             #
             # If :statuscode is 0 then everything went find, if it's 1 then you supplied the correct arguments etc
             # but the request could not be completed, you'll find a human parsable reason in :statusmsg then.
-            #  
+            #
             # Codes 2 to 5 maps directly to UnknownRPCAction, MissingRPCData, InvalidRPCData and UnknownRPCError
             # see below for a description of those, in each case :statusmsg would be the reason for failure.
             #
@@ -130,7 +130,7 @@ module MCollective
             #      pp resp
             #   end
             #
-            # In this case resp will the result from MCollective::Client#req.  Instead of returning simple 
+            # In this case resp will the result from MCollective::Client#req.  Instead of returning simple
             # text and codes as above you'll also need to handle the following exceptions:
             #
             # UnknownRPCAction - There is no matching action on the agent
@@ -143,7 +143,7 @@ module MCollective
             #
             #   rpc.progress = false
             #
-            # This supports a 2nd mode where it will send the SimpleRPC request and never handle the 
+            # This supports a 2nd mode where it will send the SimpleRPC request and never handle the
             # responses.  It's a bit like UDP, it sends the request with the filter attached and you
             # only get back the requestid, you have no indication about results.
             #
@@ -165,11 +165,11 @@ module MCollective
 
                 # Normal agent requests as per client.action(args)
                 if block_given?
-                    call_agent(method_name, args, options) do |r|
+                    call_agent(action, args, options) do |r|
                         block.call(r)
                     end
                 else
-                    call_agent(method_name, args, options) 
+                    call_agent(action, args, options)
                 end
             end
 
@@ -195,7 +195,7 @@ module MCollective
             # puppet.custom_request("runonce", {}, {:identity => "your.box.com"},
             #                       ["your.box.com"])
             #
-            # This will do runonce action on just 'your.box.com', no discovery will be 
+            # This will do runonce action on just 'your.box.com', no discovery will be
             # done and after receiving just one response it will stop waiting for responses
             def custom_request(action, args, expected_agents, filter = {}, &block)
                 @ddl.validate_request(action, args) if @ddl
@@ -228,7 +228,7 @@ module MCollective
                         block.call(r)
                     end
                 else
-                    call_agent(action, args, custom_options, [expected_agents].flatten) 
+                    call_agent(action, args, custom_options, [expected_agents].flatten)
                 end
             end
 
@@ -299,7 +299,7 @@ module MCollective
                 @discovered_agents
             end
 
-            # Provides a normal options hash like you would get from 
+            # Provides a normal options hash like you would get from
             # Optionparser
             def options
                 {:disctimeout => @discovery_timeout,
@@ -308,13 +308,13 @@ module MCollective
                  :filter => @filter,
                  :config => @config}
             end
-            
+
             private
-            # for requests that do not care for results just 
+            # for requests that do not care for results just
             # return the request id and don't do any of the
             # response processing.
             #
-            # We send the :process_results flag with to the 
+            # We send the :process_results flag with to the
             # nodes so they can make decisions based on that.
             #
             # Should only be called via method_missing
@@ -322,13 +322,13 @@ module MCollective
                 @ddl.validate_request(action, args) if @ddl
 
                 req = new_request(action.to_s, args)
-                return @client.sendreq(req, @agent, @filter) 
+                return @client.sendreq(req, @agent, @filter)
             end
 
             # Handles traditional calls to the remote agents with full stats
             # blocks, non blocks and everything else supported.
             #
-            # Other methods of calling the nodes can reuse this code by 
+            # Other methods of calling the nodes can reuse this code by
             # for example specifying custom options and discovery data
             def call_agent(action, args, opts, disc=:auto, &block)
                 # Handle fire and forget requests and make sure
@@ -355,7 +355,7 @@ module MCollective
                 if disc.size > 0
                     @client.req(req, @agent, opts, disc.size) do |resp|
                         respcount += 1
-    
+
                         if block_given?
                             process_results_with_block(resp, block)
                         else
@@ -363,11 +363,11 @@ module MCollective
                                 puts if respcount == 1
                                 print twirl.twirl(respcount, disc.size)
                             end
-    
-                            result << process_results_without_block(resp)
+
+                            result << process_results_without_block(resp, action)
                         end
                     end
-    
+
                     @stats.client_stats = @client.stats
                 else
                     print("\nNo request sent, we did not discovered any nodes.")
@@ -387,27 +387,27 @@ module MCollective
             end
 
             # Handles result sets that has no block associated, sets fails and ok
-            # in the stats object and return a hash of the response to send to the 
+            # in the stats object and return a hash of the response to send to the
             # caller
-            def process_results_without_block(resp)
+            def process_results_without_block(resp, action)
                 @stats.node_responded(resp[:senderid])
 
                 if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
                     @stats.ok if resp[:body][:statuscode] == 0
                     @stats.fail if resp[:body][:statuscode] == 1
-    
-                    return {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode], 
-                            :statusmsg => resp[:body][:statusmsg], :data => resp[:body][:data]}
+
+                    return Result.new(@agent, action, {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode],
+                                                       :statusmsg => resp[:body][:statusmsg], :data => resp[:body][:data]})
                 else
                     @stats.fail
-    
-                    return {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode], 
-                            :statusmsg => resp[:body][:statusmsg], :data => nil}
+
+                    return Result.new(@agent, action, {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode],
+                                                       :statusmsg => resp[:body][:statusmsg], :data => nil})
                 end
             end
 
             # process client requests by calling a block on each result
-            # in this mode we do not do anything fancy with the result 
+            # in this mode we do not do anything fancy with the result
             # objects and we raise exceptions if there are problems with
             # the data
             def process_results_with_block(resp, block)

@@ -1,0 +1,64 @@
+# Snippets for use with VIM and http://www.vim.org/scripts/script.php?script_id=2540
+#
+# These snippets help you write Agent DDLs.  Install the VIM Snippets system
+# and copy this to your snippets directory.
+#
+# Create a file .vim/ftdetect/mcollective_ddl.vim with the following:
+# 
+#   au BufRead,BufNewFile *.ddl   setfiletype mcollective_ddl
+#
+# Your file type should now be correctly set automatically and editing
+# DDLs should be easier.
+#
+# Please contact R.I.Pienaar <rip@devco.net> for additions and feedback, 
+snippet meta
+	metadata    :name        => "${1:`Filename('', 'name')`}",
+	            :description => "${2:description}", 
+	            :author      => "${3:`g:snips_author`}",
+	            :license     => "${4:license}",
+	            :version     => "${5:version}",
+	            :url         => "${6:homepage}",
+	            :timeout     => ${7:run timeout}
+
+	${8}
+snippet	action
+	action "${1:action name}", :description => "${2:action description}" do
+	    ${3}
+	end
+snippet input String
+	input :${1:input name},
+	    :prompt      => "${2:prompt when asking for information}",
+	    :description => "${3:description of the input}",
+	    :type        => :string,
+	    :validation  => '${4:^.+$}',
+	    :optional    => ${5:false},
+            :maxlength   => ${6:20}
+
+	${7}
+snippet input List
+	input :${1:input name},
+	    :prompt      => "${2:prompt when asking for information}",
+	    :description => "${3:description of the input}",
+	    :type        => :list,
+	    :optional    => ${4:false},
+	    :list        => [${5:list members}]
+
+	${6}
+snippet output
+	output ${1:output name},
+	       :description => "${2:description of this output data}",
+	       :display_as => "${3:what do display}"
+
+	${4}
+snippet display Always
+	display :always
+
+
+snippet display Only OK results
+	display :ok
+
+
+snippet display Only failed results
+	display :failed
+	
+

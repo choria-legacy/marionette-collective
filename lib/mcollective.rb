@@ -7,10 +7,11 @@ require 'optparse'
 require 'singleton'
 require 'socket'
 require 'erb'
+require 'mcollective/monkey_patches'
 
 # == The Marionette Collective
 #
-# Framework to build and run Systems Administration agents running on a 
+# Framework to build and run Systems Administration agents running on a
 # publish/subscribe middleware system.  The system allows you to treat your
 # network as the only true source of the state of your platform via discovery agents
 # and allow you to run agents matching discovery criteria.
@@ -28,12 +29,12 @@ module MCollective
     class NotTargettedAtUs<RuntimeError;end
     class DDLValidationError<RuntimeError;end
 
-    autoload :Config, "mcollective/config"    
-    autoload :Log, "mcollective/log"    
-    autoload :Runner, "mcollective/runner"    
-    autoload :Agents, "mcollective/agents"    
-    autoload :Client, "mcollective/client"    
-    autoload :Util, "mcollective/util"    
+    autoload :Config, "mcollective/config"
+    autoload :Log, "mcollective/log"
+    autoload :Runner, "mcollective/runner"
+    autoload :Agents, "mcollective/agents"
+    autoload :Client, "mcollective/client"
+    autoload :Util, "mcollective/util"
     autoload :Optionparser, "mcollective/optionparser"
     autoload :Connector, "mcollective/connector"
     autoload :Security, "mcollective/security"

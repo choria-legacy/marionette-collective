@@ -3,11 +3,11 @@ module MCollective
     class Config
         include Singleton
 
-        attr_reader :topicprefix, :daemonize, :pluginconf, :libdir, :configured, :logfile, 
+        attr_reader :topicprefix, :daemonize, :pluginconf, :libdir, :configured, :logfile,
                     :keeplogs, :max_log_size, :loglevel, :identity, :daemonize, :connector,
                     :securityprovider, :factsource, :registration, :registerinterval, :topicsep,
                     :classesfile, :rpcauditprovider, :rpcaudit, :configdir, :rpcauthprovider,
-                    :rpcauthorization
+                    :rpcauthorization, :color
 
         def initialize
             @configured = false
@@ -19,7 +19,7 @@ module MCollective
             @pluginconf = Hash.new
             @connector = "Stomp"
             @securityprovider = "Psk"
-            @factsource = "Facter"
+            @factsource = "Yaml"
             @identity = Socket.gethostname
             @registration = "Agentlist"
             @registerinterval = 0
@@ -30,9 +30,14 @@ module MCollective
             @rpcauthorization = false
             @rpcauthprovider = ""
             @configdir = File.dirname(configfile)
+            @color = true
 
             if File.exists?(configfile)
                 File.open(configfile, "r").each do |line|
+
+                    # strip blank spaces, tabs etc off the end of all lines
+                    line.gsub!(/\s*$/, "")
+
                     unless line =~ /^#|^$/
                         if (line =~ /(.+?)\s*=\s*(.+)/)
                             key = $1
@@ -62,6 +67,8 @@ module MCollective
                                     end
                                 when "identity"
                                     @identity = val
+                                when "color"
+                                    val =~ /^1|y/i ? @color = true : @color = false
                                 when "daemonize"
                                     val =~ /^1|y/i ? @daemonize = true : @daemonize = false
                                 when "securityprovider"
