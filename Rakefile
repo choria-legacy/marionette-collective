@@ -38,7 +38,7 @@ def init
 end
 
 desc "Build documentation, tar balls and rpms"
-task :default => [:clean, :doc, :package, :rpm] 
+task :default => [:clean, :doc, :package]
 
 # task for building docs
 rd = Rake::RDocTask.new(:doc) { |rdoc|
