@@ -13,6 +13,7 @@ lib/ruby/1.8/mcollective/facts/
 lib/ruby/1.8/mcollective/facts.rb
 lib/ruby/1.8/mcollective/facts/base.rb
 lib/ruby/1.8/mcollective/log.rb
+lib/ruby/1.8/mcollective/monkey_patches.rb
 lib/ruby/1.8/mcollective/optionparser.rb
 lib/ruby/1.8/mcollective/pluginmanager.rb
 lib/ruby/1.8/mcollective/registration/
@@ -25,9 +26,11 @@ lib/ruby/1.8/mcollective/rpc/agent.rb
 lib/ruby/1.8/mcollective/rpc/audit.rb
 lib/ruby/1.8/mcollective/rpc/client.rb
 lib/ruby/1.8/mcollective/rpc/ddl.rb
+lib/ruby/1.8/mcollective/rpc/helpers.rb
 lib/ruby/1.8/mcollective/rpc/progress.rb
 lib/ruby/1.8/mcollective/rpc/reply.rb
 lib/ruby/1.8/mcollective/rpc/request.rb
+lib/ruby/1.8/mcollective/rpc/result.rb
 lib/ruby/1.8/mcollective/rpc/stats.rb
 lib/ruby/1.8/mcollective/runner.rb
 lib/ruby/1.8/mcollective/security/
@@ -75,10 +78,12 @@ share/doc/mcollective/classes/MCollective/RPC/Agent.html
 share/doc/mcollective/classes/MCollective/RPC/Audit.html
 share/doc/mcollective/classes/MCollective/RPC/Client.html
 share/doc/mcollective/classes/MCollective/RPC/DDL.html
+share/doc/mcollective/classes/MCollective/RPC/Helpers.html
 share/doc/mcollective/classes/MCollective/RPC/Logfile.html
 share/doc/mcollective/classes/MCollective/RPC/Progress.html
 share/doc/mcollective/classes/MCollective/RPC/Reply.html
 share/doc/mcollective/classes/MCollective/RPC/Request.html
+share/doc/mcollective/classes/MCollective/RPC/Result.html
 share/doc/mcollective/classes/MCollective/RPC/Stats.html
 share/doc/mcollective/classes/MCollective/RPCAborted.html
 share/doc/mcollective/classes/MCollective/RPCError.html
@@ -96,6 +101,7 @@ share/doc/mcollective/classes/MCollective/Security/Ssl.html
 share/doc/mcollective/classes/MCollective/UnknownRPCAction.html
 share/doc/mcollective/classes/MCollective/UnknownRPCError.html
 share/doc/mcollective/classes/MCollective/Util.html
+share/doc/mcollective/classes/Symbol.html
 share/doc/mcollective/created.rid
 share/doc/mcollective/files/
 share/doc/mcollective/files/ext/
@@ -115,6 +121,7 @@ share/doc/mcollective/files/lib/mcollective/facts/
 share/doc/mcollective/files/lib/mcollective/facts/base_rb.html
 share/doc/mcollective/files/lib/mcollective/facts_rb.html
 share/doc/mcollective/files/lib/mcollective/log_rb.html
+share/doc/mcollective/files/lib/mcollective/monkey_patches_rb.html
 share/doc/mcollective/files/lib/mcollective/optionparser_rb.html
 share/doc/mcollective/files/lib/mcollective/pluginmanager_rb.html
 share/doc/mcollective/files/lib/mcollective/registration/
@@ -126,9 +133,11 @@ share/doc/mcollective/files/lib/mcollective/rpc/agent_rb.html
 share/doc/mcollective/files/lib/mcollective/rpc/audit_rb.html
 share/doc/mcollective/files/lib/mcollective/rpc/client_rb.html
 share/doc/mcollective/files/lib/mcollective/rpc/ddl_rb.html
+share/doc/mcollective/files/lib/mcollective/rpc/helpers_rb.html
 share/doc/mcollective/files/lib/mcollective/rpc/progress_rb.html
 share/doc/mcollective/files/lib/mcollective/rpc/reply_rb.html
 share/doc/mcollective/files/lib/mcollective/rpc/request_rb.html
+share/doc/mcollective/files/lib/mcollective/rpc/result_rb.html
 share/doc/mcollective/files/lib/mcollective/rpc/stats_rb.html
 share/doc/mcollective/files/lib/mcollective/rpc_rb.html
 share/doc/mcollective/files/lib/mcollective/runner_rb.html
@@ -166,8 +175,8 @@ share/examples/mcollective/facts.yaml.dist
 share/examples/mcollective/rpc-help.erb
 share/examples/mcollective/server.cfg.dist
 @sample ${SYSCONFDIR}/mcollective/server.cfg
-share/examples/mcollective/ssl/
 @sample ${SYSCONFDIR}/mcollective/ssl
+share/examples/mcollective/ssl/
 share/examples/mcollective/ssl/PLACEHOLDER
 @sample ${SYSCONFDIR}/mcollective/ssl/PLACEHOLDER
 share/examples/mcollective/ssl/clients/
