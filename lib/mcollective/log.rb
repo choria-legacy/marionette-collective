@@ -29,6 +29,38 @@ module MCollective
             end
         end
 
+        # cycles the log level increasing it till it gets to the highest
+        # then down to the lowest again
+        def cycle_level
+            config = Config.instance
+
+            case @logger.level
+                when Logger::FATAL
+                    @logger.level = Logger::ERROR
+                    error("Logging level is now ERROR configured level is #{config.loglevel}")
+
+                when Logger::ERROR
+                    @logger.level = Logger::WARN
+                    warn("Logging level is now WARN configured level is #{config.loglevel}")
+
+                when Logger::WARN
+                    @logger.level = Logger::INFO
+                    info("Logging level is now INFO configured level is #{config.loglevel}")
+
+                when Logger::INFO
+                    @logger.level = Logger::DEBUG
+                    info("Logging level is now DEBUG configured level is #{config.loglevel}")
+
+                when Logger::DEBUG
+                    @logger.level = Logger::FATAL
+                    fatal("Logging level is now FATAL configured level is #{config.loglevel}")
+
+                else
+                    @logger.level = Logger::DEBUG
+                    info("Logging level now DEBUG configured level is #{config.loglevel}")
+            end
+        end
+
         # logs at level INFO
         def info(msg)
             log(Logger::INFO, msg)

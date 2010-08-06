@@ -30,6 +30,11 @@ module MCollective
                 @log.info("Reloading all agents after receiving USR1 signal")
                 @agents.loadagents
             end
+
+            Signal.trap("USR2") do
+                @log.info("Cycling logging level due to USR2 signal")
+                @log.cycle_level
+            end
         end
 
         # Daemonize the current process
