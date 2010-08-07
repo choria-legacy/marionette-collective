@@ -68,8 +68,15 @@ module MCollective
         #   plugin.ssl_server_public = /etc/mcollective/ssl/server-public.pem
         #   plugin.ssl_client_cert_dir = /etc/mcollective/etc/ssl/clients/
         #
-        # Serialization uses Marshal, which means data types in and out of mcollective
-        # will be preserved from client to server and reverse.
+        # Serialization can be configured to use either Marshal or YAML, data types
+        # in and out of mcollective will be preserved from client to server and reverse
+        #
+        # You can configure YAML serialization:
+        #
+        #    plugins.ssl_serializer = yaml
+        #
+        # else the default is Marshal.  Use YAML if you wish to write a client using
+        # a language other than Ruby that doesn't support Marshal.
         #
         # Validation is as default and is provided by MCollective::Security::Base
         #
@@ -78,10 +85,10 @@ module MCollective
             # Decodes a message by unserializing all the bits etc, it also validates
             # it as valid using the psk etc
             def decodemsg(msg)
-                body = Marshal.load(msg.payload)
+                body = deserialize(msg.payload)
     
                 if validrequest?(body)
-                    body[:body] = Marshal.load(body[:body])
+                    body[:body] = deserialize(body[:body])
                     return body
                 else
                     nil
@@ -90,12 +97,12 @@ module MCollective
             
             # Encodes a reply
             def encodereply(sender, target, msg, requestid, filter={})
-                serialized  = Marshal.dump(msg)
+                serialized  = serialize(msg)
                 digest = makehash(serialized)
     
                 @log.debug("Encoded a message for request #{requestid}")
     
-                Marshal.dump({:senderid => @config.identity,
+                serialize({:senderid => @config.identity,
                               :requestid => requestid,
                               :senderagent => sender,
                               :msgtarget => target,
@@ -106,7 +113,7 @@ module MCollective
     
             # Encodes a request msg
             def encoderequest(sender, target, msg, requestid, filter={})
-                serialized = Marshal.dump(msg)
+                serialized = serialize(msg)
                 digest = makehash(serialized)
     
                 @log.debug("Encoding a request for '#{target}' with request id #{requestid}")
@@ -121,7 +128,7 @@ module MCollective
                 # if we're in use by a client add the callerid to the main client hashes
                 request[:callerid] = callerid
 
-                Marshal.dump(request)
+                serialize(request)
             end
     
             # Checks the SSL signature in the request body
@@ -156,6 +163,34 @@ module MCollective
             end
 
             private
+            # Serializes a message using the configured encoder
+            def serialize(msg)
+                serializer = @config.pluginconf["ssl_serializer"] || "marshal"
+
+                @log.debug("Serializing using #{serializer}")
+
+                case serializer
+                    when "yaml"
+                        return YAML.dump(msg)
+                    else
+                        return Marshal.dump(msg)
+                end
+            end
+
+            # De-Serializes a message using the configured encoder
+            def deserialize(msg)
+                serializer = @config.pluginconf["ssl_serializer"] || "marshal"
+
+                @log.debug("De-Serializing using #{serializer}")
+
+                case serializer
+                    when "yaml"
+                        return YAML.load(msg)
+                    else
+                        return Marshal.load(msg)
+                end
+            end
+
             # Figures out where to get our private key
             def private_key_file
                 if ENV.include?("MCOLLECTIVE_SSL_PRIVATE")
