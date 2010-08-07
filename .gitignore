@@ -1,0 +1,4 @@
+etc/*cfg
+etc/*yaml
+etc/ssl/*pem
+etc/ssl/clients/*pem
