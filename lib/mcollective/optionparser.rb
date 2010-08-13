@@ -18,12 +18,16 @@ module MCollective
             timeout = ENV["MCOLLECTIVE_TIMEOUT"] || 5
             dtimeout = ENV["MCOLLECTIVE_DTIMEOUT"] || 2
 
+            config = File.expand_path("~/.mcollective")
+            unless File::Stat.new(config).readable?
+                config = "/etc/mcollective/client.cfg"
+            end
 
             @options = {:disctimeout => dtimeout.to_i,
                         :timeout     => timeout.to_i,
                         :verbose     => false,
                         :filter      => Util.empty_filter,
-                        :config      => "/etc/mcollective/client.cfg"}
+                        :config      => config}
 
             @options.merge!(defaults)
         end
