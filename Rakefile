@@ -105,7 +105,7 @@ task :deb => [:clean, :doc, :package] do
         f.puts
         f.puts("  * Automated release for #{CURRENT_VERSION}-#{CURRENT_RELEASE} by rake deb")
         f.puts
-        f.puts("    See http://code.google.com/p/mcollective/wiki/ReleaseNotes for full details")
+        f.puts("    See http://marionette-collective.org/releasenotes.html for full details")
         f.puts
         f.puts(" -- The Marionette Collective <mcollective-dev@googlegroups.com>  #{Time.new.strftime('%a, %d %b %Y %H:%M:%S %z')}")
     end

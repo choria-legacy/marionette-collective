@@ -4,7 +4,7 @@ Priority: extra
 Maintainer: Riccardo Setti <giskard@debian.org>
 Build-Depends: debhelper (>= 7), dpatch, cdbs
 Standards-Version: 3.8.0
-Homepage: http://code.google.com/p/mcollective/
+Homepage: http://marionette-collective.org/
 
 Package: mcollective
 Architecture: all

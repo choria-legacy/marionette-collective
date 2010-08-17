@@ -5,7 +5,7 @@ DISTNAME=	mcollective-0.4.7
 
 CATEGORIES=	sysutils
 
-HOMEPAGE=	http://code.google.com/p/mcollective/
+HOMEPAGE=	http://marionette-collective.org/
 MASTER_SITES=	http://mcollective.googlecode.com/files/
 EXTRACT_SUFX=	.tgz
 
