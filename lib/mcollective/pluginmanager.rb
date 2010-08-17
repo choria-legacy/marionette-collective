@@ -83,6 +83,8 @@ module MCollective
             Log.instance.debug("Loading #{klass} from #{fname}")
     
             load fname
+        rescue Exception => e
+            Log.instance.error("Failed to load #{klass}: #{e}")
         end
 
         # Grep's over the plugin list and returns the list found

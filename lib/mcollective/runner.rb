@@ -57,7 +57,11 @@ module MCollective
             @connection.subscribe(controltopic)
 
             # Start the registration plugin if interval isn't 0
-            PluginManager["registration_plugin"].run(@connection) unless @config.registerinterval == 0
+            begin
+                PluginManager["registration_plugin"].run(@connection) unless @config.registerinterval == 0
+            rescue Exception => e
+                @log.error("Failed to start registration plugin: #{e}")
+            end
 
             loop do
                 begin
