@@ -1,0 +1,71 @@
+<beans
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:amq="http://activemq.apache.org/schema/core"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd   
+  http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
+
+    <broker xmlns="http://activemq.apache.org/schema/core" brokerName="broker3" useJmx="true">
+        <!-- Destination specific policies using destination names or wildcards
+             this sets enableAudit = true on all topics, thus avoiding duplicates -->
+        <destinationPolicy>
+          <policyMap>
+            <policyEntries>
+              <policyEntry topic=">" />
+            </policyEntries>
+          </policyMap>
+        </destinationPolicy>
+
+        <managementContext>
+          <managementContext connectorPort="1099" jmxDomainName="org.apache.activemq"/>
+        </managementContext>
+
+        <plugins>
+          <statisticsBrokerPlugin/>
+          <simpleAuthenticationPlugin>
+            <users>
+              <authenticationUser username="amq" password="secret" groups="admins,everyone"/>
+              <authenticationUser username="mcollective" password="example" groups="mcollective,everyone"/>
+              <authenticationUser username="admin" password="secret" groups="mcollective,admin,everyone"/>
+            </users>
+          </simpleAuthenticationPlugin>
+          <authorizationPlugin>
+            <map>
+              <authorizationMap>
+                <authorizationEntries>
+                  <authorizationEntry queue=">" write="admins" read="admins" admin="admins" />
+                  <authorizationEntry topic=">" write="admins" read="admins" admin="admins" />
+                  <authorizationEntry topic="mcollective.>" write="mcollective" read="mcollective" admin="mcollective" />
+                  <authorizationEntry topic="mcollective.>" write="mcollective" read="mcollective" admin="mcollective" />
+                  <authorizationEntry topic="ActiveMQ.Advisory.>" read="everyone" write="everyone" admin="everyone"/>
+                </authorizationEntries>
+              </authorizationMap>
+            </map>
+          </authorizationPlugin>
+        </plugins>
+
+        <systemUsage>
+          <systemUsage>
+            <memoryUsage>
+              <memoryUsage limit="20 mb" />
+            </memoryUsage>
+            <storeUsage>
+              <storeUsage limit="1 gb" />
+            </storeUsage>
+            <tempUsage>
+              <tempUsage limit="100 mb" />
+            </tempUsage>
+          </systemUsage>
+        </systemUsage>
+
+
+        <transportConnectors>
+          <transportConnector name="openwire" uri="tcp://0.0.0.0:6166"/>
+          <transportConnector name="stomp"   uri="stomp://0.0.0.0:6163"/>
+        </transportConnectors>
+
+    </broker>
+
+    <import resource="jetty.xml"/>
+</beans>
