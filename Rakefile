@@ -10,17 +10,8 @@ PROJ_VERSION = "0.4.7"
 PROJ_RELEASE = "1"
 PROJ_NAME = "mcollective"
 PROJ_RPM_NAMES = [PROJ_NAME]
-PROJ_FILES = ["#{PROJ_NAME}.spec", "#{PROJ_NAME}.init", "mcollectived.rb", "COPYING", "doc"]
-PROJ_SUBDIRS = ["etc", "lib", "plugins", "ext"]
+PROJ_FILES = ["#{PROJ_NAME}.spec", "#{PROJ_NAME}.init", "mcollectived.rb", "COPYING", "doc", "etc", "lib", "plugins", "ext"]
 PROJ_FILES.concat(Dir.glob("mc-*"))
-
-Find.find("etc", "lib", "plugins", "ext") do |f|
-    if FileTest.directory?(f) and f =~ /\.svn/
-        Find.prune
-    else
-        PROJ_FILES << f
-    end
-end
 
 ENV["RPM_VERSION"] ? CURRENT_VERSION = ENV["RPM_VERSION"] : CURRENT_VERSION = PROJ_VERSION
 ENV["BUILD_NUMBER"] ? CURRENT_RELEASE = ENV["BUILD_NUMBER"] : CURRENT_RELEASE = PROJ_RELEASE
