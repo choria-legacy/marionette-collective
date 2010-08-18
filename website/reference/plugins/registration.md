@@ -5,12 +5,12 @@ disqus: true
 ---
 [RegistrationMonitor]: http://code.google.com/p/mcollective-plugins/wiki/AgentRegistrationMonitor
 
-## {{page.title}}
+# {{page.title}}
 
 We support the ability for each node to register with a central inventory, we don't use the inventory 
 internally for anything it's there as a framework to enable you to build inventory systems or WebUI's.
 
-### Details
+## Details
 
 Registration plugins are easy to write and you can configure your nodes to use your own or the provided one.  
 All Registration plugins must inherit from *MCollective::Registration::Base* to ensure they get loaded into 

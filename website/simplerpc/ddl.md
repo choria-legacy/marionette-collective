@@ -12,7 +12,10 @@ disqus: true
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
 [DDLScreenCast]: http://mcollective.blip.tv/file/3799653
 
-## {{page.title}}
+# {{page.title}}
+
+ * TOC Placeholder
+ {:toc}
 
 As with other remote procedure invocation systems SimpleRPC has a DDL that defines what remote methods are available, what inputs they take and what outputs they generate.
 
@@ -30,12 +33,12 @@ The DDL is used in various scenarios:
 
 We've created [a screencast showing the capabilities of the DDL][DDLScreenCast] that might help give you a better overview.
 
-### Examples
+## Examples
 We'll start with a few examples as I think it's pretty simple what they do, and later on show what other permutations are allowed for defining inputs and outputs.
 
 The typical service agent is a good example, it has various actions that all more or less take the same input.  All but status would have almost identical language.
 
-#### Meta Data
+### Meta Data
 First we need to define the meta data for the agent itself:
 
 {% highlight ruby linenos %}
@@ -50,7 +53,7 @@ metadata :name        => "SimpleRPC Service Agent",
 
 It's fairly obvious what these all do, *:timeout* is how long the MCollective daemon will let the threads run.
 
-### Actions, Input and Output
+## Actions, Input and Output
 Defining inputs and outputs is the hardest part, below first the *status* action:
 
 {% highlight ruby linenos %}
@@ -139,10 +142,10 @@ ACTIONS:
                Display As: Service Status
 {% endhighlight %}
 
-#### Optional Inputs
+### Optional Inputs
 The input block has a mandatory *:optional* field, when true it would be ok if a client attempts to call the agent without this input supplied.  If it is supplied though it will be validated.
 
-#### Types of Input
+### Types of Input
 As you see above the input block has *:type* option, types can be *:string* or *:list* today, we intend to expand this to other validations.
 
 #### :string type
@@ -166,7 +169,7 @@ input :action,
 
 In user interfaces this might be displayed as a drop down list selector or another kind of menu.
 
-#### Accessing the DDL
+### Accessing the DDL
 While programming client applications or web apps you can gain access to the DDL for any agent in several ways:
 
 {% highlight ruby linenos %}
@@ -229,5 +232,5 @@ pp service.ddl.meta
 
 In the case of accessing it through the service as in this example, if there was no DDL file on the machine for the service agent you'd get a *nil* back from the ddl accessor.
 
-#### Input Validation
+### Input Validation
 As mentioned earlier the client does automatic input validation using the DDL, if validation fails you will get an *MCollective::DDLValidationError* exception thrown with an appropriate message.

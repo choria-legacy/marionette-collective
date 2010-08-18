@@ -5,15 +5,15 @@ disqus: true
 ---
 [STOMP]: http://stomp.codehaus.org/
 
-## {{page.title}}
+# {{page.title}}
 
 The stomp connector uses the [STOMP] rubygem to connect to compatible servers.  This is known to work with ActiveMQ and Stompserver.  Anecdotal evidence suggests it works with RabbitMQ's Stomp plugin.
 
 This code will only work with version _1.1_ and _1.1.6_ or newer of the Stomp gem, the in between versions have threading issues.
 
 
-### Configuring
-#### Common Options
+## Configuring
+### Common Options
 The most basic configuration method is supported in all versions of the gem:
 
 {% highlight ini %}
@@ -26,7 +26,7 @@ plugin.stomp.password = secret
 
 You can override all of these settings using environment variables STOMP_SERVER, STOMP_PORT, STOMP_USER, STOMP_PASSWORD.  It is recommended that your _client.cfg_ do not have usernames and passwords in it, users should set their own in the environment.
 
-#### Failover Pools
+### Failover Pools
 Newer versions of the Stomp gem supports failover between multiple Stomp servers, you need at least _1.1.6_ to use this.
 
 {% highlight ini %}

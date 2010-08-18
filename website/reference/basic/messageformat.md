@@ -8,7 +8,10 @@ disqus: true
 [MessageFlow]: messageflow.html
 [ScreenCast]: /introduction/screencasts.html#message_flow
 
-## {{page.title}}
+# {{page.title}}
+
+ * TOC Placeholder
+ {:toc}
 
 The messages that gets put on the middleware attempts to contain everything that mcollective needs to function, avoiding where possible special features in the Middle Ware.  This will hopefully make it easier to create Connector plugins for other middleware.
 
@@ -20,10 +23,10 @@ In general this is all hidden from the developers, especially if you use [Simple
 
 There is also a [screencast][ScreenCast] that shows this process and message format, recommend you watch that.
 
-### Message Flow
+## Message Flow
 For details of the flow of messages and how requests / replies travel around the network see the [MessageFlow] page.
 
-#### Requests sent to agents
+### Requests sent to agents
 A sample request that gets sent to the connector can be seen here, each component is described below:
 
 {% highlight ruby %}
@@ -41,7 +44,7 @@ A sample request that gets sent to the connector can be seen here, each componen
 
 Once this request is created the security plugin will serialize it and sent it to the connector, in the case of the PSK security plugin this is done using Marshal.
 
-##### :filter
+#### :filter
 The filter will be evaluated by each node, if it passes the node will dispatch the message to an agent.
 
 You can see all these types of filter in action in the _MCollection::Optionparser_ class.
@@ -49,7 +52,7 @@ You can see all these types of filter in action in the _MCollection::Optionparse
 Each filter is an array and you can have multiple filters per type which will be applied with an _AND_
 Valid filter types are:
 
-###### CF Class
+##### CF Class
 
 This will look in a list of classes/recipes/cookbooks/roles applied by your 
 configuration management system and match based on that
@@ -58,7 +61,7 @@ configuration management system and match based on that
 filter["cf_class"] = ["common::linux"]
 {% endhighlight %}
 
-###### MCollective Agent
+##### MCollective Agent
 
 This will look through the list of known agents and match against that.
 
@@ -66,7 +69,7 @@ This will look through the list of known agents and match against that.
 filter["agent"] = ["package"]
 {% endhighlight %}
 
-###### Facts
+##### Facts
 
 Since facts are key => value pairs this is a bit more complex than normal as you need to build a nested Hash.
 
@@ -74,7 +77,7 @@ Since facts are key => value pairs this is a bit more complex than normal as you
 filter["fact"] = [{:fact => "country", :value => "uk"}]
 {% endhighlight %}
 
-###### Identity
+##### Identity
 
 The identity is the configured identity in the server config file, many hosts can have the same identity it's just another level of filter doesn't really mean much like a hostname that would need to be unique.
 
@@ -82,15 +85,15 @@ The identity is the configured identity in the server config file, many hosts ca
 filter["identity"] = ["foo.bar.com"]
 {% endhighlight %}
 
-##### :senderid
+#### :senderid
 
 The value of _identity_ in the configuration file.
 
-##### :msgtarget
+#### :msgtarget
 
 The Middleware topic or channel the message is being sent to
 
-##### :body
+#### :body
 
 The contents of the body will vary by what ever the security provider choose to impliment, the PSK security provider simply Marshal encodes the body into a serialized format ready for transmission.
 
@@ -98,19 +101,19 @@ This ensures that variable types etc remain in tact end to end.  Other security 
 
 In the case of [Simple RPC][SimpleRPCIntroduction] the entire RPC request and replies will be in the body of the messages, it's effectively a layer on top of the basic message flow.
  
-##### :hash
+#### :hash
 
 This is an example of something specific to the security provider, this is used only by the PSK provider so it's optional and specific to the PSK provider
 
-##### :msgtime
+#### :msgtime
 
 The unix timestamp that the message was sent at.
 
-##### :requestid
+#### :requestid
 
 This is a unique id for each message that gets sent, replies will have the same id attached to them for validation.
 
-#### Replies from Agents
+### Replies from Agents
 Replies are very similar to requests, I'll show a reply below and only highlight the differences between requests.
 
 {% highlight ruby %}
@@ -125,8 +128,8 @@ Replies are very similar to requests, I'll show a reply below and only highlight
 
 Once this reply is created the security plugin will serialize it and sent it to the connector, in the case of the PSK security plugin this is done using serialization tools like Marshal or YAML depending on Security Plugin.
 
-##### :senderagent
+#### :senderagent
 This is the agent name that sent the reply
 
-##### :requestid
+#### :requestid
 The id that was contained in the request we are replying to.  Agents do not generally tend to generate messages - they only reply - so this should always be provided.

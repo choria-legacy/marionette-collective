@@ -12,7 +12,7 @@ disqus: true
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
 [RestGateway]: http://github.com/mcollective/marionette-collective/blob/master/ext/mc-rpc-restserver.rb
 
-## {{page.title}}
+# {{page.title}}
 
 MCollective is a framework for writing feature full agents and clients and provides a [rich system to do that][WritingAgents].  MCollective's native Client though is very low level, a bit like TCP/IP is to HTTP.  Like TCP/IP the native client does not provide any Authentication, Authorization etc.
 

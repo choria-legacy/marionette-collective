@@ -18,7 +18,7 @@ disqus: true
 [ServiceAgent]: http://code.google.com/p/mcollective-plugins/wiki/AgentService
 [PackageAgent]: http://code.google.com/p/mcollective-plugins/wiki/AgentPackage
 
-## {{page.title}}
+# {{page.title}}
 
 If you're a Puppet user you are supported in both facts and classes filters.
 
@@ -39,7 +39,7 @@ There are also several blog posts related to Puppet and MCollective:
  * Managing Puppetd - [ManagingPuppetd]
  * Bootstrapping your cloud environment - [CloudBootstrap]
 
-### Facts
+## Facts
 There is a [community plugin to enable Facter][FactsRLFacter] as a fact source.
 
 So you can use the facts provided by Facter in filters, reports etc.
@@ -50,7 +50,7 @@ $ mc-find-hosts --with-fact lsbdistrelease=5.4
 
 This includes facts pushed out with [Plugin Sync][PluginSync].
  
-### Class Filters
+## Class Filters
 Puppet provides a list of classes applied to a node by default in */var/lib/puppet/classes.txt* or */var/lib/puppet/state/classes.txt* (depending on which Puppet version you are using. The latter is true for 0.23.0 onwards) , we'll use this data with *--with-class* filters.
 
 You should configure MCollective to use this file by putting the following in your *server.cfg* 

@@ -5,13 +5,13 @@ disqus: true
 ---
 [Downloads]: http://code.google.com/p/mcollective/downloads/list
 
-## {{page.title}}
+# {{page.title}}
 For those of you who are running Gentoo Linux, we maintain ebuilds for stomp and mcollective within our public portage overlay.  Here is information on how to access those ebuilds and install mcollective from within portage.
 
-### Installing the local ebuild
+## Installing the local ebuild
 You can either clone the Arces portage overlay, or you can extract the ebuild directly into your own overlay.  
 
-### Cloning the Arces overlay
+## Cloning the Arces overlay
 The standard location for local portage overlays is _/usr/local/portage_ on Gentoo systems.  Our overlay is designed to fit with the multiple-overlay system introduced by Layman, although it's not part of the Layman repository list.  You can clone the repository with Git from _http://support.arces.net/public/git/arces`_`overlay.git_
 
 {% highlight console %}
@@ -63,13 +63,13 @@ At this point you should see the mcollective and stomp packages in portage.
 
 We recommend that you add a cron job to run _git pull_ once a day from within the overlay directory to keep it up to date.
 
-### Extracting the ebuild into your own overlay
+## Extracting the ebuild into your own overlay
 If you have your own local portage overlay and would only like to add the ebuilds for mcollective and stomp, you can do so by retrieving them from the [Downloads] page.  Extract them into your local portage overlay directory.  The mcollective package is part of _app-admin_ and the stomp package is part of _dev-ruby_.  The category directories are included in the tarballs, so please extract them from within the top of your local portage overlay.
 
 Once that's done, please update the _eix_ cache as described above, and you should see the packages.
 
-### Installing mcollective
-#### Keywords
+## Installing mcollective
+### Keywords
 The packages are masked as unstable because they are not part of the Gentoo portage tree.  You can unmask them by adding the following lines to _/etc/portage/package.keywords_, replacing _~arch_ with your architecture (_~x86_, _~amd64_, etc).
 
 {% highlight console %}
@@ -77,12 +77,12 @@ dev-ruby/stomp ~arch
 app-admin/mcollective ~arch
 {% endhighlight %}
 
-#### Use flags
+### Use flags
 You can install mcollective as a client, a server, or both through the portage use flags.  On most of your hosts you'll install mcollective only as a server, which is the default if no use flags are set.  On one or more administrative nodes, you'll want to install mcollective as a client to install the executable files that allow you to interact with all of the remote nodes.  Set these flags in _/etc/portage/package.use_.
 
 {% highlight console %}
 app-admin/mcollective -client server
 {% endhighlight %}
 
-#### Installation
+### Installation
 You may now install mcollective and stomp with _emerge_ as you would with any other package.

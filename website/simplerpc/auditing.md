@@ -6,13 +6,13 @@ disqus: true
 [SimpleRPCIntroduction]: index.html
 [AuditCentralRPCLog]: http://code.google.com/p/mcollective-plugins/wiki/AuditCentralRPCLog
 
-## {{page.title}}
+# {{page.title}}
 
 As part of the [SimpleRPC][SimpleRPCIntroduction] framework we've added an auditing system that you can use to log all requests received into a file or even send it over mcollective to a central auditing system.  What actually happens with audit data is pluggable and you can provide your own plugins to do what you need.
 
 The clients will include the _uid_ of the process running the client library in the requests and the audit function will have access to that on the requests.
 
-### Configuration
+## Configuration
 To enable logging you should set an option to enable it and also one to configure which plugin to use:
 
 {% highlight ini %}
@@ -24,7 +24,7 @@ This sets it up to use _MCollective::Audit::Logfile_ plugin for logging evens.
 
 The client will embed a caller id - the Unix UID of the program running it or SSL cert - in requests which you can find in the _request_ object.
 
-### Logfile plugin
+## Logfile plugin
 
 Auditing is implemented using plugins that you should install in the normal plugin directory under _mcollective/audit/_.  We have a sample Logfile plugin that you can see below:
 

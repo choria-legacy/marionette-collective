@@ -4,17 +4,20 @@ title: Configuration Guide
 disqus: true
 ---
 
-## {{page.title}}
+# {{page.title}}
+
+ * TOC Placeholder
+ {:toc}
 
 This guide tells you about the major configuration options in the daemon and client config files.  There are options not mentioned
 here typically ones specific to a certain plugin.
 
-### Configuration Files
+## Configuration Files
 There are 2 configuration files, one for the client and one for the server, these default to */etc/mcollective/server.cfg* and */etc/mcollective/client.cfg*.
 
 Configuration is a simple *key = val* style configuration file.
 
-### Common Options
+## Common Options
 <table>
 <tr><th><b>Key</b></th><th><b>Sample</b></th><th><b>Description</b></th></tr>
 <tr><td>topicprefix</td><td>/topic/mcollective</td><td>Prefix that gets used for all messages</td></tr>
@@ -29,7 +32,7 @@ Configuration is a simple *key = val* style configuration file.
 <tr><td>securityprovider</td><td>Psk</td><td>Which security model to use, see <a href="/reference/plugins/security_ssl.html">SSL Security Plugin</a> for details on configuring SSL</td></tr>
 </table>
 
-### Server Configuration
+## Server Configuration
 The server configuration file should be root only readable
 
 <table>
@@ -46,7 +49,7 @@ The server configuration file should be root only readable
 <tr><td>rpcauthprovider</td><td>action_policy</td><td>Use the <em>MCollective::Util::ActionPolicy</em> plugin to manage authorization</td></tr>
 </table>
 
-### Client Configuration
+## Client Configuration
 The client configuration file should be readable by everyone, it's not advised to put PSK's or client SSL certs in a world readable file, see below how to do that per user.
 
 <table>
@@ -54,7 +57,7 @@ The client configuration file should be readable by everyone, it's not advised t
 <tr><td>color</td><td>0</td><td>Disables the use of color in RPC results</td></tr>
 </table>
 
-### Plugin Configuration
+## Plugin Configuration
 You can add free form config options for plugins, they take the general form like:
 
 {% highlight ini %}
@@ -75,7 +78,7 @@ Common plugin options are:
 <tr><td>plugin.psk</td><td>123456789</td><td>The pre-shared key to use for the Psk security provider</td></tr>
 </table>
 
-### Client Setup
+## Client Setup
 It's recommended that you do not set host, user, password and Psk in the client configuration file since these files are generally world readable unlike the server one that should be root readable only.  I just set mine to *unset* so it's clear to someone who looks at the config file that it's not going to work without the settings below.
 
 From version _1.0.0_ onwards you can also put client configuration in _~/.mcollective_ as an alternative to the method below, but you will need a full client.cfg then in that location.

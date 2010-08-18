@@ -4,7 +4,10 @@ title: Node Reports
 disqus: true
 ---
 
-## {{page.title}}
+# {{page.title}}
+
+ * TOC Placeholder
+ {:toc}
 
 As we have all facts, classes and agents for nodes we can do some custom reporting on all of these.
 
@@ -12,7 +15,7 @@ We've added a tool - *mc-inventory* - that has a very simple scriptable report l
 
 **Note: This is an emerging feature, the scripting language is likely to change**
 
-### Node View
+## Node View
 To obtain a full inventory for a given node you can run mc-inventory like this:
 
 {% highlight console %}
@@ -39,7 +42,7 @@ To obtain a full inventory for a given node you can run mc-inventory like this:
 
 This gives you a good idea of all the details available for a node.
 
-### Custom Reports
+## Custom Reports
 
 **NOTE: This feature will only be in version 1.0.0**
 
@@ -56,7 +59,7 @@ You have the following data available to your reports:
 <tr><td>classes</td><td>An array of CF Classes</td></tr>
 </table>
 
-#### printf style reports
+### printf style reports
 
 Lets say you now need a report of all your IBM hardware listing hostname, serial number and product name you can write a scriptlet like this:
 
@@ -83,7 +86,7 @@ And if saved as _inventory.mc_ run it like this:
 We'll add more capabilities in the future, for now you can access *facts* as a hash, *agents* and *classes* as arrays as well as *identity* as a string.
 
 
-#### Perl format style reports
+### Perl format style reports
 To use this you need to install the *formatr* gem, once that's installed you can create a report scriptlet like below:
 
 {% highlight ruby linenos %}

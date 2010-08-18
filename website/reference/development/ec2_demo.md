@@ -6,15 +6,15 @@ disqus: true
 [Bundling]: http://support.rightscale.com/12-Guides/01-RightScale_Dashboard_User_Guide/02-Clouds/01-EC2/08-EC2_Image_Locator/Register_an_AMI#Step_2.3a_Bundle_the_Instance
 [Console]: https://console.aws.amazon.com/ec2
 
-## {{page.title}}
+# {{page.title}}
 Things to improve in next build:
 
  * set _plugin.urltest.syslocation_ to the availability zone the AMI is running on to improve mc-urltest output
 
-### RightScale AMI
+## RightScale AMI
 Start up ami _ami-efe4cf9b_ or a newer RightScale EC2 image
 
-### Packages Needed
+## Packages Needed
 Install the following RPMs:
 
 {% highlight console %}
@@ -45,7 +45,7 @@ rubygem-rdialog
 
 Gram and install _passmakr-1.0.0.gem_ from _http://passmakr.googlecode.com/_
 
-### File modifications
+## File modifications
 Most of the files needed are in SVN in the _ext/ec2demo_ directory.
 
 {% highlight console %}
@@ -89,7 +89,7 @@ Most of the files needed are in SVN in the _ext/ec2demo_ directory.
             `-- mcollective-node.motd
 {% endhighlight %}
 
-### Bundling Changes
+## Bundling Changes
 Bundling up is based on [RightScale docs][bundling].
 
 You need to copy your key, cert and have your credentials all into _/mnt_:

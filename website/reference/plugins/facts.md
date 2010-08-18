@@ -6,7 +6,7 @@ disqus: true
 [SimpleRPCAuthorization]: /simplerpc/authorization.html
 [Registration]: registration.html
 
-## {{page.title}}
+# {{page.title}}
 
 Fact plugins are used during discovery whenever you run the agent with queries like *-W country=de*.
 
@@ -14,7 +14,7 @@ The default setup uses a YAML file typically stored in */etc/mcollective/facts.y
 
 Facts at the moment should be simple *variable = value* style flat Hashes, if you have a hierarchical fact system like Ohai you can flatten them into *var.subvar = value* style variables.
 
-### Details
+## Details
 Implementing a facts plugin is made simple by inheriting from *MCollective::Facts::Base*, in that case you just need to provide 1 method, the YAML plugin code can be seen below:
 
 {% highlight ruby linenos %}

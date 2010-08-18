@@ -8,7 +8,7 @@ disqus: true
 [SimpleRPCAuditing]: /simplerpc/auditing.html
 [ActionPolicy]: http://code.google.com/p/mcollective-plugins/wiki/ActionPolicy
 
-## {{page.title}}
+# {{page.title}}
 
 As part of the [SimpleRPC][SimpleRPCIntroduction] framework we've added an authorization system that you can use to exert fine grained control over who can call agents and actions.
 
@@ -18,7 +18,7 @@ The clients will include the _uid_ of the process running the client library in 
 
 There is a sample full featured plugin called [ActionPolicy] that you can use or get some inspiration from.
 
-### Writing Authorization Plugins
+## Writing Authorization Plugins
 
 Writing an Authorization plugin is pretty simple, the below example will only allow RPC calls from Unix UID 500.
 
@@ -52,7 +52,7 @@ end
 
 The call extra _authorized`_`by :authorize`_`it_ line tells your agent to use the _MCollective::Util::AuthorizeIt_ class for authorization.
  
-### Enabling RPC auditing globally
+## Enabling RPC auditing globally
 You can enable a specific plugin on all RPC agents in the server config file.  If you do this and an agent also specify it's own authorization the agent will take priority.
 
 {% highlight ini %}

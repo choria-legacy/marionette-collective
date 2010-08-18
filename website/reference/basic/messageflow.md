@@ -8,7 +8,7 @@ disqus: true
 [SecurityWithActiveMQ]: /reference/integration/activemq_security.html
 [ScreenCast]: /introduction/screencasts.html#message_flow
 
-## {{page.title}}
+# {{page.title}}
 
 The diagram below shows basic message flow on a MCollective system.  There is also a [screencast][ScreenCast] that shows this process, recommend you watch that.
 

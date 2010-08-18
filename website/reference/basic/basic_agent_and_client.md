@@ -5,7 +5,10 @@ disqus: true
 ---
 [SimpleRPCIntroduction]: /simplerpc/
 
-## {{page.title}}
+# {{page.title}}
+
+ * TOC Placeholder
+ {:toc}
 
 In general you should use [SimpleRPC][SimpleRPCIntroduction] for writing agents and clients.  SimpleRPC is a framework that wraps the core MCollective client and agent structures in a lot of helpful convention and tools.
 
@@ -15,7 +18,7 @@ Writing agents for mcollective is simple, we'll write a simple _echo_ agent as w
 
 The agent will send back everything that got sent to it, not overly useful but enough to demonstrate the concepts.
 
-### The Agent
+## The Agent
 
 Agents go into a directory configured in the _server.cfg_ using the _libdir_ directive.  You should have _mcollective/agents_ directory under that, restart the daemon when you've put it there.
 
@@ -70,7 +73,7 @@ devel.your.com>
 {% endhighlight %}
 
 
-#### Agent name
+### Agent name
 Each agent should be wrapped in a module and class as below, this will create an agent called _echo_ and should live in a file called _agents/echo.rb_.
 
 {% highlight ruby %}
@@ -82,7 +85,7 @@ module MCollective
 end
 {% endhighlight %}
 
-#### Initialization
+### Initialization
 Every agent needs to specify a timeout and meta data.  The timeout gets used by the app server to kill off agents that is taking too long to finish.
 
 Meta data contains some information about the licence, author and version of the agent.  Right now the information is free-form but I suggest supplying at the very least the details below as we'll start enforcing the existence of it in future.
@@ -98,7 +101,7 @@ Meta data contains some information about the licence, author and version of the
             end
 {% endhighlight %}
 
-#### Handling incoming messages
+### Handling incoming messages
 You do not need to be concerned with filtering, authentication, authorization etc when writing agents - the app server takes care of all of that for you.
 
 Whenever a message for your agent pass all the checks it will be passed to you via the _handlemsg_ method.
@@ -111,7 +114,7 @@ Whenever a message for your agent pass all the checks it will be passed to you v
 
 The msg will be a hash with several keys giving you information about sender, hashes, time it was sent and so forth, in our case we just want to know about the body and we're sending it right back as a return value.
 
-#### Online Help
+### Online Help
 We keep help information, not used right now but future version of the code will have a simple way to get help for each agent, the intent is that inputs, outputs and behavior to all agents would be described in this.
 
 {% highlight ruby %}
@@ -125,7 +128,7 @@ We keep help information, not used right now but future version of the code will
             end
 {% endhighlight %}
 
-### More complex agents
+## More complex agents
 As you write more complex agents and clients you might find the need to have a few separate files make up your agent, you can drop these files into the util directory under plugins.
 
 The classes should be _MCollective::Util::Youclass_ and you should use the following construct to require them from disk:
@@ -136,7 +139,7 @@ MCollective::Util.loadclass("MCollective::Util::Youclass")
 
 At present simply requiring them will work and we'll hope to maintain that but to be 100% future safe use this method.
 
-### The Client
+## The Client
 We provide a client library that abstracts away a lot of the work in writing simple attractive cli frontends to your agents that supports discovery, filtering, generates help etc.  The client lib is functional but we will improve/refactor the options parsing a bit in future.
 
 {% highlight ruby linenos %}

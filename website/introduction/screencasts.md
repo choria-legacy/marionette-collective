@@ -10,14 +10,14 @@ disqus: true
 [SimpleRPCIntroduction]: /simplerpc/
 [DDL]: /simplerpc/ddl.html
 
-## {{page.title}}
+# {{page.title}}
 We believe screen casts give the best introduction to new concepts, we've recorded
 quite a few that compliments the documentation.
 
 There's a [blip] channel that has all the videos, you can subscribe and follow there.  
 There is also a [slideshare] site where presentations will go that we do at conferences and events.
 
-### Introductions and Guides
+## Introductions and Guides
 <ol>
 <li><a href="#introduction">Introducing MCollective</a></li>
 <li><a href="#ec2_demo">EC2 Hosted Demo</a></li>
@@ -26,7 +26,7 @@ There is also a [slideshare] site where presentations will go that we do at conf
 <li><a href="#simplerpc_ddl">Detailed information about the DDL</a></li>
 </ol>
 
-### Tools built using MCollective
+## Tools built using MCollective
 <ol>
 <li><a href="#mcollective_deployer">Software Deployer used by developers</a></li>
 <li><a href="#exim">Managing clusters of Exim Servers</a></li>

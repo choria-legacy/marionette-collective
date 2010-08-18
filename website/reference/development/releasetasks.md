@@ -4,7 +4,7 @@ title: Release Tasks
 disqus: true
 ---
 
-## {{page.title}}
+# {{page.title}}
 
 Notes on what to do when we release
 
@@ -18,7 +18,7 @@ Notes on what to do when we release
  * send mail
  * Announce on freshmeat
 
-### Building RPMs
+## Building RPMs
 Boot up an instance of the EC2 demo AMIs
 
 {% highlight console %}
@@ -31,7 +31,7 @@ Boot up an instance of the EC2 demo AMIs
 
 Copy the RPMs and test it.
 
-### Building debs
+## Building debs
 Boot up an instance of _ami-0db89079_ and do more or less the following:
 
 **Note: There's some bug, you might need to run _make deb_ twice to make it work**

@@ -5,11 +5,11 @@ disqus: true
 ---
 [FactsOpsCodeOhai]: http://code.google.com/p/mcollective-plugins/wiki/FactsOpsCodeOhai
 
-## {{page.title}}
+# {{page.title}}
 
 If you're a Chef user you are supported in both facts and classes filters.
 
-### Facts
+## Facts
 There is a [community plugin to enable Ohai][FactsOpsCodeOhai] as a fact source.
 
 Using this plugin Ohai facts will be converted from:
@@ -39,7 +39,7 @@ So you can use the flattened versions of the information provided by Ohai in fil
 % mc-find-hosts --with-fact languages.java.version=1.6.0
 {% endhighlight %}
 
-### Class Filters
+## Class Filters
 Chef does not provide a list of roles and recipes that has been applied to a node, to use with MCollective you need to create such a list.
 
 It's very easy with Chef to do this in a simple cookbook.  Put the following code in a cookbook and arrange for it to run *last* on your node.

@@ -3,7 +3,10 @@ layout: mcollective
 title: Controlling the Daemon
 disqus: true
 ---
-## {{page.title}}
+# {{page.title}}
+
+ * TOC Placeholder
+ {:toc}
 
 The main daemon that runs on nodes keeps internal stats and supports reloading of agents, we provide 
 a tool - *mc-controller* - to interact with any running daemon from a client.
@@ -14,7 +17,7 @@ If all you want is to reload all the agents without restarting the daemon you ca
 From version *1.0.0* onward you can send *USR2* to cycle the log level through DEBUG to FATAL and back 
 again, just keep sending the signal and look at the logs.
 
-### Details
+## Details
 
 The mc-controller allows you to:
 
@@ -23,11 +26,11 @@ The mc-controller allows you to:
  * Reload all agents
  * Exit the daemon
 
-### Usage
+## Usage
 Usage is like for any other client, you run mc-controller from your management station and use filters 
 to target just the nodes you need.
 
-### Statistics
+## Statistics
 This will show some basic statistics about the daemon:
 
 {% highlight console %}
@@ -54,7 +57,7 @@ Each stat means:
 <tr><td><b>filtered</b></td><td>Messages that we received but that we did not reply to due to the filter</td></tr>
 </table>
 
-### Reloading an agent
+## Reloading an agent
 You can reload a specific agent if you've just copied a new one out and don't want to restart the daemons:
 
 {% highlight console %}
@@ -71,7 +74,7 @@ Determining the amount of hosts matching filter for 2 seconds .... 1
       Total Time: 2061.67ms
 {% endhighlight %}
 
-### Reloading all agent
+## Reloading all agent
 Like the previous command but acts on all agents, this is the same as sending *USR1* signal to the process:
 
 {% highlight console %}
@@ -88,7 +91,7 @@ Determining the amount of hosts matching filter for 2 seconds .... 1
       Total Time: 2189.16ms
 {% endhighlight %}
 
-### Exiting the daemon
+## Exiting the daemon
 Sometimes you just want to quit the daemon without logging into the servers, this will force them all to exit:
 
 {% highlight console %}

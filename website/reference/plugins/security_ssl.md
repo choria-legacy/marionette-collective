@@ -6,9 +6,12 @@ disqus: true
 [SimpleRPCAuthorization]: /simplerpc/authorization.html
 [Registration]: registration.html
 
-## {{page.title}}
+# {{page.title}}
 
-### Overview
+ * TOC Placeholder
+ {:toc}
+
+## Overview
 Implements a public/private key based message validation system using SSL
 public and private keys.
 
@@ -24,8 +27,8 @@ Validation is as default and is provided by *MCollective::Security::Base*
 
 Initial code was contributed by Vladimir Vuksan and modified by R.I.Pienaar
 
-### Setup
-#### Nodes
+## Setup
+### Nodes
 To setup you need to create a SSL key pair that is shared by all nodes.
 
 {% highlight console %}
@@ -46,7 +49,7 @@ server.cfg:
 {% endhighlight %}
 
 
-#### Users and Clients
+### Users and Clients
 Now you should create a key pair for every one of your clients, here we create one
 for user john - you could also if you are less concerned with client id create one
 pair and share it with all clients:
@@ -97,7 +100,7 @@ with the public/private keys you can set the following environment variables:
  export MCOLLECTIVE_SSL_PUBLIC=/home/john/.mc/john-public.pem   
 {% endhighlight %}
 
-#### Serialization Method
+### Serialization Method
 
 **Note: This option is available from version 1.0.0 onward**
 

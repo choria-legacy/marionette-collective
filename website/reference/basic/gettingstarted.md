@@ -22,7 +22,10 @@ disqus: true
 [MessageFlowCast]: /introduction/screencasts.html#message_flow
 [Plugins]: http://code.google.com/p/mcollective-plugins/
 
-## {{page.title}}
+# {{page.title}}
+
+ * TOC Placeholder
+ {:toc}
 
 Below find a rough guide to get you going, this assumes the client and server is on the same node, but servers don't need the client code installed.
 
@@ -30,7 +33,7 @@ For an even quicker intro to how it all works you can try our [EC2 based demo][E
 
 Look at the [Screencasts] page, there are [some screencasts dealing with basic architecture, terminology and so forth][MessageFlowCast] that you might find helpful before getting started.
 
-### Requirements
+## Requirements
 We try to keep the requirements on external Gems to a minimum, you only need:
 
  * A Stomp server, tested against [ActiveMQ]
@@ -45,7 +48,7 @@ Information on installing mcollective and stomp from within Gentoo's portage are
 **NOTE: You need version Stomp Gem 1.1 for mcollective up to 0.4.5.  mcollective 0.4.6 onward supports 1.1 and 1.1.6 and newer**
 
 
-### ActiveMQ
+## ActiveMQ
 I've developed this against ActiveMQ.  It should work against other Stomp servers but I suspect if you choose 
 one without username and password support you might have problems, please let me know if that's the case 
 and I'll refactor the code around that.
@@ -53,7 +56,7 @@ and I'll refactor the code around that.
 Full details on setting up and configuring ActiveMQ is out of scope for this, but you can follow these simple 
 setup instructions for initial testing (make sure JDK is installed, see below for Debian specific issue regarding JDK):
 
-#### Download and Install
+### Download and Install
  1. Download the ActiveMQ "binary" package (for Unix) from [ActiveMQ]
  1. Extract the contents of the archive:
  1. cd into the activemq directory
@@ -74,7 +77,7 @@ versions of these Operating Systems.  I've uploaded some RPMs and SRPMs [here][D
 
 For Debian systems you'd be better off using OpenJDK than Sun JDK, there's a known issue [#562954][DebianBug].
 
-#### Configuring Stomp
+### Configuring Stomp
 First you should configure ActiveMQ to listen on the Stomp protocol
 
 And then you should add a user or two, to keep it simple we'll just add one user, the template file will hopefully make it obvious where this goes, it should be in the _broker_ block:
@@ -138,13 +141,13 @@ For further info about ActiveMQ settings you might need see [SecurityWithActiveM
 
 There are also a few known to work and tested [configs in git][ActiveMQSamples].
 
-### mcollective
-#### Download and Extract
+## mcollective
+### Download and Extract
 Grab a copy of the mcollective ideally you'd use a package for your distribution else there's a tarfile that 
 you can use, you can extract it wherever you want, the RPMs or deps will put files in Operating System compatible 
 locations.  If you use the tarball you'll need to double check all the paths in the config files below.
 
-#### Configure
+### Configure
 You'll need to tweak some configs in */etc/mcollective/client.cfg*, a full reference of config settings can be 
 found [here][ConfigurationReference]:
 
@@ -204,7 +207,7 @@ Replace the *plugin.stomp.host* with your server running ActiveMQ and replace th
 
 The STOMP connector supports other options like failover pools, see [ConnectorStomp] for full details.
 
-#### Create Facts
+### Create Facts
 By default - and for this setup - we'll use a simple YAML file for a fact source, later on you can use Reductive Labs Facter or something else.
 
 Create */etc/mcollective/facts.yaml* along these lines:
@@ -215,10 +218,10 @@ Create */etc/mcollective/facts.yaml* along these lines:
   country: uk
 {% endhighlight %}
 
-#### Start the Server
+### Start the Server
 If you installed from a package start it with the RC script, else look in the source you'll find a LSB compatible RC script to start it.
 
-#### Test from a client
+### Test from a client
 If all is setup you can test with the client code:
 
 {% highlight console %}
@@ -256,11 +259,11 @@ The filter commands are important they will be the main tool you use to target o
 See the *--help* option to the various *mc-`*`* script for available options.  You can now look at some of the available plugins and 
 play around, you might need to run the server process as root if you want to play with services etc.
 
-#### Plugins
+### Plugins
 We provide limited default plugins, you can look on our sister project [MCollective Plugins][Plugins] where you will 
 find various plugins to manage packages, services etc.
 
-#### Further Reading
+### Further Reading
 From here you should look at the rest of the wiki pages some key pages are:
 
  * [Screencasts] - Get a hands-on look at what is possible
