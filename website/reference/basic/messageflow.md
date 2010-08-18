@@ -18,10 +18,10 @@ The key thing to take away from this diagram is the broadcast paradigm that is i
 
 |Step|Description|
 |----|-----------|
-|A|A single messages gets sent from the workstation of the administrator to the middleware.  The message has a filter attached saying only machines with the fact <em>cluster=c</em> should perform an action.|
-|B|The middleware network broadcasts the message to all nodes.  The middleware network can be a <a href="http://code.google.com/p/mcollective/wiki/ActiveMQClusters">cluster of multiple servers in multiple locations, networks and data centers</a>.|
+|A|A single messages gets sent from the workstation of the administrator to the middleware.  The message has a filter attached saying only machines with the fact _cluster=c_ should perform an action.|
+|B|The middleware network broadcasts the message to all nodes.  The middleware network can be a [cluster of multiple servers in multiple locations, networks and data centers][ActiveMQClusters].|
 |C|Every node gets the message and validates the filter|
-|D|Only machines in <em>cluster=c</em> act on the message and sends a reply, depending on your middleware only the workstation will get the reply.|
+|D|Only machines in _cluster=c_ act on the message and sends a reply, depending on your middleware only the workstation will get the reply.|
 
 For further information see:
  

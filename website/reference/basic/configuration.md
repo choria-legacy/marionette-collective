@@ -4,6 +4,11 @@ title: Configuration Guide
 disqus: true
 ---
 
+[SSLSecurity]: /reference/plugins/security_ssl.html
+[Registration]: /reference/plugins/registration.html
+[Auditing]: /simplerpc/auditing.html
+[Authorization]: /simplerpc/authorization.html
+
 # {{page.title}}
 
  * TOC Placeholder
@@ -28,8 +33,8 @@ Configuration is a simple *key = val* style configuration file.
 |keeplogs|10|The amount of logs to keep|
 |max_log_size|10240|Max size in bytes for log files before rotation happens|
 |libdir|/usr/libexec/mcollective|Where to look for plugins|
-|connector|Stomp|Which <em>connector</em> plugin to use for communication|
-|securityprovider|Psk|Which security model to use, see <a href="/reference/plugins/security_ssl.html">SSL Security Plugin</a> for details on configuring SSL|
+|connector|Stomp|Which _connector_ plugin to use for communication|
+|securityprovider|Psk|Which security model to use, see [SSL Security Plugin][SSLSecurity] for details on configuring SSL|
 
 ## Server Configuration
 The server configuration file should be root only readable
@@ -38,14 +43,14 @@ The server configuration file should be root only readable
 |---|------|-----------|
 |daemonize|1|Runs the server in the background|
 |factsource|Facter|Which fact plugin to use|
-|registration|Agentlist|<a href="/reference/plugins/registration.html">Registration</a> plugin to use|
+|registration|Agentlist|[Registration] plugin to use|
 |registerinterval|120|How many seconds to sleep between registration messages, setting this to zero disables registration|
 |classesfile|/var/lib/puppet/classes.txt|Where to find a list of classes configured by your configuration management system|
-|rpcaudit|1|Enables <a href="/simplerpc/">SimpleRPCIntroduction</a> auditing|
-|rpcauditprovider|Logfile|Enables auditing using <em>MCollective::Audit::Logfile</em>|
+|rpcaudit|1|Enables [SimpleRPC Auditing][Auditing]|
+|rpcauditprovider|Logfile|Enables auditing using _MCollective::Audit::Logfile_|
 |plugin.discovery.timeout|10|Sets the timeout for the discovery agent, useful if facts are very slow|
-|rpcauthorization|1|Enables <a href="/simplerpc/authorization.html">SimpleRPCAuthorization</a> globally|
-|rpcauthprovider|action_policy|Use the <em>MCollective::Util::ActionPolicy</em> plugin to manage authorization|
+|rpcauthorization|1|Enables [SimpleRPC Authorization][Authorization] globally|
+|rpcauthprovider|action_policy|Use the _MCollective::Util::ActionPolicy_ plugin to manage authorization|
 
 ## Client Configuration
 The client configuration file should be readable by everyone, it's not advised to put PSK's or client SSL certs in a world readable file, see below how to do that per user.
