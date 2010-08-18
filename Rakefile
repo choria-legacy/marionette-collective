@@ -69,6 +69,23 @@ task :tag => [:rpm] do
     system %{svn copy -m 'Hudson adding release tag #{CURRENT_VERSION}-#{CURRENT_RELEASE}' ../#{PROJ_NAME}/ #{TAGS_URL}/#{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}}
 end
 
+desc "Creates the website as a tarball"
+task :website => [:clean] do
+    FileUtils.mkdir_p("build/marionette-collective.org/html")
+
+    Dir.chdir("website") do
+        system("jekyll ../build/marionette-collective.org/html")
+    end
+
+    unless File.exist?("build/marionette-collective.org/html/index.html")
+        raise "Failed to build website"
+    end
+
+    Dir.chdir("build") do
+        system("tar -cvzf marionette-collective-org-#{Time.now.to_i}.tgz marionette-collective.org")
+    end
+end
+
 desc "Creates a RPM"
 task :rpm => [:clean, :doc, :package] do
     announce("Building RPM for #{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}")
