@@ -50,7 +50,7 @@ At this point you should see the mcollective and stomp packages in portage.
 {% highlight console %}
 * app-admin/mcollective [1]
      Available versions:  (~)0.4.4-r1{tbz2} (~)0.4.7{tbz2} {-client +server}
-     Homepage:            http://code.google.com/p/mcollective
+     Homepage:            http://marionette-collective.org/
      Description:         Common elements of the Marionette Collective management suite.
 
 * dev-ruby/stomp [1]

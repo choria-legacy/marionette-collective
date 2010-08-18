@@ -5,7 +5,7 @@ disqus: true
 ---
 [WritingAgents]: /reference/basic/basic_agent_and_client.html
 [SimpleRPCClients]: /simplerpc/clients.html
-[ResultsandExceptions]: http://code.google.com/p/mcollective/wiki/SimpleRPCClients#Results_and_Exceptions
+[ResultsandExceptions]: /simplerpc/clients.html#results_and_exceptions
 [SimpleRPCAuditing]: /simplerpc/auditing.html
 [SimpleRPCAuthorization]: /simplerpc/authorization.html
 [SimpleRPCDDL]: /simplerpc/ddl.html

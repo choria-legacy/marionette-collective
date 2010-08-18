@@ -8,7 +8,7 @@ disqus: true
 [EC2Demo]: /introduction/ec2demo.html
 [Stomp]: http://stomp.codehaus.org/Ruby+Client
 [DepRPMs]: http://www.marionette-collective.org/activemq/
-[Gentoo]: http://code.google.com/p/mcollective/wiki/Gentoo
+[Gentoo]: /reference/os/gentoo.html
 [DebianBug]: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=562954
 [SecurityWithActiveMQ]: /reference/integration/activemq_security.html
 [ActiveMQClustering]: http://www.devco.net/archives/2009/11/10/activemq_clustering.php
