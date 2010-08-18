@@ -49,13 +49,13 @@ Determining the amount of hosts matching filter for 2 seconds .... 1
 
 Each stat means:
 
-<table>
-<tr><td><b>total</b></td><td>Total messages received from the middleware</td></tr>
-<tr><td><b>replies</b></td><td>Replies sent back</td></tr>
-<tr><td><b>valid</b></td><td>Messages that passed validity checks like the PSK</td></tr>
-<tr><td><b>invalid</b></td><td>Messages that could not be validated</td></tr>
-<tr><td><b>filtered</b></td><td>Messages that we received but that we did not reply to due to the filter</td></tr>
-</table>
+|Statistic   |Meaning                                    |
+|------------|-------------------------------------------|
+|total|Total messages received from the middleware|
+|replies|Replies sent back|
+|valid|Messages that passed validity checks like the PSK|
+|invalid|Messages that could not be validated|
+|filtered|Messages that we received but that we did not reply to due to the filter|
 
 ## Reloading an agent
 You can reload a specific agent if you've just copied a new one out and don't want to restart the daemons:

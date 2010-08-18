@@ -212,15 +212,14 @@ The biggest reason that you'd write custom clients is probably if you wanted to 
 ### Results and Exceptions
 Results have a set structure and depending on how you access the results you will either get Exceptions or result codes.
 
-<table>
-<tr><th><em>Status Code</em></th><th><em>Description</em></th><th><em>Exception Class</em></th></tr>
-<tr><td>0</td><td>OK</td><td></td></tr>
-<tr><td>1</td><td>OK, failed.  All the data parsed ok, we have a action matching the request but the requested action could not be completed.</td><td>RPCAborted</td></tr>
-<tr><td>2</td><td>Unknown action</td><td>UnknownRPCAction</td></tr>
-<tr><td>3</td><td>Missing data</td><td>MissingRPCData</td></tr>
-<tr><td>4</td><td>Invalid data</td><td>InvalidRPCData</td></tr>
-<tr><td>5</td><td>Other error</td><td>UnknownRPCError</td></tr>
-</table>
+|Status Code|Description|Exception Class|
+|-----------|-----------|---------------|
+|0|OK| |
+|1|OK, failed.  All the data parsed ok, we have a action matching the request but the requested action could not be completed.|RPCAborted|
+|2|Unknown action|UnknownRPCAction|
+|3|Missing data|MissingRPCData|
+|4|Invalid data|InvalidRPCData|
+|5|Other error|UnknownRPCError|
 
 Just note these now, I'll reference them later down.
 

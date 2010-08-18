@@ -50,14 +50,13 @@ You can create little scriptlets and pass them into *mc-inventory* with the *--s
 
 You have the following data available to your reports:
 
-<table>
-<tr><th>Variable</th><th>Description</th></tr>
-<tr><td>time</td><td>The time the report was started, normal Ruby Time object</td></tr>
-<tr><td>identity</td><td>The sender id</td></tr>
-<tr><td>facts</td><td>A hash of facts</td></tr>
-<tr><td>agents</td><td>An array of agents</td></tr>
-<tr><td>classes</td><td>An array of CF Classes</td></tr>
-</table>
+| Variable | Description |
+|----------|-------------|
+|time|The time the report was started, normal Ruby Time object|
+|identity|The sender id|
+|facts|A hash of facts|
+|agents|An array of agents|
+|classes|An array of CF Classes|
 
 ### printf style reports
 

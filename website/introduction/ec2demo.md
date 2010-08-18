@@ -26,10 +26,9 @@ height="385" allowscriptaccess="always" allowfullscreen="true"></embed>
 The AMI is based in the *EU West* availability zone, we currently have just the one 
 AMI id that is running mcollective 0.4.2.
 
-<table>
-	<tr><td><b>AMI ID</b></td><td><b>Description</b></td></tr>
-	<tr><td>ami-21c8e355</td><td>Server and Node for MCollective 0.4.2</td></tr>
-</table>
+| AMI ID | Description |
+| ------ | ----------- |
+| ami-21c8e355 | Server and Node for MCollective 0.4.2| 
 
 The video shows you the basic steps to get it going using the [Amazon Console][].
 

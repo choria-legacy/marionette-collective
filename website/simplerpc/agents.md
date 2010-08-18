@@ -170,12 +170,13 @@ In the sample action above we validate the *:msg* input to be of type *String*, 
 
 The table below shows the validators we support currently
 
-<tr><th><b>Type of Check</b></th><th><b>Description</b></th><th><b>Example</b></th></tr>
-<tr><td>Regular Expressions</td><td>Matches the input against the supplied regular expression</td><td>validate :msg, /[a-zA-Z]+/</td></tr>
-<tr><td>Type Checks</td><td>Verifies that input is of a given ruby data type</td><td>validate :msg, String</td></tr>
-<tr><td>IPv4 Checks</td><td>Validates an ip v4 address, note 5.5.5.5 is technically a valid address</td><td>validate :ipaddr, :ipv4address</td></tr>
-<tr><td>IPv6 Checks</td><td>Validates an ip v6 address</td><td>validate :ipaddr, :ipv6address</td></tr>
-<tr><td>system call safety checks</td><td>Makes sure the input is a string and has no &gt;&lt;` or | characters in it</td><td>validate :command, :shellsafe</td></tr>
+|Type of Check|Description|Example|
+|-------------|-----------|-------|
+|Regular Expressions|Matches the input against the supplied regular expression|validate :msg, /\[a-zA-Z\]+/|
+|Type Checks|Verifies that input is of a given ruby data type|validate :msg, String|
+|IPv4 Checks|Validates an ip v4 address, note 5.5.5.5 is technically a valid address|validate :ipaddr, :ipv4address|
+|IPv6 Checks|Validates an ip v6 address|validate :ipaddr, :ipv6address|
+|system call safety checks|Makes sure the input is a string and has no &gt;&lt;backtick or pipe characters in it|validate :command, :shellsafe|
 
 All of these checks will raise an InvalidRPCData exception, you shouldn't catch this exception as the Simple RPC framework catches those and handles them appropriately.
 
@@ -202,14 +203,13 @@ As you see from the echo example our input is easy to get to by just looking in 
 
 The request object is in instance of *MCollective::RPC::Request*, you can also gain access to the following:
 
-<table>
-<tr><th>Property</th><th>Description</th></tr>
-<tr><td>time</td><td>The time the message was sent</td></tr>
-<tr><td>action</td><td>The action it is directed at</td></tr>
-<tr><td>data</td><td>The actual hash of data</td></tr>
-<tr><td>sender</td><td>The id of the sender</td></tr>
-<tr><td>agent</td><td>Which agent it was directed at</td></tr>
-</table>
+|Property|Description|
+|--------|-----------|
+|time|The time the message was sent|
+|action|The action it is directed at|
+|data|The actual hash of data|
+|sender|The id of the sender|
+|agent|Which agent it was directed at|
 
 Since data is the actual Hash you can gain access to your input like:
 
@@ -295,12 +295,11 @@ We provide a few hooks into the processing of a message, you've already used thi
 
 You'd use these hooks to add some functionality into the processing chain of agents, maybe you want to add extra logging for audit purposes of the raw incoming message and replies, these hooks will let you do that.
 
-<table>
-<tr><th>Hook Function Name</th><th>Description</th></tr>
-<tr><td>startup_hook</td><td>Called at the end of the initialize method of the _RPC::Agent_ base class</td></tr>
-<tr><td>before_processing_hook(msg, connection)</td><td>Before processing of a message starts, pass in the raw message and the <em>MCollective::Connector</em> class</td></tr>
-<tr><td>after_processing_hook</td><td>Just before the message is dispatched to the client</td></tr>
-</table>
+|Hook Function Name|Description|
+|------------------|-----------|
+|startup_hook|Called at the end of the initialize method of the _RPC::Agent_ base class|
+|before_processing_hook(msg, connection)|Before processing of a message starts, pass in the raw message and the <em>MCollective::Connector</em> class|
+|after_processing_hook|Just before the message is dispatched to the client|
 
 ### startup`_`hook
 Called at the end of the _RPC::Agent_ standard initialize method use this to adjust meta parameters, timeouts and any setup you need to do.
