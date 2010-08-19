@@ -102,7 +102,7 @@ with the public/private keys you can set the following environment variables:
 
 ### Serialization Method
 
-**Note: This option is available from version 1.0.0 onward**
+**Note: This option is available from version 0.4.8 onward**
 
 You can choose either YAML or Marshal, the default is Marshal.  The view with optional Marshal encoding is to have a serializer supported by other languages other than Ruby to enable future integration with those.
 

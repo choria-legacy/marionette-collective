@@ -2,11 +2,12 @@
 layout: mcollective
 title: Release Notes
 ---
-h2. Release Notes
+h1. Release Notes
 
 This is a list of release notes for various releases, you should review these before upgrading as any potential problems and backward incompatible changes will be highlighted here.
 
   * *0.4.x*
+  ** "0.4.8":#0_4_8
   ** "0.4.7":#0_4_7
   ** "0.4.6":#0_4_6
   ** "0.4.5":#0_4_5
@@ -19,13 +20,55 @@ This is a list of release notes for various releases, you should review these be
   * "0.3.0":#0_3_0
   * "0.2.0":#0_2_0
 
+h2(#0_4_8). 0.4.8 - 
+
+h3. Release Focus and Notes
+
+This is a bug fix and minor improvement release.
+
+h3. Bug Fixes
+
+ * The RPM packages now require redhat-lsb since our RC scripts need it
+ * The rake tasks do not attempt to build rpms on all platforms
+ * Some plugin missing related exceptions are now handled gracefully
+ * The Rakefile had a few warnings cleaned up
+
+h3. Notable New Features
+
+ * Users can now have a _~/.mcollective_ file which will be preferred over over _/etc/mcollective/client.cfg_ if it exists.  You can still use _--config_ to override.
+
+ * The SSL Security plugin can now use "either YAML or Marshal for serialization":/reference/plugins/security_ssl.html#serialization_method, this means other programming languages can be used as clients.  A sample Perl client is included in the ext directory.  Marshal remains the default for backwards compatibilty
+
+ * _mc-inventory_ can now be used to create "custom reports using a small reporting DSL":/reference/ui/nodereports.html, this enable you to build custom reports listing all your machines and gives you access to facts, agents and classes lists.
+
+ * The log level for the _mcollectived_ can be adjusted during run time using the _USR2_ unix process signal.
+
+h3. Backwards Compatibility
+
+This release will be backward compatible with older releases.  If you choose to use YAML in the SSL plugin you need matching versions on the client.  
+
+h3. Changes
+
+|_. Date|_. Description|_. Ticket|
+|2010/08/19|Fix missing help template in debian packages|90|
+|2010/08/18|Clean up some hardlink warnings in the Rakefile|117|
+|2010/08/18|Include the website in the main repo and add a simple Rake task|118|
+|2010/08/17|Handle exceptions for missing plugins better|115|
+|2010/08/17|Add support for ~/.mcollective as a config file|114|
+|2010/08/07|SSL security plugin can use either YAML or Marshal|94|
+|2010/08/06|Multiple YAML files can now be used as fact source|112|
+|2010/08/06|Allow log level to be adjusted at run time with USR2|113|
+|2010/07/31|Add basic report scripting support to mc-inventory|111|
+|2010/07/06|Removed 'rpm' from the default rake task|109|
+|2010/07/06|Add redhat-lsb to the server RPM dependencies|108|
+
 h3(#0_4_7). 0.4.7 - 2010/06/29
 
-h4. Release Focus and Notes
+h3. Release Focus and Notes
 
 This is a bug fix and incremental improvement release focusing on small improvements in the DDL mostly.
 
-h4. Data Definition Language
+h3. Data Definition Language
 
 We've extended the use of the DDL in the RPC client.  We've integrated the DDL into _printrpc_ helper.  The output is dynamic showing field names in human readable format rather than hash dumps.
 
@@ -33,7 +76,7 @@ We're also using color to improve the display of the results, the color display 
 
 A "screencast of the DDL integration":http://mcollective.blip.tv/file/3799653 and color usage has been recorded.
 
-h4. Bug Fixes
+h3. Bug Fixes
 
 A serious issue has been fixed wrt complex agents.  If you attempted to use multiple agents from the same script errors such as duplicate discovery results or simply not working.  
 
@@ -41,11 +84,11 @@ The default fact source has been changed to Yaml, it was inadvertently set to Fa
 
 Some previously unhandled exceptions are now being handled correctly and passed onto the clients as failed requests rather than no responses at all.
 
-h4. Backwards Compatibility
+h3. Backwards Compatibility
 
 This release will be backward compatible with older releases.  The change to Yaml fact source by default might impact you if you did not previously specify a fact source in the configuration files.
 
-h4. Changes
+h3. Changes
 
 |_. Date |_. Descriptions |
 | 2010/06/27 | Change default factsource to Yaml - #106|
@@ -62,13 +105,13 @@ h4. Changes
 
 h3(#0_4_6). 0.4.6 - 2010/06/14
 
-h4. Release Focus and Notes
+h3. Release Focus and Notes
 
 This release is a major feature release.
 
 We're focusing mainly on the Stomp connector and on the SimpleRPC agents in this release though a few smaller additions were made.
 
-h4. Stomp Connector
+h3. Stomp Connector
 
 We've historically been stuck just using Rubygem Stomp 1.1 due to multi threading bugs in the newer releases.  All attempts to contact the authors failed.  Recently though I had some luck and these issues are resolved in the RubyGem Stomp 1.1.6 release.
 
@@ -76,24 +119,24 @@ This means we can take advantage of a lot of new features such as connection poo
 
 See "Stomp Connector":/reference/plugins/connector_stomp.html for details.
 
-h4. RPC Agent Data Description Language
+h3. RPC Agent Data Description Language
 
 I've been working since around February on building introspection, automatically generated documentation and the ability for user interfaces to be auto generated for agents, even ones you write your self.
 
 This feature is documented in "DDL":/simplerpc/ddl.html but a quick example of a DDL document might help make it clear:
 
-h4. CLI Utilities changes
+h3. CLI Utilities changes
 
   * _mc-facts_ now take all the standard filters so you can make reports for just subsets of machines
   * A new utility _mc-inventory_ has been added, it will show agents, facts and classes for a node
   * _mc-rpc_ has a new option _--agent-help_ that will use the DDL and display auto generated documentation for an agent.
   * _mc-facts_ output is sorted for better readability
 
-h4. Backwards Compatibility
+h3. Backwards Compatibility
 
 This release will be backward compatible with older releases, the new Stomp features though require the newer Ruby Gem.
 
-h4. Changes
+h3. Changes
 
 |_. Date |_. Descriptions |
 | 2010/06/12 | Qualify the Process class to avoid clashes in the discovery agent - #88|
@@ -107,41 +150,41 @@ h4. Changes
 
 h3(#0_4_5). 0.4.5 - 2010/06/03
 
-h4. Release Focus and Notes
+h3. Release Focus and Notes
 
 This release is a major feature release.
 
 The focus of this release is to finish up some of the more enterprise like features, we now have fine grained Authorization and Authentication and a new security model that uses SSL keys.
 
-h4. Security Plugin
+h3. Security Plugin
 
 Vladimir Vuksan contributed the base code of a new "SSL based security plugin":/reference/plugins/security_ssl.html .  This plugin builds on the old PSK plugin but gives each client a unique certificate pair.  The nodes all share a certificate and only store client public keys.  This means that should one node be compromised it cannot be used to control the rest of the network.
 
-h4. Authorization Plugin
+h3. Authorization Plugin
 
 We've developed new hooks and plugins for SimpleRPC that enable you to write "fine grained authorization systems":/simplerpc/authorization.html .  You can do authorization on every aspect of the request and you'll have access to the caller userid as provided by the security plugin.  Combined with the above SSL plugin this can be used to build powerful and secure Authentication and Authorization systems.
 
 A sample plugin can be found "here":http://code.google.com/p/mcollective-plugins/wiki/ActionPolicy
 
-h4. Enhancements for Web Development
+h3. Enhancements for Web Development
 
 Web apps doesn't tie in well with our discover, request, wait model.  We've made it easier for web apps to maintain their own cached discovery data using the "Registration:/reference/plugins/registration.html system and then based on that do requests that would not require any discovery.
 
-h4. Fire and Forget requests
+h3. Fire and Forget requests
 
 It is often desirable to just send a request and not wait for any reply.  We've made it easy to do requests like this] with the addition of a new request parameter on the SimpleRPC client class.
 
 Requests like this will not take any time to do discovery and you will not be able to get results back from the agents.
 
-h4. Reloading Agents
+h3. Reloading Agents
 
 To make it a bit easier to manage daemons and agents you can now send the _mcollectived_ a _USR1_ signal and it will re-read all it's agents from disk.
 
-h4. Backwards Compatibility
+h3. Backwards Compatibility
 
 This release when used with the old style PSK plugin should be perfectly backward compatible with your existing agents.  To use some of the newer features like authorization will require config and/or agent changes.
 
-h4. Changes
+h3. Changes
 
 |_. Date|_. Description|
 | 2010/06/01 | Improve the main discovery agent by adding facts and classes to its inventory action - #79|
@@ -161,7 +204,7 @@ h4. Changes
 
 h3(#0_4_4). 0.4.4 - 2010/04/03
 
-h4. Release Focus and Notes
+h3. Release Focus and Notes
 
 This release is mostly a bug fix release.
 
@@ -173,15 +216,15 @@ All the scripts now use _/usr/bin/env ruby_ rather than hardcoded paths to deal 
 
 Several other small annoyances was fixed or improved.
 
-h4. mc-controller
+h3. mc-controller
 
 We've always had a tool that let you control a network of mcollective instances remotely, it lagged behind a bit with the core, we've fixed it up and documented it "here":/reference/basic/daemon.html .  You can use it to reload agents from disk without restarting the daemon for example or get stats or shut down the entire mcollective network.
 
-h4. Backwards Compatibility
+h3. Backwards Compatibility
 
 No changes that impacts backward compatibility has been made.
 
-h4. Changes
+h3. Changes
 
 |_. Date |_. Descriptions |
 | 2010/03/27 | Make it easier to construct SimpleRPC requests to use with the standard client library - #60 |
@@ -199,27 +242,27 @@ h4. Changes
 
 h3(#0_4_3). 0.4.3 - 2010/01/24
 
-h4. Release Focus and Notes
+h3. Release Focus and Notes
 
 This release fixes a few bugs and introduce a major new SimpleRPC feature for auditing requests.
 
-h4. Auditing 
+h3. Auditing 
 
 We've created an "auditing framework for SimpleRPC":/simplerpc/auditing.html, each request gets passed to an audit plugin for processing.  We ship one that simply logs to a file on each node and there's a "community plugin":http://code.google.com/p/mcollective-plugins/wiki/AuditCentralRPCLog that logs everything on a central logging host.
 
 In future we might add auditing to the client libraries so requests will be logged where they are sent as well as auditing of replies being sent, this will be driven by requests from the community though.
 
-h4. New _fail!_ method for SimpleRPC
+h3. New _fail!_ method for SimpleRPC
 
 Till now while writing agents you can use the _fail_ method to set statusses in the reply, this however did not also raise exceptions and terminate execution of the agent immediately.
 
 Often the existing behavior is required but it did lead to some awkward code when you did want to just exit the agent immediately as well as set a fail status.  We've added a _fail!_ method that works just like _fail_ except it stops execution of your agent immediately.
 
-h4. Backwards Compatibility
+h3. Backwards Compatibility
 
 No changes that impacts backward compatibility has been made.
 
-h4. Changes
+h3. Changes
 
 |_. Date|_. Descriptions |
 | 2010/01/23 | Handle ctrl-c during discovery without showing exceptions to users - #34 |
@@ -232,13 +275,13 @@ h4. Changes
 | 2010/01/17 | Improve error message when Regex validation failed on SimpleRPC input - #36|
 
  
-h4(#0_4_2). 0.4.2 - 2010/01/14
+h3.#0_4_2). 0.4.2 - 2010/01/14
 
-h5. Release Focus and Notes
+h4. Release Focus and Notes
 
 This release fixes a few bugs, add some command line improvements and brings major changes to the Debian packaging.
 
-h5. Packaging
+h4. Packaging
 
 Firstly we've had some amazing work done by Riccardo Setti to make us Debian packages that complies with Debian and Ubuntu policy, this release use these new packages.  It has some unfortunate changes to file layout detailed below but overall I think it's a big win to get us in line with Distribution policies and standards.
 
@@ -246,7 +289,7 @@ The only major change is that in the past we used _/usr/libexec/mcollective_ as 
 
 The RedHat packages will move to this convention too in the next release since I think it's the better location and complies with LFHS.
 
-h5. Command Line Improvements
+h4. Command Line Improvements
 
 We've streamlined the command line a bit, nothings changed we've just added some flags.
 
@@ -262,17 +305,17 @@ This would find hosts with class regex matched _/centreon/_, class _roles::dev_s
 
 You can also now set the environment variables _MCOLLECTIVE_TIMEOUT_ and _MCOLLECTIVE_DTIMEOUT_ which saves you from typing _--timeout_ and _--discovery-timeout_ often, especially useful on very fast networks.
 
-h5. Other fixes and improvements
+h4. Other fixes and improvements
 
  * We've added the COPYING file to all the packages
  * We've made the init script more LSB compliant
  * A bug related to discovery in SimpleRPC was fixed
 
-h5. Backwards Compatibility
+h4. Backwards Compatibility
 
 The only backwards issue is the Debian packages.  They've been tested to upgrade cleanly but you need to change the config as above.
 
-h5. Changes
+h4. Changes
 
 |_. Date|_. Descriptions|
 | 2010/01/13 | New packaging for Debian provided by Riccardo Setti - #29|
@@ -283,9 +326,9 @@ h5. Changes
 | 2010/01/04 | Added COPYING file to RPMs and tarball - #28|
 | 2010/01/04 | Make shorter filter options -C, -I, -A and -F - #26|
 
-h4(#0_4_1). 0.4.1 - 2010/01/02
+h3.#0_4_1). 0.4.1 - 2010/01/02
 
-h5. Release Focus and Notes
+h4. Release Focus and Notes
 
 This is a bug fix release to address some shortcomings and issues found in Simple RPC.
 
@@ -302,11 +345,11 @@ You can now call the _mc-rpc_ command a bit easier:
 
 The 2 calls are the same, you can pass as many arguments in _key=val_ pairs as needed at the end.
 
-h5. Backwards Compatibility
+h4. Backwards Compatibility
 
 No issues with backward compatibility, should be a simple upgrade.
 
-h5. Changes
+h4. Changes
 
 |_. Date|_. Descriptions|
 | 2010/01/02 | Added hooks to plug into the processing of requests, also enabled setting meta data and timeouts - #14|
@@ -319,9 +362,9 @@ h5. Changes
 | 2009/12/29 | Fix layout issue when printing hosts that did not respond - #15|
 
 
-h4(#0_4_0). 0.4.0 - 2009/12/29
+h3.#0_4_0). 0.4.0 - 2009/12/29
 
-h5. Release Focus and Notes
+h4. Release Focus and Notes
 
 This release introduced a major new feature - Simple RPC - a framework for easily building clients and agents.  More than that it's a set of conventions and standards that will help us build generic clients like web based ones capable of talking to all agents.
 
@@ -337,7 +380,7 @@ This does an _AND_ operation on the puppet classes on the node and finds only no
 
 We've made the _--with-class_ filters more generic in comments, documentation etc with an eye to be more usable in Chef and other Configuration Management environments.
 
-h5. Backwards Compatibility
+h4. Backwards Compatibility
 
 Unfortunately introducing the new filtering methods has some backward compatibility issues, if you had clients/agents with code like:
 
@@ -382,7 +425,7 @@ Now you have to adjust it to:
 
 Old code will keep working but you should change to this name for filters to be consistent with the rest of the code base.
 
-h5. Changes
+h4. Changes
 
 |_. Date|_. Descriptions|
 | 2009/12/28 | Add support for other configuration management systems like chef in the --with-class filters - #13|
@@ -390,17 +433,17 @@ h5. Changes
 | 2009/12/27 | Create a new client framework [SimpleRPCIntroduction] - #6|
 | 2009/12/27 | Add support for multiple filters of the same type -  #3|
 
-h4(0_3_0).  0.3.0 - 2009/12/17
+h3.0_3_0).  0.3.0 - 2009/12/17
 
-h5. Release Focus and Notes
+h4. Release Focus and Notes
 
 Primarily a bug fix release.  Only new feature is to allow the user to create _MCollective::Util::`*`_ classes and put those in the plugins directory.  This is useful for more complex agents and clients.
 
-h5. Backwards Compatibility
+h4. Backwards Compatibility
 
 This release should not break any older code, if it does it's a bug.
 
-h5. Changes
+h4. Changes
 
 |_. Date|_. Descriptions|
 |2009/12/16|Improvements for newer versions of Ruby where TERM signal was not handled - #7|
@@ -408,16 +451,16 @@ h5. Changes
 |2009/12/07|The Rakefile now works with rake provided on Debian 4 systems - #2|
 |2009/12/07|Improvements in the RC script for Debian and older Ubuntu systems - #5|
 
-h4(0_2_0). 0.2.0 - 2009/12/02
+h3.0_2_0). 0.2.0 - 2009/12/02
 
-h5. Release Focus and Notes
+h4. Release Focus and Notes
 
 First numbered release
 
-h5. Backwards Compatibility
+h4. Backwards Compatibility
 
 n/a
 
-h5. Changes
+h4. Changes
 
 n/a

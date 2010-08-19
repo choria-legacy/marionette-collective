@@ -82,7 +82,7 @@ Common plugin options are:
 ## Client Setup
 It's recommended that you do not set host, user, password and Psk in the client configuration file since these files are generally world readable unlike the server one that should be root readable only.  I just set mine to *unset* so it's clear to someone who looks at the config file that it's not going to work without the settings below.
 
-From version _1.0.0_ onwards you can also put client configuration in _~/.mcollective_ as an alternative to the method below, but you will need a full client.cfg then in that location.
+From version _0.4.8_ onwards you can also put client configuration in _~/.mcollective_ as an alternative to the method below, but you will need a full client.cfg then in that location.
 
 You can set various Environment variables per user to supply these values:
 
