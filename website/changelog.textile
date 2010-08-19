@@ -7,6 +7,7 @@ h2. Changelog
 h3. Version 0.4.x
 
 |_. Date|_. Description|_. Ticket|
+|2010/08/19|Fix missing help template in debian packages|90|
 |2010/08/18|Clean up some hardlink warnings in the Rakefile|117|
 |2010/08/18|Include the website in the main repo and add a simple Rake task|118|
 |2010/08/17|Handle exceptions for missing plugins better|115|
