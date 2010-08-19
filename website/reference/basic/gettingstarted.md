@@ -94,11 +94,6 @@ And then you should add a user or two, to keep it simple we'll just add one user
   http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
 
    <broker xmlns="http://activemq.apache.org/schema/core" brokerName="localhost" useJmx="true">
-    <transportConnectors>
-       <transportConnector name="openwire" uri="tcp://0.0.0.0:6166"/>
-       <transportConnector name="stomp"   uri="stomp://0.0.0.0:6163"/>
-    </transportConnectors>
-
     <plugins>
       <simpleAuthenticationPlugin>
         <users>
@@ -117,6 +112,11 @@ And then you should add a user or two, to keep it simple we'll just add one user
         </map>
       </authorizationPlugin>
     </plugins>
+
+    <transportConnectors>
+       <transportConnector name="openwire" uri="tcp://0.0.0.0:6166"/>
+       <transportConnector name="stomp"   uri="stomp://0.0.0.0:6163"/>
+    </transportConnectors>
    </broker>
 </beans>
 {% endhighlight %}
