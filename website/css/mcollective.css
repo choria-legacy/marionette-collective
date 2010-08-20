@@ -1,0 +1,35 @@
+#bodycontent {border-top:1px solid #eee; padding-top: 20px; font-size:1.2em;}
+#bodycontent h1 {text-decoration:none; font-weight:bold; font-size:1.5em;}
+#bodycontent h2 {text-decoration:none; font-weight:bold; font-size:1.2em;}
+#bodycontent h3 {text-decoration:none; font-weight:bold; font-size:1em;}
+#bodycontent h4 {text-decoration:none; font-weight:bold; font-size:0.8em;}
+
+#disqus {border-top:1px solid #eee; padding-top: 20px;}
+#topheader {padding-top: 20px;}
+
+#sidebar h3 {font-size:1.4em; font-weight:normal; margin:24px 0 8px 0;}
+#sidebar ul {margin:0px; padding:0px;}
+#sidebar li {list-style:none; padding:1px 0 1px 12px; background:url(/images/mcollective/li.png) 0px 8px no-repeat;}
+#sidebar a {color:#CC385E; text-decoration:none;}
+#sidebar a:hover {color:#7F2138;}
+
+#topbar {font-size: 0.9em;}
+#topbar a {color:#CC385E; text-decoration:none;}
+#topbar a:hover {color:#7F2138;}
+
+#footer {text-align:center; font-size:0.9em; margin: 20px 0 15px 0; border-top:2px solid #eee;}
+#footer a {color:#CC385E; text-decoration:none;}
+#footer a:hover {color:#7F2138;}
+
+table { border-collapse: collapse; font-size: 0.8em;}
+th { border-bottom: 1px solid #000; padding: 0 0.5em; text-align: left; background:#EEE;}
+th+th { border-left: 1px solid #CCC; background:#EEE; }
+thead th { border-bottom: 1px solid #000; padding: 0 0.5em; text-align: left; background:#EEE;}
+thead th+th { border-left: 1px solid #CCC; background:#EEE; }
+td { border-top: 1px dotted #CCC; padding: 0 0.5em; }
+td+td { border-left: 1px dotted #CCC; }
+
+.highlight {overflow: auto; }
+code { font-size: 0.8em; }
+
+.lineno { color: #CCC; }

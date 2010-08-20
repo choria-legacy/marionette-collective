@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>MCollective - {{ page.title }}</title>
+<link rel="stylesheet" href="/blueprint/screen.css" type="text/css" media="screen, projection" />
+<link rel="stylesheet" href="/blueprint/print.css" type="text/css" media="print" />	
+<link rel="stylesheet" href="/css/mcollective.css" type="text/css" media="screen, projection" />	
+<link rel="stylesheet" href="/css/syntax.css" type="text/css" media="screen, projection" />	
+<!--[if lt IE 8]><link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection" /><![endif]-->
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-10152852-9']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</head>
+<body>
+<div class="container">
+	<div class="span-24 last" id="topheader">
+		<h1>The Marionette Collective</h1>
+	</div>
+	<div class="span-2">
+		&nbsp;
+	</div>
+	<div class="span-22 last" id="topsubheader">
+		<h4>A modern scalable datacenter orchestration framework</h4>
+	</div>
+	<div class="span-19 border">
+		<div id="topbar">
+		{% include main_menu.html %}
+		</div>
+		<div class="span-18 last" id="bodycontent">
+			{{ content }}
+		</div>
+		{% if page.disqus %}
+		<div class="span-18 last" id="disqus">
+				<div id="disqus_thread"></div>
+				<script type="text/javascript">
+				  /**
+				    * var disqus_identifier; [Optional but recommended: Define a unique identifier (e.g. post id or slug) for this thread] 
+				    */
+				  (function() {
+				   var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+				   dsq.src = 'http://mcollective.disqus.com/embed.js';
+				   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+				  })();
+				</script>
+				<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript=mcollective">comments powered by Disqus.</a></noscript>
+				<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+		</div>
+		{% endif %}
+	</div>
+	
+	<div class="span-4 last" id="sidebar">
+		{% include news.html %}
+		{% include overview_sidebar.html %}
+		{% include reference_sidebar.html %}
+		{% include writing_agents_sidebar.html %}
+		{% include consultation.html %}
+	</div>
+	<div class="span-24 last" id="footer">
+		Copyright 2010 <a href="http://www.devco.net/">R.I.Pienaar</a>.
+	</div>
+</div>
+{% if page.disqus %}
+<script type="text/javascript">
+var disqus_shortname = 'mcollective';
+(function () {
+  var s = document.createElement('script'); s.async = true;
+  s.src = 'http://disqus.com/forums/mcollective/count.js';
+  (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+{% endif %}
+</body>
+</html>

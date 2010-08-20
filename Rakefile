@@ -6,21 +6,12 @@ require 'rake/clean'
 require 'find'
 
 PROJ_DOC_TITLE = "The Marionette Collective"
-PROJ_VERSION = "0.4.7"
+PROJ_VERSION = "0.4.8"
 PROJ_RELEASE = "1"
 PROJ_NAME = "mcollective"
 PROJ_RPM_NAMES = [PROJ_NAME]
-PROJ_FILES = ["#{PROJ_NAME}.spec", "#{PROJ_NAME}.init", "mcollectived.rb", "COPYING", "doc"]
-PROJ_SUBDIRS = ["etc", "lib", "plugins", "ext"]
+PROJ_FILES = ["#{PROJ_NAME}.spec", "#{PROJ_NAME}.init", "mcollectived.rb", "COPYING", "doc", "etc", "lib", "plugins", "ext"]
 PROJ_FILES.concat(Dir.glob("mc-*"))
-
-Find.find("etc", "lib", "plugins", "ext") do |f|
-    if FileTest.directory?(f) and f =~ /\.svn/
-        Find.prune
-    else
-        PROJ_FILES << f
-    end
-end
 
 ENV["RPM_VERSION"] ? CURRENT_VERSION = ENV["RPM_VERSION"] : CURRENT_VERSION = PROJ_VERSION
 ENV["BUILD_NUMBER"] ? CURRENT_RELEASE = ENV["BUILD_NUMBER"] : CURRENT_RELEASE = PROJ_RELEASE
@@ -38,7 +29,7 @@ def init
 end
 
 desc "Build documentation, tar balls and rpms"
-task :default => [:clean, :doc, :package, :rpm] 
+task :default => [:clean, :doc, :package]
 
 # task for building docs
 rd = Rake::RDocTask.new(:doc) { |rdoc|
@@ -67,6 +58,23 @@ task :tag => [:rpm] do
 
     announce "Tagging the release for version #{CURRENT_VERSION}-#{CURRENT_RELEASE}"
     system %{svn copy -m 'Hudson adding release tag #{CURRENT_VERSION}-#{CURRENT_RELEASE}' ../#{PROJ_NAME}/ #{TAGS_URL}/#{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}}
+end
+
+desc "Creates the website as a tarball"
+task :website => [:clean] do
+    FileUtils.mkdir_p("build/marionette-collective.org/html")
+
+    Dir.chdir("website") do
+        system("jekyll ../build/marionette-collective.org/html")
+    end
+
+    unless File.exist?("build/marionette-collective.org/html/index.html")
+        raise "Failed to build website"
+    end
+
+    Dir.chdir("build") do
+        system("tar -cvzf marionette-collective-org-#{Time.now.to_i}.tgz marionette-collective.org")
+    end
 end
 
 desc "Creates a RPM"
@@ -105,7 +113,7 @@ task :deb => [:clean, :doc, :package] do
         f.puts
         f.puts("  * Automated release for #{CURRENT_VERSION}-#{CURRENT_RELEASE} by rake deb")
         f.puts
-        f.puts("    See http://code.google.com/p/mcollective/wiki/ReleaseNotes for full details")
+        f.puts("    See http://marionette-collective.org/releasenotes.html for full details")
         f.puts
         f.puts(" -- The Marionette Collective <mcollective-dev@googlegroups.com>  #{Time.new.strftime('%a, %d %b %Y %H:%M:%S %z')}")
     end

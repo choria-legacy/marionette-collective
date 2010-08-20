@@ -2,17 +2,26 @@
 
 require 'mcollective'
 
-oparser = MCollective::Optionparser.new({})
+script = nil
+node = nil
 
-options = oparser.parse{|parser, options|
+oparser = MCollective::Optionparser.new({}, "filter")
+
+@options = oparser.parse{|parser, options|
     parser.define_head "Shows an inventory for a given node"
     parser.banner = "Usage: mc-inventory [options] node"
+
+    parser.on('--script SCRIPT', 'Script to run') do |v|
+        script = v
+    end
 }
 
 if ARGV.length > 0
     node = ARGV.shift
-else
-    STDERR.puts("Please specify a node")
+end
+
+unless script || node
+    STDERR.puts("Please specify a node or script to run")
     exit 1
 end
 
@@ -44,38 +53,177 @@ class Array
     end
 end
 
+def node_inventory(node, options)
+    begin
+        client = MCollective::Client.new(options[:config])
 
-begin
-    client = MCollective::Client.new(options[:config])
+        options[:filter]["identity"] << node
+        client.options = options
 
-    options[:filter]["identity"] << node
-    client.options = options
+        stats = client.req("inventory", "discovery") do |resp|
+            puts "Inventory for #{resp[:senderid]}:"
+            puts
 
-    stats = client.req("inventory", "discovery") do |resp|
-        puts "Inventory for #{resp[:senderid]}:"
-        puts
+            puts "   Agents:"
+            resp[:body][:agents].sort.in_groups_of(3, "") do |agents|
+                puts "      %-15s %-15s %-15s" % agents
+            end
+            puts
 
-        puts "   Agents:"
-        resp[:body][:agents].sort.in_groups_of(3, "") do |agents|
-            puts "      %-15s %-15s %-15s" % agents
+            puts "   Configuration Management Classes:"
+            resp[:body][:classes].sort.in_groups_of(2, "") do |klasses|
+                puts "      %-30s %-30s" % klasses
+            end
+            puts
+
+            puts "   Facts:"
+            resp[:body][:facts].sort_by{|f| f[0]}.each do |f|
+                puts "      #{f[0]} => #{f[1]}"
+            end
+
+            break
         end
-        puts
+    rescue Exception => e
+        puts "Could not show inventory for node #{node}: #{e}"
+    end
+end
 
-        puts "   Configuration Management Classes:"
-        resp[:body][:classes].sort.in_groups_of(2, "") do |klasses|
-            puts "      %-30s %-30s" % klasses
-        end
-        puts
+# Helpers to create a simple DSL for scriptlets
+def format(fmt)
+    @fmt = fmt
+end
 
-        puts "   Facts:"
-        resp[:body][:facts].sort_by{|f| f[0]}.each do |f|
-            puts "      #{f[0]} => #{f[1]}"
-        end
+def fields(&blk)
+    @flds = blk
+end
 
-        break
+def identity
+    @node[:identity]
+end
+
+def facts
+    @node[:facts]
+end
+
+def classes
+    @node[:classes]
+end
+
+def agents
+    @node[:agents]
+end
+
+def page_length(len)
+    @page_length = len
+end
+
+def page_heading(fmt)
+    @page_heading = fmt
+end
+
+def page_body(fmt)
+    @page_body = fmt
+end
+
+# Expects a simple printf style format and apply it to 
+# each node:
+#
+#    inventory do
+#        format "%s:\t\t%s\t\t%s"
+#
+#        fields { [ identity, facts["serialnumber"], facts["productname"] ] }
+#    end
+def inventory(&blk)
+    raise "Need to give a block to inventory" unless block_given?
+
+    blk.call if block_given?
+
+    raise "Need to define a format" if @fmt.nil?
+    raise "Need to define inventory fields" if @flds.nil?
+
+    client = MCollective::Client.new(@options[:config])
+
+    stats = client.req("inventory", "discovery", @options) do |resp|
+        @node = {:identity => resp[:senderid],
+                 :facts    => resp[:body][:facts],
+                 :classes  => resp[:body][:classes],
+                 :agents   => resp[:body][:agents]}
+
+        puts @fmt % @flds.call
+    end
+end
+
+# Use the ruby formatr gem to build reports using Perls formats
+#
+# It is kind of ugly but brings a lot of flexibility in report
+# writing without building an entire reporting language.
+#
+# You need to have formatr installed to enable reports like:
+#
+#    formatted_inventory do
+#        page_length 20
+#    
+#        page_heading <<TOP
+#    
+#                Node Report @<<<<<<<<<<<<<<<<<<<<<<<<<
+#                            time
+#    
+#    Hostname:         Customer:     Distribution:
+#    -------------------------------------------------------------------------
+#    TOP
+#    
+#        page_body <<BODY
+#    
+#    @<<<<<<<<<<<<<<<< @<<<<<<<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+#    identity,    facts["customer"], facts["lsbdistdescription"]
+#                                    @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+#                                    facts["processor0"]
+#    BODY
+#    end
+def formatted_inventory(&blk)
+    require 'formatr'
+
+    include FormatR
+
+    raise "Need to give a block to formatted_inventory" unless block_given?
+
+    blk.call if block_given?
+
+    raise "Need to define page body format" if @page_body.nil?
+
+    body_fmt = Format.new(@page_heading, @page_body)
+    body_fmt.setPageLength(@page_length)
+    time = Time.now
+
+    client = MCollective::Client.new(@options[:config])
+
+    stats = client.req("inventory", "discovery", @options) do |resp|
+        @node = {:identity => resp[:senderid],
+                 :facts    => resp[:body][:facts],
+                 :classes  => resp[:body][:classes],
+                 :agents   => resp[:body][:agents]}
+
+        body_fmt.printFormat(binding)
     end
 rescue Exception => e
-    puts "Could not show inventory for node #{node}: #{e}"
+    puts "Could not create report: #{e.class}: #{e}"
+end
+
+@fmt = nil
+@flds = nil
+@page_heading = nil
+@page_body = nil
+@page_length = 40
+
+if script
+    if File.exist?(script)
+        load(script)
+    else
+        puts "Could not find script to run: #{script}"
+        exit 1
+    end
+else
+    node_inventory(node, @options)
 end
 
 # vi:tabstop=4:expandtab:ai

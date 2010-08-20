@@ -30,6 +30,11 @@ module MCollective
                 @log.info("Reloading all agents after receiving USR1 signal")
                 @agents.loadagents
             end
+
+            Signal.trap("USR2") do
+                @log.info("Cycling logging level due to USR2 signal")
+                @log.cycle_level
+            end
         end
 
         # Daemonize the current process
@@ -52,7 +57,11 @@ module MCollective
             @connection.subscribe(controltopic)
 
             # Start the registration plugin if interval isn't 0
-            PluginManager["registration_plugin"].run(@connection) unless @config.registerinterval == 0
+            begin
+                PluginManager["registration_plugin"].run(@connection) unless @config.registerinterval == 0
+            rescue Exception => e
+                @log.error("Failed to start registration plugin: #{e}")
+            end
 
             loop do
                 begin

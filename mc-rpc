@@ -2,7 +2,7 @@
 
 # Generic client for MCollective Simple RPC
 #
-# http://code.google.com/p/mcollective/wiki/SimpleRPCIntroduction
+# http://marionette-collective.org/simplerpc/
 
 require 'mcollective'
 
