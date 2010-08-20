@@ -18,9 +18,16 @@ module MCollective
             timeout = ENV["MCOLLECTIVE_TIMEOUT"] || 5
             dtimeout = ENV["MCOLLECTIVE_DTIMEOUT"] || 2
 
-            config = File.expand_path("~/.mcollective")
+            # expand_path is pretty lame, it relies on HOME environment
+            # which isnt't always there so just handling all exceptions
+            # here as cant find reverting to default
+            begin
+                config = File.expand_path("~/.mcollective")
 
-            unless File.readable?(config) && File.file?(config)
+                 unless File.readable?(config) && File.file?(config)
+                    config = "/etc/mcollective/client.cfg"
+                end
+            rescue Exception => e
                 config = "/etc/mcollective/client.cfg"
             end
 
