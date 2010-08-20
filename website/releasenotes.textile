@@ -20,7 +20,7 @@ This is a list of release notes for various releases, you should review these be
   * "0.3.0":#0_3_0
   * "0.2.0":#0_2_0
 
-h2(#0_4_8). 0.4.8 - 
+h2(#0_4_8). 0.4.8 - 2010/08/20
 
 h3. Release Focus and Notes
 
