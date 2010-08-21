@@ -13,8 +13,8 @@ disqus: true
 |                    |         |
 |--------------------|---------|
 |Target release cycle|**1.0.x**|
-|Requires|**[BDD], [ThreadManagement]**|
-|Related|**[OtherLanguages]**|
+|Requires|[BDD], [ThreadManagement]|
+|Related|[OtherLanguages]|
 
 
 ## Overview

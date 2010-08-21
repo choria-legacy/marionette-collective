@@ -11,8 +11,8 @@ disqus: true
 |                    |         |
 |--------------------|---------|
 |Target release cycle|**1.0.x**|
-|Related|**[Queueing]**|
-|Requires|**[BDD]**|
+|Related|[Queueing]|
+|Requires|[BDD]|
 
 ## Overview
 

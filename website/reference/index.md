@@ -43,9 +43,3 @@ Index to basic users documentation.
 
  1. [Release Tasks](development/releasetasks.html)
  1. [EC2 Demo Creation](development/ec2_demo.html)
-
-### Roadmap
- 1. [Cucumber Testing Suite](/roadmap/cucumber.html)
- 1. [Better thread management](/roadmap/thread_management.html)
- 1. [Queuing and Scheduling of jobs](/roadmap/queueing_and_scheduling.html)
- 1. [Actions in Other Languages](/roadmap/actions_in_other_languages.html)
