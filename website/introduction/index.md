@@ -7,8 +7,8 @@ disqus: true
 [Fabric]: http://fabfile.org/
 [Capistrano]: http://www.capify.org
 [Publish Subscribe Middleware]: http://en.wikipedia.org/wiki/Publish/subscribe
-[Screencasts]: /screencasts.html
-[Amazon EC2 based demo]: /ec2demo.html
+[Screencasts]: /introduction/screencasts.html
+[Amazon EC2 based demo]: /introduction/ec2demo.html
 [broadcast paradigm]: /reference/basic/messageflow.html
 [UsingWithPuppet]: /reference/integration/puppet.html
 [UsingWithChef]: /reference/integration/chef.html
@@ -27,7 +27,7 @@ disqus: true
 [Registration]: /reference/plugins/registration.html
 [GettingStarted]: /reference/basic/gettingstarted.html
 [Configuration]: /reference/basic/configuration.html
-[Terminology]: /terminology.html
+[Terminology]: /introduction/terminology.html
 [devco]: http://www.devco.net/archives/tag/mcollective
 [mcollective-users]: http://groups.google.com/group/mcollective-users
 [WritingAgents]: /reference/basic/basic_agent_and_client.html

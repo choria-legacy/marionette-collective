@@ -5,8 +5,8 @@ disqus: true
 ---
 [blip]: http://mcollective.blip.tv/
 [slideshare]: http://www.slideshare.net/mcollective
-[ec2demo]: /ec2demo.html
-[Terminology]: /terminology.html
+[ec2demo]: /introduction/ec2demo.html
+[Terminology]: /introduction/terminology.html
 [SimpleRPCIntroduction]: /simplerpc/
 [DDL]: /simplerpc/ddl.html
 
