@@ -15,6 +15,7 @@
 #bodycontent h2 {text-decoration:none; font-weight:bold; font-size:1.2em;}
 #bodycontent h3 {text-decoration:none; font-weight:bold; font-size:1em;}
 #bodycontent h4 {text-decoration:none; font-weight:bold; font-size:0.8em;}
+#bodycontent iframe { width: 100% }
 
 #disqus {border-top:1px solid #eee; padding-top: 20px;}
 #topheader {padding-top: 20px;}
