@@ -7,6 +7,7 @@ h2. Changelog
 h3. Version 0.4.x
 
 |_. Date|_. Description|_. Ticket|
+|2010/08/23|Fix indention/block error in M:R:Stats|124|
 |2010/08/23|Fix permissions in the RPM for files in /etc|123|
 |2010/08/23|Fix language in two error messages|122|
 |*2010/08/20*|*Release version 0.4.8*||
