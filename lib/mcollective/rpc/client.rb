@@ -370,7 +370,7 @@ module MCollective
 
                     @stats.client_stats = @client.stats
                 else
-                    print("\nNo request sent, we did not discovered any nodes.")
+                    print("\nNo request sent, we did not discover any nodes.")
                 end
 
                 @stats.finish_request
