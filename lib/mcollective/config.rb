@@ -104,6 +104,7 @@ module MCollective
                 PluginManager.loadclass("Mcollective::Security::#{@securityprovider}")
                 PluginManager.loadclass("Mcollective::Registration::#{@registration}")
                 PluginManager.loadclass("Mcollective::Audit::#{@rpcauditprovider}") if @rpcaudit
+                PluginManager << {:type => "global_stats", :class => RunnerStats.new}
             else
                 raise("Cannot find config file '#{configfile}'")
             end

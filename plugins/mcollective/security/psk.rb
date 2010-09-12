@@ -65,11 +65,11 @@ module MCollective
                 digest = makehash(req[:body])
     
                 if digest == req[:hash]
-                    @stats[:validated] += 1
+                    @stats.validated
     
                     return true
                 else
-                    @stats[:unvalidated] += 1
+                    @stats.unvalidated
     
                     raise("Received an invalid signature in message")
                 end

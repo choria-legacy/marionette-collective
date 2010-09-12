@@ -9,19 +9,12 @@ module MCollective
 
             @log = Log.instance
 
-            @connection = PluginManager["connector_plugin"]
+            @stats = PluginManager["global_stats"]
 
             @security = PluginManager["security_plugin"]
             @security.initiated_by = :node
 
-            @stats = {:starttime => Time.now.to_i,
-                      :validated => 0, 
-                      :unvalidated => 0, 
-                      :filtered => 0, 
-                      :passed => 0, 
-                      :total => 0,
-                      :replies => 0}
-
+            @connection = PluginManager["connector_plugin"]
             @connection.connect
 
             @agents = Agents.new 
@@ -113,7 +106,7 @@ module MCollective
 
                 case body
                     when /^stats$/
-                        reply("mcollective", replytopic, stats, requestid)
+                        reply("mcollective", replytopic, @stats.to_hash, requestid)
 
                     when /^reload_agent (.+)$/
                         reply("mcollective", replytopic, "reloaded #{$1} agent", requestid) if @agents.loadagent($1)
@@ -137,36 +130,11 @@ module MCollective
             end
         end
 
-        # Builds stats for this mcollectived
-        def stats
-            @stats[:validated] = @security.stats[:validated]
-            @stats[:unvalidated] = @security.stats[:unvalidated]
-            @stats[:passed] = @security.stats[:passed]
-            @stats[:filtered] = @security.stats[:filtered]
-
-            r = {:stats => @stats,
-                 :threads => [],
-                 :pid => Process.pid,
-                 :times => {} }
-
-            Process.times.each_pair{|k,v| 
-               k = k.to_sym
-               r[:times][k] = v
-            }
-
-            Thread.list.each do |t|
-                r[:threads] << "#{t.inspect}"
-            end
-
-            r[:agents] = Agents.agentlist
-            r
-        end
-
         # Receive a message from the connection handler
         def receive
             msg = @connection.receive
 
-            @stats[:total] += 1
+            @stats.received
 
             msg = @security.decodemsg(msg)
 
@@ -181,7 +149,7 @@ module MCollective
 
             @connection.send(target, reply)
 
-            @stats[:replies] += 1
+            @stats.sent
         end
     end
 end

@@ -32,6 +32,7 @@ module MCollective
     autoload :Config, "mcollective/config"
     autoload :Log, "mcollective/log"
     autoload :Runner, "mcollective/runner"
+    autoload :RunnerStats, "mcollective/runnerstats"
     autoload :Agents, "mcollective/agents"
     autoload :Client, "mcollective/client"
     autoload :Util, "mcollective/util"

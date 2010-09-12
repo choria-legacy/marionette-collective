@@ -39,10 +39,7 @@ module MCollective
                 @config = Config.instance
                 @log = Log.instance
 
-                @stats = {:passed => 0,
-                          :filtered => 0,
-                          :validated => 0,
-                          :unvalidated => 0}
+                @stats = PluginManager["global_stats"]
             end
     
             # Takes a Hash with a filter in it and validates it against host information.
@@ -114,12 +111,14 @@ module MCollective
                 if failed == 0 && passed > 0
                     @log.debug("Message passed the filter checks")
     
-                    @stats[:passed] += 1
+                    @stats.passed
+
                     return true
                 else
                     @log.debug("Message failed the filter checks")
     
-                    @stats[:filtered] += 1
+                    @stats.filtered
+
                     return false
                 end
             end
