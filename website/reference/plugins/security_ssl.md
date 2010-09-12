@@ -45,7 +45,7 @@ server.cfg:
   securityprovider = ssl
   plugin.ssl_server_private = /etc/mcollective/ssl/server-private.pem
   plugin.ssl_server_public = /etc/mcollective/ssl/server-public.pem
-  plugin.ssl_client_cert_dir = /etc/mcollective/etc/ssl/clients/
+  plugin.ssl_client_cert_dir = /etc/mcollective/ssl/clients/
 {% endhighlight %}
 
 
