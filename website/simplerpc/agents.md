@@ -10,6 +10,7 @@ disqus: true
 [SimpleRPCAuthorization]: /simplerpc/authorization.html
 [SimpleRPCDDL]: /simplerpc/ddl.html
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
+[RPCUtil]: /reference/plugins/rpcutil.html
 
 # {{page.title}}
 
@@ -63,6 +64,8 @@ end
 {% endhighlight %}
 
 Strictly speaking this Agent will work but isn't considered complete - there's no meta data and no help.
+
+A helper agent called [_rpcutil_][RPCUtil] is included from version _0.4.9_ onward that helps you gather stats, inventory etc about the running daemon.  It's a full SimpleRPC agent including DDL, you can look at it too for an example.
 
 ### Agent Name
 The agent name is derived from the class name, the example code creates *MCollective::Agent::Helloworld* and the agent name would be *helloworld*.

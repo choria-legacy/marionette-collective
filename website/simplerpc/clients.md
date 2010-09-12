@@ -5,6 +5,7 @@ disqus: true
 ---
 [SimpleRPCIntroduction]: index.html
 [WritingAgents]: agents.html
+[RPCUtil]: /reference/plugins/rpcutil.html
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
 [RubyMixin]: http://juixe.com/techknow/index.php/2006/06/15/mixins-in-ruby/
 [OptionParser]: http://github.com/mcollective/marionette-collective/blob/master/lib/mcollective/optionparser.rb
@@ -397,3 +398,6 @@ printrpc puppet.runonce(:forcerun => true)
 
 But instead of doing any discovery it will use the host list and filter you supplied in the call.
   
+## The _rpcutil_ Helper Agent
+
+A helper agent called [_rpcutil_][RPCUtil] is included from version _0.4.9_ onward that helps you gather stats, inventory etc about the running daemon.

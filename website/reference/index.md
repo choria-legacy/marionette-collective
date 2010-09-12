@@ -30,10 +30,12 @@ Index to basic users documentation.
 
 ### Plugins
 
+ 1. [The _rpcutil_ helper Agent](plugins/rpcutil.html)
  1. [Registration](plugins/registration.html)
  1. [OpenSSL based Security Plugin](plugins/security_ssl.html)
  1. [Fact Source Plugins](plugins/facts.html)
  1. [Stomp Connector](plugins/connector_stomp.html)
+ 1. [User Contributed Plugins](http://mcollective-plugins.googlecode.com/)
 
 ### Operating Systems
 

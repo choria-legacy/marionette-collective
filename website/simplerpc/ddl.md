@@ -11,6 +11,7 @@ disqus: true
 [SimpleRPCDDL]: /simplerpc/ddl.html
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
 [DDLScreenCast]: http://mcollective.blip.tv/file/3799653
+[RPCUtil]: /reference/plugins/rpcutil.html
 
 # {{page.title}}
 
@@ -35,6 +36,8 @@ We've created [a screencast showing the capabilities of the DDL][DDLScreenCast] 
 
 ## Examples
 We'll start with a few examples as I think it's pretty simple what they do, and later on show what other permutations are allowed for defining inputs and outputs.
+
+A helper agent called [_rpcutil_][RPCUtil] is included from version _0.4.9_ onward that helps you gather stats, inventory etc about the running daemon.  This helper has a full DDL included, see the plugins dir for this agent.
 
 The typical service agent is a good example, it has various actions that all more or less take the same input.  All but status would have almost identical language.
 

@@ -9,6 +9,7 @@ disqus: true
 [SimpleRPCAuditing]: /simplerpc/auditing.html
 [SimpleRPCAuthorization]: /simplerpc/authorization.html
 [SimpleRPCDDL]: /simplerpc/ddl.html
+[RPCUtil]: /reference/plugins/rpcutil.html
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
 [RestGateway]: http://github.com/mcollective/marionette-collective/blob/master/ext/mc-rpc-restserver.rb
 
@@ -95,3 +96,5 @@ printrpcstats
 {% endhighlight %}
 
 With a standard interface come a lot of possibilities, just like the standard one-size-fits-all CLI client above you can make web interfaces, there's a [simple MCollective <-> REST bridge in the ext directory][RestGateway].
+
+A helper agent called [_rpcutil_][RPCUtil] is included from version _0.4.9_ onward that helps you gather stats, inventory etc about the running daemon.
