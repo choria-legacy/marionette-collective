@@ -88,6 +88,12 @@ action "daemon_stats", :description => "Get statistics from the running daemon" 
     output :replies,
            :description => "Replies sent back to clients",
            :display_as => "Replies"
+
+    output :configfile,
+           :description => "Config file used to start the daemon",
+           :display_as => "Config File"
+    
+    
 end
 
 action "agent_inventory", :description => "Inventory of all agents on the server" do

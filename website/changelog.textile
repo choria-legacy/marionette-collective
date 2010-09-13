@@ -7,6 +7,7 @@ h2. Changelog
 h3. Version 0.4.x
 
 |_. Date|_. Description|_. Ticket|
+|2010/09/13|Make the configfile used available in the Config class and add to prcutil|132|
 |2010/09/12|Rework internal statistics and add a rpcutil agent|129|
 |2010/09/12|Fix internal memory structures related to agent meta data|128|
 |2010/08/24|Update the OpenBSD port for changes in 0.4.8 tarball|125|

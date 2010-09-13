@@ -37,6 +37,7 @@ module MCollective
                 reply[:agents] = stats[:agents]
                 reply[:pid] = stats[:pid]
                 reply[:times] = stats[:times]
+                reply[:configfile] = Config.instance.configfile
 
                 reply.data.merge!(stats[:stats])
             end

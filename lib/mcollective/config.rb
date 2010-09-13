@@ -7,7 +7,7 @@ module MCollective
                     :keeplogs, :max_log_size, :loglevel, :identity, :daemonize, :connector,
                     :securityprovider, :factsource, :registration, :registerinterval, :topicsep,
                     :classesfile, :rpcauditprovider, :rpcaudit, :configdir, :rpcauthprovider,
-                    :rpcauthorization, :color
+                    :rpcauthorization, :color, :configfile
 
         def initialize
             @configured = false
@@ -31,6 +31,7 @@ module MCollective
             @rpcauthprovider = ""
             @configdir = File.dirname(configfile)
             @color = true
+            @configfile = configfile
 
             if File.exists?(configfile)
                 File.open(configfile, "r").each do |line|

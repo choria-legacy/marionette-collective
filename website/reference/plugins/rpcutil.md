@@ -29,7 +29,8 @@ Retrieves statistics about the running daemon, how many messages it's handled, p
 See the DDL for the agent for a full reference
 
 {% highlight ruby %}
-{:validated=>46,
+{:configfile=>"/etc/mcollective/server.cfg",
+ :validated=>46,
  :threads=>      ["#<Thread:0xb7dcf480 sleep>",
                   "#<Thread:0xb7fba704 sleep>",
                   "#<Thread:0xb7dcfb88 run>"],
