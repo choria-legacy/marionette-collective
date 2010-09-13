@@ -77,7 +77,7 @@ begin
 
         ddl = MCollective::RPC::DDL.new(options[:agent_help])
 
-        puts ddl.help("#{config.configdir}/rpc-help.erb")
+        puts ddl.help(config.rpchelptemplate)
     elsif options[:process_results]
         mc = rpcclient(options[:agent], {:options => options})
 

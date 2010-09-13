@@ -7,7 +7,7 @@ module MCollective
                     :keeplogs, :max_log_size, :loglevel, :identity, :daemonize, :connector,
                     :securityprovider, :factsource, :registration, :registerinterval, :topicsep,
                     :classesfile, :rpcauditprovider, :rpcaudit, :configdir, :rpcauthprovider,
-                    :rpcauthorization, :color, :configfile
+                    :rpcauthorization, :color, :configfile, :rpchelptemplate
 
         def initialize
             @configured = false
@@ -32,6 +32,7 @@ module MCollective
             @configdir = File.dirname(configfile)
             @color = true
             @configfile = configfile
+            @rpchelptemplate = "/etc/mcollective/rpc-help.erb"
 
             if File.exists?(configfile)
                 File.open(configfile, "r").each do |line|
@@ -90,6 +91,8 @@ module MCollective
                                     val =~ /^1|y/i ? @rpcauthorization = true : @rpcauthorization = false
                                 when "rpcauthprovider"
                                     @rpcauthprovider = val.capitalize
+                                when "rpchelptemplate"
+                                    @rpchelptemplate = val
 
                                 else
                                     raise("Unknown config parameter #{key}")
