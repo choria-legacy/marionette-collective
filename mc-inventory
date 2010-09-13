@@ -2,19 +2,19 @@
 
 require 'mcollective'
 
+include MCollective::RPC
+
 script = nil
 node = nil
 
-oparser = MCollective::Optionparser.new({}, "filter")
-
-@options = oparser.parse{|parser, options|
+@options = rpcoptions do |parser, options|
     parser.define_head "Shows an inventory for a given node"
     parser.banner = "Usage: mc-inventory [options] node"
 
     parser.on('--script SCRIPT', 'Script to run') do |v|
         script = v
     end
-}
+end
 
 if ARGV.length > 0
     node = ARGV.shift
@@ -55,29 +55,46 @@ end
 
 def node_inventory(node, options)
     begin
-        client = MCollective::Client.new(options[:config])
+        util = rpcclient("rpcutil", :options => @options)
+        util.identity_filter node
 
-        options[:filter]["identity"] << node
-        client.options = options
+        nodestats = util.daemon_stats
 
-        stats = client.req("inventory", "discovery") do |resp|
-            puts "Inventory for #{resp[:senderid]}:"
+        util.inventory.each do |resp|
+            puts "Inventory for #{resp[:sender]}:"
             puts
 
+            if nodestats.is_a?(Array)
+                nodestats = nodestats.first[:data]
+
+                puts "   Server Statistics:"
+                puts "                   Start Time: #{Time.at(nodestats[:starttime])}"
+                puts "                  Config File: #{nodestats[:configfile]}"
+                puts "                   Process ID: #{nodestats[:pid]}"
+                puts "               Total Messages: #{nodestats[:total]}"
+                puts "      Messages Passed Filters: #{nodestats[:passed]}"
+                puts "            Messages Filtered: #{nodestats[:filtered]}"
+                puts "                 Replies Sent: #{nodestats[:replies]}"
+                puts "         Total Processor Time: #{nodestats[:times][:utime]} seconds"
+                puts "                  System Time: #{nodestats[:times][:stime]} seconds"
+
+                puts
+            end
+
             puts "   Agents:"
-            resp[:body][:agents].sort.in_groups_of(3, "") do |agents|
+            resp[:data][:agents].sort.in_groups_of(3, "") do |agents|
                 puts "      %-15s %-15s %-15s" % agents
             end
             puts
 
             puts "   Configuration Management Classes:"
-            resp[:body][:classes].sort.in_groups_of(2, "") do |klasses|
+            resp[:data][:classes].sort.in_groups_of(2, "") do |klasses|
                 puts "      %-30s %-30s" % klasses
             end
             puts
 
             puts "   Facts:"
-            resp[:body][:facts].sort_by{|f| f[0]}.each do |f|
+            resp[:data][:facts].sort_by{|f| f[0]}.each do |f|
                 puts "      #{f[0]} => #{f[1]}"
             end
 
@@ -141,13 +158,13 @@ def inventory(&blk)
     raise "Need to define a format" if @fmt.nil?
     raise "Need to define inventory fields" if @flds.nil?
 
-    client = MCollective::Client.new(@options[:config])
+    util = rpcclient("rpcutil", :options => @options)
 
-    stats = client.req("inventory", "discovery", @options) do |resp|
-        @node = {:identity => resp[:senderid],
-                 :facts    => resp[:body][:facts],
-                 :classes  => resp[:body][:classes],
-                 :agents   => resp[:body][:agents]}
+    util.inventory.each do |resp|
+        @node = {:identity => resp[:sender],
+                 :facts    => resp[:data][:facts],
+                 :classes  => resp[:data][:classes],
+                 :agents   => resp[:data][:agents]}
 
         puts @fmt % @flds.call
     end
@@ -195,13 +212,13 @@ def formatted_inventory(&blk)
     body_fmt.setPageLength(@page_length)
     time = Time.now
 
-    client = MCollective::Client.new(@options[:config])
+    util = rpcclient("rpcutil", :options => @options)
 
-    stats = client.req("inventory", "discovery", @options) do |resp|
-        @node = {:identity => resp[:senderid],
-                 :facts    => resp[:body][:facts],
-                 :classes  => resp[:body][:classes],
-                 :agents   => resp[:body][:agents]}
+    util.inventory.each do |resp|
+        @node = {:identity => resp[:sender],
+                 :facts    => resp[:data][:facts],
+                 :classes  => resp[:data][:classes],
+                 :agents   => resp[:data][:agents]}
 
         body_fmt.printFormat(binding)
     end

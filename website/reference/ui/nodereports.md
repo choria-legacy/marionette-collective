@@ -22,6 +22,18 @@ To obtain a full inventory for a given node you can run mc-inventory like this:
  % mc-inventory your.node.com
  Inventory for your.node.com:
  
+
+   Server Statistics:
+                   Start Time: Mon Sep 13 18:24:46 +0100 2010
+                  Config File: /etc/mcollective/server.cfg
+                   Process ID: 5197
+               Total Messages: 62
+      Messages Passed Filters: 62
+            Messages Filtered: 0
+                 Replies Sent: 61
+         Total Processor Time: 0.18 seconds
+                  System Time: 0.01 seconds
+
     Agents:
        discovery       echo            nrpe           
        package         process         puppetd        
