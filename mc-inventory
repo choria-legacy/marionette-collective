@@ -59,9 +59,9 @@ def node_inventory(node, options)
         util.identity_filter node
         util.progress = false
 
-        nodestats = util.daemon_stats
+        nodestats = util.custom_request("daemon_stats", {}, node, {"identity" => node})
 
-        util.inventory.each do |resp|
+        util.custom_request("inventory", {}, node, {"identity" => node}).each do |resp|
             puts "Inventory for #{resp[:sender]}:"
             puts
 
