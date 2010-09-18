@@ -16,7 +16,7 @@ PROJ_FILES.concat(Dir.glob("mc-*"))
 ENV["RPM_VERSION"] ? CURRENT_VERSION = ENV["RPM_VERSION"] : CURRENT_VERSION = PROJ_VERSION
 ENV["BUILD_NUMBER"] ? CURRENT_RELEASE = ENV["BUILD_NUMBER"] : CURRENT_RELEASE = PROJ_RELEASE
 
-CLEAN.include("build")
+CLEAN.include(["build", "doc"])
 
 def announce(msg='')
     STDERR.puts "================"
@@ -47,17 +47,11 @@ task :package => [:clean, :doc] do
 
     FileUtils.mkdir_p("build/#{PROJ_NAME}-#{CURRENT_VERSION}")
     system("cp -R #{PROJ_FILES.join(' ')} build/#{PROJ_NAME}-#{CURRENT_VERSION}")
+
+    announce "Setting MCollective.version to #{CURRENT_VERSION}"
+    system("cd build/#{PROJ_NAME}-#{CURRENT_VERSION}/lib && sed --in-place -e s/@DEVELOPMENT_VERSION@/#{CURRENT_VERSION}/ mcollective.rb")
+
     system("cd build && tar --exclude .svn -cvzf #{PROJ_NAME}-#{CURRENT_VERSION}.tgz #{PROJ_NAME}-#{CURRENT_VERSION}")
-end
-
-desc "Tag the release in SVN"
-task :tag => [:rpm] do
-    ENV["TAGS_URL"] ? TAGS_URL = ENV["TAGS_URL"] : TAGS_URL = `/usr/bin/svn info|/bin/awk '/Repository Root/ {print $3}'`.chomp + "/tags"
-
-    raise("Need to specify a SVN url for tags using the TAGS_URL environment variable") unless TAGS_URL
-
-    announce "Tagging the release for version #{CURRENT_VERSION}-#{CURRENT_RELEASE}"
-    system %{svn copy -m 'Hudson adding release tag #{CURRENT_VERSION}-#{CURRENT_RELEASE}' ../#{PROJ_NAME}/ #{TAGS_URL}/#{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}}
 end
 
 desc "Creates the website as a tarball"

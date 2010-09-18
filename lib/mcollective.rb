@@ -44,6 +44,12 @@ module MCollective
     autoload :PluginManager, "mcollective/pluginmanager"
     autoload :RPC, "mcollective/rpc"
     autoload :Request, "mcollective/request"
+
+    VERSION="@DEVELOPMENT_VERSION@"
+
+    def self.version
+        VERSION
+    end
 end
 
 # vi:tabstop=4:expandtab:ai

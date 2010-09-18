@@ -20,6 +20,10 @@ action "inventory", :description => "System Inventory" do
     output :classes,
            :description => "List of classes on the system",
            :display_as => "Classes"
+
+    output :version,
+           :description => "MCollective Version",
+           :display_as => "Version"
 end
 
 action "get_fact", :description => "Retrieve a single fact from the fact store" do
@@ -93,7 +97,9 @@ action "daemon_stats", :description => "Get statistics from the running daemon" 
            :description => "Config file used to start the daemon",
            :display_as => "Config File"
     
-    
+    output :version,
+           :description => "MCollective Version",
+           :display_as => "Version"
 end
 
 action "agent_inventory", :description => "Inventory of all agents on the server" do

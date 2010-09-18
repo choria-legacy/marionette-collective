@@ -13,6 +13,7 @@ module MCollective
             action "inventory" do
                 reply[:agents] = Agents.agentlist
                 reply[:facts] = PluginManager["facts_plugin"].get_facts
+                reply[:version] = MCollective.version
                 reply[:classes] = []
 
                 cfile = Config.instance.classesfile
@@ -38,6 +39,7 @@ module MCollective
                 reply[:pid] = stats[:pid]
                 reply[:times] = stats[:times]
                 reply[:configfile] = Config.instance.configfile
+                reply[:version] = MCollective.version
 
                 reply.data.merge!(stats[:stats])
             end
