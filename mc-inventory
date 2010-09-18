@@ -69,6 +69,7 @@ def node_inventory(node, options)
                 nodestats = nodestats.first[:data]
 
                 puts "   Server Statistics:"
+                puts "                      Version: #{nodestats[:version]}"
                 puts "                   Start Time: #{Time.at(nodestats[:starttime])}"
                 puts "                  Config File: #{nodestats[:configfile]}"
                 puts "                   Process ID: #{nodestats[:pid]}"
