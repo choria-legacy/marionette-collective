@@ -16,7 +16,7 @@ disqus: true
 [CentralAudit]: http://code.google.com/p/mcollective-plugins/wiki/AuditCentralRPCLog
 
 
-# Add{{page.title}}
+# {{page.title}}
 
 Due to the [broadcast paradigm] of mcollective security is a complex topic to
 discuss.
