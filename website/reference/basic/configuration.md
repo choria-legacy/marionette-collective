@@ -30,8 +30,8 @@ Configuration is a simple *key = val* style configuration file.
 |logfile|/var/log/mcollective.log|Where to log|
 |loglevel|debug|Can be info, warn, debug, fatal, error|
 |identity|dev1.your.com|Identifier for this node, doesn't need to be unique, defaults to fqdn if unset|
-|keeplogs|10|The amount of logs to keep|
-|max_log_size|10240|Max size in bytes for log files before rotation happens|
+|keeplogs|5|The amount of logs to keep|
+|max_log_size|2097152|Max size in bytes for log files before rotation happens|
 |libdir|/usr/libexec/mcollective|Where to look for plugins|
 |connector|Stomp|Which _connector_ plugin to use for communication|
 |securityprovider|Psk|Which security model to use, see [SSL Security Plugin][SSLSecurity] for details on configuring SSL|

@@ -33,6 +33,8 @@ module MCollective
             @color = true
             @configfile = configfile
             @rpchelptemplate = "/etc/mcollective/rpc-help.erb"
+            @keeplogs = 5
+            @max_log_size = 2097152
 
             if File.exists?(configfile)
                 File.open(configfile, "r").each do |line|
