@@ -7,7 +7,7 @@ module MCollective
 
         def initialize(configfile)
             @config = Config.instance
-            @config.loadconfig(configfile)
+            @config.loadconfig(configfile) unless @config.configured
             @log = Log.instance
             @connection = PluginManager["connector_plugin"]
 

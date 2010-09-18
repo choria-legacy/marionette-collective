@@ -7,6 +7,7 @@ h2. Changelog
 h3. Version 0.4.x
 
 |_. Date|_. Description|_. Ticket|
+|2010/09/18|Prevent duplicate config loading with multiple clients active|136|
 |2010/09/18|Rotate the log file by default, keeping 5 x 2MB files|135|
 |2010/09/18|Write a overview document detailing security of the collective|131|
 |2010/09/18|Add MCollective.version, set it during packaging and include it in the rpcutil agent|134|
