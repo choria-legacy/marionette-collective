@@ -57,6 +57,7 @@ def node_inventory(node, options)
     begin
         util = rpcclient("rpcutil", :options => @options)
         util.identity_filter node
+        util.progress = false
 
         nodestats = util.daemon_stats
 
@@ -159,6 +160,7 @@ def inventory(&blk)
     raise "Need to define inventory fields" if @flds.nil?
 
     util = rpcclient("rpcutil", :options => @options)
+    util.progress = false
 
     util.inventory.each do |resp|
         @node = {:identity => resp[:sender],
@@ -213,6 +215,7 @@ def formatted_inventory(&blk)
     time = Time.now
 
     util = rpcclient("rpcutil", :options => @options)
+    util.progress = false
 
     util.inventory.each do |resp|
         @node = {:identity => resp[:sender],
