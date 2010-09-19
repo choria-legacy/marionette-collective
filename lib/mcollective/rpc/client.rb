@@ -25,7 +25,7 @@ module MCollective
                             yield(parser, options)
                         end
 
-                        RPC.add_simplerpc_options(parser, options)
+                        Helper.add_simplerpc_options(parser, options)
                     end
                 end
 
