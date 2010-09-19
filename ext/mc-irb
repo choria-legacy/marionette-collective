@@ -50,10 +50,37 @@ def consolize &block
         Bond.start
 
         Bond.complete(:method => "rpc") do |e|
-            if e.argument == 1
-                @agent.ddl.actions rescue []
-            elsif  e.argument > 1
-                @agent.ddl.action_interface(eval(e.arguments[0]).to_s)[:input].keys rescue []
+            begin
+                if e.argument == 1
+                    if e.arguments.last == "?"
+                        puts "\n\nActions for #{@agent_name}:\n"
+
+                        @agent.ddl.actions.each do |action|
+                           puts "%20s - %s" % [ ":#{action}", @agent.ddl.action_interface(action)[:description] ] 
+                        end
+
+                        print "\n" + e.line
+                    end
+
+                    @agent.ddl.actions
+
+                elsif e.argument > 1
+                    action = eval(e.arguments[0]).to_s
+                    ddl = @agent.ddl.action_interface(action)
+
+                    if e.arguments.last == "?"
+                        puts "\n\nArguments for #{action}:\n"
+                        ddl[:input].keys.each do |input|
+                            puts "%20s - %s" % [ ":#{input}", ddl[:input][input][:description] ]
+                        end
+
+                        print "\n" + e.line
+                    end
+
+                    ddl[:input].keys
+                end
+            rescue Exception 
+                []
             end
         end
     rescue Exception
@@ -84,13 +111,18 @@ def rpc(method_name, *args, &block)
             args.delete(:verbose)
 
             printrpc(@agent.send(method_name, args), :verbose => true)
+            printrpcstats
         else
             printrpc @agent.send(method_name, args)
+            printrpcstats
         end
+
     else
         @agent.send(method_name, args.first).each do |resp|
             yield resp
         end
+
+        printrpcstats
     end
 
     true
@@ -104,6 +136,7 @@ def newagent(agent)
     @options[:filter]["agent"] = []
     @agent = rpcclient(@agent_name, :options => @options)
     @agent.discover(:verbose => true)
+    @agent.progress = true
 
     true
 end
