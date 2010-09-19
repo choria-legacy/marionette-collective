@@ -26,6 +26,7 @@ Index to basic users documentation.
  1. [Using with Puppet](integration/puppet.html)
  1. [Using with Chef](integration/chef.html)
  1. [ActiveMQ Security](integration/activemq_security.html)
+ 1. [ActiveMQ SSL](integration/activemq_ssl.html)
  1. [ActiveMQ Clusters](integration/activemq_clusters.html)
 
 ### Plugins

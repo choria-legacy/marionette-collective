@@ -6,12 +6,13 @@ disqus: true
 [Security]: http://activemq.apache.org/security.html
 [Registration]: /reference/plugins/registration.html
 [Wildcard]: http://activemq.apache.org/wildcards.html
+[ActiveMQ TLS]: activemq_ssl.html
 
 # {{page.title}}
 
 As part of rolling out mcollective you need to think about security. The various examples in the quick start guide and on this blog has allowed all agents to talk to all nodes all agents. The problem with this approach is that should you have untrusted users on a node they can install the client applications and read the username/password from the server config file and thus control your entire architecture.
 
-Since revision 71 of trunk the structure of messages has changed to be compatible with ActiveMQ authorization structure, I've also made the structure of the message targets configurable. The new default format is compatible with [ActiveMQ wildcard patterns][Wildcard] and so we can now do fine grained controls over who can speak to what.
+The default format for message topics is compatible with [ActiveMQ wildcard patterns][Wildcard] and so we can now do fine grained controls over who can speak to what.
 
 General information about [ActiveMQ Security can be found on their wiki][Security].
 
@@ -82,3 +83,5 @@ For my clients I can use the ability to configure the user details in my shell e
 {% endhighlight %}
 
 And finally the rip user when logged into a shell with these variables have full access to the various commands. You can now give different users access to the entire collective or go further and give a certain admin user access to only run certain agents by limiting the command topics they have access to. Doing the user and password settings in shell environments means it's not kept in any config file in /etc/ for example.
+
+Your next step should be to setup TLS between your nodes and your middleware, to set this up follow our [ActiveMQ TLS] quide.

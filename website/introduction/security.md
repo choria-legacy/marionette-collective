@@ -10,6 +10,7 @@ disqus: true
 [SSL security plugin]: /reference/plugins/security_ssl.html
 [ActiveMQ Security]: /reference/integration/activemq_security.html
 [ActiveMQ TLS]: http://activemq.apache.org/how-do-i-use-ssl.html
+[ActiveMQ SSL]: /reference/integration/activemq_ssl.html
 [ActiveMQ STOMP]: http://activemq.apache.org/stomp.html
 [MCollective STOMP Connector]: /reference/plugins/connector_stomp.html
 [ActionPolicy]: http://code.google.com/p/mcollective-plugins/wiki/ActionPolicy
@@ -72,9 +73,8 @@ By default the connections between Middleware and Nodes are not encrypted, just
 signed using the SSL keys above.  [ActiveMQ supports TLS][ActiveMQ TLS] and the
 [stomp connector][ActiveMQ STOMP] supports this.
 
-The [MCollective STOMP Connector] also supports TLS, at present we do not have a
-complete sample of such a setup but this is provided by the Rubygem and should
-work.
+The [MCollective STOMP Connector] also supports TLS, to configure MCollective
+to speak TLS to your nodes please follow our notes about [ActiveMQ SSL].
 
 Enabling TLS throughout will secure your connections from any kind of sniffing
 and Man in The Middle attacks.  Unfortunately the Rubygem we use do not provide
