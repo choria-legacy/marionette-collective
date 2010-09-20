@@ -102,16 +102,6 @@ desc "Create the .debs"
 task :deb => [:clean, :doc, :package] do
     announce("Building debian packages")
 
-    File.open("ext/debian/changelog", "w") do |f|
-        f.puts("mcollective (#{CURRENT_VERSION}-#{CURRENT_RELEASE}) unstable; urgency=low")
-        f.puts
-        f.puts("  * Automated release for #{CURRENT_VERSION}-#{CURRENT_RELEASE} by rake deb")
-        f.puts
-        f.puts("    See http://marionette-collective.org/releasenotes.html for full details")
-        f.puts
-        f.puts(" -- The Marionette Collective <mcollective-dev@googlegroups.com>  #{Time.new.strftime('%a, %d %b %Y %H:%M:%S %z')}")
-    end
-
     FileUtils.mkdir_p("build/deb")
     Dir.chdir("build/deb") do
         system %{tar -xzf ../#{PROJ_NAME}-#{CURRENT_VERSION}.tgz}
@@ -120,6 +110,17 @@ task :deb => [:clean, :doc, :package] do
         Dir.chdir("#{PROJ_NAME}-#{CURRENT_VERSION}") do
             system %{cp -R ext/debian .}
             system %{cp -R ext/Makefile .}
+
+            File.open("debian/changelog", "w") do |f|
+                f.puts("mcollective (#{CURRENT_VERSION}-#{CURRENT_RELEASE}) unstable; urgency=low")
+                f.puts
+                f.puts("  * Automated release for #{CURRENT_VERSION}-#{CURRENT_RELEASE} by rake deb")
+                f.puts
+                f.puts("    See http://marionette-collective.org/releasenotes.html for full details")
+                f.puts
+                f.puts(" -- The Marionette Collective <mcollective-dev@googlegroups.com>  #{Time.new.strftime('%a, %d %b %Y %H:%M:%S %z')}")
+            end
+
             system %{debuild -i -us -uc -b}
         end
 
