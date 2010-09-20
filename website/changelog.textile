@@ -7,6 +7,7 @@ h2. Changelog
 h3. Version 0.4.x
 
 |_. Date|_. Description|_. Ticket|
+|*2010/09/21*|*Release version 0.4.9*||
 |2010/09/20|Improve Debian packaging task|140|
 |2010/09/20|Add :boolean type support to the DDL|138|
 |2010/09/19|Refactor MCollective::RPC to add less unneeded stuff to Object|137|

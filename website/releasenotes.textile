@@ -7,6 +7,7 @@ h1. Release Notes
 This is a list of release notes for various releases, you should review these before upgrading as any potential problems and backward incompatible changes will be highlighted here.
 
   * *0.4.x*
+  ** "0.4.9":#0_4_9
   ** "0.4.8":#0_4_8
   ** "0.4.7":#0_4_7
   ** "0.4.6":#0_4_6
@@ -19,6 +20,50 @@ This is a list of release notes for various releases, you should review these be
 
   * "0.3.0":#0_3_0
   * "0.2.0":#0_2_0
+
+h2(#0_4_9). 0.4.9 - 2010/09/21
+
+h3. Release Focus and Notes
+
+This is a bug fix and minor improvement release.
+
+h3. Bug Fixes
+
+ * Internal data structure related to Agent meta data has been fixed, no user impact from this
+ * When using per-user config files the _rpc-help.erb_ template could not be found
+ * The log files will now rotate by default keeping 5 x 2MB files
+ * The config were parsed multiple times in complex scripts, this has been eliminated
+ * MCollective::RPC loaded a bunch of unneeded stuff into Object, this has been cleaned up
+ * Various packaging related tweaks were done
+
+h3. New Features
+
+ * We ship a new agent called _rpcutil_ with the base system, you can use this agent to get inventory etc from your _mcollectived_.  _mc-inventory_ has been rewritten to use this agent and should serve as a good reference for what you can get from the agent.
+ * The DDL now support :boolean style inputs, mc-rpc also turn true/false on the command line into booleans when needed
+
+h3. Backwards Compatibility
+
+This release will be backward compatible with older releases.
+
+h3. Changes
+
+|_. Date|_. Description|_. Ticket|
+|2010/09/20|Improve Debian packaging task|140|
+|2010/09/20|Add :boolean type support to the DDL|138|
+|2010/09/19|Refactor MCollective::RPC to add less unneeded stuff to Object|137|
+|2010/09/18|Prevent duplicate config loading with multiple clients active|136|
+|2010/09/18|Rotate the log file by default, keeping 5 x 2MB files|135|
+|2010/09/18|Write a overview document detailing security of the collective|131|
+|2010/09/18|Add MCollective.version, set it during packaging and include it in the rpcutil agent|134|
+|2010/09/13|mc-inventory now use SimpleRPC and the rpcutil agent and display server stats|133|
+|2010/09/13|Make the path to the rpc-help.erb configurable and set sane default|130|
+|2010/09/13|Make the configfile used available in the Config class and add to rpcutil|132|
+|2010/09/12|Rework internal statistics and add a rpcutil agent|129|
+|2010/09/12|Fix internal memory structures related to agent meta data|128|
+|2010/08/24|Update the OpenBSD port for changes in 0.4.8 tarball|125|
+|2010/08/23|Fix indention/block error in M:R:Stats|124|
+|2010/08/23|Fix permissions in the RPM for files in /etc|123|
+|2010/08/23|Fix language in two error messages|122|
 
 h2(#0_4_8). 0.4.8 - 2010/08/20
 
