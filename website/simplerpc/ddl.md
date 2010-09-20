@@ -149,7 +149,7 @@ ACTIONS:
 The input block has a mandatory *:optional* field, when true it would be ok if a client attempts to call the agent without this input supplied.  If it is supplied though it will be validated.
 
 ### Types of Input
-As you see above the input block has *:type* option, types can be *:string* or *:list* today, we intend to expand this to other validations.
+As you see above the input block has *:type* option, types can be *:string*, *:list* or *:boolean* today, we intend to expand this to other validations.
 
 #### :string type
 The string type validates initially that the input is infact a String, then it validates the length of the input and finally matches the supplied Regular Expression.
@@ -171,6 +171,10 @@ input :action,
 {% endhighlight %}
 
 In user interfaces this might be displayed as a drop down list selector or another kind of menu.
+
+#### :boolean type
+
+The value input should be either _true_ or _false_ actual boolean values.  This feature was introduced in version _0.4.9_.
 
 ### Accessing the DDL
 While programming client applications or web apps you can gain access to the DDL for any agent in several ways:

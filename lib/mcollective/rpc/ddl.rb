@@ -67,11 +67,11 @@ module MCollective
             #       display :always
             #
             #       input "service",
-            #            :prompt => "Service Action",
+            #            :prompt      => "Service Action",
             #            :description => "The action to perform",
-            #            :type => :list,
-            #            :optional => true,
-            #            :list => ["start", "stop", "restart", "status"]
+            #            :type        => :list,
+            #            :optional    => true,
+            #            :list        => ["start", "stop", "restart", "status"]
             #
             #       output "status"
             #            :description => "The status of the service after the action"
@@ -193,7 +193,7 @@ module MCollective
                         end
                     end
 
-                    # validate strings and lists, we'll add more types of validators when
+                    # validate strings, lists and booleans, we'll add more types of validators when
                     # all the use cases are clear
                     #
                     # only does validation for arguments actually given, since some might
@@ -220,6 +220,11 @@ module MCollective
                             when :list
                                 unless input[key][:list].include?(arguments[key])
                                     raise DDLValidationError, "Input #{key} doesn't match list #{input[key][:list].join(', ')}"
+                                end
+
+                            when :boolean
+                                unless [TrueClass, FalseClass].include?(arguments[key].class)
+                                    raise DDLValidationError, "Input #{key} should be a boolean"
                                 end
                         end
                     end

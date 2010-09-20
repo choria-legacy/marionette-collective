@@ -11,10 +11,10 @@
 #footerstrip a:hover {color:#000000; font-weight: bold}
 
 #bodycontent {padding-top: 20px; font-size:1.2em;}
-#bodycontent h1 {text-decoration:none; font-weight:bold; font-size:1.5em;}
-#bodycontent h2 {text-decoration:none; font-weight:bold; font-size:1.2em;}
-#bodycontent h3 {text-decoration:none; font-weight:bold; font-size:1em;}
-#bodycontent h4 {text-decoration:none; font-weight:bold; font-size:0.8em;}
+#bodycontent h1 {text-decoration:none; font-weight:bold; font-size:1.5em; color: #000000;}
+#bodycontent h2 {text-decoration:none; font-weight:bold; font-size:1.2em; color: #000000;}
+#bodycontent h3 {text-decoration:none; font-weight:bold; font-size:1em; color: #000000;}
+#bodycontent h4 {text-decoration:none; font-weight:bold; font-size:0.8em; color: #000000;}
 #bodycontent iframe { width: 100% }
 
 #disqus {border-top:1px solid #eee; padding-top: 20px;}

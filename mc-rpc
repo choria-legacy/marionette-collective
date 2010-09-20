@@ -8,6 +8,24 @@ require 'mcollective'
 
 include MCollective::RPC
 
+# As we're taking arguments on the command line we need a
+# way to input booleans, true on the cli is a string so this
+# method will take the ddl, find all arguments that are supposed
+# to be boolean and if they are the strings "true"/"yes" or "false"/"no"
+# turn them into the matching boolean
+def booleanish_to_boolean(arguments, ddl)
+    arguments.keys.each do |key|
+        if ddl[:input].keys.include?(key)
+            if ddl[:input][key][:type] == :boolean
+                arguments[key] = true if arguments[key] == "true"
+                arguments[key] = true if arguments[key] == "yes"
+                arguments[key] = false if arguments[key] == "false"
+                arguments[key] = false if arguments[key] == "no"
+            end
+        end
+    end
+end
+
 begin
     options = rpcoptions do |parser, options|
         parser.banner = ""
@@ -81,6 +99,8 @@ begin
     elsif options[:process_results]
         mc = rpcclient(options[:agent], {:options => options})
 
+        booleanish_to_boolean(options[:arguments], mc.ddl.action_interface(options[:action])) unless mc.ddl.nil?
+
         mc.agent_filter(options[:agent])
         mc.discover :verbose => true
 
@@ -89,6 +109,9 @@ begin
         printrpcstats :caption => "#{options[:agent]}##{options[:action]} call stats"
     else
         mc = rpcclient(options[:agent], {:options => options})
+
+        booleanish_to_boolean(options[:arguments], mc.ddl.action_interface(options[:action])) unless mc.ddl.nil?
+
         mc.agent_filter(options[:agent])
 
         puts "Request sent with id: " + mc.send(options[:action], options[:arguments])
