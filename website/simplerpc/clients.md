@@ -359,8 +359,9 @@ Host Filters
 
 ## Sending SimpleRPC requests without discovery and blocking
 
-Usually this section will not apply to you, I am demonstrating a technique that lets you
-use the normal _Client#sendreq_ method to send SimpleRPC requests, you would do this only in cases where you had no interest in any of the following:
+Usually this section will not apply to you.  The client libraries support sending a request without waiting for a reply.  This could be useful if you want to clean yum caches but don't really care if it actually happens everywhere.
+
+You will loose these abilities:
 
  * Knowing if your request was received by any agents
  * Any stats about processing times etc
@@ -373,7 +374,8 @@ The code below will send a request to the _runonce_ action for an agent _puppetd
 {% highlight ruby %}
 p = rpcclient("puppetd")
 
-reqid = p.new_request("runonce", :forcerun => true, :process_results => true)
+p.identity_filter "your.box.com"
+reqid = p.runonce(:forcerun => true, :process_results => false)
 {% endhighlight %}
 
 This will honor any attached filters set either programatically or through the command line, it will send the request but will 
