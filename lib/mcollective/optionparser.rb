@@ -11,7 +11,7 @@ module MCollective
         # Stats a parser in non verbose mode that does support discovery
         #  oparser = MCollective::Optionparser.new() 
         #
-        def initialize(defaults = {}, include = "")
+        def initialize(defaults = {}, include = nil)
             @parser = OptionParser.new
             @include = include
 
@@ -59,8 +59,9 @@ module MCollective
 
             add_common_options
 
-            @include.each do |i|
-                eval("add_#{i}_options")
+            [@include].flatten.compact.each do |i|
+                options_name = "add_#{i}_options"
+                send(options_name)  if respond_to?(options_name)
             end
 
             @parser.parse!
