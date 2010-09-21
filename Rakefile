@@ -6,7 +6,7 @@ require 'rake/clean'
 require 'find'
 
 PROJ_DOC_TITLE = "The Marionette Collective"
-PROJ_VERSION = "0.4.8"
+PROJ_VERSION = "0.4.9"
 PROJ_RELEASE = "1"
 PROJ_NAME = "mcollective"
 PROJ_RPM_NAMES = [PROJ_NAME]
@@ -16,7 +16,7 @@ PROJ_FILES.concat(Dir.glob("mc-*"))
 ENV["RPM_VERSION"] ? CURRENT_VERSION = ENV["RPM_VERSION"] : CURRENT_VERSION = PROJ_VERSION
 ENV["BUILD_NUMBER"] ? CURRENT_RELEASE = ENV["BUILD_NUMBER"] : CURRENT_RELEASE = PROJ_RELEASE
 
-CLEAN.include("build")
+CLEAN.include(["build", "doc"])
 
 def announce(msg='')
     STDERR.puts "================"
@@ -47,17 +47,11 @@ task :package => [:clean, :doc] do
 
     FileUtils.mkdir_p("build/#{PROJ_NAME}-#{CURRENT_VERSION}")
     system("cp -R #{PROJ_FILES.join(' ')} build/#{PROJ_NAME}-#{CURRENT_VERSION}")
+
+    announce "Setting MCollective.version to #{CURRENT_VERSION}"
+    system("cd build/#{PROJ_NAME}-#{CURRENT_VERSION}/lib && sed --in-place -e s/@DEVELOPMENT_VERSION@/#{CURRENT_VERSION}/ mcollective.rb")
+
     system("cd build && tar --exclude .svn -cvzf #{PROJ_NAME}-#{CURRENT_VERSION}.tgz #{PROJ_NAME}-#{CURRENT_VERSION}")
-end
-
-desc "Tag the release in SVN"
-task :tag => [:rpm] do
-    ENV["TAGS_URL"] ? TAGS_URL = ENV["TAGS_URL"] : TAGS_URL = `/usr/bin/svn info|/bin/awk '/Repository Root/ {print $3}'`.chomp + "/tags"
-
-    raise("Need to specify a SVN url for tags using the TAGS_URL environment variable") unless TAGS_URL
-
-    announce "Tagging the release for version #{CURRENT_VERSION}-#{CURRENT_RELEASE}"
-    system %{svn copy -m 'Hudson adding release tag #{CURRENT_VERSION}-#{CURRENT_RELEASE}' ../#{PROJ_NAME}/ #{TAGS_URL}/#{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}}
 end
 
 desc "Creates the website as a tarball"
@@ -108,16 +102,6 @@ desc "Create the .debs"
 task :deb => [:clean, :doc, :package] do
     announce("Building debian packages")
 
-    File.open("ext/debian/changelog", "w") do |f|
-        f.puts("mcollective (#{CURRENT_VERSION}-#{CURRENT_RELEASE}) unstable; urgency=low")
-        f.puts
-        f.puts("  * Automated release for #{CURRENT_VERSION}-#{CURRENT_RELEASE} by rake deb")
-        f.puts
-        f.puts("    See http://marionette-collective.org/releasenotes.html for full details")
-        f.puts
-        f.puts(" -- The Marionette Collective <mcollective-dev@googlegroups.com>  #{Time.new.strftime('%a, %d %b %Y %H:%M:%S %z')}")
-    end
-
     FileUtils.mkdir_p("build/deb")
     Dir.chdir("build/deb") do
         system %{tar -xzf ../#{PROJ_NAME}-#{CURRENT_VERSION}.tgz}
@@ -126,6 +110,17 @@ task :deb => [:clean, :doc, :package] do
         Dir.chdir("#{PROJ_NAME}-#{CURRENT_VERSION}") do
             system %{cp -R ext/debian .}
             system %{cp -R ext/Makefile .}
+
+            File.open("debian/changelog", "w") do |f|
+                f.puts("mcollective (#{CURRENT_VERSION}-#{CURRENT_RELEASE}) unstable; urgency=low")
+                f.puts
+                f.puts("  * Automated release for #{CURRENT_VERSION}-#{CURRENT_RELEASE} by rake deb")
+                f.puts
+                f.puts("    See http://marionette-collective.org/releasenotes.html for full details")
+                f.puts
+                f.puts(" -- The Marionette Collective <mcollective-dev@googlegroups.com>  #{Time.new.strftime('%a, %d %b %Y %H:%M:%S %z')}")
+            end
+
             system %{debuild -i -us -uc -b}
         end
 

@@ -44,7 +44,6 @@ sbin/mc-find-hosts
 sbin/mc-inventory
 sbin/mc-ping
 sbin/mc-rpc
-sbin/mc-rpc-restserver.rb
 sbin/mcollectived
 share/doc/mcollective/
 share/doc/mcollective/classes/

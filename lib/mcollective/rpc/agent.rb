@@ -31,13 +31,19 @@ module MCollective
             attr_accessor :meta, :reply, :request
             attr_reader :logger, :config, :timeout, :ddl
 
-            @@meta = {}
-
             def initialize
-                @timeout = @@meta[:timeout] || 10
+                # Default meta data unset
+                @meta = {:timeout     => 10,
+                         :name        => "Unknown",
+                         :description => "Unknown",
+                         :author      => "Unknown",
+                         :license     => "Unknown",
+                         :version     => "Unknown",
+                         :url         => "Unknown"}
+
+                @timeout = meta[:timeout] || 10
                 @logger = Log.instance
                 @config = Config.instance
-                @meta = {}
                 @agent_name = self.class.to_s.split("::").last.downcase
 
                 # Loads the DDL so we can later use it for validation
@@ -47,9 +53,6 @@ module MCollective
                 rescue
                     @ddl = nil
                 end
-
-                # if we're using the new meta data, use that for the timeout
-                @meta[:timeout] = @@meta[:timeout] if @@meta.include?(:timeout)
 
                 # if we have a global authorization provider enable it
                 # plugins can still override it per plugin
@@ -128,19 +131,24 @@ module MCollective
                 end
             end
 
-            # Returns the meta data for an agent
-            def self.meta
-                @@meta
-            end
 
             private
             # Registers meta data for the introspection hash
-            def self.metadata(meta)
+            def self.metadata(data)
                 [:name, :description, :author, :license, :version, :url, :timeout].each do |arg|
-                    raise "Metadata needs a :#{arg}" unless meta.include?(arg)
+                    raise "Metadata needs a :#{arg}" unless data.include?(arg)
                 end
 
-                @@meta = meta
+                # Our old style agents were able to do all sorts of things to the meta
+                # data during startup_hook etc, don't really want that but also want
+                # backward compat.
+                #
+                # Here if you're using the new metadata way this replaces the getter
+                # with one that always return the same data, setter will still work but
+                # wont actually do anything of note.
+                define_method("meta") {
+                    data
+                }
             end
 
             # Creates a new action wit the block passed and sets some defaults

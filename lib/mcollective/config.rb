@@ -7,7 +7,7 @@ module MCollective
                     :keeplogs, :max_log_size, :loglevel, :identity, :daemonize, :connector,
                     :securityprovider, :factsource, :registration, :registerinterval, :topicsep,
                     :classesfile, :rpcauditprovider, :rpcaudit, :configdir, :rpcauthprovider,
-                    :rpcauthorization, :color
+                    :rpcauthorization, :color, :configfile, :rpchelptemplate
 
         def initialize
             @configured = false
@@ -31,6 +31,10 @@ module MCollective
             @rpcauthprovider = ""
             @configdir = File.dirname(configfile)
             @color = true
+            @configfile = configfile
+            @rpchelptemplate = "/etc/mcollective/rpc-help.erb"
+            @keeplogs = 5
+            @max_log_size = 2097152
 
             if File.exists?(configfile)
                 File.open(configfile, "r").each do |line|
@@ -89,6 +93,8 @@ module MCollective
                                     val =~ /^1|y/i ? @rpcauthorization = true : @rpcauthorization = false
                                 when "rpcauthprovider"
                                     @rpcauthprovider = val.capitalize
+                                when "rpchelptemplate"
+                                    @rpchelptemplate = val
 
                                 else
                                     raise("Unknown config parameter #{key}")
@@ -104,6 +110,7 @@ module MCollective
                 PluginManager.loadclass("Mcollective::Security::#{@securityprovider}")
                 PluginManager.loadclass("Mcollective::Registration::#{@registration}")
                 PluginManager.loadclass("Mcollective::Audit::#{@rpcauditprovider}") if @rpcaudit
+                PluginManager << {:type => "global_stats", :class => RunnerStats.new}
             else
                 raise("Cannot find config file '#{configfile}'")
             end

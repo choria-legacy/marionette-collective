@@ -5,8 +5,8 @@ disqus: true
 ---
 [blip]: http://mcollective.blip.tv/
 [slideshare]: http://www.slideshare.net/mcollective
-[ec2demo]: /ec2demo.html
-[Terminology]: /terminology.html
+[ec2demo]: /introduction/ec2demo.html
+[Terminology]: /introduction/terminology.html
 [SimpleRPCIntroduction]: /simplerpc/
 [DDL]: /simplerpc/ddl.html
 
@@ -28,6 +28,7 @@ There is also a [slideshare] site where presentations will go that we do at conf
 
 ## Tools built using MCollective
 <ol>
+<li><a href="#simplerpc_ddl_irb">SimpleRPC DDL IRB</a></li>
 <li><a href="#mcollective_deployer">Software Deployer used by developers</a></li>
 <li><a href="#exim">Managing clusters of Exim Servers</a></li>
 <li><a href="#server_provisioner">Bootstrapping Puppet on EC2</a></li>
@@ -83,6 +84,14 @@ The [DDL] wiki page gives more information once you've watched this video.
 
 <embed src="http://blip.tv/play/hfMOgemKNAA" type="application/x-shockwave-flash" width="640" 
 height="424" allowscriptaccess="always" allowfullscreen="true"></embed>
+
+<a name="simplerpc_ddl_irb">&nbsp;</a>
+SimpleRPC DDL enhanced IRB
+--------------------------
+A custom IRB shell that supports command completion based on the SimpleRPC DDL
+
+<embed src="http://blip.tv/play/hfMOgf3rJgA" type="application/x-shockwave-flash" width="640" 
+height="348" allowscriptaccess="always" allowfullscreen="true"></embed>
 
 <a name="mcollective_deployer"> </a>
 Software Deployer using MCollective

@@ -11,6 +11,7 @@ disqus: true
 [SimpleRPCDDL]: /simplerpc/ddl.html
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
 [DDLScreenCast]: http://mcollective.blip.tv/file/3799653
+[RPCUtil]: /reference/plugins/rpcutil.html
 
 # {{page.title}}
 
@@ -35,6 +36,8 @@ We've created [a screencast showing the capabilities of the DDL][DDLScreenCast] 
 
 ## Examples
 We'll start with a few examples as I think it's pretty simple what they do, and later on show what other permutations are allowed for defining inputs and outputs.
+
+A helper agent called [_rpcutil_][RPCUtil] is included from version _0.4.9_ onward that helps you gather stats, inventory etc about the running daemon.  This helper has a full DDL included, see the plugins dir for this agent.
 
 The typical service agent is a good example, it has various actions that all more or less take the same input.  All but status would have almost identical language.
 
@@ -146,7 +149,7 @@ ACTIONS:
 The input block has a mandatory *:optional* field, when true it would be ok if a client attempts to call the agent without this input supplied.  If it is supplied though it will be validated.
 
 ### Types of Input
-As you see above the input block has *:type* option, types can be *:string* or *:list* today, we intend to expand this to other validations.
+As you see above the input block has *:type* option, types can be *:string*, *:list* or *:boolean* today, we intend to expand this to other validations.
 
 #### :string type
 The string type validates initially that the input is infact a String, then it validates the length of the input and finally matches the supplied Regular Expression.
@@ -168,6 +171,10 @@ input :action,
 {% endhighlight %}
 
 In user interfaces this might be displayed as a drop down list selector or another kind of menu.
+
+#### :boolean type
+
+The value input should be either _true_ or _false_ actual boolean values.  This feature was introduced in version _0.4.9_.
 
 ### Accessing the DDL
 While programming client applications or web apps you can gain access to the DDL for any agent in several ways:

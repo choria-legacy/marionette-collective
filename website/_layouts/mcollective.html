@@ -22,20 +22,33 @@
 </script>
 </head>
 <body>
-<div class="container">
-	<div class="span-24 last" id="topheader">
-		<h1>The Marionette Collective</h1>
+<div id="logostrip">
+	<div class="container">
+		<div class="span-24 last" id="topheader">
+			<h1>The Marionette Collective</h1>
+		</div>
+		<div class="span-2">
+			&nbsp;
+		</div>
+		<div class="span-22 last" id="topsubheader">
+			<h4><em>A modern scalable datacenter orchestration framework</em></h4>
+		</div>
 	</div>
-	<div class="span-2">
+</div>
+
+<div id="menustrip">
+	<div class="container">
+		<div class="span-24 last">
+			{% include main_menu.html %}
+		</div>
+	</div>
+</div>
+
+<div class="container">
+	<div class="span-24 last">
 		&nbsp;
 	</div>
-	<div class="span-22 last" id="topsubheader">
-		<h4>A modern scalable datacenter orchestration framework</h4>
-	</div>
-	<div class="span-19 border">
-		<div id="topbar">
-		{% include main_menu.html %}
-		</div>
+	<div class="span-19">
 		<div class="span-18 last" id="bodycontent">
 			{{ content }}
 		</div>
@@ -59,16 +72,27 @@
 	</div>
 	
 	<div class="span-4 last" id="sidebar">
+		{% include search.html %}
 		{% include news.html %}
 		{% include overview_sidebar.html %}
 		{% include reference_sidebar.html %}
 		{% include writing_agents_sidebar.html %}
+		{% include roadmap_sidebar.html %}
 		{% include consultation.html %}
 	</div>
-	<div class="span-24 last" id="footer">
-		Copyright 2010 <a href="http://www.devco.net/">R.I.Pienaar</a>.
+	<div class="span-24 last">
+		&nbsp;
 	</div>
 </div>
+
+<div id="footerstrip">
+	<div class="container">
+		<div class="span-24 last" id="footer">
+			Copyright 2009-2010 <a href="http://www.devco.net/">R.I.Pienaar</a>.
+		</div>
+	</div>
+</div>
+
 {% if page.disqus %}
 <script type="text/javascript">
 var disqus_shortname = 'mcollective';

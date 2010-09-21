@@ -63,8 +63,8 @@ rm -rf %{buildroot}
 %{__install} -d -m0755  %{buildroot}/etc/mcollective/ssl
 %{__install} -d -m0755  %{buildroot}/etc/mcollective/ssl/clients
 %{__install} -m0755 mcollectived.rb %{buildroot}/usr/sbin/mcollectived
-%{__install} -m0440 etc/server.cfg.dist %{buildroot}/etc/mcollective/server.cfg
-%{__install} -m0444 etc/client.cfg.dist %{buildroot}/etc/mcollective/client.cfg
+%{__install} -m0640 etc/server.cfg.dist %{buildroot}/etc/mcollective/server.cfg
+%{__install} -m0644 etc/client.cfg.dist %{buildroot}/etc/mcollective/client.cfg
 %{__install} -m0444 etc/facts.yaml.dist %{buildroot}/etc/mcollective/facts.yaml
 %{__install} -m0444 etc/rpc-help.erb %{buildroot}/etc/mcollective/rpc-help.erb
 %{__install} -m0755 mcollective.init %{buildroot}/etc/init.d/mcollective

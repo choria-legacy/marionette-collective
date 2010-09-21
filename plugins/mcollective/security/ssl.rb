@@ -141,10 +141,10 @@ module MCollective
                 public_key = File.read(public_key_file(req[:callerid])) 
 
                 if verify(public_key, signature, message.to_s)
-                    @stats[:validated] += 1
+                    @stats.validated
                     return true
                 else
-                    @stats[:unvalidated] += 1
+                    @stats.unvalidated
                     raise("Received an invalid signature in message")
                 end
             end

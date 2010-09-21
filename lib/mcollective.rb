@@ -32,6 +32,7 @@ module MCollective
     autoload :Config, "mcollective/config"
     autoload :Log, "mcollective/log"
     autoload :Runner, "mcollective/runner"
+    autoload :RunnerStats, "mcollective/runnerstats"
     autoload :Agents, "mcollective/agents"
     autoload :Client, "mcollective/client"
     autoload :Util, "mcollective/util"
@@ -43,6 +44,12 @@ module MCollective
     autoload :PluginManager, "mcollective/pluginmanager"
     autoload :RPC, "mcollective/rpc"
     autoload :Request, "mcollective/request"
+
+    VERSION="@DEVELOPMENT_VERSION@"
+
+    def self.version
+        VERSION
+    end
 end
 
 # vi:tabstop=4:expandtab:ai

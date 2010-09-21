@@ -1,6 +1,6 @@
 $OpenBSD$
---- Makefile.orig	Mon Jun 14 09:21:38 2010
-+++ Makefile	Thu Jun 24 13:43:33 2010
+--- ext/Makefile.orig	Tue Aug 24 16:26:59 2010
++++ ext/Makefile	Tue Aug 24 16:27:08 2010
 @@ -1,6 +1,5 @@
  #!/usr/bin/make -f
  

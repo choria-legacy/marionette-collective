@@ -29,6 +29,6 @@ get '/mcollective/:agent/:action/*' do
         arguments[$1.to_sym] = $2 if arg =~ /^(.+?)=(.+)$/
     end
 
-    JSON.dump(mc.send(params[:action], arguments))
+    JSON.dump(mc.send(params[:action], arguments).map{|r| r.results})
 end
 

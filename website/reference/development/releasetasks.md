@@ -11,10 +11,11 @@ Notes on what to do when we release
  * update Changelog
  * update ReleaseNotes
  * update rakefile for version
+ * update website news section
  * tag release
+ * update release notes with release date
  * build and release rpms
  * build and release debs using ami-0db89079
- * update release notes with release date
  * send mail
  * Announce on freshmeat
 

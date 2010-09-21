@@ -25,7 +25,7 @@ module MCollective
                             yield(parser, options)
                         end
 
-                        RPC.add_simplerpc_options(parser, options)
+                        Helpers.add_simplerpc_options(parser, options)
                     end
                 end
 
@@ -370,7 +370,7 @@ module MCollective
 
                     @stats.client_stats = @client.stats
                 else
-                    print("\nNo request sent, we did not discovered any nodes.")
+                    print("\nNo request sent, we did not discover any nodes.")
                 end
 
                 @stats.finish_request

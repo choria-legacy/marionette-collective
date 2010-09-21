@@ -1,11 +1,11 @@
 PKG_ARCH=	*
 COMMENT=	The Marionette Collective	
 
-DISTNAME=	mcollective-0.4.7
+DISTNAME=	mcollective-0.4.8
 
 CATEGORIES=	sysutils
 
-HOMEPAGE=	http://marionette-collective.org/
+HOMEPAGE=	http://marionette-collective.org	
 MASTER_SITES=	http://mcollective.googlecode.com/files/
 EXTRACT_SUFX=	.tgz
 
@@ -17,5 +17,8 @@ PERMIT_DISTFILES_FTP=	Yes
 
 NO_BUILD=	Yes
 NO_REGRESS=	Yes
+
+# makefile is in ext/
+MAKE_FILE=ext/Makefile
 
 .include <bsd.port.mk>

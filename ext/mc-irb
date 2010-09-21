@@ -1,0 +1,158 @@
+#!/usr/bin/env ruby
+
+# Simple IRB shell for mcollective
+#
+#    mc-irb nrpe
+#    Determining the amount of hosts matching filter for 2 seconds .... 47
+#    >> rpc :runcommand, :command => "check_disks"
+#
+#     * [ ============================================================> ] 47 / 47
+#
+#
+#     dev1.your.net                      Request Aborted
+#        CRITICAL
+#                     Output: DISK CRITICAL - free space: / 176 MB (4% inode=86%);
+#                  Exit Code: 2
+#           Performance Data:  /=3959MB;3706;3924;0;4361 /boot=26MB;83;88;0;98 /dev/shm=0MB;217;230;0;256
+#
+#    => true
+#    >> mchelp
+#    <shows the DDL based help for the chosen agent>
+#    => true
+#    >> rpc(:runcommand, :command => "check_disks") do |resp|
+#    ?> puts resp[:sender] + ":   " + resp[:data][:output]
+#    >> end
+#
+#     * [ ============================================================> ] 47 / 47
+#
+#     dev1.your.net:   DISK OK
+#     <snip>
+#    => true
+#    >>
+#
+# You can access the agent variable via @agent from where you can do the usual manipulation of filters etc,
+# if you wish to switch to a different agent mid run just do newagent("some_other_agent")
+#
+# If you install the Bond gem you'll get some DDL assisted completion in the rpc method
+require 'rubygems'
+require 'irb'
+
+def consolize &block
+    yield
+
+    IRB.setup(nil)
+    irb = IRB::Irb.new
+    IRB.conf[:MAIN_CONTEXT] = irb.context
+    irb.context.evaluate("require 'irb/completion'", 0)
+
+    begin
+        require 'bond'
+        Bond.start
+
+        Bond.complete(:method => "rpc") do |e|
+            begin
+                if e.argument == 1
+                    if e.arguments.last == "?"
+                        puts "\n\nActions for #{@agent_name}:\n"
+
+                        @agent.ddl.actions.each do |action|
+                           puts "%20s - %s" % [ ":#{action}", @agent.ddl.action_interface(action)[:description] ] 
+                        end
+
+                        print "\n" + e.line
+                    end
+
+                    @agent.ddl.actions
+
+                elsif e.argument > 1
+                    action = eval(e.arguments[0]).to_s
+                    ddl = @agent.ddl.action_interface(action)
+
+                    if e.arguments.last == "?"
+                        puts "\n\nArguments for #{action}:\n"
+                        ddl[:input].keys.each do |input|
+                            puts "%20s - %s" % [ ":#{input}", ddl[:input][input][:description] ]
+                        end
+
+                        print "\n" + e.line
+                    end
+
+                    ddl[:input].keys
+                end
+            rescue Exception 
+                []
+            end
+        end
+    rescue Exception
+    end
+
+    trap("SIGINT") do
+        irb.signal_handle
+    end
+    catch(:IRB_EXIT) do
+        irb.eval_input
+    end
+end
+
+def mchelp
+    system("mc-rpc --agent-help #{@agent_name}|less")
+    true
+end
+
+def rpc(method_name, *args, &block)
+    unless block_given?
+        if args.size > 0
+            args = args.first
+        else
+            args = {}
+        end
+
+        if args[:verbose]
+            args.delete(:verbose)
+
+            printrpc(@agent.send(method_name, args), :verbose => true)
+            printrpcstats
+        else
+            printrpc @agent.send(method_name, args)
+            printrpcstats
+        end
+
+    else
+        @agent.send(method_name, args.first).each do |resp|
+            yield resp
+        end
+
+        printrpcstats
+    end
+
+    true
+rescue MCollective::DDLValidationError => e
+    puts "Request did not pass DDL validation: #{e}"
+end
+
+def newagent(agent)
+    @agent_name = agent
+
+    @options[:filter]["agent"] = []
+    @agent = rpcclient(@agent_name, :options => @options)
+    @agent.discover(:verbose => true)
+    @agent.progress = true
+
+    true
+end
+
+consolize do
+    require 'mcollective'
+
+
+    include MCollective::RPC
+
+    @options = rpcoptions{|p,o| }
+
+    unless ARGV.size == 1
+        puts "Please specify an agent name on the command line"
+        exit 1
+    end
+
+    newagent(ARGV[0])
+end
