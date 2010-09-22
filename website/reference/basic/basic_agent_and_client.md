@@ -224,8 +224,8 @@ Finished processing 1 / 1 hosts in 38.77 ms
 Standard Help:
 
 {% highlight console %}
-% ./mc-echo --help 
-Usage: sh-echo [options] msg 
+% ./mc-echo --help
+Usage: sh-echo [options] msg
 Tester for the echo agent
 
 Common Options

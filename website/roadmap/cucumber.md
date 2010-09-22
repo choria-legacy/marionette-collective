@@ -37,7 +37,7 @@ Feature: Test the echo agent
 	And I want to test the echo agent
 	And I want to test hosts with class /neph/
 	And I want to test hosts with fact country=de
-       
+
     Scenario: Test the echo action
 	Given the following request parameters:
 	  | msg | hello world |

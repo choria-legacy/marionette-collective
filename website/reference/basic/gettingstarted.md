@@ -49,18 +49,18 @@ Information on installing mcollective and stomp from within Gentoo's portage are
 
 
 ## ActiveMQ
-I've developed this against ActiveMQ.  It should work against other Stomp servers but I suspect if you choose 
-one without username and password support you might have problems, please let me know if that's the case 
+I've developed this against ActiveMQ.  It should work against other Stomp servers but I suspect if you choose
+one without username and password support you might have problems, please let me know if that's the case
 and I'll refactor the code around that.
 
-Full details on setting up and configuring ActiveMQ is out of scope for this, but you can follow these simple 
+Full details on setting up and configuring ActiveMQ is out of scope for this, but you can follow these simple
 setup instructions for initial testing (make sure JDK is installed, see below for Debian specific issue regarding JDK):
 
 ### Download and Install
  1. Download the ActiveMQ "binary" package (for Unix) from [ActiveMQ]
  1. Extract the contents of the archive:
  1. cd into the activemq directory
- 1. Execute the activemq binary 
+ 1. Execute the activemq binary
 
 {% highlight console %}
    % tar xvzf activemq-x.x.x.tar.gz
@@ -68,11 +68,11 @@ setup instructions for initial testing (make sure JDK is installed, see below fo
    % bin/activemq
 {% endhighlight %}
 
-Below should help you get stomp and a user going. For their excellent full docs please see [ActiveMQ].  
+Below should help you get stomp and a user going. For their excellent full docs please see [ActiveMQ].
 There are also tested configurations in [the ext directory][ActiveMQSamples]
 
-A spec file can be found in the *ext* directory on GitHub that can be used to build RPMs for RedHat/CentOS/Fedora 
-you need *tanukiwrapper* which you can find from *jpackage*, it runs fine under OpenJDK that comes with recent 
+A spec file can be found in the *ext* directory on GitHub that can be used to build RPMs for RedHat/CentOS/Fedora
+you need *tanukiwrapper* which you can find from *jpackage*, it runs fine under OpenJDK that comes with recent
 versions of these Operating Systems.  I've uploaded some RPMs and SRPMs [here][DepRPMs].
 
 For Debian systems you'd be better off using OpenJDK than Sun JDK, there's a known issue [#562954][DebianBug].
@@ -90,7 +90,7 @@ And then you should add a user or two, to keep it simple we'll just add one user
   xmlns:amq="http://activemq.apache.org/schema/core"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd   
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd
   http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
 
    <broker xmlns="http://activemq.apache.org/schema/core" brokerName="localhost" useJmx="true">
@@ -143,12 +143,12 @@ There are also a few known to work and tested [configs in git][ActiveMQSamples].
 
 ## mcollective
 ### Download and Extract
-Grab a copy of the mcollective ideally you'd use a package for your distribution else there's a tarfile that 
-you can use, you can extract it wherever you want, the RPMs or deps will put files in Operating System compatible 
+Grab a copy of the mcollective ideally you'd use a package for your distribution else there's a tarfile that
+you can use, you can extract it wherever you want, the RPMs or deps will put files in Operating System compatible
 locations.  If you use the tarball you'll need to double check all the paths in the config files below.
 
 ### Configure
-You'll need to tweak some configs in */etc/mcollective/client.cfg*, a full reference of config settings can be 
+You'll need to tweak some configs in */etc/mcollective/client.cfg*, a full reference of config settings can be
 found [here][ConfigurationReference]:
 
 Mostly what you'll need to change is the *identity*, *plugin.stomp.`*`* and the *plugin.psk*:
@@ -160,14 +160,14 @@ Mostly what you'll need to change is the *identity*, *plugin.stomp.`*`* and the 
   logfile = /dev/null
   loglevel = debug
   identity = fqdn
-  
+
   # connector plugin config
   connector = stomp
   plugin.stomp.host = stomp.your.net
   plugin.stomp.port = 6163
   plugin.stomp.user = unset
   plugin.stomp.password = unset
-  
+
   # security plugin config
   securityprovider = psk
   plugin.psk = abcdefghj
@@ -186,18 +186,18 @@ You should also create _/etc/mcollective/server.cfg_ here's a sample, , a full r
   loglevel = debug
   identity = fqdn
   registerinterval = 300
-  
+
   # connector plugin config
   connector = stomp
   plugin.stomp.host = stomp.your.net
   plugin.stomp.port = 6163
   plugin.stomp.user = mcollective
   plugin.stomp.password = password
-  
+
   # facts
   factsource = yaml
   plugin.yaml = /etc/mcollective/facts.yaml
-  
+
   # security plugin config
   securityprovider = psk
   plugin.psk = abcdefghj
@@ -225,14 +225,14 @@ If you installed from a package start it with the RC script, else look in the so
 If all is setup you can test with the client code:
 
 {% highlight console %}
-% mc-ping 
+% mc-ping
 your.domain.com                           time=74.41 ms
 
 ---- ping statistics ----
 1 replies max: 74.41 min: 74.41 avg: 74.41
 {% endhighlight %}
 
-This sent a simple 'hello' packet out to the network and if you started up several of the *mcollectived.rb* processes on several machines you 
+This sent a simple 'hello' packet out to the network and if you started up several of the *mcollectived.rb* processes on several machines you
 would have seen several replies, be sure to give each a unique *identity* in the config.
 
 At this point you can start exploring the discovery features for example:
@@ -244,7 +244,7 @@ your.domain.com
 
 This searches all systems currently active for ones with a fact *country=uk*, it got the data from the yaml file you made earlier.
 
-If you use confiuration management tools like puppet and the nodes are setup with classes with *classes.txt* in */var/lib/puppet* then you 
+If you use confiuration management tools like puppet and the nodes are setup with classes with *classes.txt* in */var/lib/puppet* then you
 can search for nodes with a specific class on them - the locations will configurable soon:
 
 {% highlight console %}
@@ -256,11 +256,11 @@ Chef does not yet support such a list natively but we have some details on the w
 
 The filter commands are important they will be the main tool you use to target only parts of your infrastructure with calls to agents.
 
-See the *--help* option to the various *mc-`*`* script for available options.  You can now look at some of the available plugins and 
+See the *--help* option to the various *mc-`*`* script for available options.  You can now look at some of the available plugins and
 play around, you might need to run the server process as root if you want to play with services etc.
 
 ### Plugins
-We provide limited default plugins, you can look on our sister project [MCollective Plugins][Plugins] where you will 
+We provide limited default plugins, you can look on our sister project [MCollective Plugins][Plugins] where you will
 find various plugins to manage packages, services etc.
 
 ### Further Reading

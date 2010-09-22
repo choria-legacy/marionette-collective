@@ -42,11 +42,11 @@ A basic hello world client can be seen below:
 
 {% highlight ruby linenos %}
 #!/usr/bin/ruby
- 
+
 require 'mcollective'
- 
+
 include MCollective::RPC
- 
+
 mc = rpcclient("helloworld")
 
 printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
@@ -72,7 +72,7 @@ I'll explain each major line in the code below then add some more features from 
 
 {% highlight ruby %}
 include MCollective::RPC
- 
+
 mc = rpcclient("helloworld")
 {% endhighlight %}
 
@@ -225,7 +225,7 @@ Results have a set structure and depending on how you access the results you wil
 Just note these now, I'll reference them later down.
 
 ### Simple RPC style results
-Simple RPC provides a trimmed down version of results from the basic Client library.  You'd choose to use this if you just want to do simple things or maybe you're just learning Ruby.  You'll get to process the results _after_ the call is either done or timed out completely.  
+Simple RPC provides a trimmed down version of results from the basic Client library.  You'd choose to use this if you just want to do simple things or maybe you're just learning Ruby.  You'll get to process the results _after_ the call is either done or timed out completely.
 
 This is an important difference between the two approaches, in one you can parse the results as it comes in, in the other you will only get results after processing is done.  This would be the main driving facter for choosing one over the other.
 
@@ -296,11 +296,11 @@ You can look at the _mc-rpc_ script for a big sample, here I am just adding a si
 
 {% highlight ruby linenos %}
 #!/usr/bin/ruby
- 
+
 require 'mcollective'
- 
+
 include MCollective::RPC
- 
+
 options = rpcoptions do |parser, options|
    parser.define_head "Generic Echo Client"
    parser.banner = "Usage: hello [options] [filters] --msg MSG"
@@ -378,7 +378,7 @@ p.identity_filter "your.box.com"
 reqid = p.runonce(:forcerun => true, :process_results => false)
 {% endhighlight %}
 
-This will honor any attached filters set either programatically or through the command line, it will send the request but will 
+This will honor any attached filters set either programatically or through the command line, it will send the request but will
 just not handle any responses.  All it will do is return the request id.
 
 ## Doing your own discovery
@@ -399,7 +399,7 @@ printrpc puppet.runonce(:forcerun => true)
 {% endhighlight %}
 
 But instead of doing any discovery it will use the host list and filter you supplied in the call.
-  
+
 ## The _rpcutil_ Helper Agent
 
 A helper agent called [_rpcutil_][RPCUtil] is included from version _0.4.9_ onward that helps you gather stats, inventory etc about the running daemon.

@@ -44,14 +44,14 @@ To use your authorization plugin in an agent simply do something like this:
 module MCollective::Agent
     class Service<RPC::Agent
         authorized_by :authorize_it
-         
+
         # ...
     end
 end
 {% endhighlight %}
 
 The call extra _authorized`_`by :authorize`_`it_ line tells your agent to use the _MCollective::Util::AuthorizeIt_ class for authorization.
- 
+
 ## Enabling RPC auditing globally
 You can enable a specific plugin on all RPC agents in the server config file.  If you do this and an agent also specify it's own authorization the agent will take priority.
 

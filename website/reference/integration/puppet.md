@@ -49,11 +49,11 @@ $ mc-find-hosts --with-fact lsbdistrelease=5.4
 {% endhighlight %}
 
 This includes facts pushed out with [Plugin Sync][PluginSync].
- 
+
 ## Class Filters
 Puppet provides a list of classes applied to a node by default in */var/lib/puppet/classes.txt* or */var/lib/puppet/state/classes.txt* (depending on which Puppet version you are using. The latter is true for 0.23.0 onwards) , we'll use this data with *--with-class* filters.
 
-You should configure MCollective to use this file by putting the following in your *server.cfg* 
+You should configure MCollective to use this file by putting the following in your *server.cfg*
 
 
 {% highlight ini %}

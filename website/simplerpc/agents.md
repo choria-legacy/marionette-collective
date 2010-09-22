@@ -55,7 +55,7 @@ module MCollective
             # Basic echo server
             action "echo" do
                 validate :msg, String
-     
+
                 reply.data = request[:msg]
             end
         end
@@ -79,7 +79,7 @@ module MCollective
     module Agent
         class Helloworld<RPC::Agent
             metadata :name        => "SimpleRPC Sample Agent",
-                     :description => "Echo service for MCollective", 
+                     :description => "Echo service for MCollective",
                      :author      => "R.I.Pienaar",
                      :license     => "GPLv2",
                      :version     => "1.1",
@@ -89,7 +89,7 @@ module MCollective
             # Basic echo server
             action "echo" do
                 validate :msg, String
-     
+
                 reply.data = request[:msg]
             end
         end
@@ -107,7 +107,7 @@ Actions are the individual tasks that your agent can do, they should just be in 
 {% highlight ruby linenos %}
             def echo_action
                 validate :msg, String
-     
+
                 reply.data = request[:msg]
             end
 {% endhighlight %}
@@ -117,7 +117,7 @@ There's a helper to create this for you, you saw it earlier:
 {% highlight ruby linenos %}
             action "echo" do
                 validate :msg, String
-     
+
                 reply.data = request[:msg]
             end
 {% endhighlight %}
@@ -131,7 +131,7 @@ We have a separate file that goes together with an agent and is used to describe
 
 {% highlight ruby linenos %}
 metadata :name        => "SimpleRPC Sample Agent",
-         :description => "Echo service for MCollective", 
+         :description => "Echo service for MCollective",
          :author      => "R.I.Pienaar",
          :license     => "GPLv2",
          :version     => "1.1",
@@ -230,7 +230,7 @@ Accessing it via the first will give you full access to all the normal Hash meth
 
 ## Constructing Replies
 ### Reply Data
-The reply data is in the *reply* variable and is an instance of *MCollective::RPC::Reply*.  
+The reply data is in the *reply* variable and is an instance of *MCollective::RPC::Reply*.
 
 You can pass values back by simply assining anything to the data like here:
 

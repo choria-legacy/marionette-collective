@@ -62,7 +62,7 @@ First you should configure transport for that each ActiveMQ will listen on, this
 {%highlight xml linenos %}
  <broker xmlns="http://activemq.org/config/1.0" brokerName="noc1-broker" useJmx="true"
       dataDirectory="${activemq.base}/data">
- 
+
       <transportConnectors>
          <transportConnector name="openwire" uri="tcp://0.0.0.0:6166"/>
          <transportConnector name="stomp"   uri="stomp://0.0.0.0:6163"/>

@@ -10,7 +10,7 @@ disqus: true
 # {{page.title}}
 
 In order to achieve end to end encryption we use TLS encryption between
-ActiveMQ, the nodes and the client. 
+ActiveMQ, the nodes and the client.
 
 To set this up you need to Java Keystore, the instructions here work for Java
 1.6 either Sun or OpenJDK based.
@@ -67,5 +67,5 @@ plugin.stomp.pool.password1 = secret
 plugin.stomp.pool.ssl1 = true
 {% endhighlight %}
 
-You should now verify with tcpdump or wireshark that the connection and traffic 
+You should now verify with tcpdump or wireshark that the connection and traffic
 really is all encrypted.

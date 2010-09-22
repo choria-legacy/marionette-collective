@@ -46,7 +46,7 @@ First we need to define the meta data for the agent itself:
 
 {% highlight ruby linenos %}
 metadata :name        => "SimpleRPC Service Agent",
-         :description => "Agent to manage services using the Puppet service provider", 
+         :description => "Agent to manage services using the Puppet service provider",
          :author      => "R.I.Pienaar",
          :license     => "GPLv2",
          :version     => "1.1",
@@ -63,7 +63,7 @@ Defining inputs and outputs is the hardest part, below first the *status* action
 action "status", :description => "Gets the status of a service" do
     display :always  # supported in 0.4.7 and newer only
 
-    input :service, 
+    input :service,
           :prompt      => "Service Name",
           :description => "The service to get the status for",
           :type        => :string,
@@ -86,11 +86,11 @@ Finally the service agent has 3 almost identical actions - *start*, *stop* and *
 {% highlight ruby linenos %}
 ["start", "stop", "restart"].each do |act|
     action act, :description => "#{act.capitalize} a service" do
-        input :service, 
+        input :service,
               :prompt      => "Service Name",
               :description => "The service to #{act}",
               :type        => :string,
-              :validation  => '^[a-zA-Z\-_\d]+$', 
+              :validation  => '^[a-zA-Z\-_\d]+$',
               :optional    => false,
               :maxlength   => 30
 
@@ -162,7 +162,7 @@ If you want to allow unlimited length text you can make *:maxlength => 0* but us
 List types provide a list of valid options and only those will be allowed, see an example below:
 
 {% highlight ruby linenos %}
-input :action, 
+input :action,
       :prompt      => "Service Action",
       :description => "The action to perform",
       :type        => :list,
