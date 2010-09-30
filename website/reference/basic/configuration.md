@@ -79,6 +79,7 @@ Common plugin options are:
 |plugin.stomp.password|password|Password to use|
 |plugin.yaml|/etc/mcollective/facts.yaml:/other/facts.yaml|Where the yaml fact source finds facts from, multiples get merged|
 |plugin.psk|123456789|The pre-shared key to use for the Psk security provider|
+|plugin.psk.callertype|group|What to base the callerid on for the PSK plugin, uid, gid, user, group or identity|
 
 ## Client Setup
 It's recommended that you do not set host, user, password and Psk in the client configuration file since these files are generally world readable unlike the server one that should be root readable only.  I just set mine to *unset* so it's clear to someone who looks at the config file that it's not going to work without the settings below.
