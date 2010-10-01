@@ -1,0 +1,15 @@
+This script will automatically build Mac packages based on your source
+tarball.  The only argument is the path to the untarred source directory.
+
+It automatically determines the MCollective version so it will only work
+with 0.4.9 and forward.  It loads mcollective in ruby so it requires
+that the stomp rubygem be installed.
+
+I could just grep the mcollective.rb script but I wanted it to be future proof.
+It also requires XCode be installed to have PackageMaker available.  It sets
+the server.cfg file daemonize setting to 0 since my launchd plist will handle
+that.  I also have launchd set to restart mcollectived if it stops running.
+
+Let me know if you run in to trouble with it.
+
+Carl Caum - carl _at_ carlcaum.com

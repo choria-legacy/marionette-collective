@@ -1,0 +1,133 @@
+#!/bin/bash
+
+MPATH=''
+BETCDIR='/etc/mcollective'
+BRUBYDIR='/Library/Ruby/Site/1.8'
+BSBINDIR='/usr/sbin'
+BBINDIR='/usr/bin'
+BLIBEXECDIR='/usr/libexec/mcollective'
+BDOCDIR='/usr/share/doc/mcollective'
+BLAUNCHDIR='/Library/LaunchDaemons'
+
+if [ -z $1 ]; then 
+    echo 'Please give the path to the MCollective source directory'
+    exit 1
+else
+    MPATH=$1
+fi
+
+function msg_stomp {
+    echo 'It is recommended to install stomp on this system using ruby gems'
+    exit 2
+}
+
+function msg_xcode {
+    echo 'It is required to have the latest XCode installed'
+    exit 3
+}
+
+#Make sure we have stomp so we can load mcollective
+/usr/bin/ruby <<EOF || msg_stomp
+require 'rubygems'
+require 'stomp'
+EOF
+
+#Make sure we have PackageMaker installed
+[ -x /Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker ] || msg_xcode
+
+#Get the MCollective version
+export RUBYLIB=$RUBYLIB:$MPATH/lib
+mcversion=$(/usr/bin/ruby <<EOF
+require 'mcollective'
+puts MCollective.version
+EOF
+)
+
+#Make our tmp directory
+tmpbase=`basename $0`
+common_tmpdir=`mktemp -d /tmp/${tmpbase}-common_$mcversion.XXXX` || exit 1
+client_tmpdir=`mktemp -d /tmp/${tmpbase}-client_$mcversion.XXXX` || exit 1
+tmpdir=`mktemp -d /tmp/${tmpbase}_$mcversion.XXXX` || exit 1
+
+#Build the common environment
+mkdir -p "$common_tmpdir/$BRUBYDIR"
+mkdir -p "$common_tmpdir/$BLIBEXECDIR"
+mkdir -p "$common_tmpdir/$BDOCDIR"
+
+cp -r $MPATH/lib/mcollective     $common_tmpdir/$BRUBYDIR/
+cp    $MPATH/lib/mcollective.rb  $common_tmpdir/$BRUBYDIR/
+cp -r $MPATH/plugins/mcollective $common_tmpdir/$BLIBEXECDIR/
+cp    $MPATH/COPYING             $common_tmpdir/$BDOCDIR/
+
+#Build the server environment
+mkdir -p "$tmpdir/$BSBINDIR"
+mkdir -p "$tmpdir/$BETCDIR"
+mkdir -p "$tmpdir/$BETCDIR/ssl/clients"
+mkdir -p "$tmpdir/$BLAUNCHDIR"
+
+cp $MPATH/mcollectived.rb     $tmpdir/$BSBINDIR/mcollectived
+cp $MPATH/etc/facts.yaml.dist $tmpdir/$BETCDIR/facts.yaml
+cp $MPATH/etc/server.cfg.dist $tmpdir/$BETCDIR/server.cfg
+#This is needed for macs since launchd will handle the daemonizing
+perl -i -pe 's/daemonize = 1/daemonize = 0/' $tmpdir/$BETCDIR/server.cfg
+
+#Build the client environment
+mkdir -p "$client_tmpdir/$BETCDIR"
+mkdir -p "$client_tmpdir/$BSBINDIR"
+
+cp $MPATH/etc/client.cfg.dist $client_tmpdir/$BETCDIR/client.cfg
+cp $MPATH/etc/rpc-help.erb    $client_tmpdir/$BETCDIR/
+cp $MPATH/mc-call-agent       $client_tmpdir/$BSBINDIR/
+cp $MPATH/mc-controller       $client_tmpdir/$BSBINDIR/
+cp $MPATH/mc-facts            $client_tmpdir/$BSBINDIR/
+cp $MPATH/mc-find-hosts       $client_tmpdir/$BSBINDIR/
+cp $MPATH/mc-inventory        $client_tmpdir/$BSBINDIR/
+cp $MPATH/mc-ping             $client_tmpdir/$BSBINDIR/
+cp $MPATH/mc-rpc              $client_tmpdir/$BSBINDIR/
+
+#Build our launchd property list file
+cat - > $tmpdir/$BLAUNCHDIR/org.marionette-collective.mcollective.plist <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>EnvironmentVariables</key>
+        <dict>
+                <key>PATH</key>
+                <string>/sbin:/usr/sbin:/bin:/usr/bin</string>
+                <key>RUBYLIB</key>
+                <string>/Library/Ruby/Site/1.8</string>
+        </dict>
+        <key>Label</key>
+        <string>org.marionette-collective.mcollective</string>
+        <key>OnDemand</key>
+        <false/>
+        <key>KeepAlive</key>
+        <true/>
+        <key>ProgramArguments</key>
+        <array>
+                <string>/usr/sbin/mcollectived</string>
+                <string>--config=/etc/mcollective/server.cfg</string>
+        </array>
+        <key>RunAtLoad</key>
+        <true/>
+        <key>ServiceDescription</key>
+        <string>MCollective Server</string>
+        <key>ServiceIPC</key>
+        <false/>
+</dict>
+</plist>
+EOF
+
+#launchd complains if the permissions aren't right
+chmod 644 $tmpdir/$BLAUNCHDIR/org.marionette-collective.mcollective.plist
+
+#Make our Packages.  This requires XCode be installed
+/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker -r $tmpdir --version $mcversion --title "MCollective" -l / -o MCollective_$mcversion.pkg -i org.marionette-collective.mcollective
+/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker -r $common_tmpdir --version $mcversion --title "MCollective Common" -l / -o MCollective-Common_$mcversion.pkg -i org.marionette-collective.mcollective-common
+/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker -r $client_tmpdir --version $mcversion --title "MCollective Client" -l / -o MCollective-Client_$mcversion.pkg -i org.marionette-collective.mcollective-client
+
+#Clean up
+rm -rf $tmpdir
+rm -rf $common_tmpdir
+rm -rf $client_tmpdir
