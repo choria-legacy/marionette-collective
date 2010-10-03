@@ -7,6 +7,7 @@ h2. Changelog
 h3. Version 0.4.x
 
 |_. Date|_. Description|_. Ticket|
+|2010/10/03|Preserve options in cases where RPC::Client instances exist in the same program|148|
 |2010/09/30|Add the ability to set different types of callerid in the PSK plugin|145|
 |2010/09/30|Improve Ruby 1.9.x compatibility|142|
 |2010/09/29|Improve error handling in registration to avoid high CPU usage loops|143|

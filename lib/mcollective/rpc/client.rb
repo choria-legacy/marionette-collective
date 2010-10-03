@@ -6,6 +6,8 @@ module MCollective
             attr_accessor :discovery_timeout, :timeout, :verbose, :filter, :config, :progress
             attr_reader :client, :stats, :ddl, :agent
 
+            @@initial_options = nil
+
             # Creates a stub for a remote agent, you can pass in an options array in the flags
             # which will then be used else it will just create a default options array with
             # filtering enabled based on the standard command line use.
@@ -17,6 +19,10 @@ module MCollective
             def initialize(agent, flags = {})
                 if flags.include?(:options)
                     options = flags[:options]
+
+                elsif @@initial_options
+                    options = Marshal.load(@@initial_options)
+
                 else
                     oparser = MCollective::Optionparser.new({:verbose => false, :progress_bar => true}, "filter")
 
@@ -27,6 +33,8 @@ module MCollective
 
                         Helpers.add_simplerpc_options(parser, options)
                     end
+
+                    @@initial_options = Marshal.dump(options)
                 end
 
                 @stats = Stats.new
@@ -430,7 +438,6 @@ module MCollective
                     end
                 end
             end
-
         end
     end
 end
