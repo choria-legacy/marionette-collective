@@ -4,3 +4,32 @@ The Marionette Collective
 The Marionette Collective aka. mcollective is a framework to build server orchestration or parallel job execution systems. 
 
 For full information, wikis, ticketing and downloads please see http://marionette-collective.org/
+
+=========================
+ABOUT THIS FORK
+
+
+This fork of mcollective aims to add ssh key authentication as the security
+module rather than psk or ssl.
+
+Requires rubygem 'sshkeyauth' (gem install sshkeyauth). That project lives here:
+http://github.com/jordansissel/ruby-sshkeyauth
+
+Configuration -
+
+client.cfg:
+securityprovider = sshkey
+
+server.cfg:
+securityprovider = sshkey
+plugin.sshkey = /etc/ssh/ssh_host_rsa_key
+
+Requirements (these may change as code improves):
+
+* Your client's username must exist on the remote server and must have an
+  authorized_keys file.
+
+* Your client must be running an ssh agent with keys loaded
+
+* Your client must have the public key for all target hosts in your known_hosts
+  file.
