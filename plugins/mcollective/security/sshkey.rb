@@ -1,4 +1,5 @@
 require "rubygems"
+gem "sshkeyauth", ">= 0.0.4"
 require "ssh/key/signer"
 require "ssh/key/verifier"
 require "etc"
