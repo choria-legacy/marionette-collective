@@ -2,7 +2,6 @@ require "rubygems"
 require "ssh/key/signer"
 require "ssh/key/verifier"
 require "etc"
-require "ap"
 
 module MCollective
     module Security
@@ -49,13 +48,11 @@ module MCollective
             def encoderequest(sender, target, msg, requestid, filter={})
                 serialized = Marshal.dump(msg)
                 digest = makehash(serialized)
-                senderid = "#{Etc.getlogin}@#{@config.identity}"
     
-                @log.info("Hello")
                 @log.debug("Encoding a request for '#{target}' with request id #{requestid}")
                 request = {:body => serialized,
                            :hash => digest,
-                           :senderid => senderid,
+                           :senderid => @config.identity,
                            :requestid => requestid,
                            :msgtarget => target,
                            :filter => filter,
@@ -66,32 +63,37 @@ module MCollective
 
                 Marshal.dump(request)
             end
+
+            def callerid
+              return Etc.getlogin
+            end
     
             # Checks the md5 hash in the request body against our psk, the
             # request sent for validation 
             # should not have been deserialized already
             def validrequest?(req)
+                @log.info "Caller id: #{req[:callerid]}"
                 @log.info "Sender id: #{req[:senderid]}"
                 message = req[:body]
 
-                user, host = req[:senderid].split("@", 2)
-                host = user if !host
+                #@log.info req.awesome_inspect
+                identity = (req[:callerid] or req[:senderid])
+                verifier = SSH::Key::Verifier.new(identity)
 
-                @log.info req.awesome_inspect
-                verifier = SSH::Key::Verifier.new(user)
+                @log.info "Using name '#{identity}'"
 
-                if user == host
+                if !req[:callerid]
                   # Search known_hosts for the senderid hostname
-                  hostkey = %x{ssh-keygen -F #{host}}.split("\n")[1].chomp.split(" ",2)[-1]
-                  @log.info "Hostkey for #{host}: #{hostkey}"
+                  # TODO(sissel): Move this to SSH::Key::???
+                  hostkey = %x{ssh-keygen -F #{identity}}.split("\n")[1].chomp.split(" ",2)[-1]
                   verifier.add_public_key_data(hostkey)
                   verifier.use_agent = false
                   verifier.use_authorized_keys = false
                 end
     
                 signatures = Marshal.load(req[:hash])
-                @log.info "Signatures:"
-                @log.info signatures.awesome_inspect
+                #@log.info "Signatures:"
+                #@log.info signatures.awesome_inspect
                 if verifier.verify?(signatures, req[:body])
                     @stats.validated
     
