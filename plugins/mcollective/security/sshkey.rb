@@ -82,25 +82,22 @@ module MCollective
 
                 @log.info "Using name '#{identity}'"
 
+                # If no callerid, this is a 'response' message and we should
+                # attempt to authenticate using the senderid (hostname, usually)
+                # and that ssh key in known_hosts.
                 if !req[:callerid]
                   # Search known_hosts for the senderid hostname
-                  # TODO(sissel): Move this to SSH::Key::???
-                  hostkey = %x{ssh-keygen -F #{identity}}.split("\n")[1].chomp.split(" ",2)[-1]
-                  verifier.add_public_key_data(hostkey)
+                  verifier.add_key_from_host(identity)
                   verifier.use_agent = false
                   verifier.use_authorized_keys = false
                 end
     
                 signatures = Marshal.load(req[:hash])
-                #@log.info "Signatures:"
-                #@log.info signatures.awesome_inspect
                 if verifier.verify?(signatures, req[:body])
                     @stats.validated
-    
                     return true
                 else
                     @stats.unvalidated
-    
                     raise("Received an invalid signature in message")
                 end
             end
