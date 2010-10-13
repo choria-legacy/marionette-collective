@@ -1,5 +1,5 @@
 module MCollective
-    # The main runner for the daemon, supports running in the foreground 
+    # The main runner for the daemon, supports running in the foreground
     # and the background, keeps detailed stats and provides hooks to access
     # all this information
     class Runner
@@ -17,7 +17,7 @@ module MCollective
             @connection = PluginManager["connector_plugin"]
             @connection.connect
 
-            @agents = Agents.new 
+            @agents = Agents.new
 
             Signal.trap("USR1") do
                 @log.info("Reloading all agents after receiving USR1 signal")
@@ -39,7 +39,7 @@ module MCollective
                 STDIN.reopen('/dev/null')
                 STDOUT.reopen('/dev/null', 'a')
                 STDERR.reopen('/dev/null', 'a')
-    
+
                 yield
             end
         end
@@ -63,13 +63,13 @@ module MCollective
 
                     if dest =~ /#{controltopic}/
                         @log.debug("Handling message for mcollectived controller")
-    
-                        controlmsg(msg) 
+
+                        controlmsg(msg)
                     elsif dest =~ /#{@config.topicprefix}#{@config.topicsep}(.+)#{@config.topicsep}command/
                         target = $1
-    
+
                         @log.debug("Handling message for #{target}")
-    
+
                         agentmsg(msg, target)
                     end
                 rescue Interrupt
@@ -78,7 +78,7 @@ module MCollective
                     exit!
 
                 rescue NotTargettedAtUs => e
-                    @log.info("Message does not pass filters, ignoring")
+                    @log.debug("Message does not pass filters, ignoring")
 
                 rescue Exception => e
                     @log.warn("Failed to handle message: #{e} - #{e.class}\n")
