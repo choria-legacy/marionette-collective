@@ -4,7 +4,7 @@ title: Security Enhancements
 disqus: true
 ---
 
-[Jordan Sissle]: http://www.semicomplete.com/
+[Jordan Sissel]: http://www.semicomplete.com/
 
 # {{page.title}}
 
@@ -49,5 +49,5 @@ certificates from nodes.  We should add a message type that does not invoke any
 actions in agents but just invoke a method on security plugins that will return
 their public keys.
 
-This isn't fully fledged out but [Jordan Sissle] had some ideas around this while
+This isn't fully fledged out but [Jordan Sissel] had some ideas around this while
 writing his SSH security plugin.
