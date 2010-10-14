@@ -6,6 +6,9 @@ title: Overview
 
 # {{page.title}}
 
+Today as Puppet Camp Puppet Labs announced the aquisition of The Marionette Collective
+project.  Read the full relase notes [here](http://www.puppetlabs.com/mcollective)
+
 The Marionette Collective aka. mcollective is a framework to build server orchestration
 or parallel job execution systems.
 
