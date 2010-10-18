@@ -17,7 +17,7 @@ The messages that gets put on the middleware attempts to contain everything that
 
 At present the task of encoding and decoding messages lies with the _MCollective::Security::`*`_ classes, see the provided [security plugins][SecurityPlugins] as a examples.
 
-Abstracting the encoding away from the security plugins is a goal for future refactorings, till then each security plugin will need to at least conform to the following structure.  
+Abstracting the encoding away from the security plugins is a goal for future refactorings, till then each security plugin will need to at least conform to the following structure.
 
 In general this is all hidden from the developers, especially if you use [Simple RPC][SimpleRPCIntroduction].  If you want to implement your own security or serialization you will need to know exactly how all of this sticks together.
 
@@ -54,7 +54,7 @@ Valid filter types are:
 
 ##### CF Class
 
-This will look in a list of classes/recipes/cookbooks/roles applied by your 
+This will look in a list of classes/recipes/cookbooks/roles applied by your
 configuration management system and match based on that
 
 {% highlight ruby %}
@@ -100,7 +100,7 @@ The contents of the body will vary by what ever the security provider choose to 
 This ensures that variable types etc remain in tact end to end.  Other security providers might use JSON etc, the decoding of this is also handled by the security provider so its totally up to the provider to decide.
 
 In the case of [Simple RPC][SimpleRPCIntroduction] the entire RPC request and replies will be in the body of the messages, it's effectively a layer on top of the basic message flow.
- 
+
 #### :hash
 
 This is an example of something specific to the security provider, this is used only by the PSK provider so it's optional and specific to the PSK provider

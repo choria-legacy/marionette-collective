@@ -33,6 +33,7 @@ lib/ruby/1.8/mcollective/rpc/request.rb
 lib/ruby/1.8/mcollective/rpc/result.rb
 lib/ruby/1.8/mcollective/rpc/stats.rb
 lib/ruby/1.8/mcollective/runner.rb
+lib/ruby/1.8/mcollective/runnerstats.rb
 lib/ruby/1.8/mcollective/security/
 lib/ruby/1.8/mcollective/security.rb
 lib/ruby/1.8/mcollective/security/base.rb
@@ -52,6 +53,7 @@ share/doc/mcollective/classes/MCollective.html
 share/doc/mcollective/classes/MCollective/Agent/
 share/doc/mcollective/classes/MCollective/Agent.html
 share/doc/mcollective/classes/MCollective/Agent/Discovery.html
+share/doc/mcollective/classes/MCollective/Agent/Rpcutil.html
 share/doc/mcollective/classes/MCollective/Agents.html
 share/doc/mcollective/classes/MCollective/Client.html
 share/doc/mcollective/classes/MCollective/Config.html
@@ -92,6 +94,7 @@ share/doc/mcollective/classes/MCollective/Registration/Agentlist.html
 share/doc/mcollective/classes/MCollective/Registration/Base.html
 share/doc/mcollective/classes/MCollective/Request.html
 share/doc/mcollective/classes/MCollective/Runner.html
+share/doc/mcollective/classes/MCollective/RunnerStats.html
 share/doc/mcollective/classes/MCollective/Security/
 share/doc/mcollective/classes/MCollective/Security.html
 share/doc/mcollective/classes/MCollective/Security/Base.html
@@ -140,6 +143,7 @@ share/doc/mcollective/files/lib/mcollective/rpc/result_rb.html
 share/doc/mcollective/files/lib/mcollective/rpc/stats_rb.html
 share/doc/mcollective/files/lib/mcollective/rpc_rb.html
 share/doc/mcollective/files/lib/mcollective/runner_rb.html
+share/doc/mcollective/files/lib/mcollective/runnerstats_rb.html
 share/doc/mcollective/files/lib/mcollective/security/
 share/doc/mcollective/files/lib/mcollective/security/base_rb.html
 share/doc/mcollective/files/lib/mcollective/security_rb.html
@@ -150,6 +154,7 @@ share/doc/mcollective/files/plugins/
 share/doc/mcollective/files/plugins/mcollective/
 share/doc/mcollective/files/plugins/mcollective/agent/
 share/doc/mcollective/files/plugins/mcollective/agent/discovery_rb.html
+share/doc/mcollective/files/plugins/mcollective/agent/rpcutil_rb.html
 share/doc/mcollective/files/plugins/mcollective/audit/
 share/doc/mcollective/files/plugins/mcollective/audit/logfile_rb.html
 share/doc/mcollective/files/plugins/mcollective/connector/
@@ -168,25 +173,20 @@ share/doc/mcollective/index.html
 share/doc/mcollective/rdoc-style.css
 share/examples/mcollective/
 share/examples/mcollective/client.cfg.dist
-@sample ${SYSCONFDIR}/mcollective/client.cfg
 share/examples/mcollective/facts.yaml.dist
-@sample ${SYSCONFDIR}/mcollective/facts.yaml
 share/examples/mcollective/rpc-help.erb
 share/examples/mcollective/server.cfg.dist
-@sample ${SYSCONFDIR}/mcollective/server.cfg
-@sample ${SYSCONFDIR}/mcollective/ssl
 share/examples/mcollective/ssl/
 share/examples/mcollective/ssl/PLACEHOLDER
-@sample ${SYSCONFDIR}/mcollective/ssl/PLACEHOLDER
 share/examples/mcollective/ssl/clients/
-@sample ${SYSCONFDIR}/mcollective/ssl/clients/
 share/examples/mcollective/ssl/clients/PLACEHOLDER
-@sample ${SYSCONFDIR}/mcollective/ssl/clients/PLACEHOLDER
 share/mcollective/
 share/mcollective/plugins/
 share/mcollective/plugins/mcollective/
 share/mcollective/plugins/mcollective/agent/
 share/mcollective/plugins/mcollective/agent/discovery.rb
+share/mcollective/plugins/mcollective/agent/rpcutil.ddl
+share/mcollective/plugins/mcollective/agent/rpcutil.rb
 share/mcollective/plugins/mcollective/audit/
 share/mcollective/plugins/mcollective/audit/logfile.rb
 share/mcollective/plugins/mcollective/connector/

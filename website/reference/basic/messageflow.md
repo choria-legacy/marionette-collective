@@ -24,7 +24,7 @@ The key thing to take away from this diagram is the broadcast paradigm that is i
 |D|Only machines in _cluster=c_ act on the message and sends a reply, depending on your middleware only the workstation will get the reply.|
 
 For further information see:
- 
+
  * [Messages and their contents][MessageFormat]
  * [Clustering ActiveMQ brokers][ActiveMQClusters]
  * [Security, authentication and authorization][SecurityWithActiveMQ]

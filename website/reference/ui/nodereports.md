@@ -21,7 +21,7 @@ To obtain a full inventory for a given node you can run mc-inventory like this:
 {% highlight console %}
  % mc-inventory your.node.com
  Inventory for your.node.com:
- 
+
 
    Server Statistics:
                    Start Time: Mon Sep 13 18:24:46 +0100 2010
@@ -35,14 +35,14 @@ To obtain a full inventory for a given node you can run mc-inventory like this:
                   System Time: 0.01 seconds
 
     Agents:
-       discovery       echo            nrpe           
-       package         process         puppetd        
-       rpctest         service                        
- 
+       discovery       echo            nrpe
+       package         process         puppetd
+       rpctest         service
+
     Configuration Management Classes:
        aliases                        apache
        <snip>
- 
+
     Facts:
        architecture => i386
        country => de
@@ -129,15 +129,15 @@ The output looks like this:
 
 {% highlight console %}
  % mc-inventory -W "/dev_server/" --script inventory.mc
- 
+
              Node Report Sun Aug 01 10:30:57 +0100
- 
+
  Hostname:         Customer:     Distribution:
  -------------------------------------------------------------------------
- 
+
  dev1.one.net      rip           CentOS release 5.5 (Final)
                                  AMD Athlon(tm) 64 X2 Dual Core Processor
- 
+
  dev1.two.net      xxxxxxx       CentOS release 5.5 (Final)
                                  AMD Athlon(tm) 64 X2 Dual Core Processor
 {% endhighlight %}

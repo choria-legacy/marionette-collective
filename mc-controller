@@ -14,6 +14,7 @@ options = oparser.parse{|parser, options|
     parser.separator "   stats         - retrieve statistics from the mcollectived"
     parser.separator "   reload_agents - reloads all agents"
     parser.separator "   reload_agent  - reloads an agent, needs an argument"
+    parser.separator "   exit          - terminates the mcollectived"
     parser.separator ""
 
     parser.on('--arg', '--argument ARGUMENT', 'Argument to pass to agent') do |v|

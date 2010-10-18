@@ -17,7 +17,7 @@ Retrieves an inventory of the facts, classes and agents on the system, takes no 
 and returns a hash like this:
 
 {% highlight ruby %}
-{:agents   => ["rpcutil", "discovery"],     
+{:agents   => ["rpcutil", "discovery"],
  :facts     => {"mcollective"=>1},
  :classes   => ["common::linux", "motd"]}
 {% endhighlight %}
@@ -65,7 +65,7 @@ Returns a list of all agents with their meta data like version, author, license 
               {:agent=>"discovery",
 	       :license=>"Apache License, Version 2",
 	       :author=>"R.I.Pienaar <rip@devco.net>"},
-	       
+
 	      {:agent=>"rpcutil",
 	       :license=>"Apache License, Version 2.0",
 	       :name=>"Utilities and Helpers for SimpleRPC Agents",

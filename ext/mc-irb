@@ -77,7 +77,7 @@ def consolize &block
                         print "\n" + e.line
                     end
 
-                    ddl[:input].keys
+                    [ddl[:input].keys, :verbose].flatten
                 end
             rescue Exception 
                 []
@@ -130,14 +130,103 @@ rescue MCollective::DDLValidationError => e
     puts "Request did not pass DDL validation: #{e}"
 end
 
+def print_filter
+    puts "Active Filter matched #{discover.size} hosts:"
+    puts "\tIdentity: #{@agent.filter['identity'].pretty_inspect}"
+    puts "\t Classes: #{@agent.filter['cf_class'].pretty_inspect}"
+    puts "\t   Facts: #{@agent.filter['fact'].pretty_inspect}"
+    puts "\t  Agents: #{@agent.filter['agent'].pretty_inspect}"
+
+    discover.size > 0 ? true : false
+end
+
 def newagent(agent)
     @agent_name = agent
 
     @options[:filter]["agent"] = []
     @agent = rpcclient(@agent_name, :options => @options)
-    @agent.discover(:verbose => true)
+
+    discover
+
     @agent.progress = true
 
+    print_filter
+end
+
+def identity_filter(*args)
+    @agent.identity_filter(*args)
+
+    print_filter
+end
+
+def fact_filter(*args)
+    @agent.fact_filter(*args)
+
+    print_filter
+end
+
+def agent_filter(*args)
+    @agent.agent_filter(*args)
+
+    print_filter
+end
+
+def class_filter(*args)
+    @agent.class_filter(*args)
+
+    print_filter
+end
+
+def reset_filter
+    @agent.reset_filter
+
+    print_filter
+end
+
+def reset
+    @agent.reset
+
+    print_filter
+end
+
+def discover
+    @agent.discover
+end
+
+def mc?
+    puts <<EOF
+    Available Commands:
+
+        rpc                                 - Performs an RPC request
+        reset                               - Resets the discovered knowledge
+        discover                            - Performs a new discovery showing 
+                                              hosts that was found
+        newagent                            - Switches to a new agent
+        mchelp                              - The DDL created help for the agent
+
+    Filter Commands:
+        Filter arguments should be enclosed in "your.host.com" if they are strings
+        else use /your.host/ to match Regular expressions
+        
+        identity_filter [identity]          - Sets an identity filter
+        fact_filter [factname], [factvalue] - Sets a fact filter
+        class_filter [classname]            - Sets a class filter
+        agent_filter [agentname]            - Sets an agent filter
+        reset_filter                        - Resets to the filter to blank
+        print_filter                        - Displays current filter
+
+    Available Variables:
+
+        @agent_name                         - The name of the active agent
+        @agent                              - The active RPC client
+
+    Completions:
+
+        While doing an RPC request, press ?<tab> for a list of actions or 
+        arguments, do simple :<tab> to get completion on action names and 
+        arguments without description of each
+
+EOF
     true
 end
 
@@ -147,12 +236,17 @@ consolize do
 
     include MCollective::RPC
 
-    @options = rpcoptions{|p,o| }
+    @options = rpcoptions
 
     unless ARGV.size == 1
         puts "Please specify an agent name on the command line"
         exit 1
     end
 
+    puts "The Marionette Collective Interactive Ruby Shell version #{MCollective.version}"
+
+    puts
     newagent(ARGV[0])
+    puts
+    puts "Use mc? to get help on using this shell"
 end

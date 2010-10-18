@@ -9,7 +9,7 @@ disqus: true
 For those of you who are running Gentoo Linux, we maintain ebuilds for stomp and mcollective within our public portage overlay.  Here is information on how to access those ebuilds and install mcollective from within portage.
 
 ## Installing the local ebuild
-You can either clone the Arces portage overlay, or you can extract the ebuild directly into your own overlay.  
+You can either clone the Arces portage overlay, or you can extract the ebuild directly into your own overlay.
 
 ## Cloning the Arces overlay
 The standard location for local portage overlays is _/usr/local/portage_ on Gentoo systems.  Our overlay is designed to fit with the multiple-overlay system introduced by Layman, although it's not part of the Layman repository list.  You can clone the repository with Git from _http://support.arces.net/public/git/arces`_`overlay.git_
@@ -34,11 +34,11 @@ Update the _eix_ cache.
 Reading Portage settings ..
 Building database (/var/cache/eix) ..
 [0] "gentoo" /usr/portage/ (cache: metadata-flat)
-     Reading category 154|154 (100%) Finished             
+     Reading category 154|154 (100%) Finished
 [1] "" /usr/local/portage (cache: parse|ebuild*#metadata-flat#assign)
      Reading category 154|154 (100%) EMPTY!
 [2] "" /usr/local/portage/arces_overlay (cache: parse|ebuild*#metadata-flat#assign)
-     Reading category 154|154 (100%) Finished        
+     Reading category 154|154 (100%) Finished
 Applying masks ..
 Calculating hash tables ..
 Writing database file /var/cache/eix ..

@@ -25,7 +25,7 @@ Using this plugin Ohai facts will be converted from:
     },
 {% endhighlight %}
 
-to: 
+to:
 
 {% highlight ruby %}
  "languages.java.version"=>"1.6.0",

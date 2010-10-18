@@ -14,7 +14,7 @@ disqus: true
 We believe screen casts give the best introduction to new concepts, we've recorded
 quite a few that compliments the documentation.
 
-There's a [blip] channel that has all the videos, you can subscribe and follow there.  
+There's a [blip] channel that has all the videos, you can subscribe and follow there.
 There is also a [slideshare] site where presentations will go that we do at conferences and events.
 
 ## Introductions and Guides
@@ -37,10 +37,10 @@ There is also a [slideshare] site where presentations will go that we do at conf
 <a name="introduction">&nbsp;</a>
 Introduction
 ------------
-[This video](http://blip.tv/file/3808541) introduces the basic concepts behind MCollective.  It predates the 
+[This video](http://blip.tv/file/3808541) introduces the basic concepts behind MCollective.  It predates the
 SimpleRPC framework but is still valid today.
 
-<embed src="http://blip.tv/play/hfMOgenPYQA" type="application/x-shockwave-flash" width="640" 
+<embed src="http://blip.tv/play/hfMOgenPYQA" type="application/x-shockwave-flash" width="640"
 height="338" allowscriptaccess="always" allowfullscreen="true"></embed>
 
 <a name="ec2_demo">&nbsp;</a>
@@ -52,7 +52,7 @@ get some experience.
 
 View the [ec2demo] page for more about this.
 
-<embed src="http://blip.tv/play/hfMOgfSIRgA" type="application/x-shockwave-flash" width="640" 
+<embed src="http://blip.tv/play/hfMOgfSIRgA" type="application/x-shockwave-flash" width="640"
 height="385" allowscriptaccess="always" allowfullscreen="true"></embed>
 
 <a name="message_flow"> </a>
@@ -60,7 +60,7 @@ Message Flow, Terminology and Components
 ----------------------------------------
 This video introduce the messaging concepts you need to know about when using MCollective,
 it shows how the components talk with each other and what software needs to be installed where
-on your network.  Recommended you view this prior to starting your deployment. 
+on your network.  Recommended you view this prior to starting your deployment.
 
 We also have a page detailing the [Terminology]
 
@@ -72,7 +72,7 @@ Writing agents are easy, we have good documentation that can be used as a refere
 video](http://blip.tv/file/3808928) should show you how to tie it all together though.
 See the [SimpleRPC Introduction][SimpleRPCIntroduction] for reference wiki pages after viewing this video.
 
-<embed src="http://blip.tv/play/hfMOgenSZAA" type="application/x-shockwave-flash" width="640" 
+<embed src="http://blip.tv/play/hfMOgenSZAA" type="application/x-shockwave-flash" width="640"
 height="388" allowscriptaccess="always" allowfullscreen="true"></embed>
 
 <a name="simplerpc_ddl">&nbsp;</a>
@@ -82,7 +82,7 @@ The Data Definition Lanauge helps your clients produce more user friendly output
 input gets validated, shows online help and enable dynamic generation of user interfaces.
 The [DDL] wiki page gives more information once you've watched this video.
 
-<embed src="http://blip.tv/play/hfMOgemKNAA" type="application/x-shockwave-flash" width="640" 
+<embed src="http://blip.tv/play/hfMOgemKNAA" type="application/x-shockwave-flash" width="640"
 height="424" allowscriptaccess="always" allowfullscreen="true"></embed>
 
 <a name="simplerpc_ddl_irb">&nbsp;</a>
@@ -90,7 +90,7 @@ SimpleRPC DDL enhanced IRB
 --------------------------
 A custom IRB shell that supports command completion based on the SimpleRPC DDL
 
-<embed src="http://blip.tv/play/hfMOgf3rJgA" type="application/x-shockwave-flash" width="640" 
+<embed src="http://blip.tv/play/hfMOgf3rJgA" type="application/x-shockwave-flash" width="640"
 height="348" allowscriptaccess="always" allowfullscreen="true"></embed>
 
 <a name="mcollective_deployer"> </a>
@@ -117,7 +117,7 @@ Bootstrapping Puppet on EC2 with MCollective
 --------------------------------------------
 Modern cloud environments present a lot of challenges to your automated, using MCollective and
 some of the existing opensource agents and plugins we can completely automate the entire process
-of provisioning EC2 nodes with Puppet.  
+of provisioning EC2 nodes with Puppet.
 
 Full detail is available [on this blog post](http://www.devco.net/archives/2010/07/14/bootstrapping_puppet_on_ec2_with_mcollective.php)
 

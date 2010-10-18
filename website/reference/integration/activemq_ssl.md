@@ -10,16 +10,16 @@ disqus: true
 # {{page.title}}
 
 In order to achieve end to end encryption we use TLS encryption between
-ActiveMQ, the nodes and the client. 
+ActiveMQ, the nodes and the client.
 
 To set this up you need to Java Keystore, the instructions here work for Java
 1.6 either Sun or OpenJDK based.
 
 ## Create a keystore with existing certs
 
-I have an exiting PKI deployment, you can probably reuse Puppet ones too the main
+If you have an exiting PKI deployment, you can probably reuse Puppet ones too the main
 point is that you already have a key and signed cert signed by some CA and you
-now want to create a Java Keystore.
+now want to create a Java Keystore follow these steps:
 
 {% highlight bash %}
 # cat /etc/pki/host.key /etc/pki/ca.pem # /etc/pki/host.cert >cert.pem
@@ -67,5 +67,5 @@ plugin.stomp.pool.password1 = secret
 plugin.stomp.pool.ssl1 = true
 {% endhighlight %}
 
-You should now verify with tcpdump or wireshark that the connection and traffic 
+You should now verify with tcpdump or wireshark that the connection and traffic
 really is all encrypted.

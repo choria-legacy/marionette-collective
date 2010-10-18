@@ -36,5 +36,5 @@ end
 
 They'd go in _plugindir/rpcagents_ and at startup something should load them all up like it would normal agents.
 
-We'd need to make some kind of hook into the runner for this, it might be worth making that hook an extendable 
+We'd need to make some kind of hook into the runner for this, it might be worth making that hook an extendable
 system so other frameworks can plug into the main and have their startups executed.

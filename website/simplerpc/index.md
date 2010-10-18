@@ -44,7 +44,7 @@ module MCollective
             # Basic echo server
             def echo_action
                 validate :msg, String
-     
+
                 reply.data = request[:msg]
             end
         end
@@ -57,12 +57,12 @@ The nice thing about using a standard abstraction for clients is that you often 
 {% highlight console %}
  % mc-rpc --agent helloworld --action echo --arg msg="Welcome to MCollective Simple RPC"
  Determining the amount of hosts matching filter for 2 seconds .... 1
-                                         
+
  devel.your.com                          : OK
      "Welcome to MCollective Simple RPC"
- 
- 
- 
+
+
+
  ---- rpctest#echo call stats ----
             Nodes: 1
        Start Time: Wed Dec 23 20:49:14 +0000 2009
@@ -83,11 +83,11 @@ But you can still write your own clients, it's incredibly simple, full details o
 
 {% highlight ruby linenos %}
 #!/usr/bin/ruby
- 
+
 require 'mcollective'
- 
+
 include MCollective::RPC
- 
+
 mc = rpcclient("helloworld")
 
 printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")

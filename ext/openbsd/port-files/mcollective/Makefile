@@ -1,11 +1,11 @@
 PKG_ARCH=	*
 COMMENT=	The Marionette Collective	
 
-DISTNAME=	mcollective-0.4.8
+DISTNAME=	mcollective-0.4.9
 
 CATEGORIES=	sysutils
 
-HOMEPAGE=	http://marionette-collective.org	
+HOMEPAGE=	http://code.google.com/p/mcollective/
 MASTER_SITES=	http://mcollective.googlecode.com/files/
 EXTRACT_SUFX=	.tgz
 
