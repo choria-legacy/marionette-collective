@@ -7,6 +7,7 @@ h2. Changelog
 h3. Version 0.4.x
 
 |_. Date|_. Description|_. Ticket|
+|*2010/10/18*|*Release version 0.4.10*||
 |2010/10/18|Document exit command to mc-controller|152|
 |2010/10/13|Log messages that don't pass the filters at debug level|149|
 |2010/10/03|Preserve options in cases where RPC::Client instances exist in the same program|148|
