@@ -125,12 +125,6 @@ This creates a user *mcollective* with the password *marionette* and give it acc
 
 Save the above code as activemq.xml and run activemq as - if installing from a package probably _/etc/activemq/activemq.xml_:
 
-If you did not install from RPM or deb then start by hand:
-
-{% highlight console %}
-  $ activemq xbean:/path/to/mcollective.xml
-{% endhighlight %}
-
 Else your package would have a RC script:
 
 {% highlight console %}

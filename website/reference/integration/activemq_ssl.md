@@ -17,9 +17,9 @@ To set this up you need to Java Keystore, the instructions here work for Java
 
 ## Create a keystore with existing certs
 
-I have an exiting PKI deployment, you can probably reuse Puppet ones too the main
+If you have an exiting PKI deployment, you can probably reuse Puppet ones too the main
 point is that you already have a key and signed cert signed by some CA and you
-now want to create a Java Keystore.
+now want to create a Java Keystore follow these steps:
 
 {% highlight bash %}
 # cat /etc/pki/host.key /etc/pki/ca.pem # /etc/pki/host.cert >cert.pem
