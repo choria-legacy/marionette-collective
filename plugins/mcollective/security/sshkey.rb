@@ -100,7 +100,7 @@ module MCollective
             end
 
             def callerid
-              return Etc.getlogin
+                return Etc.getlogin
             end
     
             # Checks the md5 hash in the request body against our psk, the
@@ -143,8 +143,8 @@ module MCollective
             def makehash(body)
                 signer = SSH::Key::Signer.new
                 if @config.pluginconf["sshkey"]
-                  signer.add_key_file(@config.pluginconf["sshkey"])
-                  signer.use_agent = false
+                    signer.add_key_file(@config.pluginconf["sshkey"])
+                    signer.use_agent = false
                 end
                 signatures = signer.sign(body).collect { |s| s.signature }
                 return Marshal.dump(signatures)
