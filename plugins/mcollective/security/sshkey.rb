@@ -1,23 +1,57 @@
 require "rubygems"
 gem "sshkeyauth", ">= 0.0.4"
+
 require "ssh/key/signer"
 require "ssh/key/verifier"
 require "etc"
 
 module MCollective
     module Security
-        # Impliments message authentication using digests and shared keys
+        # A security plugin for MCollective that uses ssh keys for message
+        # signing and verification
         # 
-        # You should configure a psk in the configuration file and all requests
-        # will be validated for authenticity with this.
+        # For clients (things initiating RPC calls):
+        # * Message signing will use your ssh-agent. 
+        # * Message verification is done using the public key of the host that
+        #   sent the message. This means you have to have the public key known
+        #   before you can verify a message. Generally, this is your
+        #   ~/.ssh/known_hosts file, but we invoke 'ssh-keygen -F <host>'
+        #   The 'host' comes from the SimpleRPC senderid (defaults to the
+        #   hostname)
         #
-        # Serialization uses Marshal, this is the default security module that is
-        # supported out of the box.
+        #   Clients identify themselves with the RPC 'callerid' as your current
+        #   user (via Etc::getlogin)
         #
-        # Validation is as default and is provided by MCollective::Security::Base
+        # For nodes/agents:
+        # * Message signing uses the value of 'plugin.sshkey' in server.cfg.
+        #   I recommend you use the path of your host's ssh rsa key, for example:
+        #   /etc/ssh/ssh_host_rsa_key
+        # * Message verification uses your user's authorized_keys file. The 'user'
+        #   comes from the RPC 'callerid' field. This user must exist on your
+        #   node host 
+        #
+        # In cases of configurable paths, like the location of your authorized_keys
+        # file, the 'sshkeyauth' library will try to parse it from the
+        # sshd_config file (defaults to /etc/ssh/sshd_config)
+        #
+        # Since there is no challenge-reponse in MCollective RPC, we can't emulate
+        # ssh's "try each key until one is accepted" method. Instead, we will
+        # sign each method with *all* keys in your agent and the receiver will
+        # try to verify against any of them.
+        # 
+        # Serialization uses Marshal.
+        #
+        # Configuration:
+        #
+        # For clients:
+        #   securityprovider = sshkey
+        #
+        # For nodes:
+        #   securityprovider = sshkey
+        #   plugin.sshkey = /etc/ssh/ssh_host_rsa_key
         class Sshkey < Base
-            # Decodes a message by unserializing all the bits etc, it also validates
-            # it as valid using the psk etc
+            # Decodes a message by unserializing all the bits etc
+            # TODO(sissel): refactor this into Base?
             def decodemsg(msg)
                 body = Marshal.load(msg.payload)
     
@@ -104,8 +138,8 @@ module MCollective
             end
     
             private
-            # Retrieves the value of plugin.psk and builds a hash with it and
-            # the passed body
+            # Signs a message. If 'public.sshkey' is set, then we will sign
+            # with only that key. Otherwise, we will sign with your ssh-agente.
             def makehash(body)
                 signer = SSH::Key::Signer.new
                 if @config.pluginconf["sshkey"]
