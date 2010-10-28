@@ -1,5 +1,5 @@
 ---
-layout: mcollective
+layout: default
 title: Using With Chef
 disqus: true
 ---

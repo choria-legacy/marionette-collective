@@ -1,11 +1,11 @@
 ---
-layout: mcollective
+layout: default
 title: Writing SimpleRPC Clients
 disqus: true
 ---
 [SimpleRPCIntroduction]: index.html
 [WritingAgents]: agents.html
-[RPCUtil]: /reference/plugins/rpcutil.html
+[RPCUtil]: /mcollective/reference/plugins/rpcutil.html
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
 [RubyMixin]: http://juixe.com/techknow/index.php/2006/06/15/mixins-in-ruby/
 [OptionParser]: http://github.com/mcollective/marionette-collective/blob/master/lib/mcollective/optionparser.rb
