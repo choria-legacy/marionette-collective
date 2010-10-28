@@ -1,15 +1,15 @@
 ---
-layout: mcollective
+layout: default
 title: SimpleRPC Introduction
 disqus: true
 ---
-[WritingAgents]: /reference/basic/basic_agent_and_client.html
-[SimpleRPCAgents]: /simplerpc/agents.html
-[SimpleRPCClients]: /simplerpc/clients.html
-[SimpleRPCAuditing]: /simplerpc/auditing.html
-[SimpleRPCAuthorization]: /simplerpc/authorization.html
-[SimpleRPCDDL]: /simplerpc/ddl.html
-[RPCUtil]: /reference/plugins/rpcutil.html
+[WritingAgents]: /mcollective/reference/basic/basic_agent_and_client.html
+[SimpleRPCAgents]: /mcollective/simplerpc/agents.html
+[SimpleRPCClients]: /mcollective/simplerpc/clients.html
+[SimpleRPCAuditing]: /mcollective/simplerpc/auditing.html
+[SimpleRPCAuthorization]: /mcollective/simplerpc/authorization.html
+[SimpleRPCDDL]: /mcollective/simplerpc/ddl.html
+[RPCUtil]: /mcollective/reference/plugins/rpcutil.html
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
 [RestGateway]: http://github.com/mcollective/marionette-collective/blob/master/ext/mc-rpc-restserver.rb
 

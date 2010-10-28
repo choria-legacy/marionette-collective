@@ -1,5 +1,5 @@
 ---
-layout: mcollective
+layout: default
 title: Controlling the Daemon
 disqus: true
 ---

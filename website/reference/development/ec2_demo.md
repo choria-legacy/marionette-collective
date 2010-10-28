@@ -1,5 +1,5 @@
 ---
-layout: mcollective
+layout: default
 title: EC2 Demo Creation
 disqus: true
 ---

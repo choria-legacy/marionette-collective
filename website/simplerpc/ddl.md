@@ -1,17 +1,17 @@
 ---
-layout: mcollective
+layout: default
 title: SimpleRPC Data Definition Language
 disqus: true
 ---
-[WritingAgents]: /reference/basic/basic_agent_and_client.html
-[SimpleRPCClients]: /simplerpc/clients.html
-[ResultsandExceptions]: /simplerpc/clients.html#results_and_exceptions
-[SimpleRPCAuditing]: /simplerpc/auditing.html
-[SimpleRPCAuthorization]: /simplerpc/authorization.html
-[SimpleRPCDDL]: /simplerpc/ddl.html
+[WritingAgents]: /mcollective/reference/basic/basic_agent_and_client.html
+[SimpleRPCClients]: /mcollective/simplerpc/clients.html
+[ResultsandExceptions]: /mcollective/simplerpc/clients.html#results_and_exceptions
+[SimpleRPCAuditing]: /mcollective/simplerpc/auditing.html
+[SimpleRPCAuthorization]: /mcollective/simplerpc/authorization.html
+[SimpleRPCDDL]: /mcollective/simplerpc/ddl.html
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
 [DDLScreenCast]: http://mcollective.blip.tv/file/3799653
-[RPCUtil]: /reference/plugins/rpcutil.html
+[RPCUtil]: /mcollective/reference/plugins/rpcutil.html
 
 # {{page.title}}
 

@@ -1,5 +1,5 @@
 ---
-layout: mcollective
+layout: default
 title: Using with Puppet
 disqus: true
 ---

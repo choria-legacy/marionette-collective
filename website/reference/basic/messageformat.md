@@ -1,12 +1,12 @@
 ---
-layout: mcollective
+layout: default
 title: Message Format
 disqus: true
 ---
 [SecurityPlugins]: http://github.com/mcollective/marionette-collective/tree/master/plugins/mcollective/security/
-[SimpleRPCIntroduction]: /simplerpc/
+[SimpleRPCIntroduction]: /mcollective/simplerpc/
 [MessageFlow]: messageflow.html
-[ScreenCast]: /introduction/screencasts.html#message_flow
+[ScreenCast]: /mcollective/screencasts.html#message_flow
 
 # {{page.title}}
 

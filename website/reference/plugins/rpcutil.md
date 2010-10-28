@@ -1,5 +1,5 @@
 ---
-layout: mcollective
+layout: default
 title: The rpcutil Agent
 disqus: true
 ---
