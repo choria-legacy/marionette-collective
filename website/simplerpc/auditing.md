@@ -1,5 +1,5 @@
 ---
-layout: mcollective
+layout: default
 title: SimpleRPC Auditing
 disqus: true
 ---

@@ -1,9 +1,9 @@
 ---
-layout: mcollective
+layout: default
 title: Writing Fact Plugins
 disqus: true
 ---
-[SimpleRPCAuthorization]: /simplerpc/authorization.html
+[SimpleRPCAuthorization]: /mcollective/simplerpc/authorization.html
 [Registration]: registration.html
 
 # {{page.title}}

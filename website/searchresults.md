@@ -1,5 +1,5 @@
 ---
-layout: mcollective
+layout: default
 title: Search Results
 ---
 

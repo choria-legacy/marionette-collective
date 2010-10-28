@@ -1,5 +1,5 @@
 ---
-layout: mcollective
+layout: default
 title: Terminology
 disqus: true
 ---
@@ -7,11 +7,11 @@ disqus: true
 [Plugin]: http://en.wikipedia.org/wiki/Plugin
 [Publish_subscribe]: http://en.wikipedia.org/wiki/Publish_subscribe
 [Apache ActiveMQ]: http://activemq.apache.org/
-[SimpleRPCAgents]: /simplerpc/agents.html
-[SimpleRPCIntroduction]: /simplerpc/
-[WritingFactsPlugins]: /reference/plugins/facts.html
-[Registration]: /reference/plugins/registration.html
-[SimpleRPCAuthorization]: /simplerpc/authorization.html
+[SimpleRPCAgents]: /mcollective/simplerpc/agents.html
+[SimpleRPCIntroduction]: /mcollective/simplerpc/
+[WritingFactsPlugins]: /mcollective/reference/plugins/facts.html
+[Registration]: /mcollective/reference/plugins/registration.html
+[SimpleRPCAuthorization]: /mcollective/simplerpc/authorization.html
 
 # {{page.title}}
 This page documents the various terms used in relation to mcollective.

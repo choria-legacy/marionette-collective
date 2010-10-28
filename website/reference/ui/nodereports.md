@@ -1,5 +1,5 @@
 ---
-layout: mcollective
+layout: default
 title: Node Reports
 disqus: true
 ---
