@@ -1,9 +1,9 @@
 ---
-layout: mcollective
+layout: default
 title: Basic Agents and Clients
 disqus: true
 ---
-[SimpleRPCIntroduction]: /simplerpc/
+[SimpleRPCIntroduction]: /mcollective/simplerpc/
 
 # {{page.title}}
 

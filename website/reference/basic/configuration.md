@@ -1,13 +1,13 @@
 ---
-layout: mcollective
+layout: default
 title: Configuration Guide
 disqus: true
 ---
 
-[SSLSecurity]: /reference/plugins/security_ssl.html
-[Registration]: /reference/plugins/registration.html
-[Auditing]: /simplerpc/auditing.html
-[Authorization]: /simplerpc/authorization.html
+[SSLSecurity]: /mcollective/reference/plugins/security_ssl.html
+[Registration]: /mcollective/reference/plugins/registration.html
+[Auditing]: /mcollective/simplerpc/auditing.html
+[Authorization]: /mcollective/simplerpc/authorization.html
 
 # {{page.title}}
 

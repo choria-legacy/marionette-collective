@@ -1,5 +1,5 @@
 ---
-layout: mcollective
+layout: default
 title: Queuing and Scheduling
 disqus: true
 ---

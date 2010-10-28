@@ -1,5 +1,5 @@
 ---
-layout: mcollective
+layout: default
 title: Agent Thread Management
 disqus: true
 ---

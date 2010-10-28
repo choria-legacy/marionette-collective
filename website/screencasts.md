@@ -1,14 +1,14 @@
 ---
-layout: mcollective
+layout: default
 title: Screen Casts
 disqus: true
 ---
 [blip]: http://mcollective.blip.tv/
 [slideshare]: http://www.slideshare.net/mcollective
-[ec2demo]: /introduction/ec2demo.html
-[Terminology]: /introduction/terminology.html
-[SimpleRPCIntroduction]: /simplerpc/
-[DDL]: /simplerpc/ddl.html
+[ec2demo]: /mcollective/ec2demo.html
+[Terminology]: /mcollective/terminology.html
+[SimpleRPCIntroduction]: /mcollective/simplerpc/
+[DDL]: /mcollective/simplerpc/ddl.html
 
 # {{page.title}}
 We believe screen casts give the best introduction to new concepts, we've recorded

@@ -1,5 +1,5 @@
 ---
-layout: mcollective
+layout: default
 title: Registration
 disqus: true
 ---

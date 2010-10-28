@@ -1,5 +1,5 @@
 ---
-layout: mcollective
+layout: default
 title: EC2 Demo
 disqus: true
 ---
@@ -10,7 +10,7 @@ disqus: true
 [Meta Registration]: http://code.google.com/p/mcollective-plugins/wiki/RegistrationMetaData
 [URL Tester]: http://code.google.com/p/mcollective-plugins/wiki/AgentUrltest
 [Discovery Aware SSH]: http://code.google.com/p/mcollective-plugins/wiki/UtilitiesSSH
-[Registration]: /reference/plugins/registration.html
+[Registration]: /mcollective/reference/plugins/registration.html
 [Registration Monitor]: http://code.google.com/p/mcollective-plugins/wiki/AgentRegistrationMonitor
 
 # {{page.title}}

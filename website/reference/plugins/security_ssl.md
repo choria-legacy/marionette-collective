@@ -1,9 +1,9 @@
 ---
-layout: mcollective
+layout: default
 title: OpenSSL based Security Plugin
 disqus: true
 ---
-[SimpleRPCAuthorization]: /simplerpc/authorization.html
+[SimpleRPCAuthorization]: /mcollective/simplerpc/authorization.html
 [Registration]: registration.html
 
 # {{page.title}}
