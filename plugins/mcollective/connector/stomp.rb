@@ -115,7 +115,7 @@ module MCollective
                         connection[:backup] = get_bool_option("stomp.pool.backup", false)
                         connection[:timeout] = get_option("stomp.pool.timeout", -1).to_i
 
-                        @connection = ::Stomp::Connection.new({:hosts => hosts})
+                        @connection = ::Stomp::Connection.new(connection)
                     end
                 rescue Exception => e
                     raise("Could not connect to Stomp Server: #{e}")

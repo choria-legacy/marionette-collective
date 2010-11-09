@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2010/11/09|General connection settings to the Stomp connector was ignored|5245|
 |*2010/10/18*|*Release version 0.4.10*| |
 |2010/10/18|Document exit command to mc-controller|152|
 |2010/10/13|Log messages that don't pass the filters at debug level|149|
