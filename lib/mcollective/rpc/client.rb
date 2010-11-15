@@ -229,6 +229,12 @@ module MCollective
                 # Fake out the stats discovery would have put there
                 @stats.discovered_agents([expected_agents].flatten)
 
+                # Handle fire and forget requests
+                if args.include?(:process_results) && args[:process_results] == false
+                    @filter = custom_filter
+                    return fire_and_forget_request(action, args)
+                end
+
                 # Now do a call pretty much exactly like in method_missing except with our own
                 # options and discovery magic
                 if block_given?
@@ -341,10 +347,8 @@ module MCollective
             def call_agent(action, args, opts, disc=:auto, &block)
                 # Handle fire and forget requests and make sure
                 # the :process_results value is set appropriately
-                if args.include?(:process_results)
-                    if args[:process_results] == false
-                        return fire_and_forget_request(action, args)
-                    end
+                if args.include?(:process_results) && args[:process_results] == false
+                    return fire_and_forget_request(action, args)
                 else
                     args[:process_results] = true
                 end
