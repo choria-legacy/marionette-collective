@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2010/11/16|Add the ability to limit the results to a subset of hosts|5306|
 |2010/11/15|Add fire and forget mode to SimpleRPC custom_request|5305|
 |2010/11/09|General connection settings to the Stomp connector was ignored|5245|
 |*2010/10/18*|*Release version 0.4.10*| |

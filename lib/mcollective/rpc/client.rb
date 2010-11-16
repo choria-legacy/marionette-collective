@@ -4,7 +4,7 @@ module MCollective
         # and just brings in a lot of convention and standard approached.
         class Client
             attr_accessor :discovery_timeout, :timeout, :verbose, :filter, :config, :progress
-            attr_reader :client, :stats, :ddl, :agent
+            attr_reader :client, :stats, :ddl, :agent, :limit_targets
 
             @@initial_options = nil
 
@@ -24,7 +24,7 @@ module MCollective
                     options = Marshal.load(@@initial_options)
 
                 else
-                    oparser = MCollective::Optionparser.new({:verbose => false, :progress_bar => true}, "filter")
+                    oparser = MCollective::Optionparser.new({:verbose => false, :progress_bar => true, :mcollective_limit_targets => false}, "filter")
 
                     options = oparser.parse do |parser, options|
                         if block_given?
@@ -46,6 +46,7 @@ module MCollective
                 @config = options[:config]
                 @discovered_agents = nil
                 @progress = options[:progress_bar]
+                @limit_targets = options[:mcollective_limit_targets]
 
                 agent_filter agent
 
@@ -171,13 +172,17 @@ module MCollective
 
                 @ddl.validate_request(action, args) if @ddl
 
-                # Normal agent requests as per client.action(args)
-                if block_given?
-                    call_agent(action, args, options) do |r|
-                        block.call(r)
-                    end
+                # Handle single target requests by doing discovery and picking
+                # a random node.  Then do a custom request specifying a filter
+                # that will only match the one node.
+                if @limit_targets
+                    target_nodes = pick_nodes_from_discovered(@limit_targets)
+                    Log.instance.debug("Picked #{target_nodes.join(',')} as limited target(s)")
+
+                    custom_request(action, args, target_nodes, {"identity" => /^(#{target_nodes.join('|')})$/}, &block)
                 else
-                    call_agent(action, args, options)
+                    # Normal agent requests as per client.action(args)
+                    call_agent(action, args, options, &block)
                 end
             end
 
@@ -323,7 +328,59 @@ module MCollective
                  :config => @config}
             end
 
+            # Sets and sanity checks the limit_targets variable
+            # used to restrict how many nodes we'll target
+            def limit_targets=(limit)
+                if limit.is_a?(String)
+                    raise "Invalid limit specified: #{limit} valid limits are /^\d+%*$/" unless limit =~ /^\d+%*$/
+                    @limit_targets = limit
+                elsif limit.respond_to?(:to_i)
+                    limit = limit.to_i
+                    limit = 1 if limit == 0
+                    @limit_targets = limit
+                else
+                    raise "Don't know how to handle limit of type #{limit.class}"
+                end
+            end
+
             private
+            # Pick a number of nodes from the discovered nodes
+            #
+            # The count should be a string that can be either
+            # just a number or a percentage like 10%
+            #
+            # It will select nodes from the discovered list based
+            # on the rpclimitmethod configuration option which can
+            # be either :first or anything else
+            #
+            #   - :first would be a simple way to do a distance based
+            #     selection
+            #   - anything else will just pick one at random
+            def pick_nodes_from_discovered(count)
+                if count =~ /%$/
+                    pct = (discover.size * (count.to_f / 100)).to_i
+                    pct == 0 ? count = 1 : count = pct
+                else
+                    count = count.to_i
+                end
+
+                return discover if discover.size <= count
+
+                result = []
+
+                if Config.instance.rpclimitmethod == :first
+                    return discover[0, count]
+                else
+                    count.times do
+                        rnd = rand(discover.size)
+                        result << discover[rnd]
+                        discover.delete_at(rnd)
+                    end
+                end
+
+                [result].flatten
+            end
+
             # for requests that do not care for results just
             # return the request id and don't do any of the
             # response processing.
