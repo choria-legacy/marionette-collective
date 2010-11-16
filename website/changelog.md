@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2010/11/16|Input validation on prcutil has been improved to match all valid facts|5320|
 |2010/11/16|Add the ability to limit the results to a subset of hosts|5306|
 |2010/11/15|Add fire and forget mode to SimpleRPC custom_request|5305|
 |2010/11/09|General connection settings to the Stomp connector was ignored|5245|
