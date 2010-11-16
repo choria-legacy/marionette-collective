@@ -9,9 +9,9 @@
 #              as a bonus.
 #
 ### BEGIN INIT INFO
-# Provides:          scriptname
-# Required-Start:    $remote_fs $syslog
-# Required-Stop:     $remote_fs $syslog
+# Provides:          mcollective
+# Required-Start:    $remote_fs
+# Required-Stop:     $remote_fs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: Start daemon at boot time
@@ -40,7 +40,7 @@ pidfile="/var/run/mcollectived.pid"
 . /lib/lsb/init-functions
 
 # Check that binary exists
-if ! [ -f  $mcollectived ] 
+if ! [ -f  $mcollectived ]
 then
   echo "mcollectived binary not found"
   exit 0
