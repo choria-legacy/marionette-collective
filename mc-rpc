@@ -122,6 +122,7 @@ begin
     end
 rescue Exception => e
     STDERR.puts("Could not call agent: #{e}")
+    exit 1
 end
 
 # vi:tabstop=4:expandtab:ai

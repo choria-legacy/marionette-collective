@@ -30,7 +30,8 @@ begin
         facts.include?(value) ? facts[value] << resp[:senderid] : facts[value] = [ resp[:senderid] ]
     end
 rescue Exception => e
-    raise
+    STDERR.puts "Could not call remote agent: #{e}"
+    exit 1
 end
 
 puts("\rReport for fact: #{fact}                            \n\n")

@@ -233,7 +233,8 @@ def formatted_inventory(&blk)
 
     util.disconnect
 rescue Exception => e
-    puts "Could not create report: #{e.class}: #{e}"
+    STDERR.puts "Could not create report: #{e.class}: #{e}"
+    exit 1
 end
 
 @fmt = nil

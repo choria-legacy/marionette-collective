@@ -19,7 +19,8 @@ begin
 
     client.disconnect
 rescue Exception => e
-    raise
+    STDERR.puts "Could not call remote agent: #{e}"
+    exit 1
 end
 
 client.display_stats(stats) if options[:verbose]
