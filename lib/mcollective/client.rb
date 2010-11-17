@@ -21,7 +21,13 @@ module MCollective
             @connection.connect
         end
 
-        # Sends a request and returns the generated request id, doesn't wait for 
+        # Disconnects cleanly from the middleware
+        def disconnect
+            @log.debug("Disconnecting from the middleware")
+            @connection.disconnect
+        end
+
+        # Sends a request and returns the generated request id, doesn't wait for
         # responses and doesn't execute any passed in code blocks for responses
         def sendreq(msg, agent, filter = {})
             target = Util.make_target(agent, :command)
@@ -29,7 +35,7 @@ module MCollective
             reqid = Digest::MD5.hexdigest("#{@config.identity}-#{Time.now.to_f.to_s}-#{target}")
 
             req = @security.encoderequest(@config.identity, target, msg, reqid, filter)
-    
+
             @log.debug("Sending request #{reqid} to #{target}")
 
             unless @subscriptions.include?(agent)
@@ -44,7 +50,7 @@ module MCollective
 
             reqid
         end
-    
+
         # Blocking call that waits for ever for a message to arrive.
         #
         # If you give it a requestid this means you've previously send a request
@@ -93,7 +99,7 @@ module MCollective
         end
 
         # Send a request, performs the passed block for each response
-        # 
+        #
         # times = req("status", "mcollectived", options, client) {|resp|
         #   pp resp
         # }
@@ -115,7 +121,7 @@ module MCollective
                 Timeout.timeout(options[:timeout]) do
                     loop do
                         resp = receive(reqid)
-    
+
                         hosts_responded += 1
 
                         yield(resp)
@@ -137,7 +143,7 @@ module MCollective
         end
 
         # Performs a discovery and then send a request, performs the passed block for each response
-        # 
+        #
         #    times = discovered_req("status", "mcollectived", options, client) {|resp|
         #       pp resp
         #    }
@@ -175,7 +181,7 @@ module MCollective
                 Timeout.timeout(options[:timeout]) do
                     (1..discovered).each do |c|
                         resp = receive(reqid)
-    
+
                         hosts_responded << resp[:senderid]
                         hosts_not_responded.delete(resp[:senderid]) if hosts_not_responded.include?(resp[:senderid])
 
@@ -214,7 +220,7 @@ module MCollective
                 printf("  Discovery Time: %.2fms\n", stats[:discoverytime] * 1000)
                 printf("      Agent Time: %.2fms\n", stats[:blocktime] * 1000)
                 printf("      Total Time: %.2fms\n", stats[:totaltime] * 1000)
-    
+
             else
                 if stats[:discovered]
                     printf("\nFinished processing %d / %d hosts in %.2f ms\n\n", stats[:responses], stats[:discovered], stats[:blocktime] * 1000)
@@ -225,7 +231,7 @@ module MCollective
 
             if stats[:noresponsefrom].size > 0
                 puts("\nNo response from:\n")
-    
+
                 stats[:noresponsefrom].each do |c|
                     puts if c % 4 == 1
                     printf("%30s", c)

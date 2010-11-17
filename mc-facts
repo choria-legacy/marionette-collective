@@ -24,9 +24,9 @@ begin
 
     stats = client.req("get_fact #{fact}", "discovery") do |resp|
         next if resp == nil
-    
+
         value = resp[:body]
-    
+
         facts.include?(value) ? facts[value] << resp[:senderid] : facts[value] = [ resp[:senderid] ]
     end
 rescue Exception => e
@@ -50,5 +50,7 @@ facts.keys.sort.each do |k|
 end
 
 client.display_stats(stats, options, "fact call stats")
+
+client.disconnect
 
 # vi:tabstop=4:expandtab:ai

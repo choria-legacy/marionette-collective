@@ -72,6 +72,11 @@ module MCollective
                 STDOUT.sync = true
             end
 
+            # Disconnects cleanly from the middleware
+            def disconnect
+                @client.disconnect
+            end
+
             # Returns help for an agent if a DDL was found
             def help(template)
                 if @ddl

@@ -52,6 +52,8 @@ mc = rpcclient("helloworld")
 printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
 
 printrpcstats
+
+mc.disconnect
 {% endhighlight %}
 
 Save this into _hello.rb_ and run it with _--help_, you should see the standard basic help including filters for discovery.
@@ -89,6 +91,12 @@ printrpcstats
 To call a specific action you simply have to do _mc.echo_ this calls the _echo_ action, we pass a _:msg_ parameter into it with the string we want echo'd back.  The parameters will differ from action to action.  It returns a simple array of the results that you can print any way you want, we'll show that later.
 
 _printrpc_ and _printrpcstats_ are functions used to print the results and stats respectively.
+
+{% highlight ruby %}
+mc.disconnect
+{% endhighlight %}
+
+This cleanly disconnects the client from the middleware, some middleware tools like ActiveMQ will log confusing exceptions if you do not do this.  It's good form to always disconnect but isn't strictly required.
 
 ## Adjusting the output
 

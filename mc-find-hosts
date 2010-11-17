@@ -16,6 +16,8 @@ begin
     stats = client.req("ping", "discovery") do |resp|
         puts resp[:senderid]
     end
+
+    client.disconnect
 rescue Exception => e
     raise
 end

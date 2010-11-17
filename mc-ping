@@ -24,6 +24,8 @@ begin
             printf(".")
         end
     end
+
+    client.disconnect
 rescue Exception => e
     raise e
 end

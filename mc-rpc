@@ -35,9 +35,9 @@ begin
         parser.separator "Alternate Usage: mc-rpc [options] [filters] <agent> <action> [<key=val> <key=val> ...]"
         parser.separator "Alternate Usage: mc-rpc --agent-help agent"
         parser.separator ""
-    
+
         options[:arguments] = {}
-    
+
         parser.on('--no-results', '--nr', "Do not process results, just send request") do |v|
             options[:process_results] = false
         end
@@ -45,11 +45,11 @@ begin
         parser.on('-a', '--agent AGENT', 'Agent to call') do |v|
             options[:agent] = v
         end
-    
+
         parser.on('--action ACTION', 'Action to call') do |v|
             options[:action] = v
         end
-    
+
         parser.on("--ah", "--agent-help AGENT", "Get help for an agent") do |v|
             options[:agent_help] = v
         end
@@ -63,7 +63,7 @@ begin
         end
     end
 
-    # Parse the alternative command line 
+    # Parse the alternative command line
     unless (options.include?(:agent) && options.include?(:action)) || options.include?(:agent_help)
         if ARGV.length >= 2
             options[:agent] = ARGV[0]
@@ -107,6 +107,8 @@ begin
         printrpc mc.send(options[:action], options[:arguments])
 
         printrpcstats :caption => "#{options[:agent]}##{options[:action]} call stats"
+
+        mc.disconnect
     else
         mc = rpcclient(options[:agent], {:options => options})
 
@@ -115,6 +117,8 @@ begin
         mc.agent_filter(options[:agent])
 
         puts "Request sent with id: " + mc.send(options[:action], options[:arguments])
+
+        mc.disconnect
     end
 rescue Exception => e
     STDERR.puts("Could not call agent: #{e}")
