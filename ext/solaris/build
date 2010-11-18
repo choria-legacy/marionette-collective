@@ -1,0 +1,64 @@
+#!/opt/csw/bin/gmake -f -d
+# -*- makefile -*-
+
+BUILDDIR = solaris/tmp
+PKG = solaris/pkg
+DESTDIR = ${CURDIR}/${BUILDDIR}
+PKGDIR = ${CURDIR}/${PKG}
+PKGNAME = CSW$(shell ggrep "PROJ_NAME = "  ../../Rakefile | cut -d' ' -f3 | sed -e 's/"//g')
+VERSION = $(shell ggrep "PROJ_VERSION = "  ../../Rakefile | cut -d' ' -f3 | sed -e 's/"//g')
+RELEASE = $(shell ggrep "PROJ_RELEASE = "  ../../Rakefile | cut -d' ' -f3 | sed -e 's/"//g')
+PKGVERSION = ${VERSION}-${RELEASE}\,REV=$(shell date +%Y.%m.%d)
+
+RUBY_VERSION = 1.8
+RUBY_SITE = ${DESTDIR}/opt/csw/lib/ruby/site_ruby/${RUBY_VERSION}
+
+install:
+	# install directories
+	ginstall -d $(DESTDIR)
+	ginstall -g root -d $(DESTDIR)/opt
+	ginstall -g sys -d $(DESTDIR)/var $(DESTDIR)/var/lock  $(DESTDIR)/etc $(DESTDIR)/etc/opt
+	ginstall -g bin -d $(DESTDIR)/var/opt $(DESTDIR)/var/opt/csw $(DESTDIR)/var/opt/csw/svc $(DESTDIR)/var/opt/csw/svc/manifest $(DESTDIR)/var/opt/csw/svc/manifest/network
+	ginstall -g bin -d $(DESTDIR)/opt/csw/lib $(DESTDIR)/opt/csw/lib/svc $(DESTDIR)/opt/csw/lib/svc/method
+	ginstall -g bin -d $(DESTDIR)/opt/csw $(DESTDIR)/opt/csw/lib $(DESTDIR)/opt/csw/sbin $(DESTDIR)/opt/csw/bin
+	ginstall -g bin -d $(DESTDIR)/opt/csw/lib/ruby $(DESTDIR)/opt/csw/lib/ruby/site_ruby $(DESTDIR)/opt/csw/lib/ruby/site_ruby/$(RUBY_VERSION)
+	ginstall -g bin -d $(DESTDIR)/etc/opt/csw $(DESTDIR)/etc/opt/csw/mcollective
+	ginstall -g bin -d $(DESTDIR)/opt/csw/share $(DESTDIR)/opt/csw/share/mcollective
+
+	# install binaries
+	ginstall -g bin $(CURDIR)/../../mc-* $(DESTDIR)/opt/csw/sbin/
+	ginstall -g bin $(CURDIR)/../../mcollectived.rb $(DESTDIR)/opt/csw/sbin/mcollectived
+	# install libraries
+	gcp -a $(CURDIR)/../../lib/* $(RUBY_SITE)/
+	chgrp -R bin $(RUBY_SITE)/
+	# install example config files
+	gcp -a $(CURDIR)/../../etc/* $(DESTDIR)/etc/opt/csw/mcollective/
+	grm $(DESTDIR)/etc/opt/csw/mcollective/ssl/PLACEHOLDER
+	grm $(DESTDIR)/etc/opt/csw/mcollective/ssl/clients/PLACEHOLDER
+	chgrp -R bin $(DESTDIR)/etc/opt/csw/mcollective/
+	# install plugins
+	gcp -a $(CURDIR)/../../plugins $(DESTDIR)/opt/csw/share/mcollective/
+	# install docs 
+	#ginstall -d $(DESTDIR)/opt/csw/doc $(DESTDIR)/opt/csw/doc/mcollective/
+	#gcp -a $(CURDIR)/../../doc/  $(DESTDIR)/opt/cs/doc/mcollective
+
+	ginstall -g bin $(CURDIR)/mcollective.init $(DESTDIR)/opt/csw/lib/svc/method/svc-cswmcollectived
+	ginstall -g bin $(CURDIR)/cswmcollectived.xml $(DESTDIR)/var/opt/csw/svc/manifest/network
+
+	(cat prototype.head; pkgproto $(DESTDIR)=/ ) > solaris/prototype
+	mkdir $(PKGDIR) || true
+	ginstall postinstall solaris/
+	ginstall postremove solaris/
+	ginstall preremove solaris/
+
+	ginstall pkginfo solaris/
+	(echo PKG=${PKGNAME} ) >> solaris/pkginfo
+	(echo VERSION=${PKGVERSION} ) >> solaris/pkginfo
+	(cd solaris/ ; pkgmk -o -d $(PKGDIR))
+	pkgtrans -s $(PKGDIR) $(CURDIR)/$(PKGNAME)-$(PKGVERSION)-`uname -s``uname -r`-all-CSW.pkg $(PKGNAME)
+
+clean:
+	grm -rf $(DESTDIR)
+	grm -rf $(PKGDIR)
+	grm -f solaris/prototype
+	grm -f $(PKGNAME)-$(SOLARIS_VERSION)-`uname -s``uname -r`-all-CSW.pkg

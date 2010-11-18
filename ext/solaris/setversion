@@ -1,0 +1,9 @@
+#! /bin/bash
+
+IN=$1
+OUT=$2
+
+SOLARIS_VERSION=`ggrep ^VERSION solaris/pkginfo | cut -d = -f2`
+
+sed 's/VERSION="none"/VERSION="'"$SOLARIS_VERSION"'"/' $IN > $OUT
+chmod 755 $OUT

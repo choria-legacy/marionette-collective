@@ -1,0 +1,96 @@
+#!/bin/sh
+#
+# mcollective	Application Server for STOMP based agents
+#
+# description: mcollective lets you build powerful Stomp compatible middleware clients in ruby without having to worry too
+#              much about all the setup and management of a Stomp connection, it also provides stats, logging and so forth
+#              as a bonus.
+#
+
+RUBYLIB=/opt/csw/lib/ruby/site_ruby/1.8:$RUBYLIB
+export RUBYLIB
+
+mcollectived="/opt/csw/sbin/mcollectived"
+
+lock="/var/lock/mcollective"
+
+# PID directory
+pidfile="/var/run/mcollectived.pid"
+
+# Check that binary exists
+if [ ! -f  $mcollectived ] 
+then
+  echo "mcollectived binary not found"
+  exit 1
+fi
+
+# See how we were called.
+case "$1" in
+  start)
+	if [ -f ${lock} ]; then
+	    # we were not shut down correctly
+	    if [ -s ${pidfile} ]; then
+		kill `cat ${pidfile}` >/dev/null 2>&1
+	    fi
+	    rm -f ${pidfile}
+
+	    rm -f ${lock}
+	    sleep 2
+	fi
+
+	rm -f ${pidfile}
+
+	${mcollectived} --pid=${pidfile} --config="/etc/mcollective/server.cfg"
+	if [ $? = 0 ]; then
+	    touch $lock
+	    exit 0
+	else
+            exit 1
+	fi
+	;;
+  stop)
+	if [ -s ${pidfile} ]; then
+	  kill `cat ${pidfile}` >/dev/null 2>&1
+	fi
+	rm -f ${pidfile}
+
+	rm -f $lock
+	;;
+  restart)
+	$0 stop
+	sleep 2
+	$0 start
+	;;
+  condrestart)
+	if [ -f $lock ]; then
+	    $0 stop
+	    # avoid race
+	    sleep 2
+	    $0 start
+	fi
+	;;
+  status)
+	if [ -f ${lock} ]; then
+	    if [ -s ${pidfile} ]; then
+	       if [ -e /proc/`cat ${pidfile}` ]; then
+                  echo "mcollectived (`cat ${pidfile}`) is running"
+                  exit 0
+               else
+                  echo "mcollectived (`cat ${pidfile}`) is NOT running"
+                  exit 1
+               fi
+	    fi
+	else
+	    echo "mcollectived: service not started"
+	    exit 1
+	fi
+  ;;
+	force-reload)
+		echo "not implemented"
+	;;
+  *)
+	echo "Usage: $0 {start|stop|restart|condrestart|status}"
+	exit 1
+	;;
+esac
+exit 0

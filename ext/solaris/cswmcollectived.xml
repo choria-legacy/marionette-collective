@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+
+<!-- Mcollective Manifest: Rudy Gevaert -->
+
+<service_bundle type='manifest' name='cswmcollectived:cswmcollectived:'>
+
+
+<service
+	name='network/cswmcollectived'
+	type='service'
+	version='1'>
+
+        <create_default_instance enabled='false'/>
+        <single_instance/>
+
+        <dependency name='config-file'
+                    grouping='require_all'
+                    restart_on='none'
+                    type='path'>
+                <service_fmri value='file:///etc/opt/csw/mcollective/server.cfg'/>
+        </dependency>
+        
+	<dependency name='loopback'
+		    grouping='require_all'
+		    restart_on='error'
+		    type='service'>
+		<service_fmri value='svc:/network/loopback:default'/>
+	</dependency>
+
+	<dependency name='physical'
+		    grouping='require_all'
+		    restart_on='error'
+		    type='service'>
+		<service_fmri value='svc:/network/physical:default'/>
+	</dependency>
+
+	<dependency name='fs-local'
+		    grouping='require_all'
+		    restart_on='none'
+		    type='service'>
+		<service_fmri value='svc:/system/filesystem/local'/>
+	</dependency>
+
+	<exec_method
+		type='method'
+		name='start'
+        exec='/opt/csw/lib/svc/method/svc-cswmcollectived start'
+		timeout_seconds='60'>
+		<method_context>
+			<method_environment>
+				<envvar name='PATH' value='/bin:/usr/bin:/opt/csw/bin' />
+			</method_environment>
+		</method_context>
+	</exec_method>
+
+	<exec_method
+		type='method'
+		name='stop'
+        exec='/opt/csw/lib/svc/method/svc-cswmcollectived stop'
+		timeout_seconds='60' />
+
+	<exec_method
+		type='method'
+		name='refresh'
+        exec='/opt/csw/lib/svc/method/svc-cswmcollectived reload'
+		timeout_seconds='60' />
+
+	<exec_method
+		type='method'
+		name='restart'
+        exec='/opt/csw/lib/svc/method/svc-cswmcollectived restart'
+		timeout_seconds='60' />
+
+	<exec_method
+		type='method'
+		name='condrestart'
+        exec='/opt/csw/lib/svc/method/svc-cswmcollectived condrestart'
+		timeout_seconds='60' />
+
+	<exec_method
+		type='method'
+		name='status'
+        exec='/opt/csw/lib/svc/method/svc-cswmcollectived status'
+		timeout_seconds='60' />
+
+	<stability value='Unstable' />
+
+	<template>
+		<common_name>
+			<loctext xml:lang='C'>Mcollective server daemon</loctext>
+		</common_name>
+		<documentation>
+			<doc_link name='puppetlabs.com'
+				uri='http://www.puppetlabs.com/projects/mcollective' />
+		</documentation>
+	</template>
+</service>
+
+</service_bundle>

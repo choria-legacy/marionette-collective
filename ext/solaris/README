@@ -1,0 +1,18 @@
+Just run ./build on your solaris system.
+
+Build requirements, get them from opencsw:
+- gmake
+- coreutils
+
+Run requirements, get them from opencsw:
+- ruby
+- rubygems
+
+Run requirements
+- rubystomp library
+  http://stomp.codehaus.org/Ruby+Client
+  Up and till version 1.0.4 it is a single file. Put in /opt/csw/lib/ruby/site_ruby/1.8/
+
+Configuration:
+server.cfg:
+libdir = /opt/csw/share/mcollective/plugins
