@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2010/11/18|Added GPG signing to Rake packaging tasks (SIGNED=1)|5355|
 |2010/11/17|Improve error messages from clients in the case of failure|5329|
 |2010/11/17|Add helpers to disconnect from the middleware and update all bundled clients|5328|
 |2010/11/16|Correct LSB provides and requires in default init script|5222|

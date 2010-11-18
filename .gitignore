@@ -1,3 +1,5 @@
+doc
+build
 etc/*cfg
 etc/*yaml
 etc/ssl/*pem
