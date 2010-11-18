@@ -34,9 +34,10 @@ disqus: true
 [WritingAgents]: /mcollective/reference/basic/basic_agent_and_client.html
 [ActiveMQ]: /mcollective/reference/integration/activemq_security.html
 [MessageFormat]: /mcollective/reference/basic/messageformat.html
+[ChangeLog]: /mcollective/changelog.html
 
 # {{page.title}}
-The Marionette Collective aka. mcollective is a framework to build server
+The Marionette Collective AKA mcollective is a framework to build server
 orchestration or parallel job execution systems.
 
 Primarily we'll use it as a means of programmatic execution of Systems Administration
@@ -94,6 +95,7 @@ MCollective is licensed under the Apache 2 license.
  * See it in action in our [Screencasts]
  * Read the [GettingStarted] and [Configuration] guides for installation instructions
  * Read the [Terminology] page if you see any words where the meaning in the context of MCollective is not clear
+ * Read the [ChangeLog] page to see how MCollective has developed
  * Learn how to write basic reports for your servers - [NodeReports]
  * Learn how to write simple Agents and Clients using our [Simple RPC Framework][SimpleRPCIntroduction]
  * The author maintains some agents and clients on another project [here][PluginsSite].
