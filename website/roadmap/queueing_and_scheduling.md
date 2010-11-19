@@ -6,6 +6,7 @@ disqus: true
 [InitialMailThread]: http://groups.google.com/group/mcollective-users/browse_frm/thread/583dbf305bef2f8d
 [ThreadManagement]: thread_management.html
 [OtherLanguages]: actions_in_other_languages.html
+[SLURM]: https://computing.llnl.gov/linux/slurm/overview.html
 [BDD]: cucumber.html
 
 # {{page.title}}
@@ -77,3 +78,8 @@ The current mcollectived will have a thread that tracks jobs due to start and wi
 Replies will also be stored on disk on every node.
 
 The real time nature of mcollective will be used to create/edit/delete/query the jobs on disk, this will ensure maximum portability across middleware systems.  We could use something like beanstalk for the jobs but that would just add extra dependencies.
+
+## Inspiration
+Some systems that might be worth reviewing for inspiration or to learn how job scheduling works in other industries:
+
+  * [The Simple Linux Utility for Resource Management][SLURM]
