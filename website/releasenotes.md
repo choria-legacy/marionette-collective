@@ -4,25 +4,10 @@ title: Release Notes
 ---
 # {{page.title}}
 
- * TOC Placeholder
-  {:toc}
-
 This is a list of release notes for various releases, you should review these before upgrading as any potential problems and backward incompatible changes will be highlighted here.
 
-*	*0.4.x*
-	*	[0.4.10](#0410__20101018)
-	*	[0.4.9](#049__20100921)
-	*	[0.4.8](#048__20100820)
-	*	[0.4.7](#047__20100629)
-	*	[0.4.6](#046__20100614)
-	*	[0.4.5](#045__20100603)
-	*	[0.4.4](#044__20100403)
-	*	[0.4.3](#043__20100124)
-	*	[0.4.2](#042__20100114)
-	*	[0.4.1](#041__20100102)
-	*	[0.4.0](#040__20091229)
-* [0.3.0](#030__20091217)
-* [0.2.0](#020__20091202)
+ * TOC Placeholder
+  {:toc}
 
 ## 0.4.10 - 2010/10/18
 
