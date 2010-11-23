@@ -109,3 +109,23 @@ action "agent_inventory", :description => "Inventory of all agents on the server
            :description => "List of agents on the server",
            :display_as => "Agents"
 end
+
+action "get_config_item", :description => "Get the active value of a specific config property" do
+    display :always
+
+    input :item,
+        :prompt      => "Configuration Item",
+        :description => "The item to retrieve from the server",
+        :type        => :string,
+        :validation  => '^.+$',
+        :optional    => false,
+        :maxlength    => 50
+
+    output :item,
+           :description => "The config property being retrieved",
+           :display_as => "Property"
+
+    output :value,
+           :description => "The value that is in use",
+           :display_as => "Value"
+end

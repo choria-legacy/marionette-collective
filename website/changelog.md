@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2010/11/23|Add get_config_item to rpcutil to retrieve a running config value from a server|5376|
 |2010/11/20|Convert mc-facts into a SimpleRPC client|5371|
 |2010/11/18|Added GPG signing to Rake packaging tasks (SIGNED=1)|5355|
 |2010/11/17|Improve error messages from clients in the case of failure|5329|
