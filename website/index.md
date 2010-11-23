@@ -56,7 +56,7 @@ where you can launch as many instances as you want to see how it behaves first h
 ## What is MCollective and what does it allow you to do
 
  * Interact with small to very large clusters of servers
- * Use a [broadcast paradigm] for request distribution].  All servers get all requests at the same time, requests have
+ * Use a [broadcast paradigm] for request distribution.  All servers get all requests at the same time, requests have
    filters attached and only servers matching the filter will act on requests.  There is no central asset database to
    go out of sync, the network is the only source of truth.
  * Break free from ever more complex naming conventions for hostnames as a means of identity.  Use a very
