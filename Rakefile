@@ -28,6 +28,10 @@ def init
     FileUtils.mkdir("build") unless File.exist?("build")
 end
 
+def safe_system *args
+    raise RuntimeError, "Failed: #{args.join(' ')}" unless system *args
+end
+
 desc "Build documentation, tar balls and rpms"
 task :default => [:clean, :doc, :package]
 
@@ -46,12 +50,12 @@ task :package => [:clean, :doc] do
     announce "Creating #{PROJ_NAME}-#{CURRENT_VERSION}.tgz"
 
     FileUtils.mkdir_p("build/#{PROJ_NAME}-#{CURRENT_VERSION}")
-    system("cp -R #{PROJ_FILES.join(' ')} build/#{PROJ_NAME}-#{CURRENT_VERSION}")
+    safe_system("cp -R #{PROJ_FILES.join(' ')} build/#{PROJ_NAME}-#{CURRENT_VERSION}")
 
     announce "Setting MCollective.version to #{CURRENT_VERSION}"
-    system("cd build/#{PROJ_NAME}-#{CURRENT_VERSION}/lib && sed --in-place -e s/@DEVELOPMENT_VERSION@/#{CURRENT_VERSION}/ mcollective.rb")
+    safe_system("cd build/#{PROJ_NAME}-#{CURRENT_VERSION}/lib && sed --in-place -e s/@DEVELOPMENT_VERSION@/#{CURRENT_VERSION}/ mcollective.rb")
 
-    system("cd build && tar --exclude .svn -cvzf #{PROJ_NAME}-#{CURRENT_VERSION}.tgz #{PROJ_NAME}-#{CURRENT_VERSION}")
+    safe_system("cd build && tar --exclude .svn -cvzf #{PROJ_NAME}-#{CURRENT_VERSION}.tgz #{PROJ_NAME}-#{CURRENT_VERSION}")
 end
 
 desc "Creates the website as a tarball"
@@ -59,7 +63,7 @@ task :website => [:clean] do
     FileUtils.mkdir_p("build/marionette-collective.org/html")
 
     Dir.chdir("website") do
-        system("jekyll ../build/marionette-collective.org/html")
+        safe_system("jekyll ../build/marionette-collective.org/html")
     end
 
     unless File.exist?("build/marionette-collective.org/html/index.html")
@@ -67,7 +71,7 @@ task :website => [:clean] do
     end
 
     Dir.chdir("build") do
-        system("tar -cvzf marionette-collective-org-#{Time.now.to_i}.tgz marionette-collective.org")
+        safe_system("tar -cvzf marionette-collective-org-#{Time.now.to_i}.tgz marionette-collective.org")
     end
 end
 
@@ -89,17 +93,18 @@ task :rpm => [:clean, :doc, :package] do
             rpmdist = ""
     end
 
-    system %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}.tgz #{sourcedir}}
-    system %{cat #{PROJ_NAME}.spec|sed -e s/%{rpm_release}/#{CURRENT_RELEASE}/g | sed -e s/%{version}/#{CURRENT_VERSION}/g > #{specsdir}/#{PROJ_NAME}.spec}
-    system %{cd #{specsdir}}
-    if ENV['SIGNED'] == '1'
-      system %{rpmbuild --sign -D 'version #{CURRENT_VERSION}' -D 'rpm_release #{CURRENT_RELEASE}' -D 'dist #{rpmdist}' -ba #{PROJ_NAME}.spec}
-    else
-      system %{rpmbuild -D 'version #{CURRENT_VERSION}' -D 'rpm_release #{CURRENT_RELEASE}' -D 'dist #{rpmdist}' -ba #{PROJ_NAME}.spec}
-    end
-    system %{cp #{srpmsdir}/#{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}#{rpmdist}.src.rpm build/}
+    safe_system %{cp build/#{PROJ_NAME}-#{CURRENT_VERSION}.tgz #{sourcedir}}
+    safe_system %{cat #{PROJ_NAME}.spec|sed -e s/%{rpm_release}/#{CURRENT_RELEASE}/g | sed -e s/%{version}/#{CURRENT_VERSION}/g > #{specsdir}/#{PROJ_NAME}.spec}
 
-    system %{cp #{rpmdir}/*/#{PROJ_NAME}*-#{CURRENT_VERSION}-#{CURRENT_RELEASE}#{rpmdist}.*.rpm build/}
+    if ENV['SIGNED'] == '1'
+        safe_system %{rpmbuild --sign -D 'version #{CURRENT_VERSION}' -D 'rpm_release #{CURRENT_RELEASE}' -D 'dist #{rpmdist}' -ba #{PROJ_NAME}.spec}
+    else
+        safe_system %{rpmbuild -D 'version #{CURRENT_VERSION}' -D 'rpm_release #{CURRENT_RELEASE}' -D 'dist #{rpmdist}' -ba #{PROJ_NAME}.spec}
+    end
+
+    safe_system %{cp #{srpmsdir}/#{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}#{rpmdist}.src.rpm build/}
+
+    safe_system %{cp #{rpmdir}/*/#{PROJ_NAME}*-#{CURRENT_VERSION}-#{CURRENT_RELEASE}#{rpmdist}.*.rpm build/}
 end
 
 desc "Create the .debs"
@@ -108,12 +113,12 @@ task :deb => [:clean, :doc, :package] do
 
     FileUtils.mkdir_p("build/deb")
     Dir.chdir("build/deb") do
-        system %{tar -xzf ../#{PROJ_NAME}-#{CURRENT_VERSION}.tgz}
-        system %{cp ../#{PROJ_NAME}-#{CURRENT_VERSION}.tgz #{PROJ_NAME}_#{CURRENT_VERSION}.orig.tar.gz}
+        safe_system %{tar -xzf ../#{PROJ_NAME}-#{CURRENT_VERSION}.tgz}
+        safe_system %{cp ../#{PROJ_NAME}-#{CURRENT_VERSION}.tgz #{PROJ_NAME}_#{CURRENT_VERSION}.orig.tar.gz}
 
         Dir.chdir("#{PROJ_NAME}-#{CURRENT_VERSION}") do
-            system %{cp -R ext/debian .}
-            system %{cp -R ext/Makefile .}
+            safe_system %{cp -R ext/debian .}
+            safe_system %{cp -R ext/Makefile .}
 
             File.open("debian/changelog", "w") do |f|
                 f.puts("mcollective (#{CURRENT_VERSION}-#{CURRENT_RELEASE}) unstable; urgency=low")
@@ -126,13 +131,13 @@ task :deb => [:clean, :doc, :package] do
             end
 
             if ENV['SIGNED'] == '1'
-                system %{debuild -i -b}
+                safe_system %{debuild -i -b}
             else
-                system %{debuild -i -us -uc -b} 
+                safe_system %{debuild -i -us -uc -b}
             end
         end
 
-        system %{cp *.deb ..}
+        safe_system %{cp *.deb ..}
     end
 
 end
