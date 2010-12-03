@@ -12,7 +12,6 @@ Source0: %{name}-%{version}.tgz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Requires: ruby
 Requires: rubygems
-Requires: redhat-lsb
 Requires: rubygem-stomp
 Requires: mcollective-common = %{version}-%{release}
 Packager: R.I.Pienaar <rip@devco.net>
@@ -43,7 +42,7 @@ The Marionette Collective:
 
 Client tools for the mcollective Application Server
 
-%description 
+%description
 The Marionette Collective:
 
 Server for the mcollective Application Server
@@ -67,7 +66,8 @@ rm -rf %{buildroot}
 %{__install} -m0644 etc/client.cfg.dist %{buildroot}/etc/mcollective/client.cfg
 %{__install} -m0444 etc/facts.yaml.dist %{buildroot}/etc/mcollective/facts.yaml
 %{__install} -m0444 etc/rpc-help.erb %{buildroot}/etc/mcollective/rpc-help.erb
-%{__install} -m0755 mcollective.init %{buildroot}/etc/init.d/mcollective
+%{__install} -m0755 mcollective.init-rh %{buildroot}/etc/init.d/mcollective
+
 
 cp -R lib/* %{buildroot}/%{ruby_sitelib}/
 cp -R plugins/* %{buildroot}/usr/libexec/mcollective/
@@ -80,12 +80,12 @@ rm -rf %{buildroot}
 %post
 /sbin/chkconfig --add mcollective || :
 
-%postun 
+%postun
 if [ "$1" -ge 1 ]; then
 	/sbin/service mcollective condrestart &>/dev/null || :
 fi
 
-%preun 
+%preun
 if [ "$1" = 0 ] ; then
   /sbin/service mcollective stop > /dev/null 2>&1
   /sbin/chkconfig --del mcollective || :
@@ -114,5 +114,5 @@ fi
 %dir /etc/mcollective/ssl/clients
 
 %changelog
-* Tue Nov 03 2009 R.I.Pienaar <rip@devco.net> 
+* Tue Nov 03 2009 R.I.Pienaar <rip@devco.net>
 - First release
