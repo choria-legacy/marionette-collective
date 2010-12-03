@@ -1,0 +1,125 @@
+#!/bin/sh
+#
+# mcollective	Application Server for STOMP based agents
+#
+# chkconfig: 345 24 76
+#
+# description: mcollective lets you build powerful Stomp compatible middleware clients in ruby without having to worry too
+#              much about all the setup and management of a Stomp connection, it also provides stats, logging and so forth
+#              as a bonus.
+#
+### BEGIN INIT INFO
+# Provides:          scriptname
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start daemon at boot time
+# Description:       Enable service provided by daemon.
+### END INIT INFO
+
+RUBYLIB=/usr/local/lib/site_ruby/1.8:$RUBYLIB
+export RUBYLIB
+
+mcollectived="/usr/sbin/mcollectived"
+
+# Lockfile
+if [ -d /var/lock/subsys ]; then
+  # RedHat/CentOS/etc who use subsys
+  lock="/var/lock/subsys/mcollective"
+else
+  # The rest of them
+  lock="/var/lock/mcollective"
+fi
+
+
+# PID directory
+pidfile="/var/run/mcollectived.pid"
+
+# Source function library.
+. /etc/init.d/functions
+
+# Check that binary exists
+if ! [ -f  $mcollectived ] 
+then
+  echo "mcollectived binary not found"
+  exit 0
+fi
+
+# See how we were called.
+case "$1" in
+  start)
+	echo -n "Starting mcollective: "
+
+	if [ -f ${lock} ]; then
+	    # we were not shut down correctly
+	    if [ -s ${pidfile} ]; then
+		kill `cat ${pidfile}` >/dev/null 2>&1
+	    fi
+	    rm -f ${pidfile}
+
+	    rm -f ${lock}
+	    sleep 2
+	fi
+
+	rm -f ${pidfile}
+
+	${mcollectived} --pid=${pidfile} --config="/etc/mcollective/server.cfg"
+	if [ $? = 0 ]; then
+	    success $"mcollectived"
+	    touch $lock
+	    exit 0
+	else
+	    failure
+            exit 1
+	fi
+	;;
+  stop)
+	echo -n "Shutting down mcollective: "
+
+	if [ -s ${pidfile} ]; then
+	  kill `cat ${pidfile}` >/dev/null 2>&1
+	fi
+	rm -f ${pidfile}
+
+	success $"mcollectived"
+	rm -f $lock
+	;;
+  restart)
+	$0 stop
+	sleep 2
+	$0 start
+	;;
+  condrestart)
+	if [ -f $lock ]; then
+	    $0 stop
+	    # avoid race
+	    sleep 2
+	    $0 start
+	fi
+	;;
+  status)
+	if [ -f ${lock} ]; then
+	    if [ -s ${pidfile} ]; then
+	       if [ -e /proc/`cat ${pidfile}` ]; then
+                  echo "mcollectived (`cat ${pidfile}`) is running"
+                  exit 0
+               else
+                  echo "mcollectived (`cat ${pidfile}`) is NOT running"
+                  exit 1
+               fi
+	    fi
+	else
+	    echo "mcollectived: service not started"
+	    exit 1
+	fi
+  ;;
+	force-reload)
+		echo "not implemented"
+	;;
+  *)
+	echo "Usage: mcollectived {start|stop|restart|condrestart|status}"
+	exit 1
+	;;
+esac
+exit 0

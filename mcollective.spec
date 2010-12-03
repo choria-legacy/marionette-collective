@@ -1,5 +1,7 @@
 %define ruby_sitelib %(ruby -rrbconfig -e "puts Config::CONFIG['sitelibdir']")
 %define release %{rpm_release}%{?dist}
+# set to 0 to use RH-specific initscripts, eliminating lsb dependency
+%define use_lsb 1
 
 Summary: Application Server for hosting Ruby code on any capable middleware
 Name: mcollective
@@ -12,7 +14,9 @@ Source0: %{name}-%{version}.tgz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Requires: ruby
 Requires: rubygems
+%if %use_lsb
 Requires: redhat-lsb
+%endif
 Requires: rubygem-stomp
 Requires: mcollective-common = %{version}-%{release}
 Packager: R.I.Pienaar <rip@devco.net>
@@ -67,7 +71,12 @@ rm -rf %{buildroot}
 %{__install} -m0644 etc/client.cfg.dist %{buildroot}/etc/mcollective/client.cfg
 %{__install} -m0444 etc/facts.yaml.dist %{buildroot}/etc/mcollective/facts.yaml
 %{__install} -m0444 etc/rpc-help.erb %{buildroot}/etc/mcollective/rpc-help.erb
+%if %use_lsb
 %{__install} -m0755 mcollective.init %{buildroot}/etc/init.d/mcollective
+%else
+%{__install} -m0755 mcollective.init-rh %{buildroot}/etc/init.d/mcollective
+%endif
+
 
 cp -R lib/* %{buildroot}/%{ruby_sitelib}/
 cp -R plugins/* %{buildroot}/usr/libexec/mcollective/
