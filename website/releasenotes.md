@@ -9,6 +9,64 @@ This is a list of release notes for various releases, you should review these be
  * TOC Placeholder
   {:toc}
 
+## 1.0.0 - 2010/12/13
+
+### Release Focus and Notes
+
+This is a bug fix and minor improvement release.
+
+We will maintain the 1.0.x branch as a stable supported branch.  The features
+currently in the branch will be frozen and we'll only do bug fixes.
+
+A new 1.1.x series of releases will be done where we will introduce new features.
+Once the 1.1.x code base reaches a mature point it will become the new stable
+release and so forth.
+
+### Bug Fixes
+
+ * Settings like retry times were ignored in the Stomp connector
+ * The default init script had incorrect LSB comments
+ * The rpcutil DDL has better validation and will now match all facts
+
+### New Features and Enhancements
+
+ * You can now send RPC requests to a subset of discovered nodes
+ * SimpleRPC custom_request can now be used to create fire and forget requests
+ * Clients can now cleanly disconnect from the middleware.  Bundled clients have been
+   updated.  This should cause fewer exceptions in ActiveMQ logs
+ * Rather than big exceptions many clients will now log errors only
+ * mc-facts has been reworked to be a SimpleRPC client, this speeds it up significantly
+ * Add get_config_item to rpcutil to retrieve a running config value from a server
+ * YAML facts are now forced to be all strings and is thread safe
+ * On RedHat based systems the requirement for the LSB packages has been removed
+
+The first feature is a major new feature in SimpleRPC.  If you expose a service redundantly
+on your network using MCollective you wouldn't always want to send requests to all the
+nodes providing the service.  You can now limit the requests to an arbitrary amount
+using the new --limit-nodes option which will also take a percentage.  A shortcut -1 has
+been added that is the equivelant to --limit-nodes 1
+
+### Backwards Compatibility
+
+This release will be backward compatible with older releases.
+
+### Changes
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2010/12/04|Remove the LSB requirements for RedHat systems|5451|
+|2010/11/23|Make the YAML fact source thread safe and force all facts to strings|5377|
+|2010/11/23|Add get_config_item to rpcutil to retrieve a running config value from a server|5376|
+|2010/11/20|Convert mc-facts into a SimpleRPC client|5371|
+|2010/11/18|Added GPG signing to Rake packaging tasks (SIGNED=1)|5355|
+|2010/11/17|Improve error messages from clients in the case of failure|5329|
+|2010/11/17|Add helpers to disconnect from the middleware and update all bundled clients|5328|
+|2010/11/16|Correct LSB provides and requires in default init script|5222|
+|2010/11/16|Input validation on rpcutil has been improved to match all valid facts|5320|
+|2010/11/16|Add the ability to limit the results to a subset of hosts|5306|
+|2010/11/15|Add fire and forget mode to SimpleRPC custom_request|5305|
+|2010/11/09|General connection settings to the Stomp connector was ignored|5245|
+
 ## 0.4.10 - 2010/10/18
 
 ### Release Focus and Notes
