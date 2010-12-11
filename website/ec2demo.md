@@ -9,7 +9,6 @@ disqus: true
 [NRPE]: http://code.google.com/p/mcollective-plugins/wiki/AgentNRPE
 [Meta Registration]: http://code.google.com/p/mcollective-plugins/wiki/RegistrationMetaData
 [URL Tester]: http://code.google.com/p/mcollective-plugins/wiki/AgentUrltest
-[Discovery Aware SSH]: http://code.google.com/p/mcollective-plugins/wiki/UtilitiesSSH
 [Registration]: /mcollective/reference/plugins/registration.html
 [Registration Monitor]: http://code.google.com/p/mcollective-plugins/wiki/AgentRegistrationMonitor
 
@@ -24,11 +23,11 @@ height="385" allowscriptaccess="always" allowfullscreen="true"></embed>
 
 ## AMIs
 The AMI is based in the *EU West* availability zone, we currently have just the one
-AMI id that is running mcollective 0.4.2.
+AMI id that is running mcollective 1.0.0.
 
 | AMI ID | Description |
 | ------ | ----------- |
-| ami-21c8e355 | Server and Node for MCollective 0.4.2|
+| ami-73cffa07 | Server and Node for MCollective 1.0.0|
 
 The video shows you the basic steps to get it going using the [Amazon Console][].
 
@@ -58,10 +57,7 @@ The images all have the basic agents going as well as some community ones:
  * [NRPE][]
  * [Meta Registration][]
  * [URL Tester][]
- * [Discovery Aware SSH][]
 
 ## Registration
 The main node will have [Registration] setup and the community [Registration Monitor] agent,
 look in */var/tmp/mcollective* for meta data from all your nodes.
-
-The current AMI has 1 x left over file there from when I was building the AMI.
