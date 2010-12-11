@@ -27,7 +27,7 @@ AMI id that is running mcollective 1.0.0.
 
 | AMI ID | Description |
 | ------ | ----------- |
-| ami-73cffa07 | Server and Node for MCollective 1.0.0|
+| ami-23cffa57 | Server and Node for MCollective 1.0.0|
 
 The video shows you the basic steps to get it going using the [Amazon Console][].
 
