@@ -1,10 +1,10 @@
 ---
-layout: mcollective
+layout: default
 title: ActiveMQ TLS
 disqus: true
 ---
 [Security]: http://activemq.apache.org/security.html
-[Registration]: /reference/plugins/registration.html
+[Registration]: /mcollective/reference/plugins/registration.html
 [Wildcard]: http://activemq.apache.org/wildcards.html
 
 # {{page.title}}

@@ -1,5 +1,5 @@
 ---
-layout: mcollective
+layout: default
 title: The rpcutil Agent
 disqus: true
 ---
@@ -77,3 +77,13 @@ Returns a list of all agents with their meta data like version, author, license 
 	   ]
 }
 {% endhighlight %}
+
+## _get`_`config`_`item Action
+
+Retrieves the active value for any configuration item on a server
+
+{% highlight ruby %}
+{:item   => "loglevel",
+ :value  => "debug"}
+{% endhighlight %}
+

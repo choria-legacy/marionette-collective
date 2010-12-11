@@ -1,0 +1,6 @@
+#! /bin/bash
+
+PKG_INSTALL_ROOT=${PKG_INSTALL_ROOT:-/}
+
+/usr/bin/test -d $PKG_INSTALL_ROOT/etc/mcollective || /usr/sbin/chroot $PKG_INSTALL_ROOT /usr/bin/ln -s /etc/opt/csw/mcollective /etc/mcollective
+/usr/sbin/chroot $PKG_INSTALL_ROOT /usr/sbin/svccfg import /var/opt/csw/svc/manifest/network/cswmcollectived.xml || /bin/true

@@ -1,25 +1,25 @@
 ---
-layout: mcollective
+layout: default
 title: Getting Started
 disqus: true
 ---
-[Screencasts]: /introduction/screencasts.html
+[Screencasts]: /mcollective/screencasts.html
 [ActiveMQ]: http://activemq.apache.org/
-[EC2Demo]: /introduction/ec2demo.html
+[EC2Demo]: /mcollective/ec2demo.html
 [Stomp]: http://stomp.codehaus.org/Ruby+Client
 [DepRPMs]: http://www.marionette-collective.org/activemq/
-[Gentoo]: /reference/os/gentoo.html
+[Gentoo]: /mcollective/reference/os/gentoo.html
 [DebianBug]: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=562954
-[SecurityWithActiveMQ]: /reference/integration/activemq_security.html
+[SecurityWithActiveMQ]: /mcollective/reference/integration/activemq_security.html
 [ActiveMQClustering]: http://www.devco.net/archives/2009/11/10/activemq_clustering.php
 [ActiveMQSamples]: http://github.com/mcollective/marionette-collective/tree/master/ext/activemq/examples/
-[ConfigurationReference]: /reference/basic/configuration.html
-[Terminology]: /introduction/terminology.html
-[SimpleRPCIntroduction]: /simplerpc/
-[ControllingTheDaemon]: /reference/basic/daemon.html
-[SSLSecurityPlugin]: /reference/plugins/security_ssl.html
-[ConnectorStomp]: /reference/plugins/connector_stomp.html
-[MessageFlowCast]: /introduction/screencasts.html#message_flow
+[ConfigurationReference]: /mcollective/reference/basic/configuration.html
+[Terminology]: /mcollective/terminology.html
+[SimpleRPCIntroduction]: /mcollective/simplerpc/
+[ControllingTheDaemon]: /mcollective/reference/basic/daemon.html
+[SSLSecurityPlugin]: /mcollective/reference/plugins/security_ssl.html
+[ConnectorStomp]: /mcollective/reference/plugins/connector_stomp.html
+[MessageFlowCast]: /mcollective/screencasts.html#message_flow
 [Plugins]: http://code.google.com/p/mcollective-plugins/
 
 # {{page.title}}

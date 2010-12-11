@@ -2,7 +2,7 @@ module MCollective
     module Agent
         class Rpcutil<RPC::Agent
             metadata    :name        => "Utilities and Helpers for SimpleRPC Agents",
-                        :description => "General helpful actions that expose stats and internals to SimpleRPC clients", 
+                        :description => "General helpful actions that expose stats and internals to SimpleRPC clients",
                         :author      => "R.I.Pienaar <rip@devco.net>",
                         :license     => "Apache License, Version 2.0",
                         :version     => "1.0",
@@ -58,6 +58,16 @@ module MCollective
 
                     reply[:agents] << agent_data
                 end
+            end
+
+            # Retrieves a single config property that is in effect
+            action "get_config_item" do
+                validate :item, String
+
+                reply.fail! "Unknown config property #{request[:item]}" unless config.respond_to?(request[:item])
+
+                reply[:item] = request[:item]
+                reply[:value] = config.send(request[:item])
             end
         end
     end

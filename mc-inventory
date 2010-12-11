@@ -26,7 +26,7 @@ unless script || node
 end
 
 # Monkey patching array with a in_groups_of method
-# that walks an array in groups, pass a block to 
+# that walks an array in groups, pass a block to
 # call the block on each sub array
 class Array
     def in_groups_of(chunk_size, padded_with=nil)
@@ -102,6 +102,8 @@ def node_inventory(node, options)
 
             break
         end
+
+        util.disconnect
     rescue Exception => e
         puts "Could not show inventory for node #{node}: #{e}"
     end
@@ -144,7 +146,7 @@ def page_body(fmt)
     @page_body = fmt
 end
 
-# Expects a simple printf style format and apply it to 
+# Expects a simple printf style format and apply it to
 # each node:
 #
 #    inventory do
@@ -171,6 +173,8 @@ def inventory(&blk)
 
         puts @fmt % @flds.call
     end
+
+    util.disconnect
 end
 
 # Use the ruby formatr gem to build reports using Perls formats
@@ -182,18 +186,18 @@ end
 #
 #    formatted_inventory do
 #        page_length 20
-#    
+#
 #        page_heading <<TOP
-#    
+#
 #                Node Report @<<<<<<<<<<<<<<<<<<<<<<<<<
 #                            time
-#    
+#
 #    Hostname:         Customer:     Distribution:
 #    -------------------------------------------------------------------------
 #    TOP
-#    
+#
 #        page_body <<BODY
-#    
+#
 #    @<<<<<<<<<<<<<<<< @<<<<<<<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 #    identity,    facts["customer"], facts["lsbdistdescription"]
 #                                    @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -226,8 +230,11 @@ def formatted_inventory(&blk)
 
         body_fmt.printFormat(binding)
     end
+
+    util.disconnect
 rescue Exception => e
-    puts "Could not create report: #{e.class}: #{e}"
+    STDERR.puts "Could not create report: #{e.class}: #{e}"
+    exit 1
 end
 
 @fmt = nil

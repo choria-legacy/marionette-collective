@@ -211,6 +211,14 @@ module MCollective
                 parser.on('--np', '--no-progress', 'Do not show the progress bar') do |v|
                     options[:progress_bar] = false
                 end
+
+                parser.on('--one', '-1', 'Send request to only one discovered nodes') do |v|
+                    options[:mcollective_limit_targets] = "1"
+                end
+
+                parser.on('--limit-nodes [COUNT]', '--ln [COUNT]', 'Send request to only a subset of nodes, can be a percentage') do |v|
+                    options[:mcollective_limit_targets] = v
+                end
             end
         end
     end

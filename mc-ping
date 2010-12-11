@@ -24,8 +24,11 @@ begin
             printf(".")
         end
     end
+
+    client.disconnect
 rescue Exception => e
-    raise e
+    STDERR.puts "Could not call remote agent: #{e}"
+    exit 1
 end
 
 puts("\n\n---- ping statistics ----")

@@ -37,7 +37,7 @@ fi
 pidfile="/var/run/mcollectived.pid"
 
 # Source function library.
-. /lib/lsb/init-functions
+. /etc/init.d/functions
 
 # Check that binary exists
 if ! [ -f  $mcollectived ]
@@ -66,11 +66,13 @@ case "$1" in
 
 	${mcollectived} --pid=${pidfile} --config="/etc/mcollective/server.cfg"
 	if [ $? = 0 ]; then
-	    log_success_msg
+	    success $"mcollectived"
 	    touch $lock
+	    echo
 	    exit 0
 	else
-	    log_failure_msg
+	    failure
+            echo
             exit 1
 	fi
 	;;
@@ -82,8 +84,9 @@ case "$1" in
 	fi
 	rm -f ${pidfile}
 
-	log_success_msg
+	success $"mcollectived"
 	rm -f $lock
+	echo
 	;;
   restart)
 	$0 stop

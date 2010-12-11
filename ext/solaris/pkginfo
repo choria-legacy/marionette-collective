@@ -1,0 +1,6 @@
+NAME=mcollective- build server orchestration or parallel job execution systems
+CATEGORY=network
+DESC=The Marionette Collective aka. mcollective is a framework to build server orchestration or parallel job execution systems.
+ARCH=all
+EMAIL=rudy.gevaert@ugent.be
+VENDOR=Puppetlabs

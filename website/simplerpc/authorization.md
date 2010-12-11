@@ -1,11 +1,11 @@
 ---
-layout: mcollective
+layout: default
 title: SimpleRPC Authorization
 disqus: true
 ---
 [SimpleRPCIntroduction]: index.html
-[SecurityWithActiveMQ]: /reference/integration/activemq_security.html
-[SimpleRPCAuditing]: /simplerpc/auditing.html
+[SecurityWithActiveMQ]: /mcollective/reference/integration/activemq_security.html
+[SimpleRPCAuditing]: /mcollective/simplerpc/auditing.html
 [ActionPolicy]: http://code.google.com/p/mcollective-plugins/wiki/ActionPolicy
 
 # {{page.title}}

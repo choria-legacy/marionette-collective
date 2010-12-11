@@ -1,20 +1,42 @@
 ---
-layout: mcollective
+layout: default
 title: Changelog
 ---
-h2. Changelog
+# {{page.title}}
 
-h3. Version 0.4.x
+ * TOC Placeholder
+  {:toc}
 
-|_. Date|_. Description|_. Ticket|
-|*2010/10/18*|*Release version 0.4.10*||
+## Version 1.0.x
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|*2010/12/13*|*Release 1.0.0*|5453|
+
+## Version 0.4.x
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2010/12/04|Remove the LSB requirements for RedHat systems|5451|
+|2010/11/23|Make the YAML fact source thread safe and force all facts to strings|5377|
+|2010/11/23|Add get_config_item to rpcutil to retrieve a running config value from a server|5376|
+|2010/11/20|Convert mc-facts into a SimpleRPC client|5371|
+|2010/11/18|Added GPG signing to Rake packaging tasks (SIGNED=1)|5355|
+|2010/11/17|Improve error messages from clients in the case of failure|5329|
+|2010/11/17|Add helpers to disconnect from the middleware and update all bundled clients|5328|
+|2010/11/16|Correct LSB provides and requires in default init script|5222|
+|2010/11/16|Input validation on rpcutil has been improved to match all valid facts|5320|
+|2010/11/16|Add the ability to limit the results to a subset of hosts|5306|
+|2010/11/15|Add fire and forget mode to SimpleRPC custom_request|5305|
+|2010/11/09|General connection settings to the Stomp connector was ignored|5245|
+|*2010/10/18*|*Release version 0.4.10*| |
 |2010/10/18|Document exit command to mc-controller|152|
 |2010/10/13|Log messages that don't pass the filters at debug level|149|
 |2010/10/03|Preserve options in cases where RPC::Client instances exist in the same program|148|
 |2010/09/30|Add the ability to set different types of callerid in the PSK plugin|145|
 |2010/09/30|Improve Ruby 1.9.x compatibility|142|
 |2010/09/29|Improve error handling in registration to avoid high CPU usage loops|143|
-|*2010/09/21*|*Release version 0.4.9*||
+|*2010/09/21*|*Release version 0.4.9*| |
 |2010/09/20|Improve Debian packaging task|140|
 |2010/09/20|Add :boolean type support to the DDL|138|
 |2010/09/19|Refactor MCollective::RPC to add less unneeded stuff to Object|137|
@@ -31,7 +53,7 @@ h3. Version 0.4.x
 |2010/08/23|Fix indention/block error in M:R:Stats|124|
 |2010/08/23|Fix permissions in the RPM for files in /etc|123|
 |2010/08/23|Fix language in two error messages|122|
-|*2010/08/20*|*Release version 0.4.8*||
+|*2010/08/20*|*Release version 0.4.8*| |
 |2010/08/19|Fix missing help template in debian packages|90|
 |2010/08/18|Clean up some hardlink warnings in the Rakefile|117|
 |2010/08/18|Include the website in the main repo and add a simple Rake task|118|
@@ -43,7 +65,7 @@ h3. Version 0.4.x
 |2010/07/31|Add basic report scripting support to mc-inventory|111|
 |2010/07/06|Removed 'rpm' from the default rake task|109|
 |2010/07/06|Add redhat-lsb to the server RPM dependencies|108|
-|*2010/06/29*|*Release version 0.4.7*||
+|*2010/06/29*|*Release version 0.4.7*| |
 |2010/06/27|Change default factsource to Yaml|106|
 |2010/06/27|Added VIM snippets to create DDLs and Agents|102|
 |2010/06/26|DDL based help now works better with Symbols in in/output|105|
@@ -55,7 +77,7 @@ h3. Version 0.4.x
 |2010/06/15|Avoid duplicate topic subscribes in complex clients|95|
 |2010/06/15|Catch some unhandled exceptions in RPC Agents|96|
 |2010/06/15|Fix missing help template file from RPM|90|
-|*2010/06/14*|*Release version 0.4.6* ||
+|*2010/06/14*|*Release version 0.4.6* | |
 |2010/06/12|Qualify the Process class to avoid clashes in the discovery agent|88|
 |2010/06/12|Add mc-inventory which shows agents, classes and facts for a node|87|
 |2010/06/11|mc-facts now supports standard filters|86|
@@ -64,7 +86,7 @@ h3. Version 0.4.x
 |2010/06/10|Tighten up handling of filters to avoid nil's getting into them|83|
 |2010/06/09|Sort the mc-facts output to be more readable|82|
 |2010/06/08|Fix deprecation warnings in newer Stomp gems|81|
-|*2010/06/03*|*Release version 0.4.5* ||
+|*2010/06/03*|*Release version 0.4.5* | |
 |2010/06/01|Improve the main discovery agent by adding facts and classes to its inventory action|79|
 |2010/05/30|Add various helpers to get reports as text instead of printing them|43|
 |2010/05/30|Add a custom_request method to call SimpleRPC agents with your own discovery|75|
@@ -78,7 +100,7 @@ h3. Version 0.4.x
 |2010/04/26|Add a SimpleRPC Client helper to reset filters|64 |
 |2010/04/26|Listen for signal USR1 and reload all agents from disk|65 |
 |2010/04/12|Add SimpleRPC Authorization support|63|
-|*2010/04/03*|*Release version 0.4.4* ||
+|*2010/04/03*|*Release version 0.4.4* | |
 |2010/03/27|Make it easier to construct SimpleRPC requests to use with the standard client library|60 |
 |2010/03/27|Manipulating the filters via the helper methods will force rediscovery|59 |
 |2010/03/23|Prevent Activesupport when brought in by Facter from breaking our logs|57 |
@@ -90,16 +112,16 @@ h3. Version 0.4.x
 |2010/02/01|Made the discovery agent timeout configurable using plugin.discovery.timeout|48|
 |2010/01/25|mc-controller now correctly loads/reloads agents.|45|
 |2010/01/25|Building packages has been improved to ensure rdocs are always included|44 |
-|*2010/01/24*|*Release version 0.4.3* ||
+|*2010/01/24*|*Release version 0.4.3* | |
 |2010/01/23|Handle ctrl-c during discovery without showing exceptions to users|34 |
 |2010/01/21|Force all facts in the YAML fact source to be strings|41 |
-|2010/01/19|Add auditing to SimpleRPC clients and Agents ||
+|2010/01/19|Add auditing to SimpleRPC clients and Agents | |
 |2010/01/18|The SRPM we provide will now build outside of the Rake environment|40|
 |2010/01/18|Add a _fail!_ method to RPC::Agent|37|
 |2010/01/18|mc-rpc can now be used without supplying arguments|38 |
 |2010/01/18|Don't raise an error if no user/pass is given to the stomp connector, try unauthenticated mode|35|
 |2010/01/17|Improve error message when Regex validation failed on SimpleRPC input|36|
-|*2010/01/13*|*Release version 0.4.2* ||
+|*2010/01/13*|*Release version 0.4.2* | |
 |2010/01/13|New packaging for Debian provided by Riccardo Setti|29|
 |2010/01/07|Improved LSB compliance of the init script - thanks Riccardo Setti|32|
 |2010/01/07|Multiple calls to SimpleRPC client would reset discovered hosts|31|
@@ -107,7 +129,7 @@ h3. Version 0.4.x
 |2010/01/04|Specify class and fact filters easier with the new -W or --with option|27 |
 |2010/01/04|Added COPYING file to RPMs and tarball|28|
 |2010/01/04|Make shorter filter options -C, -I, -A and -F|26|
-|*2010/01/02*|*Release version 0.4.1* ||
+|*2010/01/02*|*Release version 0.4.1* | |
 |2010/01/02|Added hooks to plug into the processing of requests, also enabled setting meta data and timeouts|14|
 |2010/01/02|Created readers for @config and @logger in the SimpleRPC agent|23|
 |2009/12/30|Don't send out any requests if no nodes were discovered|17|
@@ -116,22 +138,23 @@ h3. Version 0.4.x
 |2009/12/30|Fix formatting bug with progress bar|21|
 |2009/12/29|Simplify mc-rpc command line|16|
 |2009/12/29|Fix layout issue when printing hosts that did not respond|15|
-|*2009/12/29*|*Release version 0.4.0* ||
+|*2009/12/29*|*Release version 0.4.0* | |
 |2009/12/28|Add support for other configuration management systems like chef in the --with-class filters|13|
-|2009/12/28|Add a <em>Util.empty_filter?</em> to test for an empty filter||
+|2009/12/28|Add a <em>Util.empty_filter?</em> to test for an empty filter| |
 |2009/12/27|Create a new client framework - SimpleRPC|6|
 |2009/12/27|Add support for multiple filters of the same type|3|
 
-h3. Version 0.3.x
+## Version 0.3.x
 
-|_. Date|_. Description|_. Ticket|
-|*2009/12/17*|*Release version 0.3.0* ||
+|Date|Description|Ticket|
+|----|-----------|------|
+|*2009/12/17*|*Release version 0.3.0* | |
 |2009/12/16|Improvements for newer versions of Ruby where TERM signal was not handled|7|
-|2009/12/07|MCollective::Util is now a module and plugins can drop in util classes in the plugin dir||
+|2009/12/07|MCollective::Util is now a module and plugins can drop in util classes in the plugin dir| |
 |2009/12/07|The Rakefile now works with rake provided on Debian 4 systems|2|
 |2009/12/07|Improvements in the RC script for Debian and older Ubuntu systems|5|
 
-h3. Version 0.2.x
+## Version 0.2.x
 
-|_. Date|_. Description|_. Ticket|
-|2009/12/01|Release version 0.2.0||
+|Date|Description|Ticket|
+|2009/12/01|Release version 0.2.0| |

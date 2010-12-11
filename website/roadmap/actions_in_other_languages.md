@@ -1,5 +1,5 @@
 ---
-layout: mcollective
+layout: default
 title: Actions in other languages
 disqus: true
 ---

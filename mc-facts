@@ -2,12 +2,12 @@
 
 require 'mcollective'
 
-oparser = MCollective::Optionparser.new({}, "filter")
+include MCollective::RPC
 
-options = oparser.parse{|parser, options|
+options = rpcoptions do |parser, options|
     parser.define_head "Report on usage for a specific fact"
     parser.banner = "Usage: mc-facts [options] fact"
-}
+end
 
 if ARGV.length > 0
     fact = ARGV.shift
@@ -16,39 +16,46 @@ else
     exit 1
 end
 
+def show_single_fact_report(fact, facts, verbose=false)
+    puts("Report for fact: #{fact}\n\n")
+
+    facts.keys.sort.each do |k|
+        printf("        %-40sfound %d times\n", k, facts[k].size)
+
+        if verbose
+            puts
+
+            facts[k].sort.each do |f|
+                puts("            #{f}")
+            end
+
+            puts
+        end
+    end
+end
+
 begin
-    client = MCollective::Client.new(options[:config])
-    client.options = options
+    rpcutil = rpcclient("rpcutil", :options => options)
+    rpcutil.progress = false
 
     facts = {}
 
-    stats = client.req("get_fact #{fact}", "discovery") do |resp|
-        next if resp == nil
-    
-        value = resp[:body]
-    
-        facts.include?(value) ? facts[value] << resp[:senderid] : facts[value] = [ resp[:senderid] ]
-    end
-rescue Exception => e
-    raise
-end
-
-puts("\rReport for fact: #{fact}                            \n\n")
-
-facts.keys.sort.each do |k|
-    printf("        %-40sfound %d times\n", k, facts[k].size)
-
-    if options[:verbose]
-        puts
-
-        facts[k].sort.each do |f|
-            puts("            #{f}")
+    rpcutil.get_fact(:fact => fact) do |resp|
+        value = resp[:body][:data][:value]
+        if value
+            facts.include?(value) ? facts[value] << resp[:senderid] : facts[value] = [ resp[:senderid] ]
         end
-
-        puts
     end
+
+    show_single_fact_report(fact, facts, options[:verbose])
+rescue Exception => e
+    STDERR.puts "Could not call remote agent: #{e}"
+    exit 1
 end
 
-client.display_stats(stats, options, "fact call stats")
+
+printrpcstats
+
+rpcutil.disconnect
 
 # vi:tabstop=4:expandtab:ai

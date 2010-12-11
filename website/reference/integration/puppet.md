@@ -1,5 +1,5 @@
 ---
-layout: mcollective
+layout: default
 title: Using with Puppet
 disqus: true
 ---
@@ -17,6 +17,7 @@ disqus: true
 [CloudBootstrap]: http://vuksan.com/blog/2010/07/28/bootstraping-your-cloud-environment-with-puppet-and-mcollective/
 [ServiceAgent]: http://code.google.com/p/mcollective-plugins/wiki/AgentService
 [PackageAgent]: http://code.google.com/p/mcollective-plugins/wiki/AgentPackage
+[Facter2YAML]: http://www.semicomplete.com/blog/geekery/puppet-facts-into-mcollective.html
 
 # {{page.title}}
 
@@ -49,6 +50,8 @@ $ mc-find-hosts --with-fact lsbdistrelease=5.4
 {% endhighlight %}
 
 This includes facts pushed out with [Plugin Sync][PluginSync].
+
+A less resource intensive approach has can be found [here][Facter2YAML], it converts the Puppet scope into a YAML file that the YAML fact source then loads.  This is both less resource intensive and much faster.
 
 ## Class Filters
 Puppet provides a list of classes applied to a node by default in */var/lib/puppet/classes.txt* or */var/lib/puppet/state/classes.txt* (depending on which Puppet version you are using. The latter is true for 0.23.0 onwards) , we'll use this data with *--with-class* filters.

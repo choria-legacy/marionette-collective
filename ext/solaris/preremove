@@ -1,0 +1,2 @@
+/usr/sbin/svcadm disable svc:network/cswmcollectived 2>/dev/null || /bin/true
+/usr/sbin/svccfg delete svc:network/cswmcollectived 2>/dev/null || /bin/true

@@ -1,13 +1,13 @@
 ---
-layout: mcollective
+layout: default
 title: Configuration Guide
 disqus: true
 ---
 
-[SSLSecurity]: /reference/plugins/security_ssl.html
-[Registration]: /reference/plugins/registration.html
-[Auditing]: /simplerpc/auditing.html
-[Authorization]: /simplerpc/authorization.html
+[SSLSecurity]: /mcollective/reference/plugins/security_ssl.html
+[Registration]: /mcollective/reference/plugins/registration.html
+[Auditing]: /mcollective/simplerpc/auditing.html
+[Authorization]: /mcollective/simplerpc/authorization.html
 
 # {{page.title}}
 
@@ -23,13 +23,14 @@ There are 2 configuration files, one for the client and one for the server, thes
 Configuration is a simple *key = val* style configuration file.
 
 ## Common Options
+
 |Key|Sample|Description|
 |---|------|-----------|
 |topicprefix|/topic/mcollective|Prefix that gets used for all messages|
 |topicnamesep|.|The seperator to use between parts of the topic path|
 |logfile|/var/log/mcollective.log|Where to log|
 |loglevel|debug|Can be info, warn, debug, fatal, error|
-|identity|dev1.your.com|Identifier for this node, doesn't need to be unique, defaults to fqdn if unset|
+|identity|dev1.your.com|Identifier for this node, does not need to be unique, defaults to fqdn if unset|
 |keeplogs|5|The amount of logs to keep|
 |max_log_size|2097152|Max size in bytes for log files before rotation happens|
 |libdir|/usr/libexec/mcollective|Where to look for plugins|
@@ -52,6 +53,7 @@ The server configuration file should be root only readable
 |plugin.discovery.timeout|10|Sets the timeout for the discovery agent, useful if facts are very slow|
 |rpcauthorization|1|Enables [SimpleRPC Authorization][Authorization] globally|
 |rpcauthprovider|action_policy|Use the _MCollective::Util::ActionPolicy_ plugin to manage authorization|
+|rpclimitmethod|The method used for --limit-results.  Can be either _first_ or _random_|
 
 ## Client Configuration
 The client configuration file should be readable by everyone, it's not advised to put PSK's or client SSL certs in a world readable file, see below how to do that per user.

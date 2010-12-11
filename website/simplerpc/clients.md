@@ -1,11 +1,11 @@
 ---
-layout: mcollective
+layout: default
 title: Writing SimpleRPC Clients
 disqus: true
 ---
 [SimpleRPCIntroduction]: index.html
 [WritingAgents]: agents.html
-[RPCUtil]: /reference/plugins/rpcutil.html
+[RPCUtil]: /mcollective/reference/plugins/rpcutil.html
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
 [RubyMixin]: http://juixe.com/techknow/index.php/2006/06/15/mixins-in-ruby/
 [OptionParser]: http://github.com/mcollective/marionette-collective/blob/master/lib/mcollective/optionparser.rb
@@ -52,6 +52,8 @@ mc = rpcclient("helloworld")
 printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
 
 printrpcstats
+
+mc.disconnect
 {% endhighlight %}
 
 Save this into _hello.rb_ and run it with _--help_, you should see the standard basic help including filters for discovery.
@@ -89,6 +91,12 @@ printrpcstats
 To call a specific action you simply have to do _mc.echo_ this calls the _echo_ action, we pass a _:msg_ parameter into it with the string we want echo'd back.  The parameters will differ from action to action.  It returns a simple array of the results that you can print any way you want, we'll show that later.
 
 _printrpc_ and _printrpcstats_ are functions used to print the results and stats respectively.
+
+{% highlight ruby %}
+mc.disconnect
+{% endhighlight %}
+
+This cleanly disconnects the client from the middleware, some middleware tools like ActiveMQ will log confusing exceptions if you do not do this.  It's good form to always disconnect but isn't strictly required.
 
 ## Adjusting the output
 
@@ -193,6 +201,22 @@ printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
 {% endhighlight %}
 
 Here we make one _echo_ call - which would do a discovery - we then reset the client, adjust filters and call it again.  The 2nd call would do a new discovery and have new client lists etc.
+
+## Only sending requests to a subset of discovered nodes
+By default all nodes that get discovered will get the request.  This isn't always desirable maybe you want to deploy only to a random subset of hosts or maybe you have a service exposed over MCollective that you want to treat as a HA service and so only speak with one host that provides the functionality.
+
+You can limit the hosts to talk to either using a number or a percentage, the code below shows both:
+
+{%highlight ruby %}
+mc = rpcclient("helloworld")
+
+mc.limit_targets = "10%"
+printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
+{% endhighlight %}
+
+This will pick 10% of the discovered hosts - or 1 if 10% is less than 1 - and only target those nodes with your request.  You can also set it to an integer.
+
+This functionality is only available from version _1.0.0_ and newer.
 
 ## Gaining access to the full MCollective::Client
 If you wanted to work with the Client directly as in [WritingAgents] after perhaps setting up some queries or gathering data first you can gain access to the client, you might also need access to the options array that was parsed out from the command line and any subsequent filters that you added.

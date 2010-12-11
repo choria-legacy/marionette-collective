@@ -7,7 +7,7 @@ module MCollective
                     :keeplogs, :max_log_size, :loglevel, :identity, :daemonize, :connector,
                     :securityprovider, :factsource, :registration, :registerinterval, :topicsep,
                     :classesfile, :rpcauditprovider, :rpcaudit, :configdir, :rpcauthprovider,
-                    :rpcauthorization, :color, :configfile, :rpchelptemplate
+                    :rpcauthorization, :color, :configfile, :rpchelptemplate, :rpclimitmethod
 
         def initialize
             @configured = false
@@ -35,6 +35,7 @@ module MCollective
             @rpchelptemplate = "/etc/mcollective/rpc-help.erb"
             @keeplogs = 5
             @max_log_size = 2097152
+            @rpclimitmethod = :first
 
             if File.exists?(configfile)
                 File.open(configfile, "r").each do |line|
@@ -95,6 +96,8 @@ module MCollective
                                     @rpcauthprovider = val.capitalize
                                 when "rpchelptemplate"
                                     @rpchelptemplate = val
+                                when "rpclimitmethod"
+                                    @rpclimitmethod = val.to_sym
 
                                 else
                                     raise("Unknown config parameter #{key}")

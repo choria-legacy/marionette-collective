@@ -56,27 +56,30 @@ begin
 
     command += " #{options[:argument]}" if options[:argument]
     stats = client.discovered_req(command, "mcollective") do |resp|
-            next if resp == nil
+        next if resp == nil
 
-            case command
-                when "stats"
-                    printstats(resp[:senderid], resp[:body][:stats])
+        case command
+            when "stats"
+                printstats(resp[:senderid], resp[:body][:stats])
 
-                when /reload_agent/
-                    printf("%30s> %s\n", resp[:senderid], resp[:body])
+            when /reload_agent/
+                printf("%30s> %s\n", resp[:senderid], resp[:body])
 
+            else
+                if options[:verbose]
+                    puts("#{resp[:senderid]}>")
+                    pp resp[:body]
                 else
-                    if options[:verbose]
-                        puts("#{resp[:senderid]}>")
-                        pp resp[:body]
-                    else
-                        puts if c % 4 == 1
-                        print("#{resp[:senderid]} ")
-                    end
-            end
+                    puts if c % 4 == 1
+                    print("#{resp[:senderid]} ")
+                end
+        end
     end
+
+    client.disconnect
 rescue Exception => e
-    raise
+    STDERR.puts "Could not call remote agent: #{e}"
+    exit 1
 end
 
 client.display_stats(stats, false, "mcollectived controller summary")

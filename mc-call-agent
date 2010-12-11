@@ -19,7 +19,7 @@ options = oparser.parse{|parser, options|
 }
 
 if options[:agent] == nil || options[:argument] == nil
-    puts("Please use either --agent or --argument") 
+    puts("Please use either --agent or --argument")
     exit 1
 end
 
@@ -44,8 +44,11 @@ begin
             printf("%-30s", resp[:senderid])
         end
     end
+
+    client.disconnect
 rescue Exception => e
-    raise
+    STDERR.puts "Could not call remote agent: #{e}"
+    exit 1
 end
 
 client.display_stats(stats)
