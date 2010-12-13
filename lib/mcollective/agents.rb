@@ -30,7 +30,7 @@ module MCollective
 
                 Dir.new(agentdir).grep(/\.rb$/).each do |agent|
                     agentname = File.basename(agent, ".rb")
-                    loadagent(agentname)
+                    loadagent(agentname) unless PluginManager.include?("#{agentname}_agent")
                 end
             end
         end
@@ -61,7 +61,10 @@ module MCollective
         def findagentfile(agentname)
             @config.libdir.each do |libdir|
                 agentfile = "#{libdir}/mcollective/agent/#{agentname}.rb"
-                return agentfile if File.exist?(agentfile)
+                if File.exist?(agentfile)
+                    @log.debug("Found #{agentname} at #{agentfile}")
+                    return agentfile
+                end
             end
             return false
         end

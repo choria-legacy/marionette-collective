@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2010/12/13|Allow libdir to be an array of directories for agents and ddl files|5253|
 |2010/12/13|The progress bar will now intelligently figure out the terminal dimentions|5524|
 
 ## Version 1.0.x
