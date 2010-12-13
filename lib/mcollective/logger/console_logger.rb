@@ -20,7 +20,7 @@ module MCollective
             end
 
             def log(level, from, msg)
-                if @known_levels.index(level) <= @known_levels.index(@active_level)
+                if @known_levels.index(level) >= @known_levels.index(@active_level)
                     time = Time.new.strftime("%Y/%m/%d %H:%M:%S")
                     lvltxt = colorize(level, level)
                     STDERR.puts("#{lvltxt} #{time}: #{from} #{msg}")

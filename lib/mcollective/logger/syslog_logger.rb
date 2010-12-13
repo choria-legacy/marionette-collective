@@ -28,7 +28,7 @@ module MCollective
             end
 
             def log(level, from, msg)
-                if @known_levels.index(level) <= @known_levels.index(@active_level)
+                if @known_levels.index(level) >= @known_levels.index(@active_level)
                     Syslog.send(map_level(level), "#{from} #{msg}")
                 end
             rescue
