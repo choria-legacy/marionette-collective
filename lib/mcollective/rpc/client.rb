@@ -421,7 +421,7 @@ module MCollective
 
                 req = new_request(action.to_s, args)
 
-                twirl = Progress.new(60)
+                twirl = Progress.new
 
                 result = []
                 respcount = 0

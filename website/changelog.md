@@ -7,6 +7,12 @@ title: Changelog
  * TOC Placeholder
   {:toc}
 
+## Version 1.1.x
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2010/12/13|The progress bar will now intelligently figure out the terminal dimentions|5524|
+
 ## Version 1.0.x
 
 |Date|Description|Ticket|
