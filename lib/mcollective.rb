@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'stomp'
-require 'logger'
 require 'timeout'
 require 'digest/md5'
 require 'optparse'
@@ -31,6 +30,7 @@ module MCollective
 
     autoload :Config, "mcollective/config"
     autoload :Log, "mcollective/log"
+    autoload :Logger, "mcollective/logger"
     autoload :Runner, "mcollective/runner"
     autoload :RunnerStats, "mcollective/runnerstats"
     autoload :Agents, "mcollective/agents"

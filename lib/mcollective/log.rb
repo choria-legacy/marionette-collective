@@ -9,91 +9,46 @@ module MCollective
             config = Config.instance
             raise ("Configuration has not been loaded, can't start logger") unless config.configured
 
-            @logger = Logger.new(config.logfile, config.keeplogs, config.max_log_size)
-            @logger.formatter = Logger::Formatter.new
+            require "mcollective/logger/#{config.logger_type.downcase}_logger"
+            @logger = eval("MCollective::Logger::#{config.logger_type.capitalize}_logger.new")
 
-            case config.loglevel
-                when "info"
-                    @logger.level = Logger::INFO
-                when "warn"
-                    @logger.level = Logger::WARN
-                when "debug"
-                    @logger.level = Logger::DEBUG
-                when "fatal"
-                    @logger.level = Logger::FATAL
-                when "error"
-                    @logger.level = Logger::ERROR
-                else
-                    @logger.level = Logger::INFO
-                    log(Logger::ERROR, "Invalid log level #{config.loglevel}, defaulting to info")
-            end
+            @logger.start
+        rescue Exception => e
+            STDERR.puts "Could not start logger: #{e.class} #{e}"
         end
 
-        # cycles the log level increasing it till it gets to the highest
-        # then down to the lowest again
         def cycle_level
-            config = Config.instance
-
-            case @logger.level
-                when Logger::FATAL
-                    @logger.level = Logger::ERROR
-                    error("Logging level is now ERROR configured level is #{config.loglevel}")
-
-                when Logger::ERROR
-                    @logger.level = Logger::WARN
-                    warn("Logging level is now WARN configured level is #{config.loglevel}")
-
-                when Logger::WARN
-                    @logger.level = Logger::INFO
-                    info("Logging level is now INFO configured level is #{config.loglevel}")
-
-                when Logger::INFO
-                    @logger.level = Logger::DEBUG
-                    info("Logging level is now DEBUG configured level is #{config.loglevel}")
-
-                when Logger::DEBUG
-                    @logger.level = Logger::FATAL
-                    fatal("Logging level is now FATAL configured level is #{config.loglevel}")
-
-                else
-                    @logger.level = Logger::DEBUG
-                    info("Logging level now DEBUG configured level is #{config.loglevel}")
-            end
+            @logger.cycle_level
         end
 
-        # logs at level INFO
+        # Logs at info level
         def info(msg)
-            log(Logger::INFO, msg)
+            @logger.log(:info, from, msg)
         end
 
-        # logs at level WARN
+        # Logs at warn level
         def warn(msg)
-            log(Logger::WARN, msg)
+            @logger.log(:warn, from, msg)
         end
 
-        # logs at level DEBUG
+        # Logs at debug level
         def debug(msg)
-            log(Logger::DEBUG, msg)
+            @logger.log(:debug, from, msg)
         end
 
-        # logs at level FATAL
+        # Logs at fatal level
         def fatal(msg)
-            log(Logger::FATAL, msg)
+            @logger.log(:fatal, from, msg)
         end
 
-        # logs at level ERROR
+        # Logs at error level
         def error(msg)
-            log(Logger::ERROR, msg)
+            @logger.log(:error, from, msg)
         end
 
         private
-        # do some fancy logging with caller information etc
-        def log(severity, msg)
-            begin
-                from = File.basename(caller[1])
-                @logger.add(severity) { "#{$$} #{from}: #{msg}" }
-            rescue Exception => e
-            end
+        def from
+            from = File.basename(caller[1])
         end
     end
 end

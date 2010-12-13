@@ -37,6 +37,7 @@ Configuration is a simple *key = val* style configuration file.
 |connector|Stomp|Which _connector_ plugin to use for communication|
 |securityprovider|Psk|Which security model to use, see [SSL Security Plugin][SSLSecurity] for details on configuring SSL|
 |rpchelptemplate|/etc/mcollective/rpc-help.erb|The path to the erb template used for generating help|
+|loggertype|file|Valid logger types, currently file or syslog|
 
 ## Server Configuration
 The server configuration file should be root only readable
