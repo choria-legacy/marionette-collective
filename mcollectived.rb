@@ -16,7 +16,7 @@ opts.each do |opt, arg|
     case opt
         when '--help'
             puts "Usage: mcollectived.rb [--config /path/to/config] [--pidfile /path/to/pid]"
-            exit 
+            exit
         when '--config'
             configfile = arg
         when '--pidfile'
@@ -29,6 +29,8 @@ config = MCollective::Config.instance
 config.loadconfig(configfile) unless config.configured
 
 log = MCollective::Log.instance
+
+log.info("The Marionette Collective #{MCollective::VERSION} started logging at #{config.loglevel} level")
 
 Signal.trap("TERM") do
     log.info("Received TERM signal, terminating")
