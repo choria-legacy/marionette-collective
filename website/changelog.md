@@ -12,6 +12,7 @@ title: Changelog
 |Date|Description|Ticket|
 |----|-----------|------|
 |2010/12/13|Log a startup message showing version and log level|5538|
+|2010/12/13|Add a console logger|5537|
 |2010/12/13|Logging is now plugable and a syslog plugin was provided|5082|
 |2010/12/13|Allow libdir to be an array of directories for agents and ddl files|5253|
 |2010/12/13|The progress bar will now intelligently figure out the terminal dimentions|5524|

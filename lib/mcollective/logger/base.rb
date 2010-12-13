@@ -23,7 +23,7 @@ module MCollective
                 lvl = get_next_level
                 set_level(lvl)
 
-                log(lvl, "Logging level is now #{lvl.to_s.upcase}")
+                log(lvl, "", "Logging level is now #{lvl.to_s.upcase}")
             end
 
             # Sets a new level and record it in @active_level
@@ -59,7 +59,7 @@ module MCollective
                 raise "The logging class did not supply a valid_levels method"
             end
 
-            def log(level, msg)
+            def log(level, from, msg)
                 raise "The logging class did not supply a log method"
             end
 
