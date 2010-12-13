@@ -36,6 +36,7 @@ module MCollective
             @keeplogs = 5
             @max_log_size = 2097152
             @rpclimitmethod = :first
+            @libdir = Array.new
 
             if File.exists?(configfile)
                 File.open(configfile, "r").each do |line|
@@ -66,9 +67,12 @@ module MCollective
                                 when "loglevel"
                                      @loglevel = val
                                 when "libdir"
-                                    @libdir = val
-                                    unless $LOAD_PATH.include?(val)
-                                        $LOAD_PATH << val
+                                    paths = val.split(/:/)
+                                    paths.each do |path|
+                                        @libdir << path
+                                        unless $LOAD_PATH.include?(path)
+                                            $LOAD_PATH << path
+                                        end
                                     end
                                 when "identity"
                                     @identity = val

@@ -24,21 +24,22 @@ module MCollective
 
             @@agents = {}
 
-            agentdir = "#{@config.libdir}/mcollective/agent"
-            raise("Cannot find agents directory") unless File.directory?(agentdir)
+            @config.libdir.each do |libdir|
+                agentdir = "#{libdir}/mcollective/agent"
+                raise("Cannot find agents directory: '#{agentdir}'") unless File.directory?(agentdir)
 
-            Dir.new(agentdir).grep(/\.rb$/).each do |agent|
-                agentname = File.basename(agent, ".rb")
-                loadagent(agentname)
+                Dir.new(agentdir).grep(/\.rb$/).each do |agent|
+                    agentname = File.basename(agent, ".rb")
+                    loadagent(agentname)
+                end
             end
         end
 
         # Loads a specified agent from disk if available
         def loadagent(agentname)
-            agentfile = "#{@config.libdir}/mcollective/agent/#{agentname}.rb"
+            agentfile = findagentfile(agentname)
+            return false unless agentfile
             classname = "MCollective::Agent::#{agentname.capitalize}"
-
-            return false unless File.exist?(agentfile)
 
             PluginManager.delete("#{agentname}_agent")
 
@@ -54,6 +55,15 @@ module MCollective
                 @log.error("Loading agent #{agentname} failed: #{e}")
                 PluginManager.delete("#{agentname}_agent")
             end
+        end
+
+        # searches the libdirs for agents
+        def findagentfile(agentname)
+            @config.libdir.each do |libdir|
+                agentfile = "#{libdir}/mcollective/agent/#{agentname}.rb"
+                return agentfile if File.exist?(agentfile)
+            end
+            return false
         end
 
         # Determines if we have an agent with a certain name

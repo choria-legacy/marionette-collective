@@ -42,13 +42,19 @@ module MCollective
                 @config = MCollective::Config.instance
                 @agent = agent
 
-                agentdir = "#{@config.libdir}/mcollective/agent"
-
-                if File.exist?("#{agentdir}/#{agent}.ddl")
-                    instance_eval(File.read("#{agentdir}/#{agent}.ddl"))
+                if ddlfile = findddlfile(agent)
+                    instance_eval(File.read(ddlfile))
                 else
-                    raise("Can't find DDL for agent '#{agent}' in #{agentdir}/#{agent}.ddl")
+                    raise("Can't find DDL for agent '#{agent}'")
                 end
+            end
+
+            def findddlfile(agent)
+                @config.libdir.each do |libdir|
+                    ddlfile = "#{libdir}/mcollective/agent/#{agent}.ddl"
+                    return ddlfile if File.exist?(ddlfile)
+                end
+                return false
             end
 
             # Registers meta data for the introspection hash
