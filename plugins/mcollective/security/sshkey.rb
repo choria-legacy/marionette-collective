@@ -9,9 +9,9 @@ module MCollective
     module Security
         # A security plugin for MCollective that uses ssh keys for message
         # signing and verification
-        # 
+        #
         # For clients (things initiating RPC calls):
-        # * Message signing will use your ssh-agent. 
+        # * Message signing will use your ssh-agent.
         # * Message verification is done using the public key of the host that
         #   sent the message. This means you have to have the public key known
         #   before you can verify a message. Generally, this is your
@@ -28,7 +28,7 @@ module MCollective
         #   /etc/ssh/ssh_host_rsa_key
         # * Message verification uses your user's authorized_keys file. The 'user'
         #   comes from the RPC 'callerid' field. This user must exist on your
-        #   node host 
+        #   node host
         #
         # In cases of configurable paths, like the location of your authorized_keys
         # file, the 'sshkeyauth' library will try to parse it from the
@@ -38,8 +38,20 @@ module MCollective
         # ssh's "try each key until one is accepted" method. Instead, we will
         # sign each method with *all* keys in your agent and the receiver will
         # try to verify against any of them.
-        # 
+        #
         # Serialization uses Marshal.
+        #
+        # NOTE: This plugin should be considered experimental at this point as it has
+        #       a few gotchas and drawbacks.
+        #
+        #       * Nodes cannot easily send messages now, this means registration is
+        #         not supported
+        #       * Automated systems that wish to manage a collective with this plugin
+        #         will somehow need access to ssh agents, this can insecure and
+        #         problematic in general.
+        #
+        # We're including this plugin as an early preview of what is being worked on
+        # in order to solicit feedback.
         #
         # Configuration:
         #
@@ -54,7 +66,7 @@ module MCollective
             # TODO(sissel): refactor this into Base?
             def decodemsg(msg)
                 body = Marshal.load(msg.payload)
-    
+
                 if validrequest?(body)
                     body[:body] = Marshal.load(body[:body])
                     return body
@@ -62,14 +74,14 @@ module MCollective
                     nil
                 end
             end
-            
+
             # Encodes a reply
             def encodereply(sender, target, msg, requestid, filter={})
                 serialized  = Marshal.dump(msg)
                 digest = makehash(serialized)
-    
+
                 @log.debug("Encoded a message with hash #{digest} for request #{requestid}")
-    
+
                 Marshal.dump({:senderid => @config.identity,
                               :requestid => requestid,
                               :senderagent => sender,
@@ -78,12 +90,12 @@ module MCollective
                               :hash => digest,
                               :body => serialized})
             end
-    
+
             # Encodes a request msg
             def encoderequest(sender, target, msg, requestid, filter={})
                 serialized = Marshal.dump(msg)
                 digest = makehash(serialized)
-    
+
                 @log.debug("Encoding a request for '#{target}' with request id #{requestid}")
                 request = {:body => serialized,
                            :hash => digest,
@@ -102,9 +114,9 @@ module MCollective
             def callerid
                 return Etc.getlogin
             end
-    
+
             # Checks the md5 hash in the request body against our psk, the
-            # request sent for validation 
+            # request sent for validation
             # should not have been deserialized already
             def validrequest?(req)
                 @log.info "Caller id: #{req[:callerid]}"
@@ -126,7 +138,7 @@ module MCollective
                   verifier.use_agent = false
                   verifier.use_authorized_keys = false
                 end
-    
+
                 signatures = Marshal.load(req[:hash])
                 if verifier.verify?(signatures, req[:body])
                     @stats.validated
@@ -136,7 +148,7 @@ module MCollective
                     raise("Received an invalid signature in message")
                 end
             end
-    
+
             private
             # Signs a message. If 'public.sshkey' is set, then we will sign
             # with only that key. Otherwise, we will sign with your ssh-agente.
