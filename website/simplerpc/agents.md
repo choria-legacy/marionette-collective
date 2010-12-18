@@ -83,7 +83,7 @@ module MCollective
                      :author      => "R.I.Pienaar",
                      :license     => "GPLv2",
                      :version     => "1.1",
-                     :url         => "http://mcollective-plugins.googlecode.com/",
+                     :url         => "http://projects.puppetlabs.com/projects/mcollective-plugins/wiki",
                      :timeout     => 60
 
             # Basic echo server
@@ -135,7 +135,7 @@ metadata :name        => "SimpleRPC Sample Agent",
          :author      => "R.I.Pienaar",
          :license     => "GPLv2",
          :version     => "1.1",
-         :url         => "http://mcollective-plugins.googlecode.com/",
+         :url         => "http://projects.puppetlabs.com/projects/mcollective-plugins/wiki",
          :timeout     => 60
 
 action "echo", description "Echos back any message it receives" do

@@ -50,7 +50,7 @@ metadata :name        => "SimpleRPC Service Agent",
          :author      => "R.I.Pienaar",
          :license     => "GPLv2",
          :version     => "1.1",
-         :url         => "http://mcollective-plugins.googlecode.com/",
+         :url         => "http://projects.puppetlabs.com/projects/mcollective-plugins/wiki",
          :timeout     => 60
 {% endhighlight %}
 
@@ -118,7 +118,7 @@ Agent to manage services using the Puppet service provider
      Version: 1.1
      License: GPLv2
      Timeout: 60
-   Home Page: http://mcollective-plugins.googlecode.com/
+   Home Page: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki
 
 
 
@@ -210,7 +210,7 @@ Meta Data:
  :name=>"SimpleRPC Service Agent",
  :timeout=>60,
  :version=>"1.1",
- :url=>"http://mcollective-plugins.googlecode.com/",
+ :url=>"http://projects.puppetlabs.com/projects/mcollective-plugins/wiki",
  :description=>"Agent to manage services using the Puppet service provider"}
 
 Status Action:
