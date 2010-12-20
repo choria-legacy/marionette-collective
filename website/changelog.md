@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2010/12/20|Add parameters <=, >=, <, >, !=, == and =~ to fact selection|5084|
 |2010/12/14|Add experimental sshkey security plugin|5085|
 |2010/12/13|Log a startup message showing version and log level|5538|
 |2010/12/13|Add a console logger|5537|

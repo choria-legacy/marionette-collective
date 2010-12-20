@@ -59,22 +59,25 @@ module MCollective
             Log.instance.debug("Comparing #{fact} #{operator} #{value}")
             Log.instance.debug("where :fact = '#{fact}', :operator = '#{operator}', :value = '#{value}'")
 
-            # Yuk - need to type cast, but to_i and to_f are overzealous
-            if value =~ /^[0-9]+$/
-                value = Integer(value)
-            elsif value =~ /^[0-9]+.[0-9]+$/
-                value = Float(value)
-            end
+            fact = Facts.get_fact(fact).clone
 
             if operator == '=~'
-                return true if Facts.get_fact(fact).match(Regexp.new(value))
-            elsif operator == '<=' or
-                  operator == '>=' or
-                  operator == '<'  or
-                  operator == '>'  or
-                  operator == '!=' or
-                  operator == '=='
-                return true if eval("Facts.get_fact(fact) #{operator} value")
+                return true if fact.match(Regexp.new(value))
+
+            elsif operator == "=="
+                return true if fact == value
+
+            elsif ['<=', '>=', '<', '>', '!='].include?(operator)
+                # Yuk - need to type cast, but to_i and to_f are overzealous
+                if value =~ /^[0-9]+$/ && fact =~ /^[0-9]+$/
+                    fact = Integer(fact)
+                    value = Integer(value)
+                elsif value =~ /^[0-9]+.[0-9]+$/ && fact =~ /^[0-9]+.[0-9]+$/
+                    fact = Float(fact)
+                    value = Float(value)
+                end
+
+                return true if eval("fact #{operator} value")
             end
 
             false

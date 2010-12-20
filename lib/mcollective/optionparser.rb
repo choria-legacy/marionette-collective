@@ -77,10 +77,9 @@ module MCollective
 
             @parser.on('-W', '--with FILTER', 'Combined classes and facts filter') do |f|
                 f.split(" ").each do |filter|
-                    if filter =~ /^(.+?)=\/(.+)\/$/
-                        @options[:filter]["fact"] << {:fact => $1, :value => $2, :operator => '=~'}
-                    elsif filter =~ /^(.+?[^=])=([^=].+)/
-                        @options[:filter]["fact"] << {:fact => $1, :value => $2, :operator => '==' }
+                    fact_parsed = parse_fact(filter)
+                    if fact_parsed
+                        @options[:filter]["fact"] << fact_parsed
                     else
                         @options[:filter]["cf_class"] << filter
                     end
@@ -88,15 +87,9 @@ module MCollective
             end
 
             @parser.on('-F', '--wf', '--with-fact fact=val', 'Match hosts with a certain fact') do |f|
-                if f =~ /^(.+?)=\/(.+)\/$/
-                    @options[:filter]["fact"] << {:fact => $1, :value => $2, :operator => '=~' }
-                elsif f =~ /^(.+?)[ ]*(=~)[ ]*\/(.+)\//
-                    @options[:filter]["fact"] << {:fact => $1, :value => $2, :operator => '=~' }
-                elsif f =~ /^([^ ]+?)[ ]*(<=|>=|<|>|!=|==)[ ]*(.+)/
-                    @options[:filter]["fact"] << {:fact => $1, :value => $3, :operator => $2 }
-                elsif f =~ /^(.+?[^=])=([^=].+)/
-                    @options[:filter]["fact"] << {:fact => $1, :value => $2, :operator => '==' }
-                end
+                fact_parsed = parse_fact(f)
+
+                @options[:filter]["fact"] << fact_parsed if fact_parsed
             end
 
             @parser.on('-C', '--wc', '--with-class CLASS', 'Match hosts with a certain config management class') do |f|
@@ -142,6 +135,26 @@ module MCollective
                 exit! 1
             end
         end
+
+        private
+        def parse_fact(fact)
+            if fact =~ /^(.+?)=\/(.+)\/$/
+                return {:fact => $1, :value => $2, :operator => '=~' }
+            elsif fact =~ /^(.+?)[ ]*(=~)[ ]*\/(.+)\//
+                return {:fact => $1, :value => $2, :operator => '=~' }
+            elsif fact =~ /^([^ ]+?)[ ]*=>[ ]*(.+)/
+                return {:fact => $1, :value => $2, :operator => '>=' }
+            elsif fact =~ /^([^ ]+?)[ ]*=<[ ]*(.+)/
+                return {:fact => $1, :value => $2, :operator => '<=' }
+            elsif fact =~ /^([^ ]+?)[ ]*(<=|>=|<|>|!=|==|=>|=<)[ ]*(.+)/
+                return {:fact => $1, :value => $3, :operator => $2 }
+            elsif fact =~ /^(.+?[^=]*)=([^=]*.+)/
+                return {:fact => $1, :value => $2, :operator => '==' }
+            end
+
+            return false
+        end
+
     end
 end
 
