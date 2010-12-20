@@ -1,9 +1,9 @@
 module MCollective
     module Security
         # This is a base class the other security modules should inherit from
-        # it handles statistics and validation of messages that should in most 
+        # it handles statistics and validation of messages that should in most
         # cases apply to all security models.
-        # 
+        #
         # To create your own security plugin you should provide a plugin that inherits
         # from this and provides the following methods:
         #
@@ -11,9 +11,9 @@ module MCollective
         # encodereply    - Encodes a reply message to a previous request message
         # encoderequest  - Encodes a new request message
         # validrequest?  - Validates a request received from the middleware
-        # 
+        #
         # Optionally if you are identifying users by some other means like certificate name
-        # you can provide your own callerid method that can provide the rest of the system 
+        # you can provide your own callerid method that can provide the rest of the system
         # with an id, and you would see this id being usable in SimpleRPC authorization methods
         #
         # The @initiated_by variable will be set to either :client or :node depending on
@@ -27,7 +27,7 @@ module MCollective
         class Base
             attr_reader :stats
             attr_accessor :initiated_by
-    
+
             # Register plugins that inherits base
             def self.inherited(klass)
                 PluginManager << {:type => "security_plugin", :class => klass.to_s}
@@ -41,7 +41,7 @@ module MCollective
 
                 @stats = PluginManager["global_stats"]
             end
-    
+
             # Takes a Hash with a filter in it and validates it against host information.
             #
             # At present this supports filter matches against the following criteria:
@@ -56,9 +56,9 @@ module MCollective
             def validate_filter?(filter)
                 failed = 0
                 passed = 0
-    
+
                 passed = 1 if Util.empty_filter?(filter)
-    
+
                 filter.keys.each do |key|
                     case key
                         when /puppet_class|cf_class/
@@ -72,7 +72,7 @@ module MCollective
                                     failed += 1
                                 end
                             end
-            
+
                         when "agent"
                             filter[key].each do |f|
                                 if Util.has_agent?(f) || f == "mcollective"
@@ -83,18 +83,18 @@ module MCollective
                                     failed += 1
                                 end
                             end
-            
+
                         when "fact"
                             filter[key].each do |f|
-                                if Util.has_fact?(f[:fact], f[:value]) 
-                                    @log.debug("Passing based on fact #{f[:fact]} = #{f[:value]}")
+                                if Util.has_fact?(f[:fact], f[:value], f[:operator])
+                                    @log.debug("Passing based on fact #{f[:fact]} #{f[:operator]} #{f[:value]}")
                                     passed += 1
                                 else
-                                    @log.debug("Failing based on fact #{f[:fact]} = #{f[:value]}")
+                                    @log.debug("Failing based on fact #{f[:fact]} #{f[:operator]} #{f[:value]}")
                                     failed += 1
                                 end
                             end
-    
+
                         when "identity"
                             filter[key].each do |f|
                                 if Util.has_identity?(f)
@@ -107,43 +107,43 @@ module MCollective
                             end
                     end
                 end
-            
+
                 if failed == 0 && passed > 0
                     @log.debug("Message passed the filter checks")
-    
+
                     @stats.passed
 
                     return true
                 else
                     @log.debug("Message failed the filter checks")
-    
+
                     @stats.filtered
 
                     return false
                 end
             end
 
-            # Returns a unique id for the caller, by default we just use the unix 
+            # Returns a unique id for the caller, by default we just use the unix
             # user id, security plugins can provide their own means of doing ids.
             def callerid
                 "uid=#{Process.uid}"
             end
-    
+
             # Security providers should provide this, see MCollective::Security::Psk
             def validrequest?(req)
                 @log.error("validrequest? is not implimented in #{this.class}")
             end
-    
+
             # Security providers should provide this, see MCollective::Security::Psk
             def encoderequest(sender, target, msg, filter={})
                 @log.error("encoderequest is not implimented in #{this.class}")
             end
-    
+
             # Security providers should provide this, see MCollective::Security::Psk
             def encodereply(sender, target, msg, filter={})
                 @log.error("encodereply is not implimented in #{this.class}")
             end
-    
+
             # Security providers should provide this, see MCollective::Security::Psk
             def decodemsg(msg)
                 @log.error("decodemsg is not implimented in #{this.class}")

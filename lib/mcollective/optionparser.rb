@@ -1,15 +1,15 @@
 module MCollective
-    # A simple helper to build cli tools that supports a uniform command line 
-    # layout.  
+    # A simple helper to build cli tools that supports a uniform command line
+    # layout.
     class Optionparser
         # Creates a new instance of the parser, you can supply defaults and include named groups of options.
         #
         # Starts a parser that defaults to verbose and that includs the filter options:
         #
-        #  oparser = MCollective::Optionparser.new({:verbose => true}, "filter") 
+        #  oparser = MCollective::Optionparser.new({:verbose => true}, "filter")
         #
         # Stats a parser in non verbose mode that does support discovery
-        #  oparser = MCollective::Optionparser.new() 
+        #  oparser = MCollective::Optionparser.new()
         #
         def initialize(defaults = {}, include = nil)
             @parser = OptionParser.new
@@ -43,7 +43,7 @@ module MCollective
         # Parse the options returning the options, you can pass a block that adds additional options
         # to the Optionparser.
         #
-        # The sample below starts a parser that also prompts for --arguments in addition to the defaults. 
+        # The sample below starts a parser that also prompts for --arguments in addition to the defaults.
         # It also sets the description and shows a usage message specific to this app.
         #
         #  options = oparser.parse{|parser, options|
@@ -69,7 +69,7 @@ module MCollective
             @options
         end
 
-        # These options will be added if you pass 'filter' into the include list of the 
+        # These options will be added if you pass 'filter' into the include list of the
         # constructor.
         def add_filter_options
             @parser.separator ""
@@ -77,8 +77,10 @@ module MCollective
 
             @parser.on('-W', '--with FILTER', 'Combined classes and facts filter') do |f|
                 f.split(" ").each do |filter|
-                    if filter =~ /^(.+?)=(.+)/
-                        @options[:filter]["fact"] << {:fact => $1, :value => $2}
+                    if filter =~ /^(.+?)=\/(.+)\/$/
+                        @options[:filter]["fact"] << {:fact => $1, :value => $2, :operator => '=~'}
+                    elsif filter =~ /^(.+?[^=])=([^=].+)/
+                        @options[:filter]["fact"] << {:fact => $1, :value => $2, :operator => '==' }
                     else
                         @options[:filter]["cf_class"] << filter
                     end
@@ -86,7 +88,15 @@ module MCollective
             end
 
             @parser.on('-F', '--wf', '--with-fact fact=val', 'Match hosts with a certain fact') do |f|
-                @options[:filter]["fact"] << {:fact => $1, :value => $2} if f =~ /^(.+?)=(.+)/
+                if f =~ /^(.+?)=\/(.+)\/$/
+                    @options[:filter]["fact"] << {:fact => $1, :value => $2, :operator => '=~' }
+                elsif f =~ /^(.+?)[ ]*(=~)[ ]*\/(.+)\//
+                    @options[:filter]["fact"] << {:fact => $1, :value => $2, :operator => '=~' }
+                elsif f =~ /^([^ ]+?)[ ]*(<=|>=|<|>|!=|==)[ ]*(.+)/
+                    @options[:filter]["fact"] << {:fact => $1, :value => $3, :operator => $2 }
+                elsif f =~ /^(.+?[^=])=([^=].+)/
+                    @options[:filter]["fact"] << {:fact => $1, :value => $2, :operator => '==' }
+                end
             end
 
             @parser.on('-C', '--wc', '--with-class CLASS', 'Match hosts with a certain config management class') do |f|

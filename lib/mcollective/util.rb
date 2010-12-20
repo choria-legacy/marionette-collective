@@ -21,7 +21,7 @@ module MCollective
             false
         end
 
-        # Checks if this node has a configuration management class by parsing the 
+        # Checks if this node has a configuration management class by parsing the
         # a text file with just a list of classes, recipes, roles etc.  This is
         # ala the classes.txt from puppet.
         #
@@ -54,13 +54,27 @@ module MCollective
         #
         # If the passed value starts with a / it's assumed to be regex
         # and will use regex to match
-        def self.has_fact?(fact, value)
-            value = Regexp.new(value.gsub("\/", "")) if value.match("^/")
+        def self.has_fact?(fact, value, operator)
 
-            if value.is_a?(Regexp)
-                return true if Facts.get_fact(fact).match(value)
-            else
-                return true if Facts.get_fact(fact) == value
+            Log.instance.debug("Comparing #{fact} #{operator} #{value}")
+            Log.instance.debug("where :fact = '#{fact}', :operator = '#{operator}', :value = '#{value}'")
+
+            # Yuk - need to type cast, but to_i and to_f are overzealous
+            if value =~ /^[0-9]+$/
+                value = Integer(value)
+            elsif value =~ /^[0-9]+.[0-9]+$/
+                value = Float(value)
+            end
+
+            if operator == '=~'
+                return true if Facts.get_fact(fact).match(Regexp.new(value))
+            elsif operator == '<=' or
+                  operator == '>=' or
+                  operator == '<'  or
+                  operator == '>'  or
+                  operator == '!=' or
+                  operator == '=='
+                return true if eval("Facts.get_fact(fact) #{operator} value")
             end
 
             false
@@ -78,7 +92,7 @@ module MCollective
             else
                 return true if Config.instance.identity == identity
             end
-            
+
             false
         end
 
@@ -87,7 +101,7 @@ module MCollective
             filter == empty_filter || filter == {}
         end
 
-        # Creates an empty filter 
+        # Creates an empty filter
         def self.empty_filter
             {"fact" => [],
              "cf_class" => [],
