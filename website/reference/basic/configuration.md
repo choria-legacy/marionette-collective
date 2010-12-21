@@ -55,6 +55,7 @@ The server configuration file should be root only readable
 |rpcauthorization|1|Enables [SimpleRPC Authorization][Authorization] globally|
 |rpcauthprovider|action_policy|Use the _MCollective::Util::ActionPolicy_ plugin to manage authorization|
 |rpclimitmethod|The method used for --limit-results.  Can be either _first_ or _random_|
+|fact_cache_time|300|How long to cache fact results for before refreshing from source|
 
 ## Client Configuration
 The client configuration file should be readable by everyone, it's not advised to put PSK's or client SSL certs in a world readable file, see below how to do that per user.

@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2010/12/21|The fact plugin format has been changed and simplified, the base now provides caching and thread safety|5083|
 |2010/12/20|Add parameters <=, >=, <, >, !=, == and =~ to fact selection|5084|
 |2010/12/14|Add experimental sshkey security plugin|5085|
 |2010/12/13|Log a startup message showing version and log level|5538|

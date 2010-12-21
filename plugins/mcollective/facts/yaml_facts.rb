@@ -7,18 +7,8 @@ module MCollective
         # Multiple files can be specified seperated with a : in the
         # config file, they will be merged with later files overriding
         # earlier ones in the list.
-        class Yaml<Base
-            @@facts = {}
-            @@last_good_facts = {}
-
-            def get_facts
-                Thread.exclusive do
-                    reload_facts
-                end
-            end
-
-            private
-            def reload_facts
+        class Yaml_facts<Base
+            def load_facts_from_source
                 config = Config.instance
                 logger = Log.instance
 
@@ -37,17 +27,7 @@ module MCollective
                     end
                 end
 
-                facts.each_pair do |key,value|
-                    @@facts[key.to_s] = value.to_s
-                end
-
-                if @@facts.empty?
-                    logger.error("Got empty facts, resetting to last known good")
-
-                    @@facts = @last_good_facts.clone
-                else
-                    @@last_good_facts = @@facts.clone
-                end
+                facts
             end
         end
     end
