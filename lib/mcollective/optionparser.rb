@@ -138,17 +138,15 @@ module MCollective
 
         private
         def parse_fact(fact)
-            if fact =~ /^(.+?)=\/(.+)\/$/
-                return {:fact => $1, :value => $2, :operator => '=~' }
-            elsif fact =~ /^(.+?)[ ]*(=~)[ ]*\/(.+)\//
-                return {:fact => $1, :value => $2, :operator => '=~' }
-            elsif fact =~ /^([^ ]+?)[ ]*=>[ ]*(.+)/
+            if fact =~ /^([^ ]+?)[ ]*=>[ ]*(.+)/
                 return {:fact => $1, :value => $2, :operator => '>=' }
             elsif fact =~ /^([^ ]+?)[ ]*=<[ ]*(.+)/
                 return {:fact => $1, :value => $2, :operator => '<=' }
-            elsif fact =~ /^([^ ]+?)[ ]*(<=|>=|<|>|!=|==|=>|=<)[ ]*(.+)/
+            elsif fact =~ /^([^ ]+?)[ ]*(<=|>=|<|>|!=|==|=~)[ ]*(.+)/
                 return {:fact => $1, :value => $3, :operator => $2 }
-            elsif fact =~ /^(.+?[^=]*)=([^=]*.+)/
+            elsif fact =~ /^(.+?)[ ]*=[ ]*\/(.+)\/$/
+                return {:fact => $1, :value => $2, :operator => '=~' }
+            elsif fact =~ /^([^= ]+?)[ ]*=[ ]*(.+)/
                 return {:fact => $1, :value => $2, :operator => '==' }
             end
 
