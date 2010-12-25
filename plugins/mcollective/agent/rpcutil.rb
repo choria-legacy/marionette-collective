@@ -7,7 +7,7 @@ module MCollective
                         :license     => "Apache License, Version 2.0",
                         :version     => "1.0",
                         :url         => "http://marionette-collective.org/",
-                        :timeout     => 3
+                        :timeout     => 10
 
             # Basic system inventory, same as the basic discovery agent
             action "inventory" do
