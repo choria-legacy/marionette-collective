@@ -17,9 +17,6 @@ module MCollective
 
             @options = Util.default_options
 
-            @options["timeout"] = ENV["MCOLLECTIVE_TIMEOUT"] || 5
-            @options["disctimeout"] = ENV["MCOLLECTIVE_DTIMEOUT"] || 2
-
             @options.merge!(defaults)
         end
 
@@ -37,6 +34,9 @@ module MCollective
         #           options[:argument] = v
         #       end
         #  }
+        #
+        # Users can set default options that get parsed in using the MCOLLECTIVE_EXTRA_OPTS environemnt
+        # variable
         def parse(&block)
             yield(@parser, @options) if block_given?
 
@@ -46,6 +46,8 @@ module MCollective
                 options_name = "add_#{i}_options"
                 send(options_name)  if respond_to?(options_name)
             end
+
+            @parser.environment("MCOLLECTIVE_EXTRA_OPTS")
 
             @parser.parse!
 

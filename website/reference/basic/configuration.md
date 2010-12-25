@@ -99,13 +99,10 @@ export STOMP_SERVER=stomp.your.com
 export MCOLLECTIVE_PSK=123456789
 {% endhighlight %}
 
-You can also adjust some default behaviors on a per user basis with environment variables:
+You an set options that will always apply using the _MCOLLECTIVE_EXTRA_OPTS_ as below:
 
 {% highlight bash %}
-export MCOLLECTIVE_TIMEOUT=10
-export MCOLLECTIVE_DTIMEOUT=1
+export MCOLLECTIVE_EXTRA_OPTS="--dt 5 --timeout 3 --config /home/you/mcollective.cfg"
 {% endhighlight %}
-
-This sets the overall timeout and discovery timeout respectively.
 
 The client library will use these and so you can give each user who use the admin utilities their own username and rights.
