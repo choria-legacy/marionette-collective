@@ -381,6 +381,33 @@ Host Filters
         --wi, --with-identity IDENT  Match hosts with a certain configured identity
 {% endhighlight %}
 
+## Disabling command line parsing and supplying your options programatically
+
+Sometimes, perhaps when embedding an MCollective client into another tool like Puppet, you do not want MCollective to do any command line parsing as there might be conflicting command line options etc.
+
+This can be achieved by supplying an options hash to the SimpleRPC client:
+
+{% highlight ruby %}
+include MCollective::RPC
+
+options =  MCollective::Util.default_options
+
+client = rpcclient("test", {:options => options})
+{% endhighlight %}
+
+This will create a RPC client for the agent test without any options parsing at all.
+
+To set options like discovery timeout and so forth you will need use either the client utilities or manipulate the hash upfront, the client utility methods is the best.   The code below sets the discovery timeout in a way that does not require you to know any internal structures or the content of the options hash.
+
+{% highlight ruby %}
+options =  MCollective::Util.default_options
+
+client = rpcclient("test", {:options => options})
+client.discovery_timeout = 4
+{% endhighlight %}
+
+Using this method of creating custom options hashes mean we can make internal changes to MCollective without affecting your code in the future.
+
 ## Sending SimpleRPC requests without discovery and blocking
 
 Usually this section will not apply to you.  The client libraries support sending a request without waiting for a reply.  This could be useful if you want to clean yum caches but don't really care if it actually happens everywhere.

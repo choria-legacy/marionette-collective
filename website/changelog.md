@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2010/12/25|Refactor the creation of the options hash so other tools don't need to know the internal formats|5672|
 |2010/12/21|The fact plugin format has been changed and simplified, the base now provides caching and thread safety|5083|
 |2010/12/20|Add parameters <=, >=, <, >, !=, == and =~ to fact selection|5084|
 |2010/12/14|Add experimental sshkey security plugin|5085|

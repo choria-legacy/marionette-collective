@@ -15,27 +15,10 @@ module MCollective
             @parser = OptionParser.new
             @include = include
 
-            timeout = ENV["MCOLLECTIVE_TIMEOUT"] || 5
-            dtimeout = ENV["MCOLLECTIVE_DTIMEOUT"] || 2
+            @options = Util.default_options
 
-            # expand_path is pretty lame, it relies on HOME environment
-            # which isnt't always there so just handling all exceptions
-            # here as cant find reverting to default
-            begin
-                config = File.expand_path("~/.mcollective")
-
-                 unless File.readable?(config) && File.file?(config)
-                    config = "/etc/mcollective/client.cfg"
-                end
-            rescue Exception => e
-                config = "/etc/mcollective/client.cfg"
-            end
-
-            @options = {:disctimeout => dtimeout.to_i,
-                        :timeout     => timeout.to_i,
-                        :verbose     => false,
-                        :filter      => Util.empty_filter,
-                        :config      => config}
+            @options["timeout"] = ENV["MCOLLECTIVE_TIMEOUT"] || 5
+            @options["disctimeout"] = ENV["MCOLLECTIVE_DTIMEOUT"] || 2
 
             @options.merge!(defaults)
         end

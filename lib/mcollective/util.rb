@@ -106,10 +106,37 @@ module MCollective
 
         # Creates an empty filter
         def self.empty_filter
-            {"fact" => [],
+            {"fact"     => [],
              "cf_class" => [],
-             "agent" => [],
+             "agent"    => [],
              "identity" => []}
+        end
+
+        # Picks a config file defaults to ~/.mcollective
+        # else /etc/mcollective/client.cfg
+        def self.config_file_for_user
+            # expand_path is pretty lame, it relies on HOME environment
+            # which isnt't always there so just handling all exceptions
+            # here as cant find reverting to default
+            begin
+                config = File.expand_path("~/.mcollective")
+
+                unless File.readable?(config) && File.file?(config)
+                    config = "/etc/mcollective/client.cfg"
+                end
+            rescue Exception => e
+                config = "/etc/mcollective/client.cfg"
+            end
+
+            return config
+        end
+
+        # Creates a standard options hash
+        def self.default_options
+            {:verbose     => false,
+             :disctimeout => 2,
+             :config      => config_file_for_user,
+             :filter      => empty_filter}
         end
 
         # Constructs the full target name based on topicprefix and topicsep config options
