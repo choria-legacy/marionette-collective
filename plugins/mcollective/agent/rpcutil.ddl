@@ -4,7 +4,7 @@ metadata    :name        => "Utilities and Helpers for SimpleRPC Agents",
             :license     => "Apache License, Version 2.0",
             :version     => "1.0",
             :url         => "http://marionette-collective.org/",
-            :timeout     => 3
+            :timeout     => 10
 
 action "inventory", :description => "System Inventory" do
     display :always

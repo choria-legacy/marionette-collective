@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2010/12/25|Increase the rpcutil timeout to allow for slow facts|5679|
 |2010/12/25|Allow for network and fact source latency when calculating client timeout|5676|
 |2010/12/25|Remove MCOLLECTIVE_TIMEOUT and MCOLLECTIVE_DTIMEOUT environment vars in favour of MCOLLECTIVE_EXTRA_OPTS|5675|
 |2010/12/25|Refactor the creation of the options hash so other tools don't need to know the internal formats|5672|
@@ -27,6 +28,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2010/12/25|Increase the rpcutil timeout to allow for slow facts|5679|
 |*2010/12/13*|*Release 1.0.0*|5453|
 
 ## Version 0.4.x
