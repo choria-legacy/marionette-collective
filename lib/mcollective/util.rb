@@ -135,6 +135,7 @@ module MCollective
         def self.default_options
             {:verbose     => false,
              :disctimeout => 2,
+             :timeout     => 5,
              :config      => config_file_for_user,
              :filter      => empty_filter}
         end
