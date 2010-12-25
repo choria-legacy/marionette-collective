@@ -82,7 +82,7 @@ First you should configure ActiveMQ to listen on the Stomp protocol
 
 And then you should add a user or two, to keep it simple we'll just add one user, the template file will hopefully make it obvious where this goes, it should be in the _broker_ block:
 
-*Note: This config is for ActiveMQ 5.3*
+*Note: This config is for ActiveMQ 5.4*
 
 {% highlight xml %}
 <beans
@@ -93,31 +93,53 @@ And then you should add a user or two, to keep it simple we'll just add one user
   http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd
   http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
 
-   <broker xmlns="http://activemq.apache.org/schema/core" brokerName="localhost" useJmx="true">
-    <plugins>
-      <simpleAuthenticationPlugin>
-        <users>
-          <authenticationUser username="mcollective" password="marionette" groups="systemusers,everyone"/>
-        </users>
-      </simpleAuthenticationPlugin>
+    <broker xmlns="http://activemq.apache.org/schema/core" brokerName="localhost" useJmx="true">
+        <managementContext>
+            <managementContext createConnector="false"/>
+        </managementContext>
 
-      <authorizationPlugin>
-        <map>
-          <authorizationMap>
-            <authorizationEntries>
-              <authorizationEntry topic="mcollective.>" write="systemusers" read="systemusers" admin="systemusers" />
-              <authorizationEntry topic="ActiveMQ.Advisory.>" read="everyone,all" write="everyone,all" admin="everyone,all"/>
-            </authorizationEntries>
-          </authorizationMap>
-        </map>
-      </authorizationPlugin>
-    </plugins>
+        <plugins>
+          <statisticsBrokerPlugin/>
+          <simpleAuthenticationPlugin>
+            <users>
+              <authenticationUser username="mcollective" password="marionette" groups="mcollective,everyone"/>
+              <authenticationUser username="admin" password="secret" groups="mcollective,admin,everyone"/>
+            </users>
+          </simpleAuthenticationPlugin>
+          <authorizationPlugin>
+            <map>
+              <authorizationMap>
+                <authorizationEntries>
+                  <authorizationEntry queue=">" write="admins" read="admins" admin="admins" />
+                  <authorizationEntry topic=">" write="admins" read="admins" admin="admins" />
+                  <authorizationEntry topic="mcollective.>" write="mcollective" read="mcollective" admin="mcollective" />
+                  <authorizationEntry topic="mcollective.>" write="mcollective" read="mcollective" admin="mcollective" />
+                  <authorizationEntry topic="ActiveMQ.Advisory.>" read="everyone" write="everyone" admin="everyone"/>
+                </authorizationEntries>
+              </authorizationMap>
+            </map>
+          </authorizationPlugin>
+        </plugins>
 
-    <transportConnectors>
-       <transportConnector name="openwire" uri="tcp://0.0.0.0:6166"/>
-       <transportConnector name="stomp"   uri="stomp://0.0.0.0:6163"/>
-    </transportConnectors>
-   </broker>
+        <systemUsage>
+            <systemUsage>
+                <memoryUsage>
+                    <memoryUsage limit="20 mb"/>
+                </memoryUsage>
+                <storeUsage>
+                    <storeUsage limit="1 gb" name="foo"/>
+                </storeUsage>
+                <tempUsage>
+                    <tempUsage limit="100 mb"/>
+                </tempUsage>
+            </systemUsage>
+        </systemUsage>
+
+        <transportConnectors>
+            <transportConnector name="openwire" uri="tcp://0.0.0.0:6166"/>
+            <transportConnector name="stomp" uri="stomp://0.0.0.0:6163"/>
+        </transportConnectors>
+    </broker>
 </beans>
 {% endhighlight %}
 
