@@ -153,6 +153,23 @@ module MCollective
         def self.loadclass(klass)
             PluginManager.loadclass(klass)
         end
+
+        # Parse a fact filter string like foo=bar into the tuple hash thats needed
+        def self.parse_fact_string(fact)
+            if fact =~ /^([^ ]+?)[ ]*=>[ ]*(.+)/
+                return {:fact => $1, :value => $2, :operator => '>=' }
+            elsif fact =~ /^([^ ]+?)[ ]*=<[ ]*(.+)/
+                return {:fact => $1, :value => $2, :operator => '<=' }
+            elsif fact =~ /^([^ ]+?)[ ]*(<=|>=|<|>|!=|==|=~)[ ]*(.+)/
+                return {:fact => $1, :value => $3, :operator => $2 }
+            elsif fact =~ /^(.+?)[ ]*=[ ]*\/(.+)\/$/
+                return {:fact => $1, :value => $2, :operator => '=~' }
+            elsif fact =~ /^([^= ]+?)[ ]*=[ ]*(.+)/
+                return {:fact => $1, :value => $2, :operator => '==' }
+            end
+
+            return false
+        end
     end
 end
 

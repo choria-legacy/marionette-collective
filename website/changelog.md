@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2010/12/26|Improve the SimpleRPC fact_filter helper to support new fact operators|5678|
 |2010/12/25|Increase the rpcutil timeout to allow for slow facts|5679|
 |2010/12/25|Allow for network and fact source latency when calculating client timeout|5676|
 |2010/12/25|Remove MCOLLECTIVE_TIMEOUT and MCOLLECTIVE_DTIMEOUT environment vars in favour of MCOLLECTIVE_EXTRA_OPTS|5675|

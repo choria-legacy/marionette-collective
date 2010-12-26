@@ -270,8 +270,13 @@ module MCollective
             end
 
             # Sets the fact filter
-            def fact_filter(fact, value)
-                @filter["fact"] << {:fact => fact, :value => value}
+            def fact_filter(fact, value=nil, operator="=")
+                if value.nil?
+                    @filter["fact"] << Util.parse_fact_string(fact)
+                else
+                    @filter["fact"] << Util.parse_fact_string("#{fact}#{operator}#{value}")
+                end
+
                 @filter["fact"].compact!
                 reset
             end

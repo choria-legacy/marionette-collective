@@ -122,20 +122,9 @@ module MCollective
         end
 
         private
+        # Parse a fact filter string like foo=bar into the tuple hash thats needed
         def parse_fact(fact)
-            if fact =~ /^([^ ]+?)[ ]*=>[ ]*(.+)/
-                return {:fact => $1, :value => $2, :operator => '>=' }
-            elsif fact =~ /^([^ ]+?)[ ]*=<[ ]*(.+)/
-                return {:fact => $1, :value => $2, :operator => '<=' }
-            elsif fact =~ /^([^ ]+?)[ ]*(<=|>=|<|>|!=|==|=~)[ ]*(.+)/
-                return {:fact => $1, :value => $3, :operator => $2 }
-            elsif fact =~ /^(.+?)[ ]*=[ ]*\/(.+)\/$/
-                return {:fact => $1, :value => $2, :operator => '=~' }
-            elsif fact =~ /^([^= ]+?)[ ]*=[ ]*(.+)/
-                return {:fact => $1, :value => $2, :operator => '==' }
-            end
-
-            return false
+            Util.parse_fact_string(fact)
         end
 
     end

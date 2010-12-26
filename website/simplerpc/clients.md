@@ -172,6 +172,15 @@ printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
 
 You can set other filters like _agent`_`filter_ and _identity`_`filter_.
 
+As of version 1.1.0 the fact_filter method supports a few other forms in adition to above:
+
+{% highlight ruby %}
+mc.fact_filter "country=uk"
+mc.fact_filter "physicalprocessorcount", "4", ">="
+{% endhighlight %}
+
+This will limit it to all machines in the UK with more than 3 processors.
+
 ## Resetting filters to empty
 If while using the client you wish to reset the filters to an empty set of filters - containing only the agent name that you're busy addressing you can do it as follows:
 
