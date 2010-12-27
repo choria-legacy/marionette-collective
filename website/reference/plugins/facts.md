@@ -17,6 +17,8 @@ Facts at the moment should be simple *variable = value* style flat Hashes, if yo
 ## Details
 Implementing a facts plugin is made simple by inheriting from *MCollective::Facts::Base*, in that case you just need to provide 1 method, the YAML plugin code can be seen below:
 
+For releases in the 1.0.x release cycle and older, use this plugin format:
+
 {% highlight ruby linenos %}
 module MCollective
     module Facts
@@ -40,11 +42,36 @@ module MCollective
 end
 {% endhighlight %}
 
+For releases 1.1.x and onward use this format:
+
+{% highlight ruby linenos %}
+module MCollective
+    module Facts
+        require 'yaml'
+
+        class Yaml_facts<Base
+            def load_facts_from_source
+                config = MCollective::Config.instance
+
+                facts = {}
+
+                YAML.load_file(config.pluginconf["yaml"]).each_pair do |k, v|
+                    facts[k] = v.to_s
+                end
+
+                facts
+            end
+        end
+    end
+end
+{% endhighlight %}
+
+If using the newer format in newer releases of mcollective you do not need to worry about caching or
+thread safety as the base class does this for you.
+
 You can see that all you have to do is provide *self.get_facts* which should return a Hash as described above.
 
-Important to note that we only support strings for fact values, in this example we force all values in the YAML file to string since discovery from the client can only be done based on strings.
-
-There's a sample using Reductive Labs Facter on the plugins project if you wish to see an example that queries an external fact source.
+There's a sample using Puppet Labs Facter on the plugins project if you wish to see an example that queries an external fact source.
 
 Once you've written your plugin you can save it in the plugins directory and configure mcollective to use it:
 
@@ -52,4 +79,4 @@ Once you've written your plugin you can save it in the plugins directory and con
 factsource = yaml
 {% endhighlight %}
 
-This will result in *MCollective::Facts::Yaml* being used as source for your facts.
+This will result in *MCollective::Facts::Yaml* or *MCollective::Facts::Yaml_facts* being used as source for your facts.

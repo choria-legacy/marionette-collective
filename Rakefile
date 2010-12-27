@@ -6,8 +6,8 @@ require 'rake/clean'
 require 'find'
 
 PROJ_DOC_TITLE = "The Marionette Collective"
-PROJ_VERSION = "1.0.0"
-PROJ_RELEASE = "2"
+PROJ_VERSION = "1.1.0"
+PROJ_RELEASE = "4"
 PROJ_NAME = "mcollective"
 PROJ_RPM_NAMES = [PROJ_NAME]
 PROJ_FILES = ["#{PROJ_NAME}.spec", "#{PROJ_NAME}.init", "#{PROJ_NAME}.init-rh", "mcollectived.rb", "COPYING", "doc", "etc", "lib", "plugins", "ext"]

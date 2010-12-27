@@ -9,6 +9,85 @@ This is a list of release notes for various releases, you should review these be
  * TOC Placeholder
   {:toc}
 
+## 1.1.0 - 2010/12/29
+
+This is the first in a new development series, as such there will be rapid changes
+and new features.  We cannot guarantee the changes will be backward compatible but
+we will as before try to keep these releases solid and production quality.
+
+Production users who do not wish to have rapid change should use release 1.0.0.
+
+This release focus mainly on getting all the community contributed code into a release
+and adressing some issues I had but wasn't comfortable fixing them late in the
+previous development series.
+
+Please read these notes carefully we are **removing** some old functionality and changing
+some internals, you need to carefully review the text below.
+
+### Bug Fixes
+
+ * The progress bar will now try hard to detect screen size and adjust itself,
+   failing back to a dumb mode if it can't work it out.
+ * rpcutil timeout was too short when considering slow facts and network latency
+
+### Improvements
+
+ * libdir can now be multiple directories specified with : seperation - Thanks to Richard Clamp
+ * Logging is now pluggable, 3 logger types are supported - file, syslog and console.  Thanks to
+   Nicolas Szalay for the initial Syslog code
+ * A new experimental ssh agent based security system.  Thanks to Jordan Sissel
+ * New fact matching operators <=, >=, <, >, !=, == and =~. Thanks to Mike Pountney
+ * SimpleRPC fact_filter method can now take any valid fact string as input in addition to the old format
+ * A message gets logged at startup showing mcollective version and logging level
+ * The fact plugin format has been changed, simplified, made thread safe and global caching added.
+   This breaks backward compatability with old fact sources
+ * Creating options hashes has been simplified by adding a helper that creates them for you
+ * Calculating the client timeout has been improved by including for latency and fact source slowness
+ * Audit log lines are now on one line and include a ISO 8601 format date
+
+### Removed Functionality
+
+ * The old MCOLLECTIVE_TIMEOUT and MCOLLECTIVE_DTIMEOUT were removed, a new MCOLLECTIVE_EXTRA_OPTS
+   was added which should allow much more flexibility.  Supply any command line options in this var
+
+### Upgrading
+
+Upgrading should be easy the only backward incompatible change is the Facts format.  If you only use
+the included YAML plugin the upgrade will just work if you use the packages.  If you use either the
+facter or ohai plugins you will need to download new plugins from the community plugin page.
+
+If you wrote your own Facts plugin you will need to change it a bit:
+
+  * The old get_facts method should now be load_facts_from_source
+  * The class for facts have to be in the form MCollective::Facts::Foo_facts and the filename should match
+
+This is all, your facts can now be much simpler as threading and caching is handled in the base class.
+
+You can place these new plugins into the plugindir before upgrading.  The old mcollective will not use
+these plugins and the new one will not touch the old ones.  This will allow for a clean rollback.
+
+Once the new version is deployed you will immediately have caching on all fact types at 3000 seconds
+you can tune this using the fact_cache_time setting in the configuration file.
+
+### Changes
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2010/12/28|Adjust the logfile audit format to include local time and all on one line|5694|
+|2010/12/26|Improve the SimpleRPC fact_filter helper to support new fact operators|5678|
+|2010/12/25|Increase the rpcutil timeout to allow for slow facts|5679|
+|2010/12/25|Allow for network and fact source latency when calculating client timeout|5676|
+|2010/12/25|Remove MCOLLECTIVE_TIMEOUT and MCOLLECTIVE_DTIMEOUT environment vars in favour of MCOLLECTIVE_EXTRA_OPTS|5675|
+|2010/12/25|Refactor the creation of the options hash so other tools don't need to know the internal formats|5672|
+|2010/12/21|The fact plugin format has been changed and simplified, the base now provides caching and thread safety|5083|
+|2010/12/20|Add parameters <=, >=, <, >, !=, == and =~ to fact selection|5084|
+|2010/12/14|Add experimental sshkey security plugin|5085|
+|2010/12/13|Log a startup message showing version and log level|5538|
+|2010/12/13|Add a console logger|5537|
+|2010/12/13|Logging is now plugable and a syslog plugin was provided|5082|
+|2010/12/13|Allow libdir to be an array of directories for agents and ddl files|5253|
+|2010/12/13|The progress bar will now intelligently figure out the terminal dimentions|5524|
+
 ## 1.0.0 - 2010/12/13
 
 ### Release Focus and Notes
