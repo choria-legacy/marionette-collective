@@ -7,14 +7,17 @@ module MCollective
         #   plugin.rpcaudit.logfile
         #
         class Logfile<Audit
-            def audit_request(request, connection)
-                require 'pp'
+            require 'pp'
 
+            def audit_request(request, connection)
                 logfile = Config.instance.pluginconf["rpcaudit.logfile"] || "/var/log/mcollective-audit.log"
 
+                now = Time.now
+                now_tz = tz = now.utc? ? "Z" : now.strftime("%z")
+                now_iso8601 = "%s.%06d%s" % [now.strftime("%Y-%m-%dT%H:%M:%S"), now.tv_usec, now_tz]
+
                 File.open(logfile, "a") do |f|
-                    f.puts("#{request.uniqid}: #{request.time} caller=#{request.caller}@#{request.sender} agent=#{request.agent} action=#{request.action}")
-                    f.puts("#{request.uniqid}: #{request.data.pretty_print_inspect}")
+                    f.puts("#{now_iso8601}: reqid=#{request.uniqid}: reqtime=#{request.time} caller=#{request.caller}@#{request.sender} agent=#{request.agent} action=#{request.action} data=#{request.data.pretty_print_inspect}")
                 end
             end
         end

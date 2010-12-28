@@ -32,12 +32,17 @@ Auditing is implemented using plugins that you should install in the normal plug
 module MCollective
     module RPC
         class Logfile<Audit
+	    require 'pp'
+
             def audit_request(request, connection)
                 logfile = Config.instance.pluginconf["rpcaudit.logfile"] || "/var/log/mcollective-audit.log"
 
+                now = Time.now
+                now_tz = tz = now.utc? ? "Z" : now.strftime("%z")
+                now_iso8601 = "%s.%06d%s" % [now.strftime("%Y-%m-%dT%H:%M:%S"), now.tv_usec, now_tz]
+
                 File.open(logfile, "w") do |f|
-                    f.puts("#{request.uniqid}: #{request.time} caller=#{request.caller}@#{request.sender} agent=#{request.agent} action=#{request.action}")
-                    f.puts("#{request.uniqid}: #{request.data.pretty_print_inspect}")
+                    f.puts("#{now_iso8601}: reqid=#{request.uniqid}: reqtime=#{request.time} caller=#{request.caller}@#{request.sender} agent=#{request.agent} action=#{request.action} data=#{request.data.pretty_print_inspect}")
                 end
             end
         end
@@ -58,8 +63,7 @@ We do not do log rotation of this file so you should do that yourself if you ena
 This log lines like:
 
 {% highlight ruby %}
-9170b825005d47d66a86efe23ebaa106: 1263939135 caller=uid=500@devel.your.com agent=service action=status
-9170b825005d47d66a86efe23ebaa106: {:service=>"httpd"}
+2010-12-28T17:09:03.889113+0000: reqid=319719cc475f57fda3f734136a31e19b: reqtime=1293556143 caller=cert=nagios@monitor1 agent=nrpe action=runcommand data={:process_results=>true, :command=>"check_mailq"}
 {% endhighlight %}
 
 Other plugins can be found on the community site like [a centralized logging plugin][AuditCentralRPCLog].
