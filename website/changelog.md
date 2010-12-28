@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2010/12/29|Treat machines that fail security validation like ones that did not respond|5700|
 |2010/12/25|Increase the rpcutil timeout to allow for slow facts|5679|
 |*2010/12/13*|*Release 1.0.0*|5453|
 
