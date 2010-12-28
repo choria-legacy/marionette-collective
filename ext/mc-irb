@@ -56,7 +56,7 @@ def consolize &block
                         puts "\n\nActions for #{@agent_name}:\n"
 
                         @agent.ddl.actions.each do |action|
-                           puts "%20s - %s" % [ ":#{action}", @agent.ddl.action_interface(action)[:description] ] 
+                           puts "%20s - %s" % [ ":#{action}", @agent.ddl.action_interface(action)[:description] ]
                         end
 
                         print "\n" + e.line
@@ -79,7 +79,7 @@ def consolize &block
 
                     [ddl[:input].keys, :verbose].flatten
                 end
-            rescue Exception 
+            rescue Exception
                 []
             end
         end
@@ -199,7 +199,7 @@ def mc?
 
         rpc                                 - Performs an RPC request
         reset                               - Resets the discovered knowledge
-        discover                            - Performs a new discovery showing 
+        discover                            - Performs a new discovery showing
                                               hosts that was found
         newagent                            - Switches to a new agent
         mchelp                              - The DDL created help for the agent
@@ -207,7 +207,7 @@ def mc?
     Filter Commands:
         Filter arguments should be enclosed in "your.host.com" if they are strings
         else use /your.host/ to match Regular expressions
-        
+
         identity_filter [identity]          - Sets an identity filter
         fact_filter [factname], [factvalue] - Sets a fact filter
         class_filter [classname]            - Sets a class filter
@@ -222,8 +222,8 @@ def mc?
 
     Completions:
 
-        While doing an RPC request, press ?<tab> for a list of actions or 
-        arguments, do simple :<tab> to get completion on action names and 
+        While doing an RPC request, press ?<tab> for a list of actions or
+        arguments, do simple :<tab> to get completion on action names and
         arguments without description of each
 
 EOF

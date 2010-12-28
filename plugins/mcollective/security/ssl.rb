@@ -27,8 +27,8 @@ module MCollective
         #
         #   openssl genrsa -out john-private.pem 1024
         #   openssl rsa -in john-private.pem -out john-public.pem -outform PEM -pubout
-        # 
-        # Each user has a unique userid, this is based on the name of the public key.  
+        #
+        # Each user has a unique userid, this is based on the name of the public key.
         # In this example case the userid would be 'john-public'.
         #
         # Store these somewhere like:
@@ -41,11 +41,11 @@ module MCollective
         #
         #   /etc/mcollective/ssl/clients/john-public.pem
         #
-        # If you wish to use registration or auditing that sends connections over MC to a 
+        # If you wish to use registration or auditing that sends connections over MC to a
         # central host you will need also put the server-public.pem in the clients directory.
         #
-        # You should be aware if you do add the node public key to the clients dir you will in 
-        # effect be weakening your overall security.  You should consider doing this only if 
+        # You should be aware if you do add the node public key to the clients dir you will in
+        # effect be weakening your overall security.  You should consider doing this only if
         # you also set up an Authorization method that limits the requests the nodes can make.
         #
         # client.cfg:
@@ -54,12 +54,12 @@ module MCollective
         #   plugin.ssl_server_public = /etc/mcollective/ssl/server-public.pem
         #   plugin.ssl_client_private = /home/john/.mc/john-private.pem
         #   plugin.ssl_client_public = /home/john/.mc/john-public.pem
-        # 
+        #
         # If you have many clients per machine and dont want to configure the main config file
         # with the public/private keys you can set the following environment variables:
         #
-        #   export MCOLLECTIVE_SSL_PRIVATE=/home/john/.mc/john-private.pem   
-        #   export MCOLLECTIVE_SSL_PUBLIC=/home/john/.mc/john-public.pem   
+        #   export MCOLLECTIVE_SSL_PRIVATE=/home/john/.mc/john-private.pem
+        #   export MCOLLECTIVE_SSL_PUBLIC=/home/john/.mc/john-public.pem
         #
         # server.cfg:
         #
@@ -86,7 +86,7 @@ module MCollective
             # it as valid using the psk etc
             def decodemsg(msg)
                 body = deserialize(msg.payload)
-    
+
                 if validrequest?(body)
                     body[:body] = deserialize(body[:body])
                     return body
@@ -94,14 +94,14 @@ module MCollective
                     nil
                 end
             end
-            
+
             # Encodes a reply
             def encodereply(sender, target, msg, requestid, filter={})
                 serialized  = serialize(msg)
                 digest = makehash(serialized)
-    
+
                 @log.debug("Encoded a message for request #{requestid}")
-    
+
                 serialize({:senderid => @config.identity,
                               :requestid => requestid,
                               :senderagent => sender,
@@ -110,12 +110,12 @@ module MCollective
                               :hash => digest,
                               :body => serialized})
             end
-    
+
             # Encodes a request msg
             def encoderequest(sender, target, msg, requestid, filter={})
                 serialized = serialize(msg)
                 digest = makehash(serialized)
-    
+
                 @log.debug("Encoding a request for '#{target}' with request id #{requestid}")
                 request = {:body => serialized,
                            :hash => digest,
@@ -130,15 +130,15 @@ module MCollective
 
                 serialize(request)
             end
-    
+
             # Checks the SSL signature in the request body
             def validrequest?(req)
                 message = req[:body]
                 signature = req[:hash]
-    
+
                 @log.debug("Validating request from #{req[:callerid]}")
 
-                public_key = File.read(public_key_file(req[:callerid])) 
+                public_key = File.read(public_key_file(req[:callerid]))
 
                 if verify(public_key, signature, message.to_s)
                     @stats.validated
@@ -149,7 +149,7 @@ module MCollective
                 end
             end
 
-    
+
             # sets the caller id to the md5 of the public key
             def callerid
                 if @initiated_by == :client
@@ -206,7 +206,7 @@ module MCollective
 
             # Figures out the public key to use
             #
-            # If the node is asking do it based on caller id 
+            # If the node is asking do it based on caller id
             # If the client is asking just get the node public key
             def public_key_file(callerid = nil)
                 if @initiated_by == :client
@@ -268,8 +268,8 @@ module MCollective
             def makehash(body)
                 @log.debug("Creating message hash using #{private_key_file}")
 
-                private_key = File.read(private_key_file) 
-            
+                private_key = File.read(private_key_file)
+
                 sign(private_key, body.to_s)
             end
 

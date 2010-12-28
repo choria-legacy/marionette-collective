@@ -1,7 +1,7 @@
 module MCollective
     module Agent
         # Discovery agent for The Marionette Collective
-        # 
+        #
         # Released under the Apache License, Version 2
         class Discovery
             attr_reader :timeout, :meta
@@ -48,7 +48,7 @@ module MCollective
                 Accepted Messages
                 -----------------
 
-                inventory     - returns a hash with various bits of information like 
+                inventory     - returns a hash with various bits of information like
                                 list of agents, threads, etc
 
                 ping          - simply responds with 'pong'

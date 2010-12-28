@@ -39,28 +39,28 @@ module MCollective
                  :okcount          => @okcount,
                  :failcount        => @failcount}
             end
-    
+
             # Fake hash access to keep things backward compatible
             def [](key)
                 to_hash[key]
             rescue
                  nil
             end
-    
+
             # increment the count of ok hosts
             def ok
                 @okcount += 1
             rescue
                 @okcount = 1
             end
-    
+
             # increment the count of failed hosts
             def fail
                 @failcount += 1
             rescue
                 @failcount = 1
             end
-    
+
             # Re-initializes the object with stats from the basic client
             def client_stats=(stats)
                 @noresponsefrom = stats[:noresponsefrom]
@@ -70,7 +70,7 @@ module MCollective
                 @totaltime = stats[:totaltime]
                 @discoverytime = stats[:discoverytime] if @discoverytime == 0
             end
-    
+
             # Utility to time discovery from :start to :end
             def time_discovery(action)
                 if action == :start
@@ -83,7 +83,7 @@ module MCollective
             rescue
                 @discoverytime = 0
             end
-    
+
             # helper to time block execution time
             def time_block_execution(action)
                 if action == :start
@@ -96,18 +96,18 @@ module MCollective
             rescue
                 @blocktime = 0
             end
-    
+
             # Update discovered and discovered_nodes based on
             # discovery results
             def discovered_agents(agents)
                 @discovered_nodes = agents
                 @discovered = agents.size
             end
-    
+
             # Helper to calculate total time etc
             def finish_request
                 @totaltime = @blocktime + @discoverytime
-    
+
                 # figures out who we had no responses from
                 dhosts = @discovered_nodes.clone
                 @responsesfrom.each {|r| dhosts.delete(r)}
@@ -116,31 +116,31 @@ module MCollective
                 @totaltime = 0
                 @noresponsefrom = []
             end
-    
+
             # Helper to keep track of who we received responses from
             def node_responded(node)
                 @responsesfrom << node
             rescue
                 @responsesfrom = [node]
             end
-    
+
             # Returns a blob of text representing the request status based on the
             # stats contained in this class
             def report(caption = "rpc stats", verbose = false)
                 result_text = []
-    
+
                 if verbose
                     result_text << Helpers.colorize(:yellow, "---- #{caption} ----")
-    
+
                     if @discovered
                         @responses < @discovered ? color = :red : color = :reset
                         result_text << "           Nodes: %s / %s" % [ Helpers.colorize(color, @discovered), Helpers.colorize(color, @responses) ]
                     else
                         result_text << "           Nodes: #{@responses}"
                     end
-    
+
                     @failcount < 0 ? color = :red : color = :reset
-    
+
                     result_text << "     Pass / Fail: %s / %s" % [Helpers.colorize(color, @okcount), Helpers.colorize(color, @failcount) ]
                     result_text << "      Start Time: %s"      % [Time.at(@starttime)]
                     result_text << "  Discovery Time: %.2fms"  % [@discoverytime * 1000]
@@ -149,35 +149,35 @@ module MCollective
                 else
                     if @discovered
                         @responses < @discovered ? color = :red : color = :green
-    
+
                         result_text << "Finished processing %s / %s hosts in %.2f ms" % [Helpers.colorize(color, @responses), Helpers.colorize(color, @discovered), @blocktime * 1000]
                     else
                         result_text << "Finished processing %s hosts in %.2f ms" % [Helpers.colorize(:bold, @responses), @blocktime * 1000]
                     end
                 end
-    
+
                 if no_response_report != ""
                     result_text << "" << no_response_report
                 end
-    
+
                 result_text.join("\n")
             end
-    
+
             # Returns a blob of text indicating what nodes did not respond
             def no_response_report
                 result_text = []
-    
+
                 if @noresponsefrom.size > 0
                     result_text << Helpers.colorize(:red, "\nNo response from:\n")
-    
+
                     @noresponsefrom.each_with_index do |c,i|
                         result_text << "" if i % 4 == 0
                         result_text << "%30s" % [c]
                     end
-    
+
                     result_text << ""
                 end
-    
+
                 result_text.join("\n")
             end
         end

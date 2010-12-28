@@ -1,5 +1,5 @@
 module MCollective
-    module RPC 
+    module RPC
         # Simple class to manage compliant results from MCollective::RPC agents
         #
         # Currently it just fakes Hash behaviour to the result to remain backward

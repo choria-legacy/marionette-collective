@@ -12,24 +12,24 @@ module MCollective
         # You must inherit from MCollective::RPC::Audit which will take
         # care of registering you with the plugin system.
         #
-        # Your plugin must provide audit_request(request, connection) 
+        # Your plugin must provide audit_request(request, connection)
         # the request parameter will be an instance of MCollective::RPC::Request
         #
         # To enable auditing you should set:
         #
-        # rpcaudit = 1 
+        # rpcaudit = 1
         # rpcauditprovider = Logfile
         #
-        # in the config file this will enable logging using the 
+        # in the config file this will enable logging using the
         # MCollective::Audit::Logile class
         #
-        # The Audit class acts as a base for audit plugins and takes care of registering them 
+        # The Audit class acts as a base for audit plugins and takes care of registering them
         # with the plugin manager
         class Audit
             def self.inherited(klass)
                 PluginManager << {:type => "rpcaudit_plugin", :class => klass.to_s}
             end
-    
+
             def audit_request(request, connection)
                 @log.error("audit_request is not implimented in #{this.class}")
             end

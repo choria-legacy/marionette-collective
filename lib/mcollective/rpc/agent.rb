@@ -1,7 +1,7 @@
 module MCollective
     module RPC
         # A wrapper around the traditional agent, it takes care of a lot of the tedious setup
-        # you would do for each agent allowing you to just create methods following a naming 
+        # you would do for each agent allowing you to just create methods following a naming
         # standard leaving the heavy lifting up to this clas.
         #
         # See http://marionette-collective.org/simplerpc/agents.html
@@ -57,17 +57,17 @@ module MCollective
                 # if we have a global authorization provider enable it
                 # plugins can still override it per plugin
                 self.class.authorized_by(@config.rpcauthprovider) if @config.rpcauthorization
-                
+
                 startup_hook
             end
-                
+
             def handlemsg(msg, connection)
                 @request = RPC.request(msg)
                 @reply = RPC.reply
 
                 begin
                     # Calls the authorization plugin if any is defined
-                    # if this raises an exception we wil just skip processing this 
+                    # if this raises an exception we wil just skip processing this
                     # message
                     authorization_hook(@request) if respond_to?("authorization_hook")
 
@@ -207,10 +207,10 @@ module MCollective
                         case validation
                             when :shellsafe
                                 raise InvalidRPCData, "#{key} should be a String" unless @request[key].is_a?(String)
-                                raise InvalidRPCData, "#{key} should not have > in it" if @request[key].match(/>/) 
-                                raise InvalidRPCData, "#{key} should not have < in it" if @request[key].match(/</) 
-                                raise InvalidRPCData, "#{key} should not have \` in it" if @request[key].match(/\`/) 
-                                raise InvalidRPCData, "#{key} should not have | in it" if @request[key].match(/\|/) 
+                                raise InvalidRPCData, "#{key} should not have > in it" if @request[key].match(/>/)
+                                raise InvalidRPCData, "#{key} should not have < in it" if @request[key].match(/</)
+                                raise InvalidRPCData, "#{key} should not have \` in it" if @request[key].match(/\`/)
+                                raise InvalidRPCData, "#{key} should not have | in it" if @request[key].match(/\|/)
 
 
                             when :ipv6address
@@ -241,7 +241,7 @@ module MCollective
             end
 
             # Called at the end of the RPC::Agent standard initialize method
-            # use this to adjust meta parameters, timeouts and any setup you 
+            # use this to adjust meta parameters, timeouts and any setup you
             # need to do.
             #
             # This will not be called right when the daemon starts up, we use
@@ -261,7 +261,7 @@ module MCollective
             # to the middleware.
             #
             # This gets run outside of the main exception handling block of the agent
-            # so you should handle any exceptions you could raise yourself.  The reason 
+            # so you should handle any exceptions you could raise yourself.  The reason
             # it is outside of the block is so you'll have access to even status codes
             # set by the exception handlers.  If you do raise an exception it will just
             # be passed onto the runner and processing will fail.

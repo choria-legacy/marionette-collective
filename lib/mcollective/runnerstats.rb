@@ -5,9 +5,9 @@ module MCollective
         def initialize
             @starttime = Time.now.to_i
             @validated = 0
-            @unvalidated = 0 
+            @unvalidated = 0
             @filtered = 0
-            @passed = 0 
+            @passed = 0
             @total = 0
             @replies = 0
 
@@ -25,7 +25,7 @@ module MCollective
         # Records a message that didnt pass the filters
         def filtered
             @logger.debug("Incrementing filtered stat")
-            @filtered += 1 
+            @filtered += 1
         end
 
         # Records a message that validated ok
@@ -47,7 +47,7 @@ module MCollective
 
         # Records sending a message
         def sent
-            @mutex.synchronize do 
+            @mutex.synchronize do
                 @logger.debug("Incrementing replies stat")
                 @replies += 1
             end
@@ -68,7 +68,7 @@ module MCollective
                      :pid => Process.pid,
                      :times => {} }
 
-            ::Process.times.each_pair{|k,v| 
+            ::Process.times.each_pair{|k,v|
                k = k.to_sym
                reply[:times][k] = v
             }

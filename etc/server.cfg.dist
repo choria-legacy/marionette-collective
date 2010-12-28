@@ -4,7 +4,7 @@ logfile = /var/log/mcollective.log
 loglevel = info
 daemonize = 1
 
-# Plugins 
+# Plugins
 securityprovider = psk
 plugin.psk = unset
 

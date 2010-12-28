@@ -19,7 +19,7 @@
 #
 # --port, -p
 #   The port to connect to, default to 6163
-# 
+#
 # --user, -u
 #   The user to connect as, can also be set in STOMP_USER environment variable
 #
@@ -106,7 +106,7 @@ Thread.new(@conn) do |amq|
         dest = msg.headers["destination"]
         time = Time.now.strftime('%H:%M:%S')
 
-        if @showdetails 
+        if @showdetails
             msg = "\r#{time}:#{dest} > #{msg.body.chomp}\n"
         else
             msg = "\r#{msg.body.chomp}\n"

@@ -1,5 +1,5 @@
 module MCollective
-    module RPC 
+    module RPC
         # Simple class to manage compliant requests for MCollective::RPC agents
         class Request
             attr_accessor :time, :action, :data, :sender, :agent, :uniqid, :caller

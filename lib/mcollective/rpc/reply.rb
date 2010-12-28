@@ -1,5 +1,5 @@
 module MCollective
-    module RPC 
+    module RPC
         # Simple class to manage compliant replies to MCollective::RPC
         class Reply
             attr_accessor :statuscode, :statusmsg, :data

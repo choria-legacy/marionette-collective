@@ -3,7 +3,7 @@ libdir = /usr/libexec/mcollective
 logfile = /dev/null
 loglevel = info
 
-# Plugins 
+# Plugins
 securityprovider = psk
 plugin.psk = unset
 

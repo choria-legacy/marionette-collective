@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2010/12/28|Remove trailing whitespace from all source files|5702|
 |2010/12/28|Adjust the logfile audit format to include local time and all on one line|5694|
 |2010/12/26|Improve the SimpleRPC fact_filter helper to support new fact operators|5678|
 |2010/12/25|Increase the rpcutil timeout to allow for slow facts|5679|
