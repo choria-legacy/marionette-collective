@@ -145,7 +145,7 @@ module MCollective
                     return true
                 else
                     @stats.unvalidated
-                    raise("Received an invalid signature in message")
+                    raise(SecurityValidationFailed, "Received an invalid signature in message")
                 end
             end
 
