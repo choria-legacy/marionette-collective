@@ -5,6 +5,7 @@ disqus: true
 ---
 
 [SSLSecurity]: /mcollective/reference/plugins/security_ssl.html
+[AESSecurity]: /mcollective/reference/plugins/security_aes.html
 [Registration]: /mcollective/reference/plugins/registration.html
 [Auditing]: /mcollective/simplerpc/auditing.html
 [Authorization]: /mcollective/simplerpc/authorization.html
@@ -35,7 +36,7 @@ Configuration is a simple *key = val* style configuration file.
 |max_log_size|2097152|Max size in bytes for log files before rotation happens|
 |libdir|/usr/libexec/mcollective:/site/mcollective|Where to look for plugins|
 |connector|Stomp|Which _connector_ plugin to use for communication|
-|securityprovider|Psk|Which security model to use, see [SSL Security Plugin][SSLSecurity] for details on configuring SSL|
+|securityprovider|Psk|Which security model to use, see [SSL Security Plugin][SSLSecurity] and [AES Security Plugin][AESSecurity] for details on others|
 |rpchelptemplate|/etc/mcollective/rpc-help.erb|The path to the erb template used for generating help|
 |loggertype|file|Valid logger types, currently file, syslog or console|
 

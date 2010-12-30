@@ -5,6 +5,8 @@ disqus: true
 ---
 [SimpleRPCAuthorization]: /mcollective/simplerpc/authorization.html
 [Registration]: registration.html
+[AESPlugin]: security_aes.html
+[SecurityOverview]: ../../security.html
 
 # {{page.title}}
 
@@ -15,7 +17,9 @@ disqus: true
 Implements a public/private key based message validation system using SSL
 public and private keys.
 
-The design goal of the plugin is two fold:
+Please review the [Security Overview][SecurityOverview] for a general discussion about security in Marionette Collective.
+
+The design goal of the plugin are two fold:
 
  * give different security credentials to clients and servers to avoid a compromised server from sending new client requests.
  * create a token that uniquely identify the client - based on the filename of the public key.  This creates a strong identity token for [SimpleRPCAuthorization].
@@ -26,6 +30,8 @@ will be preserved from client to server and reverse.
 Validation is as default and is provided by *MCollective::Security::Base*
 
 Initial code was contributed by Vladimir Vuksan and modified by R.I.Pienaar
+
+An [alternative plugin][AESPlugin] exist that encrypts data but is more work to setup and maintain.
 
 ## Setup
 ### Nodes

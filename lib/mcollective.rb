@@ -45,6 +45,7 @@ module MCollective
     autoload :PluginManager, "mcollective/pluginmanager"
     autoload :RPC, "mcollective/rpc"
     autoload :Request, "mcollective/request"
+    autoload :SSL, "mcollective/ssl"
 
     VERSION="@DEVELOPMENT_VERSION@"
 

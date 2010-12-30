@@ -8,6 +8,7 @@ disqus: true
 [Authorization]: /mcollective/simplerpc/authorization.html
 [Auditing]: /mcollective/simplerpc/auditing.html
 [SSL security plugin]: /mcollective/reference/plugins/security_ssl.html
+[AES security plugin]: /mcollective/reference/plugins/security_aes.html
 [ActiveMQ Security]: /mcollective/reference/integration/activemq_security.html
 [ActiveMQ TLS]: http://activemq.apache.org/how-do-i-use-ssl.html
 [ActiveMQ SSL]: /mcollective/reference/integration/activemq_ssl.html
@@ -22,10 +23,11 @@ disqus: true
 Due to the [broadcast paradigm] of mcollective security is a complex topic to
 discuss.
 
-This discussion will focus on strong SSL base security, this is not the default
-or only option but is currently the most secure.  The [SSL security plugin]
-provides strong caller identification, this is used by the [SimpleRPC]
-framework for [Authorization] and [Auditing].
+This discussion will focus on strong SSL and AES+RSA based security plugins,
+these are not the default or only option but is currently the most secure.
+Both the [SSL security plugin] and [AES security plugin] provide strong caller
+identification, this is used by the [SimpleRPC] framework for [Authorization]
+and [Auditing].
 
 As every organisation has its own needs almost all aspects of the security
 system is pluggable.  This is an overview of the current state of SSL based
@@ -52,6 +54,28 @@ ActiveMQ can use LDAP and other security providers, details of this is out of
 scope here, you should use their documentation or the recently released book
 for details of that.
 
+### The AES+RSA securith plugin
+When using the [AES security plugin] each user also gets a private and public
+key, like with SSH you need to ensure that the private keys remain private
+and not shared between users.
+
+This plugin can be configured to distribute public keys at the cost of some
+security, you can also manually distribute keys for the most secure setup.
+
+The public / private key pair is used to encrypt using AES and then to encrypt
+the key used during the AES phase using RSA.  This provides encrypted payloads
+securing the reply strucutres.
+
+The client embeds a _caller_ structure in each request, if RSA decryption
+pass the rest of the MCollective agents, auditing etc can securely know who
+initiated a request.
+
+This caller is used later during Authorization and Auditing.
+
+This plugin comes with a significant setup, maintenance and performance overhead
+if all you need is to securely identify users use the SSL security plugin instead.
+
+### The SSL security plugin
 When using the [SSL security plugin] each user also gets a private and public
 certificate, like with SSH you need to ensure that the private keys remain
 private and not be shared between users.  The public part needs to be
@@ -82,6 +106,10 @@ options for enforcing a specific CA etc.  The authors are willing to extend it
 to support these based on requests, file support tickets if you need our help
 in working with them as we already have a good working relationship.
 
+At present there is a bug in the TLS setup with ActiveMQ and RabbitMQ does not
+support it at all.  If you need security of the payloads in your messages use
+the AES security plugin.
+
 ## Middleware Authorization and Authentication
 
 As mentioned above ActiveMQ has it's own users and every node and client
@@ -106,10 +134,14 @@ connection since generally nodes do not make new requests.  You can enable
 registration features that will see your nodes make connections, you should
 restrict this as outlined in the previous section.
 
-All the nodes share a same SSL private and public key, all replies are signed
-using this key.  It would not be impossible to add a per node certificate setup
-but I do not think this will add a significant level of security over what we
-have today.
+When using the [SSL security plugin] all the nodes share a same SSL private
+and public key, all replies are signed using this key.  It would not be
+impossible to add a per node certificate setup but I do not think this will
+add a significant level of security over what we have today.
+
+When using the [AES security plugin] nodes can have their own sets of keys
+and registration data can be secured.  Replies are encrypted using the clients
+key and so only the client who made the request can read the replies.
 
 ## SimpleRPC Authorization
 
@@ -138,7 +170,7 @@ they can be specific to an agent or apply to the entire collective.
 ## SimpleRPC Auditing
 
 The RPC layer can keep detailed [Auditing] records of every request received,
-the audit log shows the - SSL signature verified - caller, what agent, action
+the audit log shows the - SSL signature or RSA verified - caller, what agent, action
 and any arguments that was sent for every request.
 
 The audit layer is a plugin based system, we provide one that logs to a file on

@@ -21,6 +21,7 @@ disqus: true
 [SecurityOverview]: /mcollective/security.html
 [SecurityWithActiveMQ]: /mcollective/reference/integration/activemq_security.html
 [SSLSecurityPlugin]: /mcollective/reference/plugins/security_ssl.html
+[AESSecurityPlugin]: /mcollective/reference/plugins/security_aes.html
 [SimpleRPCAuthorization]: /mcollective/simplerpc/authorization.html
 [SimpleRPCAuditing]: /mcollective/simplerpc/auditing.html
 [ActiveMQClusters]: /mcollective/reference/integration/activemq_clusters.html
@@ -69,7 +70,7 @@ where you can launch as many instances as you want to see how it behaves first h
  * Allows you to write [simple RPC style agents, clients][SimpleRPCIntroduction] and Web UIs in an easy to understand language - Ruby
  * Extremely pluggable and adaptable to local needs
  * Middleware systems already have rich [authentication and authorization models][SecurityWithActiveMQ], leverage these as a first
-   line of control.  Include fine grained [Authentication][SSLSecurityPlugin], [Authorization][SimpleRPCAuthorization] and
+   line of control.  Include fine grained Authentication using [SSL][SSLSecurityPlugin] or [RSA][AESSecurityPlugin], [Authorization][SimpleRPCAuthorization] and
    [Auditing][SimpleRPCAuditing] of requests.  You can see more details in the [Security Overview][SecurityOverview].
  * Re-use the ability of middleware to do [clustering, routing and network isolation][ActiveMQClusters]
    to realize secure and scalable setups.

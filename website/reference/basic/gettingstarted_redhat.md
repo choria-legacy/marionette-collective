@@ -18,6 +18,7 @@ disqus: true
 [SimpleRPCIntroduction]: /mcollective/simplerpc/
 [ControllingTheDaemon]: /mcollective/reference/basic/daemon.html
 [SSLSecurityPlugin]: /mcollective/reference/plugins/security_ssl.html
+[AESSecurityPlugin]: /mcollective/reference/plugins/security_aes.html
 [ConnectorStomp]: /mcollective/reference/plugins/connector_stomp.html
 [MessageFlowCast]: /mcollective/screencasts.html#message_flow
 [Plugins]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki
@@ -299,5 +300,6 @@ From here you should look at the rest of the wiki pages some key pages are:
  * [Terminology]
  * [Introduction to Simple RPC][SimpleRPCIntroduction] - a simple to use framework for writing clients and agents
  * [ControllingTheDaemon] - Controlling a running daemon
+ * [AESSecurityPlugin] - Using AES+RSA for secure message encryption and authentication of clients
  * [SSLSecurityPlugin] - Using SSL for secure message signing and authentication of clients
  * [ConnectorStomp] - Full details on the Stomp adapter including failover pools

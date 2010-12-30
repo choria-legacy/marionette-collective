@@ -5,3 +5,4 @@ etc/*yaml
 etc/ssl/*pem
 etc/ssl/clients/*pem
 plugins/mcollective/security/none.rb
+tags
