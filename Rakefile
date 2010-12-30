@@ -37,13 +37,16 @@ task :default => [:clean, :doc, :package]
 
 # task for building docs
 rd = Rake::RDocTask.new(:doc) { |rdoc|
-    announce "Building documentation for #{CURRENT_VERSION}"
-
     rdoc.rdoc_dir = 'doc'
     rdoc.template = 'html'
     rdoc.title    = "#{PROJ_DOC_TITLE} version #{CURRENT_VERSION}"
     rdoc.options << '--line-numbers' << '--inline-source' << '--main' << 'MCollective'
 }
+
+desc "Run spec tests"
+task :test do
+    sh "cd spec;rake"
+end
 
 desc "Create a tarball for this release"
 task :package => [:clean, :doc] do

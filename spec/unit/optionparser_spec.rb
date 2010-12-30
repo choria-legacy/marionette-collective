@@ -2,13 +2,17 @@
 
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe MCollective::Optionparser do
-    before do
-        @parser = MCollective::Optionparser.new
-    end
+module MCollective
+    describe Optionparser do
+        before do
+            @parser = Optionparser.new
+        end
 
-    it "should parse MCOLLECTIVE_EXTRA_OPTS" do
-        ENV["MCOLLECTIVE_EXTRA_OPTS"] = "--dt 999"
-        @parser.parse[:disctimeout].should == 999
+        describe "#parse" do
+            it "should parse MCOLLECTIVE_EXTRA_OPTS" do
+                ENV["MCOLLECTIVE_EXTRA_OPTS"] = "--dt 999"
+                @parser.parse[:disctimeout].should == 999
+            end
+        end
     end
 end
