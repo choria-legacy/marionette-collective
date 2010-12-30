@@ -33,7 +33,7 @@ action "get_fact", :description => "Retrieve a single fact from the fact store" 
          :prompt      => "The name of the fact",
          :description => "The fact to retrieve",
          :type        => :string,
-         :validation  => '^[a-z_0-9]+$',
+         :validation  => '^[a-z_0-9\-]+$',
          :optional    => false,
          :maxlength    => 40
 
