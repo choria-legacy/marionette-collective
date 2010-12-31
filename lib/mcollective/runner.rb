@@ -92,7 +92,7 @@ module MCollective
         def agentmsg(msg, target)
             @agents.dispatch(msg, target, @connection) do |replies|
                 dest = Util.make_target(target, :reply)
-                reply(target, dest, replies, msg[:requestid]) unless replies == nil
+                reply(target, dest, replies, msg[:requestid], msg[:callerid]) unless replies == nil
             end
         end
 
@@ -101,22 +101,23 @@ module MCollective
             begin
                 body = msg[:body]
                 requestid = msg[:requestid]
+                callerid = msg[:callerid]
 
                 replytopic = Util.make_target("mcollective", :reply)
 
                 case body
                     when /^stats$/
-                        reply("mcollective", replytopic, @stats.to_hash, requestid)
+                        reply("mcollective", replytopic, @stats.to_hash, requestid, callerid)
 
                     when /^reload_agent (.+)$/
-                        reply("mcollective", replytopic, "reloaded #{$1} agent", requestid) if @agents.loadagent($1)
+                        reply("mcollective", replytopic, "reloaded #{$1} agent", requestid, callerid) if @agents.loadagent($1)
 
                     when /^reload_agents$/
-                        reply("mcollective", replytopic, "reloaded all agents", requestid) if @agents.loadagents
+                        reply("mcollective", replytopic, "reloaded all agents", requestid, callerid) if @agents.loadagents
 
                     when /^exit$/
                         @log.error("Exiting due to request to controller")
-                        reply("mcollective", replytopic, "exiting after request to controller", requestid)
+                        reply("mcollective", replytopic, "exiting after request to controller", requestid, callerid)
 
                         @connection.disconnect
                         exit!
@@ -144,8 +145,8 @@ module MCollective
         end
 
         # Sends a reply to a specific target topic
-        def reply(sender, target, msg, requestid)
-            reply = @security.encodereply(sender, target, msg, requestid)
+        def reply(sender, target, msg, requestid, callerid)
+            reply = @security.encodereply(sender, target, msg, requestid, callerid)
 
             @connection.send(target, reply)
 

@@ -96,7 +96,7 @@ module MCollective
             end
 
             # Encodes a reply
-            def encodereply(sender, target, msg, requestid, filter={})
+            def encodereply(sender, target, msg, requestid, requestcallerid=nil)
                 serialized  = serialize(msg)
                 digest = makehash(serialized)
 

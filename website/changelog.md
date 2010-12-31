@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2010/12/31|Security plugins now have access to the callerid of the message they are replying to|5745|
 |2010/12/30|Allow - in fact names|5727|
 |2010/12/29|Treat machines that fail security validation like ones that did not respond|5700|
 |*2010/12/29*|*Release 1.1.0*|5695|

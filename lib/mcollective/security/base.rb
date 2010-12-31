@@ -140,7 +140,7 @@ module MCollective
             end
 
             # Security providers should provide this, see MCollective::Security::Psk
-            def encodereply(sender, target, msg, filter={})
+            def encodereply(sender, target, msg, requestcallerid=nil)
                 @log.error("encodereply is not implimented in #{this.class}")
             end
 
