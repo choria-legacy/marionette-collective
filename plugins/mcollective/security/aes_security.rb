@@ -66,7 +66,7 @@ module MCollective
                             if certname
                                 certfile = "#{client_cert_dir}/#{certname}.pem"
                                 unless File.exist?(certfile)
-                                    @log.debug("Caching client cert in #{certfile}")
+                                    Log.debug("Caching client cert in #{certfile}")
                                     File.open(certfile, "w") {|f| f.print body[:sslpubkey]}
                                 end
                             end
@@ -84,7 +84,7 @@ module MCollective
 
                 return body
             rescue Exception => e
-                @log.warn("Could not decrypt message from client: #{e.class}: #{e}")
+                Log.warn("Could not decrypt message from client: #{e.class}: #{e}")
                 raise SecurityValidationFailed, "Could not decrypt message"
             end
 
@@ -92,7 +92,7 @@ module MCollective
             def encodereply(sender, target, msg, requestid, requestcallerid)
                 crypted = encrypt(serialize(msg), requestcallerid)
 
-                @log.debug("Encoded a reply for request #{requestid} for #{requestcallerid}")
+                Log.debug("Encoded a reply for request #{requestid} for #{requestcallerid}")
 
                 req = {:senderid => @config.identity,
                        :requestid => requestid,
@@ -109,7 +109,7 @@ module MCollective
             def encoderequest(sender, target, msg, requestid, filter={})
                 crypted = encrypt(serialize(msg), callerid)
 
-                @log.debug("Encoding a request for '#{target}' with request id #{requestid}")
+                Log.debug("Encoding a request for '#{target}' with request id #{requestid}")
 
                 req = {:senderid => @config.identity,
                        :requestid => requestid,
@@ -136,7 +136,7 @@ module MCollective
             def serialize(msg)
                 serializer = @config.pluginconf["aes.serializer"] || "marshal"
 
-                @log.debug("Serializing using #{serializer}")
+                Log.debug("Serializing using #{serializer}")
 
                 case serializer
                     when "yaml"
@@ -150,7 +150,7 @@ module MCollective
             def deserialize(msg)
                 serializer = @config.pluginconf["aes.serializer"] || "marshal"
 
-                @log.debug("De-Serializing using #{serializer}")
+                Log.debug("De-Serializing using #{serializer}")
 
                 case serializer
                     when "yaml"
@@ -176,18 +176,18 @@ module MCollective
                 if @initiated_by == :client
                     @ssl ||= SSL.new(client_public_key, client_private_key)
 
-                    @log.debug("Encrypting message using private key")
+                    Log.debug("Encrypting message using private key")
                     return @ssl.encrypt_with_private(string)
                 else
                     # when the server is initating requests like for registration
                     # then the certid will be our callerid
                     if certid == callerid
-                        @log.debug("Encrypting message using private key #{server_private_key}")
+                        Log.debug("Encrypting message using private key #{server_private_key}")
 
                         ssl = SSL.new(server_public_key, server_private_key)
                         return ssl.encrypt_with_private(string)
                     else
-                        @log.debug("Encrypting message using public key for #{certid}")
+                        Log.debug("Encrypting message using public key for #{certid}")
 
                         ssl = SSL.new(public_key_path_for_client(certid))
                         return ssl.encrypt_with_public(string)
@@ -199,10 +199,10 @@ module MCollective
                 if @initiated_by == :client
                     @ssl ||= SSL.new(client_public_key, client_private_key)
 
-                    @log.debug("Decrypting message using private key")
+                    Log.debug("Decrypting message using private key")
                     return @ssl.decrypt_with_private(string)
                 else
-                    @log.debug("Decrypting message using public key for #{certid}")
+                    Log.debug("Decrypting message using public key for #{certid}")
 
                     ssl = SSL.new(public_key_path_for_client(certid))
                     return ssl.decrypt_with_public(string)

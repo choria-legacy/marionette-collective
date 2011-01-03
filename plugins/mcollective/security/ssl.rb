@@ -100,7 +100,7 @@ module MCollective
                 serialized  = serialize(msg)
                 digest = makehash(serialized)
 
-                @log.debug("Encoded a message for request #{requestid}")
+                Log.debug("Encoded a message for request #{requestid}")
 
                 serialize({:senderid => @config.identity,
                               :requestid => requestid,
@@ -116,7 +116,7 @@ module MCollective
                 serialized = serialize(msg)
                 digest = makehash(serialized)
 
-                @log.debug("Encoding a request for '#{target}' with request id #{requestid}")
+                Log.debug("Encoding a request for '#{target}' with request id #{requestid}")
                 request = {:body => serialized,
                            :hash => digest,
                            :senderid => @config.identity,
@@ -136,7 +136,7 @@ module MCollective
                 message = req[:body]
                 signature = req[:hash]
 
-                @log.debug("Validating request from #{req[:callerid]}")
+                Log.debug("Validating request from #{req[:callerid]}")
 
                 public_key = File.read(public_key_file(req[:callerid]))
 
@@ -167,7 +167,7 @@ module MCollective
             def serialize(msg)
                 serializer = @config.pluginconf["ssl_serializer"] || "marshal"
 
-                @log.debug("Serializing using #{serializer}")
+                Log.debug("Serializing using #{serializer}")
 
                 case serializer
                     when "yaml"
@@ -181,7 +181,7 @@ module MCollective
             def deserialize(msg)
                 serializer = @config.pluginconf["ssl_serializer"] || "marshal"
 
-                @log.debug("De-Serializing using #{serializer}")
+                Log.debug("De-Serializing using #{serializer}")
 
                 case serializer
                     when "yaml"
@@ -266,7 +266,7 @@ module MCollective
 
             # Retrieves the value of plugin.psk and builds a hash with it and the passed body
             def makehash(body)
-                @log.debug("Creating message hash using #{private_key_file}")
+                Log.debug("Creating message hash using #{private_key_file}")
 
                 private_key = File.read(private_key_file)
 

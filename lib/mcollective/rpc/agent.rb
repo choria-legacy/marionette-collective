@@ -276,7 +276,7 @@ module MCollective
             def audit_request(msg, connection)
                 PluginManager["rpcaudit_plugin"].audit_request(msg, connection) if @config.rpcaudit
             rescue Exception => e
-                @logger.warn("Audit failed - #{e} - continuing to process message")
+                Log.warn("Audit failed - #{e} - continuing to process message")
             end
         end
     end

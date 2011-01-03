@@ -9,6 +9,8 @@ module MCollective
         #    * valid_levels - a hash of maps from :info to your internal level name
         #    * log - what needs to be done to log a specific message
         class Base
+            attr_reader :active_level
+
             def initialize
                 @known_levels = [:debug, :info, :warn, :error, :fatal]
 
@@ -64,7 +66,7 @@ module MCollective
             end
 
             def start
-                raise "The logging class did not supply a set_level method"
+                raise "The logging class did not supply a start method"
             end
         end
     end

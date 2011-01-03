@@ -57,14 +57,12 @@ module MCollective
             def initialize
                 @config = Config.instance
                 @subscriptions = []
-
-                @log = Log.instance
             end
 
             # Connects to the Stomp middleware
             def connect
                 if @connection
-                    @log.debug("Already connection, not re-initializing connection")
+                    Log.debug("Already connection, not re-initializing connection")
                     return
                 end
 
@@ -81,7 +79,7 @@ module MCollective
                         user = get_env_or_option("STOMP_USER", "stomp.user")
                         password = get_env_or_option("STOMP_PASSWORD", "stomp.password")
 
-                        @log.debug("Connecting to #{host}:#{port}")
+                        Log.debug("Connecting to #{host}:#{port}")
                         @connection = ::Stomp::Connection.new(user, password, host, port, true)
                     else
                         pools = @config.pluginconf["stomp.pool.size"].to_i
@@ -96,7 +94,7 @@ module MCollective
                             host[:passcode] = get_env_or_option("STOMP_PASSWORD", "stomp.pool.password#{poolnum}")
                             host[:ssl] = get_bool_option("stomp.pool.ssl#{poolnum}", false)
 
-                            @log.debug("Adding #{host[:host]}:#{host[:port]} to the connection pool")
+                            Log.debug("Adding #{host[:host]}:#{host[:port]} to the connection pool")
                             hosts << host
                         end
 
@@ -124,7 +122,7 @@ module MCollective
 
             # Receives a message from the Stomp connection
             def receive
-                @log.debug("Waiting for a message from Stomp")
+                Log.debug("Waiting for a message from Stomp")
                 msg = @connection.receive
 
                 # STOMP puts the payload in the body variable, pass that
@@ -135,7 +133,7 @@ module MCollective
 
             # Sends a message to the Stomp connection
             def send(target, msg)
-                @log.debug("Sending a message to Stomp target '#{target}'")
+                Log.debug("Sending a message to Stomp target '#{target}'")
                 # deal with deprecation warnings in newer stomp gems
                 if @connection.respond_to?("publish")
                     @connection.publish(target, msg)
@@ -147,7 +145,7 @@ module MCollective
             # Subscribe to a topic or queue
             def subscribe(source)
                 unless @subscriptions.include?(source)
-                    @log.debug("Subscribing to #{source}")
+                    Log.debug("Subscribing to #{source}")
                     @connection.subscribe(source)
                     @subscriptions << source
                 end
@@ -155,14 +153,14 @@ module MCollective
 
             # Subscribe to a topic or queue
             def unsubscribe(source)
-                @log.debug("Unsubscribing from #{source}")
+                Log.debug("Unsubscribing from #{source}")
                 @connection.unsubscribe(source)
                 @subscriptions.delete(source)
             end
 
             # Disconnects from the Stomp connection
             def disconnect
-                @log.debug("Disconnecting from Stomp")
+                Log.debug("Disconnecting from Stomp")
                 @connection.disconnect
             end
 

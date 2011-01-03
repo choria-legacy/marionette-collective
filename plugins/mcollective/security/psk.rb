@@ -34,7 +34,7 @@ module MCollective
                 serialized  = Marshal.dump(msg)
                 digest = makehash(serialized)
 
-                @log.debug("Encoded a message with hash #{digest} for request #{requestid}")
+                Log.debug("Encoded a message with hash #{digest} for request #{requestid}")
 
                 Marshal.dump({:senderid => @config.identity,
                               :requestid => requestid,
@@ -50,7 +50,7 @@ module MCollective
                 serialized = Marshal.dump(msg)
                 digest = makehash(serialized)
 
-                @log.debug("Encoding a request for '#{target}' with request id #{requestid}")
+                Log.debug("Encoding a request for '#{target}' with request id #{requestid}")
                 request = {:body => serialized,
                            :hash => digest,
                            :senderid => @config.identity,
@@ -105,7 +105,7 @@ module MCollective
                         id ="uid=#{Process.uid}"
                 end
 
-                @log.debug("Setting callerid to #{id} based on callertype=#{callertype}")
+                Log.debug("Setting callerid to #{id} based on callertype=#{callertype}")
 
                 id
             end

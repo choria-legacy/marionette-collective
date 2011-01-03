@@ -70,7 +70,7 @@ module MCollective
                     @ddl = DDL.new(agent)
                     @timeout = @ddl.meta[:timeout] + @discovery_timeout if @timeout == 5
                 rescue Exception => e
-                    Log.instance.debug("Could not find DDL: #{e}")
+                    Log.debug("Could not find DDL: #{e}")
                     @ddl = nil
                 end
 
@@ -188,7 +188,7 @@ module MCollective
                 # that will only match the one node.
                 if @limit_targets
                     target_nodes = pick_nodes_from_discovered(@limit_targets)
-                    Log.instance.debug("Picked #{target_nodes.join(',')} as limited target(s)")
+                    Log.debug("Picked #{target_nodes.join(',')} as limited target(s)")
 
                     custom_request(action, args, target_nodes, {"identity" => /^(#{target_nodes.join('|')})$/}, &block)
                 else

@@ -80,7 +80,7 @@ module MCollective
                 serialized  = Marshal.dump(msg)
                 digest = makehash(serialized)
 
-                @log.debug("Encoded a message with hash #{digest} for request #{requestid}")
+                Log.debug("Encoded a message with hash #{digest} for request #{requestid}")
 
                 Marshal.dump({:senderid => @config.identity,
                               :requestid => requestid,
@@ -96,7 +96,7 @@ module MCollective
                 serialized = Marshal.dump(msg)
                 digest = makehash(serialized)
 
-                @log.debug("Encoding a request for '#{target}' with request id #{requestid}")
+                Log.debug("Encoding a request for '#{target}' with request id #{requestid}")
                 request = {:body => serialized,
                            :hash => digest,
                            :senderid => @config.identity,
@@ -119,15 +119,15 @@ module MCollective
             # request sent for validation
             # should not have been deserialized already
             def validrequest?(req)
-                @log.info "Caller id: #{req[:callerid]}"
-                @log.info "Sender id: #{req[:senderid]}"
+                Log.info "Caller id: #{req[:callerid]}"
+                Log.info "Sender id: #{req[:senderid]}"
                 message = req[:body]
 
                 #@log.info req.awesome_inspect
                 identity = (req[:callerid] or req[:senderid])
                 verifier = SSH::Key::Verifier.new(identity)
 
-                @log.info "Using name '#{identity}'"
+                Log.info "Using name '#{identity}'"
 
                 # If no callerid, this is a 'response' message and we should
                 # attempt to authenticate using the senderid (hostname, usually)

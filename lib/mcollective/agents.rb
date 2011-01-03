@@ -6,7 +6,6 @@ module MCollective
             @config = Config.instance
             raise ("Configuration has not been loaded, can't load agents") unless @config.configured
 
-            @log = Log.instance
             @@agents = {}
 
             loadagents
@@ -14,7 +13,7 @@ module MCollective
 
         # Loads all agents from disk
         def loadagents
-            @log.debug("Reloading all agents from disk")
+            Log.debug("Reloading all agents from disk")
 
             # We're loading all agents so just nuke all the old agents and unsubscribe
             connector = PluginManager["connector_plugin"]
@@ -52,7 +51,7 @@ module MCollective
                 @@agents[agentname] = {:file => agentfile}
                 return true
             rescue Exception => e
-                @log.error("Loading agent #{agentname} failed: #{e}")
+                Log.error("Loading agent #{agentname} failed: #{e}")
                 PluginManager.delete("#{agentname}_agent")
             end
         end
@@ -62,7 +61,7 @@ module MCollective
             @config.libdir.each do |libdir|
                 agentfile = "#{libdir}/mcollective/agent/#{agentname}.rb"
                 if File.exist?(agentfile)
-                    @log.debug("Found #{agentname} at #{agentfile}")
+                    Log.debug("Found #{agentname} at #{agentfile}")
                     return agentfile
                 end
             end
@@ -107,7 +106,7 @@ module MCollective
         # Dispatches a message to an agent, accepts a block that will get run if there are
         # any replies to process from the agent
         def dispatch(msg, target, connection)
-            @log.debug("Dispatching a message to agent #{target}")
+            Log.debug("Dispatching a message to agent #{target}")
 
             Thread.new do
                 begin
@@ -122,10 +121,10 @@ module MCollective
                         end
                     end
                 rescue Timeout::Error => e
-                    @log.warn("Timeout while handling message for #{target}")
+                    Log.warn("Timeout while handling message for #{target}")
                 rescue Exception => e
-                    @log.error("Execution of #{target} failed: #{e}")
-                    @log.error(e.backtrace.join("\n\t\t"))
+                    Log.error("Execution of #{target} failed: #{e}")
+                    Log.error(e.backtrace.join("\n\t\t"))
                 end
             end
         end

@@ -19,14 +19,13 @@ module MCollective
             # Returns the value of a single fact
             def get_fact(fact=nil)
                 config = Config.instance
-                logger = Log.instance
 
                 cache_time = config.fact_cache_time || 300
 
                 Thread.exclusive do
                     begin
                         if (Time.now.to_i - @@last_facts_load > cache_time.to_i )
-                            logger.debug("Resetting facter cache after #{cache_time} seconds, now: #{Time.now.to_i} last-known-good: #{@@last_facts_load}")
+                            Log.debug("Resetting facter cache after #{cache_time} seconds, now: #{Time.now.to_i} last-known-good: #{@@last_facts_load}")
 
                             @@facts = load_facts_from_source
 
@@ -40,10 +39,10 @@ module MCollective
                             @@last_good_facts = @@facts.clone
                             @@last_facts_load = Time.now.to_i
                         else
-                            logger.debug("Using cached facts now: #{Time.now.to_i} last-known-good: #{@@last_facts_load}")
+                            Log.debug("Using cached facts now: #{Time.now.to_i} last-known-good: #{@@last_facts_load}")
                         end
                     rescue Exception => e
-                        logger.error("Failed to load facts: #{e.class}: #{e}")
+                        Log.error("Failed to load facts: #{e.class}: #{e}")
 
                         # Avoid loops where failing fact loads cause huge CPU
                         # loops, this way it only retries once every cache_time

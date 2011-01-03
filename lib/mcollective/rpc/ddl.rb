@@ -40,7 +40,6 @@ module MCollective
                 @actions = {}
                 @meta = {}
                 @config = MCollective::Config.instance
-                @log = MCollective::Log.instance
                 @agent = agent
 
                 if ddlfile = findddlfile(agent)
@@ -54,7 +53,7 @@ module MCollective
                 @config.libdir.each do |libdir|
                     ddlfile = "#{libdir}/mcollective/agent/#{agent}.ddl"
                     if File.exist?(ddlfile)
-                        @log.debug("Found #{agent} ddl at #{ddlfile}")
+                        Log.debug("Found #{agent} ddl at #{ddlfile}")
                         return ddlfile
                     end
                 end

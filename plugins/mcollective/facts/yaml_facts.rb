@@ -10,7 +10,6 @@ module MCollective
         class Yaml_facts<Base
             def load_facts_from_source
                 config = Config.instance
-                logger = Log.instance
 
                 fact_files = config.pluginconf["yaml"].split(":")
                 facts = {}
@@ -23,7 +22,7 @@ module MCollective
                             raise("Can't find YAML file to load: #{file}")
                         end
                     rescue Exception => e
-                        logger.error("Failed to load yaml facts from #{file}: #{e.class}: #{e}")
+                        Log.error("Failed to load yaml facts from #{file}: #{e.class}: #{e}")
                     end
                 end
 

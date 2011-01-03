@@ -7,8 +7,6 @@ module MCollective
             attr_reader :timeout, :meta
 
             def initialize
-                @log = Log.instance
-
                 @timeout = Config.instance.pluginconf["discovery.timeout"].to_i || 5
 
                 @meta = {:license => "Apache License, Version 2",

@@ -8,7 +8,6 @@ module MCollective
         def initialize(configfile)
             @config = Config.instance
             @config.loadconfig(configfile) unless @config.configured
-            @log = Log.instance
             @connection = PluginManager["connector_plugin"]
 
             @security = PluginManager["security_plugin"]
@@ -23,7 +22,7 @@ module MCollective
 
         # Disconnects cleanly from the middleware
         def disconnect
-            @log.debug("Disconnecting from the middleware")
+            Log.debug("Disconnecting from the middleware")
             @connection.disconnect
         end
 
@@ -36,11 +35,11 @@ module MCollective
 
             req = @security.encoderequest(@config.identity, target, msg, reqid, filter)
 
-            @log.debug("Sending request #{reqid} to #{target}")
+            Log.debug("Sending request #{reqid} to #{target}")
 
             unless @subscriptions.include?(agent)
                 topic = Util.make_target(agent, :reply)
-                @log.debug("Subscribing to #{topic}")
+                Log.debug("Subscribing to #{topic}")
 
                 @connection.subscribe(topic)
                 @subscriptions[agent] = 1
@@ -69,10 +68,10 @@ module MCollective
 
                 raise(MsgDoesNotMatchRequestID, "Message reqid #{requestid} does not match our reqid #{msg[:requestid]}") if msg[:requestid] != requestid
             rescue SecurityValidationFailed => e
-                @log.warn("Ignoring a message that did not pass security validations")
+                Log.warn("Ignoring a message that did not pass security validations")
                 retry
             rescue MsgDoesNotMatchRequestID => e
-                @log.debug("Ignoring a message for some other client")
+                Log.debug("Ignoring a message for some other client")
                 retry
             end
 
@@ -84,13 +83,13 @@ module MCollective
         def discover(filter, timeout)
             begin
                 reqid = sendreq("ping", "discovery", filter)
-                @log.debug("Waiting #{timeout} seconds for discovery replies to request #{reqid}")
+                Log.debug("Waiting #{timeout} seconds for discovery replies to request #{reqid}")
 
                 hosts = []
                 Timeout.timeout(timeout) do
                     loop do
                         msg = receive(reqid)
-                        @log.debug("Got discovery reply from #{msg[:senderid]}")
+                        Log.debug("Got discovery reply from #{msg[:senderid]}")
                         hosts << msg[:senderid]
                     end
                 end

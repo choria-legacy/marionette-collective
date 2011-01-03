@@ -7,8 +7,6 @@ module MCollective
             @config = Config.instance
             @config.loadconfig(configfile) unless @config.configured
 
-            @log = Log.instance
-
             @stats = PluginManager["global_stats"]
 
             @security = PluginManager["security_plugin"]
@@ -20,13 +18,13 @@ module MCollective
             @agents = Agents.new
 
             Signal.trap("USR1") do
-                @log.info("Reloading all agents after receiving USR1 signal")
+                Log.info("Reloading all agents after receiving USR1 signal")
                 @agents.loadagents
             end
 
             Signal.trap("USR2") do
-                @log.info("Cycling logging level due to USR2 signal")
-                @log.cycle_level
+                Log.info("Cycling logging level due to USR2 signal")
+                Log.cycle_level
             end
         end
 
@@ -53,7 +51,7 @@ module MCollective
             begin
                 PluginManager["registration_plugin"].run(@connection) unless @config.registerinterval == 0
             rescue Exception => e
-                @log.error("Failed to start registration plugin: #{e}")
+                Log.error("Failed to start registration plugin: #{e}")
             end
 
             loop do
@@ -62,27 +60,27 @@ module MCollective
                     dest = msg[:msgtarget]
 
                     if dest =~ /#{controltopic}/
-                        @log.debug("Handling message for mcollectived controller")
+                        Log.debug("Handling message for mcollectived controller")
 
                         controlmsg(msg)
                     elsif dest =~ /#{@config.topicprefix}#{@config.topicsep}(.+)#{@config.topicsep}command/
                         target = $1
 
-                        @log.debug("Handling message for #{target}")
+                        Log.debug("Handling message for #{target}")
 
                         agentmsg(msg, target)
                     end
                 rescue Interrupt
-                    @log.warn("Exiting after interrupt signal")
+                    Log.warn("Exiting after interrupt signal")
                     @connection.disconnect
                     exit!
 
                 rescue NotTargettedAtUs => e
-                    @log.debug("Message does not pass filters, ignoring")
+                    Log.debug("Message does not pass filters, ignoring")
 
                 rescue Exception => e
-                    @log.warn("Failed to handle message: #{e} - #{e.class}\n")
-                    @log.warn(e.backtrace.join("\n\t"))
+                    Log.warn("Failed to handle message: #{e} - #{e.class}\n")
+                    Log.warn(e.backtrace.join("\n\t"))
                 end
             end
         end
@@ -116,18 +114,18 @@ module MCollective
                         reply("mcollective", replytopic, "reloaded all agents", requestid, callerid) if @agents.loadagents
 
                     when /^exit$/
-                        @log.error("Exiting due to request to controller")
+                        Log.error("Exiting due to request to controller")
                         reply("mcollective", replytopic, "exiting after request to controller", requestid, callerid)
 
                         @connection.disconnect
                         exit!
 
                     else
-                        @log.error("Received an unknown message to the controller")
+                        Log.error("Received an unknown message to the controller")
 
                 end
             rescue Exception => e
-                @log.error("Failed to handle control message: #{e}")
+                Log.error("Failed to handle control message: #{e}")
             end
         end
 

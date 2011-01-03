@@ -33,10 +33,10 @@ module MCollective
             # create the class later on demand.
             if klass.is_a?(String)
                 @plugins[type] = {:loadtime => Time.now, :class => klass, :instance => nil}
-                Log.instance.debug("Registering plugin #{type} with class #{klass}")
+                Log.debug("Registering plugin #{type} with class #{klass}")
             else
                 @plugins[type] = {:loadtime => Time.now, :class => klass.class, :instance => klass}
-                Log.instance.debug("Registering plugin #{type} with class #{klass.class}")
+                Log.debug("Registering plugin #{type} with class #{klass.class}")
             end
         end
 
@@ -70,7 +70,7 @@ module MCollective
                 end
             end
 
-            Log.instance.debug("Returning plugin #{plugin} with class #{klass}")
+            Log.debug("Returning plugin #{plugin} with class #{klass}")
 
             @plugins[plugin][:instance]
         end
@@ -80,11 +80,11 @@ module MCollective
         def self.loadclass(klass)
             fname = klass.gsub("::", "/").downcase + ".rb"
 
-            Log.instance.debug("Loading #{klass} from #{fname}")
+            Log.debug("Loading #{klass} from #{fname}")
 
             load fname
         rescue Exception => e
-            Log.instance.error("Failed to load #{klass}: #{e}")
+            Log.error("Failed to load #{klass}: #{e}")
         end
 
         # Grep's over the plugin list and returns the list found

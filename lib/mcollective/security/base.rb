@@ -37,8 +37,7 @@ module MCollective
             # various security methods and filter validators should increment stats, see MCollective::Security::Psk for a sample
             def initialize
                 @config = Config.instance
-                @log = Log.instance
-
+                @log = Log
                 @stats = PluginManager["global_stats"]
             end
 
@@ -63,12 +62,12 @@ module MCollective
                     case key
                         when /puppet_class|cf_class/
                             filter[key].each do |f|
-                                @log.debug("Checking for class #{f}")
+                                Log.debug("Checking for class #{f}")
                                 if Util.has_cf_class?(f) then
-                                    @log.debug("Passing based on configuration management class #{f}")
+                                    Log.debug("Passing based on configuration management class #{f}")
                                     passed += 1
                                 else
-                                    @log.debug("Failing based on configuration management class #{f}")
+                                    Log.debug("Failing based on configuration management class #{f}")
                                     failed += 1
                                 end
                             end
@@ -76,10 +75,10 @@ module MCollective
                         when "agent"
                             filter[key].each do |f|
                                 if Util.has_agent?(f) || f == "mcollective"
-                                    @log.debug("Passing based on agent #{f}")
+                                    Log.debug("Passing based on agent #{f}")
                                     passed += 1
                                 else
-                                    @log.debug("Failing based on agent #{f}")
+                                    Log.debug("Failing based on agent #{f}")
                                     failed += 1
                                 end
                             end
@@ -87,10 +86,10 @@ module MCollective
                         when "fact"
                             filter[key].each do |f|
                                 if Util.has_fact?(f[:fact], f[:value], f[:operator])
-                                    @log.debug("Passing based on fact #{f[:fact]} #{f[:operator]} #{f[:value]}")
+                                    Log.debug("Passing based on fact #{f[:fact]} #{f[:operator]} #{f[:value]}")
                                     passed += 1
                                 else
-                                    @log.debug("Failing based on fact #{f[:fact]} #{f[:operator]} #{f[:value]}")
+                                    Log.debug("Failing based on fact #{f[:fact]} #{f[:operator]} #{f[:value]}")
                                     failed += 1
                                 end
                             end
@@ -98,10 +97,10 @@ module MCollective
                         when "identity"
                             filter[key].each do |f|
                                 if Util.has_identity?(f)
-                                    @log.debug("Passing based on identity = #{f}")
+                                    Log.debug("Passing based on identity = #{f}")
                                     passed += 1
                                 else
-                                    @log.debug("Failed based on identity = #{f}")
+                                    Log.debug("Failed based on identity = #{f}")
                                     failed += 1
                                 end
                             end
@@ -109,13 +108,13 @@ module MCollective
                 end
 
                 if failed == 0 && passed > 0
-                    @log.debug("Message passed the filter checks")
+                    Log.debug("Message passed the filter checks")
 
                     @stats.passed
 
                     return true
                 else
-                    @log.debug("Message failed the filter checks")
+                    Log.debug("Message failed the filter checks")
 
                     @stats.filtered
 
@@ -131,22 +130,22 @@ module MCollective
 
             # Security providers should provide this, see MCollective::Security::Psk
             def validrequest?(req)
-                @log.error("validrequest? is not implimented in #{this.class}")
+                Log.error("validrequest? is not implimented in #{this.class}")
             end
 
             # Security providers should provide this, see MCollective::Security::Psk
             def encoderequest(sender, target, msg, filter={})
-                @log.error("encoderequest is not implimented in #{this.class}")
+                Log.error("encoderequest is not implimented in #{this.class}")
             end
 
             # Security providers should provide this, see MCollective::Security::Psk
             def encodereply(sender, target, msg, requestcallerid=nil)
-                @log.error("encodereply is not implimented in #{this.class}")
+                Log.error("encodereply is not implimented in #{this.class}")
             end
 
             # Security providers should provide this, see MCollective::Security::Psk
             def decodemsg(msg)
-                @log.error("decodemsg is not implimented in #{this.class}")
+                Log.error("decodemsg is not implimented in #{this.class}")
             end
         end
     end

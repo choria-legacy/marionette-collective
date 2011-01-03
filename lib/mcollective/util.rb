@@ -31,7 +31,7 @@ module MCollective
             klass = Regexp.new(klass.gsub("\/", "")) if klass.match("^/")
             cfile = Config.instance.classesfile
 
-            Log.instance.debug("Looking for configuration management classes in #{cfile}")
+            Log.debug("Looking for configuration management classes in #{cfile}")
 
             File.readlines(cfile).each do |k|
                 if klass.is_a?(Regexp)
@@ -56,8 +56,8 @@ module MCollective
         # and will use regex to match
         def self.has_fact?(fact, value, operator)
 
-            Log.instance.debug("Comparing #{fact} #{operator} #{value}")
-            Log.instance.debug("where :fact = '#{fact}', :operator = '#{operator}', :value = '#{value}'")
+            Log.debug("Comparing #{fact} #{operator} #{value}")
+            Log.debug("where :fact = '#{fact}', :operator = '#{operator}', :value = '#{value}'")
 
             fact = Facts.get_fact(fact).clone
 

@@ -5,4 +5,9 @@ $LOAD_PATH.unshift("#{dir}/../lib")
 require 'mcollective'
 require 'rubygems'
 require 'rspec'
+require 'rspec/mocks'
+require 'mocha'
 
+RSpec.configure do |config|
+    config.mock_with :mocha
+end

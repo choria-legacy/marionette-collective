@@ -3,8 +3,10 @@ module MCollective
         # Impliments a syslog based logger using the standard ruby syslog class
         class Console_logger<Base
             def start
+                set_level(:info)
+
                 config = Config.instance
-                set_level(config.loglevel.to_sym)
+                set_level(config.loglevel.to_sym) if config.configured
             end
 
             def set_logging_level(level)

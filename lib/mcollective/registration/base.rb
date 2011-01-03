@@ -28,12 +28,12 @@ module MCollective
                             filter = {"agent" => "registration"}
                             req = PluginManager["security_plugin"].encoderequest(config.identity, target, body, reqid, filter)
 
-                            Log.instance.debug("Sending registration #{reqid} to #{target}")
+                            Log.debug("Sending registration #{reqid} to #{target}")
                             connection.send(target, req)
 
                             sleep config.registerinterval
                         rescue Exception => e
-                            Log.instance.error("Sending registration message failed: #{e}")
+                            Log.error("Sending registration message failed: #{e}")
                             sleep config.registerinterval
                         end
                     end
