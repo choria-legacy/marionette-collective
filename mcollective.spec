@@ -66,7 +66,11 @@ rm -rf %{buildroot}
 %{__install} -m0644 etc/client.cfg.dist %{buildroot}/etc/mcollective/client.cfg
 %{__install} -m0444 etc/facts.yaml.dist %{buildroot}/etc/mcollective/facts.yaml
 %{__install} -m0444 etc/rpc-help.erb %{buildroot}/etc/mcollective/rpc-help.erb
+%if 0%{?suse_version}
+%{__install} -m0755 mcollective.init %{buildroot}/etc/init.d/mcollective
+%else
 %{__install} -m0755 mcollective.init-rh %{buildroot}/etc/init.d/mcollective
+%endif
 
 
 cp -R lib/* %{buildroot}/%{ruby_sitelib}/
