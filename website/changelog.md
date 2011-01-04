@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/01/04|Remove the use of a Singleton in the logging class|5749|
 |2011/01/02|Add AES+RSA security plugin|5696|
 |2010/12/31|Security plugins now have access to the callerid of the message they are replying to|5745|
 |2010/12/30|Allow - in fact names|5727|
