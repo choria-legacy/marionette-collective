@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/01/04|Use the LSB based init script on SUSE|5762|
 |2012/01/04|Remove the use of a Singleton in the logging class|5749|
 |2011/01/02|Add AES+RSA security plugin|5696|
 |2010/12/31|Security plugins now have access to the callerid of the message they are replying to|5745|
@@ -37,6 +38,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/01/04|Use the LSB based init script on SUSE|5762|
 |2010/12/30|Allow - in fact names|5727|
 |2010/12/29|Treat machines that fail security validation like ones that did not respond|5700|
 |2010/12/25|Increase the rpcutil timeout to allow for slow facts|5679|
