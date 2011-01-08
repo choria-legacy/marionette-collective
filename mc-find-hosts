@@ -2,27 +2,11 @@
 
 require 'mcollective'
 
-oparser = MCollective::Optionparser.new({}, "filter")
+app_name = "find"
 
-options = oparser.parse{|parser, options|
-    parser.define_head "Find hosts matching criteria"
-    parser.banner = "Usage: mc-find-hosts [options] [filters]"
-}
-
-begin
-    client = MCollective::Client.new(options[:config])
-    client.options = options
-
-    stats = client.req("ping", "discovery") do |resp|
-        puts resp[:senderid]
-    end
-
-    client.disconnect
-rescue Exception => e
-    STDERR.puts "Could not call remote agent: #{e}"
-    exit 1
+if MCollective::Applications.list.include?(app_name)
+    MCollective::Applications.run(app_name)
+else
+    STDERR.puts "Cannot find the #{app_name} command in the applications plugin directory"
 end
 
-client.display_stats(stats) if options[:verbose]
-
-# vi:tabstop=4:expandtab:ai

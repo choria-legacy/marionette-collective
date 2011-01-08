@@ -9,22 +9,36 @@ disqus: true
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
 [RubyMixin]: http://juixe.com/techknow/index.php/2006/06/15/mixins-in-ruby/
 [OptionParser]: http://github.com/mcollective/marionette-collective/blob/master/lib/mcollective/optionparser.rb
+[AppPlugin]: ../reference/plugins/application.html
 
 # {{page.title}}
 
  * a list for the toc
  {:toc}
 
-As pointed out in the [SimpleRPCIntroduction] page you can use the _mc-rpc_ CLI to call agents and it will do it's best to print results in a sane way.  When this is not enough you can write your own clients.
+As pointed out in the [SimpleRPCIntroduction] page you can use the _mc-rpc_ CLI
+to call agents and it will do it's best to print results in a sane way.  When
+this is not enough you can write your own clients.
 
-Simple RPC clients can do most of what a normal [client][WritingAgents] can do but it makes a lot of things much easier if you stick to the Simple RPC conventions.
+Simple RPC clients can do most of what a normal [client][WritingAgents] can do
+but it makes a lot of things much easier if you stick to the Simple RPC
+conventions.
 
-We've recorded a [tutorial that will give you a quick look at what is involved in writing agents and a very simple client][WritingAgentsScreenCast].
+This guide shows how to write standalone scripts to interact with your
+collective.  Since version 1.1.1 there is a single executable system.  You can
+apply most of the techniques documented here to writing plugins for that
+application system.  See the full reference for the plugin system
+[here][AppPlugin].  You should try to write your general agent CLIs using
+this plugin system.
+
+We've recorded a [tutorial that will give you a quick look at what is involved
+in writing agents and a very simple client][WritingAgentsScreenCast].
 
 We'll walk through building a ever more complex example of Hello World here.
 
 ## The Basic Client
-The client is mostly a bunch of helper methods that you use as a [Ruby Mixin][RubyMixin] in your own code, it provides:
+The client is mostly a bunch of helper methods that you use as a [Ruby
+Mixin][RubyMixin] in your own code, it provides:
 
  * Standard command line option parsing with help output
  * Ability to add your own command line options
@@ -35,7 +49,8 @@ The client is mostly a bunch of helper methods that you use as a [Ruby Mixin][Ru
  * While retaining full power of _MCollective::Client_ if you need the additional feature sets
  * And being as simple or as complex to match your level of code proficiency
 
-We'll write a client for the _Helloworld_ agent that you saw in the [SimpleRPCIntroduction].
+We'll write a client for the _Helloworld_ agent that you saw in the
+[SimpleRPCIntroduction].
 
 ## Call an Agent and print the result
 A basic hello world client can be seen below:

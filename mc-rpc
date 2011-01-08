@@ -1,128 +1,16 @@
 #!/usr/bin/env ruby
 
-# Generic client for MCollective Simple RPC
-#
-# http://marionette-collective.org/simplerpc/
-
 require 'mcollective'
 
-include MCollective::RPC
+if $0 =~ /mc\-(.+)$/
+    app_name = $1
 
-# As we're taking arguments on the command line we need a
-# way to input booleans, true on the cli is a string so this
-# method will take the ddl, find all arguments that are supposed
-# to be boolean and if they are the strings "true"/"yes" or "false"/"no"
-# turn them into the matching boolean
-def booleanish_to_boolean(arguments, ddl)
-    arguments.keys.each do |key|
-        if ddl[:input].keys.include?(key)
-            if ddl[:input][key][:type] == :boolean
-                arguments[key] = true if arguments[key] == "true"
-                arguments[key] = true if arguments[key] == "yes"
-                arguments[key] = false if arguments[key] == "false"
-                arguments[key] = false if arguments[key] == "no"
-            end
-        end
-    end
-end
-
-begin
-    options = rpcoptions do |parser, options|
-        parser.banner = ""
-        parser.define_head "Generic Simple RPC client"
-        parser.separator ""
-        parser.separator "Usage: mc-rpc [options] [filters] --agent <agent> --action <action> [--argument <key=val> --argument ...]"
-        parser.separator "Alternate Usage: mc-rpc [options] [filters] <agent> <action> [<key=val> <key=val> ...]"
-        parser.separator "Alternate Usage: mc-rpc --agent-help agent"
-        parser.separator ""
-
-        options[:arguments] = {}
-
-        parser.on('--no-results', '--nr', "Do not process results, just send request") do |v|
-            options[:process_results] = false
-        end
-
-        parser.on('-a', '--agent AGENT', 'Agent to call') do |v|
-            options[:agent] = v
-        end
-
-        parser.on('--action ACTION', 'Action to call') do |v|
-            options[:action] = v
-        end
-
-        parser.on("--ah", "--agent-help AGENT", "Get help for an agent") do |v|
-            options[:agent_help] = v
-        end
-
-        parser.on('--arg', '--argument ARGUMENT', 'Arguments to pass to agent') do |v|
-            if v =~ /^(.+?)=(.+)$/
-                options[:arguments][$1.to_sym] = $2
-            else
-                STDERR.puts("Could not parse --arg #{v}")
-            end
-        end
-    end
-
-    # Parse the alternative command line
-    unless (options.include?(:agent) && options.include?(:action)) || options.include?(:agent_help)
-        if ARGV.length >= 2
-            options[:agent] = ARGV[0]
-            ARGV.delete_at(0)
-
-            options[:action] = ARGV[0]
-            ARGV.delete_at(0)
-
-            ARGV.each do |v|
-                if v =~ /^(.+?)=(.+)$/
-                    options[:arguments][$1.to_sym] = $2
-                else
-                    STDERR.puts("Could not parse --arg #{v}")
-                end
-            end
-        else
-            STDERR.puts("No agent, action and arguments specified")
-            exit!
-        end
-    end
-
-    # handle fire and forget mode
-    options[:process_results] = true unless options.include?(:process_results)
-    options[:arguments][:process_results] = options[:process_results]
-
-    if options[:agent_help]
-        config = MCollective::Config.instance
-        config.loadconfig(options[:config])
-
-        ddl = MCollective::RPC::DDL.new(options[:agent_help])
-
-        puts ddl.help(config.rpchelptemplate)
-    elsif options[:process_results]
-        mc = rpcclient(options[:agent], {:options => options})
-
-        booleanish_to_boolean(options[:arguments], mc.ddl.action_interface(options[:action])) unless mc.ddl.nil?
-
-        mc.agent_filter(options[:agent])
-        mc.discover :verbose => true
-
-        printrpc mc.send(options[:action], options[:arguments])
-
-        printrpcstats :caption => "#{options[:agent]}##{options[:action]} call stats"
-
-        mc.disconnect
+    if MCollective::Applications.list.include?(app_name)
+        MCollective::Applications.run(app_name)
     else
-        mc = rpcclient(options[:agent], {:options => options})
-
-        booleanish_to_boolean(options[:arguments], mc.ddl.action_interface(options[:action])) unless mc.ddl.nil?
-
-        mc.agent_filter(options[:agent])
-
-        puts "Request sent with id: " + mc.send(options[:action], options[:arguments])
-
-        mc.disconnect
+        STDERR.puts "Cannot find the #{app_name} command in the applications plugin directory"
     end
-rescue Exception => e
-    STDERR.puts("Could not call agent: #{e}")
-    exit 1
+else
+    STDERR.puts "Do not know which command to run, please run mc help for details"
 end
 
-# vi:tabstop=4:expandtab:ai

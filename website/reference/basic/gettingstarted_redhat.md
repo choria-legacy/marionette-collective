@@ -46,7 +46,7 @@ We try to keep the requirements on external Gems to a minimum, you only need:
 
 We strongly recommend you set up a local Yum repository that will host all the packages on your LAN, you can get the prerequisite packages here:
 
- * [ActiveMQ][MCDownloads] - activemq-5.4.0-2.el5.noarch.rpm, activemq-info-provider-5.4.0-2.el5.noarch.rpm, tanukiwrapper-3.2.3-1jpp.*.rpm
+ * [ActiveMQ][MCDownloads] - activemq-5.4.0-2.el5.noarch.rpm, activemq-info-provider-5.4.0-2.el5.noarch.rpm, tanukiwrapper-3.2.3-1jpp.`*`.rpm
  * Java - OpenJDK that is included with your distribution
  * Ruby - included with your distribution
  * RubyGems - [EPEL]

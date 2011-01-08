@@ -76,7 +76,8 @@ rm -rf %{buildroot}
 cp -R lib/* %{buildroot}/%{ruby_sitelib}/
 cp -R plugins/* %{buildroot}/usr/libexec/mcollective/
 cp mc-* %{buildroot}/usr/sbin/
-chmod 0755 %{buildroot}/usr/sbin/mc-*
+cp mc %{buildroot}/usr/sbin/
+chmod 0755 %{buildroot}/usr/sbin/*
 
 %clean
 rm -rf %{buildroot}
@@ -104,7 +105,7 @@ fi
 %dir /etc/mcollective/ssl
 
 %files client
-%attr(0755, root, root)/usr/sbin/mc-*
+%attr(0755, root, root)/usr/sbin/mc*
 %doc COPYING
 %config(noreplace)/etc/mcollective/client.cfg
 %config/etc/mcollective/rpc-help.erb

@@ -11,6 +11,7 @@ install: install-bin install-lib install-conf install-plugins install-doc
 install-bin:
 	install -d $(DESTDIR)/usr/sbin
 	cp mc-* $(DESTDIR)/usr/sbin
+	cp mc $(DESTDIR)/usr/sbin
 	cp mcollectived.rb $(DESTDIR)/usr/sbin/mcollectived
 
 install-lib:
