@@ -18,6 +18,7 @@ module MCollective
             # We're loading all agents so just nuke all the old agents and unsubscribe
             connector = PluginManager["connector_plugin"]
             @@agents.each_key do |agent|
+                PluginManager.delete "#{agent}_agent"
                 connector.unsubscribe(Util.make_target(agent, :command))
             end
 
