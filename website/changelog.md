@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/01/11|Fix a bug with forcing all facts to be strings|5832|
 |2011/01/08|When using reload_agents or USR1 signal no agents would be reloaded|5808|
 |2011/01/04|Use the LSB based init script on SUSE|5762|
 |2011/01/04|Remove the use of a Singleton in the logging class|5749|

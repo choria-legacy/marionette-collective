@@ -7,9 +7,11 @@ module MCollective
         #  {"foo" => "bar",
         #   "bar" => "baz"}
         class Base
-            @@facts = {}
-            @@last_good_facts = {}
-            @@last_facts_load = 0
+            def initialize
+                @facts = {}
+                @last_good_facts = {}
+                @last_facts_load = 0
+            end
 
             # Registers new fact sources into the plugin manager
             def self.inherited(klass)
@@ -24,22 +26,24 @@ module MCollective
 
                 Thread.exclusive do
                     begin
-                        if (Time.now.to_i - @@last_facts_load > cache_time.to_i )
-                            Log.debug("Resetting facter cache after #{cache_time} seconds, now: #{Time.now.to_i} last-known-good: #{@@last_facts_load}")
+                        if (Time.now.to_i - @last_facts_load > cache_time.to_i )
+                            Log.debug("Resetting facter cache after #{cache_time} seconds, now: #{Time.now.to_i} last-known-good: #{@last_facts_load}")
 
-                            @@facts = load_facts_from_source
+                            tfacts = load_facts_from_source
 
                             # Force reset to last known good state on empty facts
-                            raise "Got empty facts" if @@facts.empty?
+                            raise "Got empty facts" if tfacts.empty?
 
-                            @@facts.each_pair do |key,value|
-                                @@facts[key.to_s] = value.to_s
+                            @facts.clear
+
+                            tfacts.each_pair do |key,value|
+                                @facts[key.to_s] = value.to_s
                             end
 
-                            @@last_good_facts = @@facts.clone
-                            @@last_facts_load = Time.now.to_i
+                            @last_good_facts = @facts.clone
+                            @last_facts_load = Time.now.to_i
                         else
-                            Log.debug("Using cached facts now: #{Time.now.to_i} last-known-good: #{@@last_facts_load}")
+                            Log.debug("Using cached facts now: #{Time.now.to_i} last-known-good: #{@last_facts_load}")
                         end
                     rescue Exception => e
                         Log.error("Failed to load facts: #{e.class}: #{e}")
@@ -47,19 +51,19 @@ module MCollective
                         # Avoid loops where failing fact loads cause huge CPU
                         # loops, this way it only retries once every cache_time
                         # seconds
-                        @@last_facts_load = Time.now.to_i
+                        @last_facts_load = Time.now.to_i
 
                         # Revert to last known good state
-                        @@facts = @@last_good_facts.clone
+                        @facts = @last_good_facts.clone
                     end
                 end
 
 
                 # If you do not supply a specific fact all facts will be returned
                 if fact.nil?
-                    return @@facts
+                    return @facts
                 else
-                    @@facts.include?(fact) ? @@facts[fact] : nil
+                    @facts.include?(fact) ? @facts[fact] : nil
                 end
             end
 
@@ -70,7 +74,7 @@ module MCollective
 
             # Returns true if we know about a specific fact, false otherwise
             def has_fact?(fact)
-                get_fact(fact).nil?
+                get_fact(nil).include?(fact)
             end
         end
     end

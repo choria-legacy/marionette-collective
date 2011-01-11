@@ -16,25 +16,25 @@ module MCollective
     #   self.get_facts
     #
     # method that should return a hash of facts.
-	module Facts
+    module Facts
         autoload :Base, "mcollective/facts/base"
 
-		@@config = nil
+        @@config = nil
 
-		# True if we know of a specific fact else false
-		def self.has_fact?(fact, value)
-			PluginManager["facts_plugin"].get_fact(fact) == value ? true : false
-		end
+        # True if we know of a specific fact else false
+        def self.has_fact?(fact, value)
+            PluginManager["facts_plugin"].get_fact(fact) == value ? true : false
+        end
 
-		# Get the value of a fact
-		def self.get_fact(fact)
-			PluginManager["facts_plugin"].get_fact(fact)
-		end
+        # Get the value of a fact
+        def self.get_fact(fact)
+            PluginManager["facts_plugin"].get_fact(fact)
+        end
 
-		# Get the value of a fact
-		def self.[](fact)
-			PluginManager["facts_plugin"].get_fact(fact)
-		end
-	end
+        # Get the value of a fact
+        def self.[](fact)
+            PluginManager["facts_plugin"].get_fact(fact)
+        end
+    end
 end
 # vi:tabstop=4:expandtab:ai
