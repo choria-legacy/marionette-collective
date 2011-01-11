@@ -36,10 +36,12 @@ module MCollective
 
         it "using a helper it should be able to decrypt with private key what it encrypted using the public key" do
             @ssl.decrypt_with_private(@ssl.encrypt_with_public("foo")).should == "foo"
+            @ssl.decrypt_with_private(@ssl.encrypt_with_public("foo", false), false).should == "foo"
         end
 
         it "using a helper it should be able to decrypt with public key what it encrypted using the private key" do
             @ssl.decrypt_with_public(@ssl.encrypt_with_private("foo")).should == "foo"
+            @ssl.decrypt_with_public(@ssl.encrypt_with_private("foo", false), false).should == "foo"
         end
 
         describe "#read_key" do
@@ -71,12 +73,14 @@ module MCollective
         describe "#base64_encode" do
             it "should correctly encode" do
                 @ssl.base64_encode("foo").should == "Zm9v"
+                SSL.base64_encode("foo").should == "Zm9v"
             end
         end
 
         describe "#base64_decode" do
             it "should correctly decode" do
                 @ssl.base64_decode("Zm9v").should == "foo"
+                SSL.base64_decode("Zm9v").should == "foo"
             end
         end
 

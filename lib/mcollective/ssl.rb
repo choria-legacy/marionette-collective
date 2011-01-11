@@ -21,7 +21,9 @@ module MCollective
     #   crypted = {:key  => "crd4NHvG....=",
     #              :data => "XWXlqN+i...=="}
     #
-    # The key and data will all be base 64 encoded already
+    # The key and data will all be base 64 encoded already by default
+    # you can pass a 2nd parameter as false to encrypt_with_private and
+    # counterparts that will prevent the base 64 encoding
     #
     # You can pass the data hash into ssl.decrypt_with_public which
     # should return your original data
@@ -42,47 +44,65 @@ module MCollective
         # Encrypts supplied data using AES and then encrypts using RSA
         # the key and IV
         #
-        # Return a hash with everything base 64 encoded
-        def encrypt_with_public(plain_text)
+        # Return a hash with everything optionally base 64 encoded
+        def encrypt_with_public(plain_text, base64=true)
             crypted = aes_encrypt(plain_text)
 
-            encoded_key = base64_encode(rsa_encrypt_with_public(crypted[:key]))
-            encoded_data = base64_encode(crypted[:data])
+            if base64
+                key = base64_encode(rsa_encrypt_with_public(crypted[:key]))
+                data = base64_encode(crypted[:data])
+            else
+                key = rsa_encrypt_with_public(crypted[:key])
+                data = crypted[:data]
+            end
 
-            {:key => encoded_key, :data => encoded_data}
+            {:key => key, :data => data}
         end
 
         # Encrypts supplied data using AES and then encrypts using RSA
         # the key and IV
         #
-        # Return a hash with everything base 64 encoded
-        def encrypt_with_private(plain_text)
+        # Return a hash with everything optionally base 64 encoded
+        def encrypt_with_private(plain_text, base64=true)
             crypted = aes_encrypt(plain_text)
 
-            encoded_key = base64_encode(rsa_encrypt_with_private(crypted[:key]))
-            encoded_data = base64_encode(crypted[:data])
+            if base64
+                key = base64_encode(rsa_encrypt_with_private(crypted[:key]))
+                data = base64_encode(crypted[:data])
+            else
+                key = rsa_encrypt_with_private(crypted[:key])
+                data = crypted[:data]
+            end
 
-            {:key => encoded_key, :data => encoded_data}
+            {:key => key, :data => data}
         end
 
         # Decrypts data, expects a hash as create with crypt_with_public
-        def decrypt_with_private(crypted)
+        def decrypt_with_private(crypted, base64=true)
             raise "Crypted data should include a key" unless crypted.include?(:key)
             raise "Crypted data should include data" unless crypted.include?(:data)
 
-            key = rsa_decrypt_with_private(base64_decode(crypted[:key]))
-
-            aes_decrypt(key, base64_decode(crypted[:data]))
+            if base64
+                key = rsa_decrypt_with_private(base64_decode(crypted[:key]))
+                aes_decrypt(key, base64_decode(crypted[:data]))
+            else
+                key = rsa_decrypt_with_private(crypted[:key])
+                aes_decrypt(key, crypted[:data])
+            end
         end
 
         # Decrypts data, expects a hash as create with crypt_with_private
-        def decrypt_with_public(crypted)
+        def decrypt_with_public(crypted, base64=true)
             raise "Crypted data should include a key" unless crypted.include?(:key)
             raise "Crypted data should include data" unless crypted.include?(:data)
 
-            key = rsa_decrypt_with_public(base64_decode(crypted[:key]))
-
-            aes_decrypt(key, base64_decode(crypted[:data]))
+            if base64
+                key = rsa_decrypt_with_public(base64_decode(crypted[:key]))
+                aes_decrypt(key, base64_decode(crypted[:data]))
+            else
+                key = rsa_decrypt_with_public(crypted[:key])
+                aes_decrypt(key, crypted[:data])
+            end
         end
 
         # Use the public key to RSA encrypt data
@@ -139,12 +159,20 @@ module MCollective
 
         # base 64 encode a string
         def base64_encode(string)
+            SSL.base64_encode(string)
+        end
+
+        def self.base64_encode(string)
             Base64.encode64(string).chomp
         end
 
         # base 64 decode a string
         def base64_decode(string)
-            Base64.decode64(string)
+            SSL.base64_decode(string)
+        end
+
+        def self.base64_decode(string)
+            Base64.decode64(string).chomp
         end
 
         # Reads either a :public or :private key from disk, uses an

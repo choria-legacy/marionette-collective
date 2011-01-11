@@ -71,6 +71,7 @@ module MCollective
                     port = nil
                     user = nil
                     password = nil
+                    @base64 = get_bool_option("stomp.base64", false)
 
                     # Maintain backward compat for older stomps
                     unless @config.pluginconf.include?("stomp.pool.size")
@@ -128,12 +129,19 @@ module MCollective
                 # STOMP puts the payload in the body variable, pass that
                 # into the payload of MCollective::Request and discard all the
                 # other headers etc that stomp provides
-                Request.new(msg.body)
+                if @base64
+                    Request.new(SSL.base64_decode(msg.body))
+                else
+                    Request.new(msg.body)
+                end
             end
 
             # Sends a message to the Stomp connection
             def send(target, msg)
                 Log.debug("Sending a message to Stomp target '#{target}'")
+
+                msg = SSL.base64_encode(msg) if @base64
+
                 # deal with deprecation warnings in newer stomp gems
                 if @connection.respond_to?("publish")
                     @connection.publish(target, msg)

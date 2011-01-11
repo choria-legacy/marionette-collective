@@ -18,6 +18,7 @@ The most basic configuration method is supported in all versions of the gem:
 
 {% highlight ini %}
 connector = stomp
+plugin.stomp.base64 = false
 plugin.stomp.host = stomp.my.net
 plugin.stomp.port = 6163
 plugin.stomp.user = me
@@ -25,6 +26,8 @@ plugin.stomp.password = secret
 {% endhighlight %}
 
 You can override all of these settings using environment variables STOMP_SERVER, STOMP_PORT, STOMP_USER, STOMP_PASSWORD.  It is recommended that your _client.cfg_ do not have usernames and passwords in it, users should set their own in the environment.
+
+If you are seeing issues with the Stomp gem logging protocol errors and resetting your connections, especially if you are using Ruby on Rails then set the _plugin.stomp.base64_ to true, this adds an additional layer of encoding on packets to make sure they don't interfere with UTF8 encoding used in Rails.
 
 ### Failover Pools
 Newer versions of the Stomp gem supports failover between multiple Stomp servers, you need at least _1.1.6_ to use this.
