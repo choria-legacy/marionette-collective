@@ -442,7 +442,7 @@ module MCollective
                         respcount += 1
 
                         if block_given?
-                            process_results_with_block(resp, block)
+                            process_results_with_block(action, resp, block)
                         else
                             if @progress
                                 puts if respcount == 1
@@ -495,12 +495,21 @@ module MCollective
             # in this mode we do not do anything fancy with the result
             # objects and we raise exceptions if there are problems with
             # the data
-            def process_results_with_block(resp, block)
+            def process_results_with_block(action, resp, block)
                 @stats.node_responded(resp[:senderid])
 
                 if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
                     @stats.time_block_execution :start
-                    block.call(resp)
+
+                    case block.arity
+                        when 1
+                            block.call(resp)
+                        when 2
+                            rpcresp = Result.new(@agent, action, {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode],
+                                                                  :statusmsg => resp[:body][:statusmsg], :data => resp[:body][:data]})
+                            block.call(resp, rpcresp)
+                    end
+
                     @stats.time_block_execution :end
                 else
                     case resp[:body][:statuscode]

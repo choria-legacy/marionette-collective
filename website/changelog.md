@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/01/16|Provide SimpleRPC style results when accessing the MC::Client results directly|5912|
 |2011/01/11|Add an option to Base64 encode the STOMP payload|5815|
 |2011/01/11|Fix a bug with forcing all facts to be strings|5832|
 |2011/01/08|When using reload_agents or USR1 signal no agents would be reloaded|5808|

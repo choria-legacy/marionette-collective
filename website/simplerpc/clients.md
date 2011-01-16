@@ -324,6 +324,20 @@ In this mode the results you get will be like this:
 
 Note how here we need to catch the exceptions, just handing _:statuscode_ will not be enough as the RPC client will raise exceptions - all descendant from _RPCError_ so you can easily catch just those.
 
+As of version 1.1.1 you can additionally gain access to a SimpleRPC style result in addition to the more complex native client results:
+
+{% highlight ruby %}
+mc.echo(:msg => "hello world") do |resp, simpleresp|
+   begin
+      printf("%-40s: %s\n", simpleresp[:sender], simpleresp[:data])
+   rescue RPCError => e
+      puts "The RPC agent returned an error: #{e}"
+   end
+end
+{% endhighlight %}
+
+You will need to handle exceptions yourself but you have a simpler result set to deal with
+
 ## Adding custom command line options
 You can look at the _mc-rpc_ script for a big sample, here I am just adding a simple _--msg_ option to our script so you can customize the message that will be sent and received.
 
