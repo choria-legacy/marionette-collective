@@ -85,7 +85,7 @@ module MCollective
                 if flags[:verbose]
                     result_text = old_rpcresults(result, flags)
                 else
-                    result.each do |r|
+                    [result].flatten.each do |r|
                         begin
                             ddl = DDL.new(r.agent).action_interface(r.action.to_s)
 
@@ -165,7 +165,6 @@ module MCollective
                     end
                 end
 
-                result_text << "\n"
                 result_text
             end
 
@@ -203,7 +202,7 @@ module MCollective
 
                     result_text << ""
                 else
-                    result.each do |r|
+                    [result].flatten.each do |r|
 
                         if flags[:verbose]
                             result_text << "%-40s: %s\n" % [r[:sender], r[:statusmsg]]

@@ -336,6 +336,18 @@ mc.echo(:msg => "hello world") do |resp, simpleresp|
 end
 {% endhighlight %}
 
+You can still use printrpc to print these style of results and gain advantage of the DDL and so forth:
+
+{% highlight ruby %}
+mc.echo(:msg => "hello world") do |resp, simpleresp|
+   begin
+      printrpc simpleresp
+   rescue RPCError => e
+      puts "The RPC agent returned an error: #{e}"
+   end
+end
+{% endhighlight %}
+
 You will need to handle exceptions yourself but you have a simpler result set to deal with
 
 ## Adding custom command line options
