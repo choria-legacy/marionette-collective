@@ -163,7 +163,7 @@ module MCollective
         end
 
         def self.base64_encode(string)
-            Base64.encode64(string).chomp
+            Base64.encode64(string)
         end
 
         # base 64 decode a string
@@ -172,7 +172,7 @@ module MCollective
         end
 
         def self.base64_decode(string)
-            Base64.decode64(string).chomp
+            Base64.decode64(string)
         end
 
         # Reads either a :public or :private key from disk, uses an

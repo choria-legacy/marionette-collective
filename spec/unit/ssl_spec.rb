@@ -72,8 +72,8 @@ module MCollective
 
         describe "#base64_encode" do
             it "should correctly encode" do
-                @ssl.base64_encode("foo").should == "Zm9v"
-                SSL.base64_encode("foo").should == "Zm9v"
+                @ssl.base64_encode("foo").should == "Zm9v\n"
+                SSL.base64_encode("foo").should == "Zm9v\n"
             end
         end
 
