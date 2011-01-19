@@ -78,7 +78,7 @@ Returns a list of all agents with their meta data like version, author, license 
 }
 {% endhighlight %}
 
-## _get`_`config`_`item Action
+## _get`_`config`_`item_ Action
 
 Retrieves the active value for any configuration item on a server
 
@@ -87,3 +87,10 @@ Retrieves the active value for any configuration item on a server
  :value  => "debug"}
 {% endhighlight %}
 
+## _ping_ Action
+
+A simple lightweight ping action that just returns each nodes local time
+
+{% highlight ruby %}
+{:pong   => 1295471526}
+{% endhighlight %}

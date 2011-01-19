@@ -69,6 +69,11 @@ module MCollective
                 reply[:item] = request[:item]
                 reply[:value] = config.send(request[:item])
             end
+
+            # Responds to PING requests with the local timestamp
+            action "ping" do
+                reply[:pong] = Time.now.to_i
+            end
         end
     end
 end

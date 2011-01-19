@@ -129,3 +129,11 @@ action "get_config_item", :description => "Get the active value of a specific co
            :description => "The value that is in use",
            :display_as => "Value"
 end
+
+action "ping", :description => "Responds to requests for PING with PONG" do
+    display :always
+
+    output :pong,
+           :description => "The local timestamp",
+           :display_as => "Timestamp"
+end

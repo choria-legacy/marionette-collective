@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/01/19|Add a ping action to the rpcutil agent|5937|
 |2011/01/17|Allow MC::RPC#printrpc to print single results|5918|
 |2011/01/16|Provide SimpleRPC style results when accessing the MC::Client results directly|5912|
 |2011/01/11|Add an option to Base64 encode the STOMP payload|5815|
