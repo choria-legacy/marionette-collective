@@ -2,7 +2,7 @@
 
 require 'mcollective'
 
-oparser = MCollective::Optionparser.new({:verbose => true})
+oparser = MCollective::Optionparser.new({:verbose => true}, "filter")
 
 options = oparser.parse{|parser, options|
     parser.define_head "Pings all hosts and report their names and some stats"
