@@ -83,6 +83,9 @@ module MCollective
                 end
 
                 return body
+            rescue OpenSSL::PKey::RSAError
+                raise MsgDoesNotMatchRequestID, "Could not decrypt message using our key, possibly directed at another client"
+
             rescue Exception => e
                 Log.warn("Could not decrypt message from client: #{e.class}: #{e}")
                 raise SecurityValidationFailed, "Could not decrypt message"
