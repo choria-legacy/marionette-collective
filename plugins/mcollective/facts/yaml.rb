@@ -37,8 +37,11 @@ module MCollective
                     end
                 end
 
-                facts.each_pair do |key,value|
-                    @@facts[key.to_s] = value.to_s
+                Thread.exclusive do
+                    @@facts.clear
+                    facts.each_pair do |key,value|
+                        @@facts[key.to_s] = value.to_s
+                    end
                 end
 
                 if @@facts.empty?

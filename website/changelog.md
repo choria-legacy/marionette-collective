@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/01/29|The YAML fact plugin kept deleted facts in memory|6056|
 |2012/01/04|Use the LSB based init script on SUSE|5762|
 |2010/12/30|Allow - in fact names|5727|
 |2010/12/29|Treat machines that fail security validation like ones that did not respond|5700|
