@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/01/30|Document an approach to disable type validation in the DDL|6066|
 |2011/01/19|Add basic filters to the mc-ping command|5933|
 |2011/01/19|Add a ping action to the rpcutil agent|5937|
 |2011/01/17|Allow MC::RPC#printrpc to print single results|5918|
@@ -45,6 +46,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/01/29|The YAML fact plugin kept deleted facts in memory|6056|
 |2011/01/04|Use the LSB based init script on SUSE|5762|
 |2010/12/30|Allow - in fact names|5727|
 |2010/12/29|Treat machines that fail security validation like ones that did not respond|5700|
