@@ -26,8 +26,8 @@ module MCollective
 
                 Thread.exclusive do
                     begin
-                        if (Time.now.to_i - @last_facts_load > cache_time.to_i )
-                            Log.debug("Resetting facter cache after #{cache_time} seconds, now: #{Time.now.to_i} last-known-good: #{@last_facts_load}")
+                        if (Time.now.to_i - @last_facts_load > cache_time.to_i ) || force_reload?
+                            Log.debug("Resetting facter cache, now: #{Time.now.to_i} last-known-good: #{@last_facts_load}")
 
                             tfacts = load_facts_from_source
 
@@ -75,6 +75,11 @@ module MCollective
             # Returns true if we know about a specific fact, false otherwise
             def has_fact?(fact)
                 get_fact(nil).include?(fact)
+            end
+
+            # Plugins can override this to provide forced fact invalidation
+            def force_reload?
+                false
             end
         end
     end

@@ -67,7 +67,9 @@ end
 {% endhighlight %}
 
 If using the newer format in newer releases of mcollective you do not need to worry about caching or
-thread safety as the base class does this for you.
+thread safety as the base class does this for you.  You can force reloading of facts by creating a
+*force_reload?* method that should return *true* or *false*.  Returning *true* will force the cache
+to be rebuilt.
 
 You can see that all you have to do is provide *self.get_facts* which should return a Hash as described above.
 

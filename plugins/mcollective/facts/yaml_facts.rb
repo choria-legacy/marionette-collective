@@ -8,6 +8,12 @@ module MCollective
         # config file, they will be merged with later files overriding
         # earlier ones in the list.
         class Yaml_facts<Base
+            def initialize
+                @yaml_file_mtimes = {}
+
+                super
+            end
+
             def load_facts_from_source
                 config = Config.instance
 
@@ -27,6 +33,28 @@ module MCollective
                 end
 
                 facts
+            end
+
+            # force fact reloads when the mtime on the yaml file change
+            def force_reload?
+                config = Config.instance
+
+                fact_files = config.pluginconf["yaml"].split(":")
+
+                fact_files.each do |file|
+                    @yaml_file_mtimes[file] ||= File.stat(file).mtime
+                    mtime = File.stat(file).mtime
+
+                    if mtime > @yaml_file_mtimes[file]
+                        @yaml_file_mtimes[file] = mtme
+
+                        Log.debug("Forcing fact reload due to age of #{file}")
+
+                        return true
+                    end
+                end
+
+                false
             end
         end
     end
