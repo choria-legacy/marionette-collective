@@ -62,6 +62,13 @@ module MCollective
             fact = Facts.get_fact(fact).clone
 
             if operator == '=~'
+                # to maintain backward compat we send the value
+                # as /.../ which is what 1.0.x needed.  this strips
+                # off the /'s wich is what we need here
+                if value =~ /^\/(.+)\/$/
+                    value = $1
+                end
+
                 return true if fact.match(Regexp.new(value))
 
             elsif operator == "=="
@@ -163,7 +170,7 @@ module MCollective
             elsif fact =~ /^([^ ]+?)[ ]*(<=|>=|<|>|!=|==|=~)[ ]*(.+)/
                 return {:fact => $1, :value => $3, :operator => $2 }
             elsif fact =~ /^(.+?)[ ]*=[ ]*\/(.+)\/$/
-                return {:fact => $1, :value => $2, :operator => '=~' }
+                return {:fact => $1, :value => "/#{$2}/", :operator => '=~' }
             elsif fact =~ /^([^= ]+?)[ ]*=[ ]*(.+)/
                 return {:fact => $1, :value => $2, :operator => '==' }
             end

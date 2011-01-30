@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/01/30|Fix backward compatibility with old foo=/bar/ style fact searches|5985|
 |2011/01/30|Documentation update to reflect correct default identity behavior|6073|
 |2011/01/29|Let the YAML file force fact reloads when the files update|6057|
 |2011/01/29|Add the ability for fact plugins to force fact invalidation|6057|

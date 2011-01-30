@@ -39,8 +39,8 @@ module MCollective
 
         describe "#parse_fact_string" do
             it "should parse old style regex fact matches" do
-                Util.parse_fact_string("foo=/bar/").should == {:fact => "foo", :value => "bar", :operator => "=~"}
-                Util.parse_fact_string("foo = /bar/").should == {:fact => "foo", :value => "bar", :operator => "=~"}
+                Util.parse_fact_string("foo=/bar/").should == {:fact => "foo", :value => "/bar/", :operator => "=~"}
+                Util.parse_fact_string("foo = /bar/").should == {:fact => "foo", :value => "/bar/", :operator => "=~"}
             end
 
             it "should parse old style equality" do
