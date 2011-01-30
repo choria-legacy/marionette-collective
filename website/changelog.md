@@ -11,9 +11,10 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
-|2011/01/30|Let the YAML file force fact reloads when the files update|6057|
-|2011/01/30|Add the ability for fact plugins to force fact invalidation|6057|
-|2011/01/30|Document an approach to disable type validation in the DDL|6066|
+|2011/01/30|Documentation update to reflect correct default identity behavior|6073|
+|2011/01/29|Let the YAML file force fact reloads when the files update|6057|
+|2011/01/29|Add the ability for fact plugins to force fact invalidation|6057|
+|2011/01/29|Document an approach to disable type validation in the DDL|6066|
 |2011/01/19|Add basic filters to the mc-ping command|5933|
 |2011/01/19|Add a ping action to the rpcutil agent|5937|
 |2011/01/17|Allow MC::RPC#printrpc to print single results|5918|
