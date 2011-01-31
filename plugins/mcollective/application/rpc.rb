@@ -22,6 +22,7 @@ class MCollective::Application::Rpc<MCollective::Application
         :description    => "Arguments to pass to agent",
         :arguments      => ["--arg", "--argument ARGUMENT"],
         :type           => :array,
+        :default        => [],
         :validate       => Proc.new {|val| val.match(/^(.+?)=(.+)$/) ? true : "Could not parse --arg #{val} should be of the form key=val" }
 
     def post_option_parser(configuration)
