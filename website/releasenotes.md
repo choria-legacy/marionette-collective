@@ -9,6 +9,171 @@ This is a list of release notes for various releases, you should review these be
  * TOC Placeholder
   {:toc}
 
+## 1.1.1 - 2011/02/02
+
+This is a release in the development series of mcollective.  It features major new
+features and numerous bug fixes.  Please pay careful attention to the upgrading
+section as there is some changes that are not backward compatible.
+
+This release is for early adopters, production users should consider the 1.0.x series.
+
+### AES+RSA Security Plugin
+
+A new security plugin that encrypts the payloads, uniquely identify senders and secure
+replies from inspection by other people on the collective has been written.  The plugin
+can re-use Puppet certificates and supports distributing of public keys if you wish.
+
+This plugin and its deployment is very complex and it has a visible performance impact
+but we felt it was a often requested feature and so decided to implement it.
+
+Full documentation for this plugin can be found [in our docs](reference/plugins/security_aes.html), please read them very
+carefully should you choose to deploy this plugin.
+
+### Single Exeuctable Framework
+
+In the past a lot of the CLI tools have behaved inconsistently as the mc scripts were
+mostly just written to serve immediate needs, we are starting a process of improving
+these scripts and making them more robust.
+
+The first step is to create a new framework for CLI commands, we call these Single Executable
+Applications.  A new executable called _mc_ is being distributed with this release:
+
+{% highlight console %}
+$ mc
+The Marionette Collective version 1.1.1
+
+/usr/sbin/mc: command (options)
+
+Known commands: rpc filemgr inventory facts ping find help
+{% endhighlight %}
+
+{% highlight console %}
+$ mc help
+The Marionette Collection version 1.1.1
+
+  facts           Reports on usage for a specific fact
+  filemgr         Generic File Manager Client
+  find            Find hosts matching criteria
+  help            Application list and RPC agent help
+  inventory       Shows an inventory for a given node
+  ping            Ping all nodes
+  rpc             Generic RPC agent client application
+{% endhighlight %}
+
+{% highlight console %}
+$ mc rpc package status package=zsh
+Determining the amount of hosts matching filter for 2 seconds .... 51
+
+ * [ ============================================================> ] 51 / 51
+
+
+ test.com:
+    Properties:
+       {:provider=>:yum,
+	:release=>"3.el5",
+	:arch=>"x86_64",
+	:version=>"4.2.6",
+	:epoch=>"0",
+	:name=>"zsh",
+	:ensure=>"4.2.6-3.el5"}
+{% endhighlight %}
+
+You can see these commands behave just like their older counter parts but is more integrated
+and discovering available commands is much easier.
+
+Agent help that was in the past available through _mc-rpc --ah agentname_ is now available through
+_mc help agentname_ and error reporting is short single line reports by default but by adding
+_-v_ to the command line you can get full Ruby backtraces.
+
+We've maintained backward compatibility by creating wrappers for all the old mc scripts but these
+might be deprecated in future.
+
+These application live in the normal plugin directories and should make it much easier to distrubute
+plugins in future.
+
+We will port the scripts for plugins to this framework and encourage you to do the same when writing
+new CLI tools.  An example of a ported CLI can be seen in the _filemgr_ agent.
+
+Find the documentation for these plugins [here](reference/plugins/application.html).
+
+### Miscelaneous Improvements
+
+The logging system has been refactored to not use a Signleton, logging messages are now simply:
+
+{% highlight ruby %}
+MCollective::Log.notice("hello world")
+{% endhighlight %}
+
+A backwards compatible wrapper exist to prevent existing code from breaking.
+
+In some cases - like when using MCollective from within Rails - the STOMP
+gem would fail to decode the payloads.  We've worked with the authors and
+a new release was made that makes this more robust but we've also enabled
+Base64 encoding on the Stomp connector for those who can't upgrade the Gem
+and who are running into this problem.
+
+### Bug Fixes
+
+
+ * Machines that do not pass security checks are handled as having not responded
+   so that these are listed in the usual stat for non responsive hosts
+ * The - character is now allowed in Fact names by the DDL for rpcutil
+ * Version 1.1.0 introduced a bug with reloading agents from disks using USR1 and mc-controller
+
+### Enhancements
+
+ * New AES+RSA based security plugin was added
+ * Create a new single executable framework and port several mc scripts
+ * Security plugins have access to the callerid they are responding to
+ * The logging methods have been improved by removing the use of Singletons
+ * The STOMP connector can now Base64 encode all sent data to deal with en/decoding issues by the gem
+ * The rpcutil agent has a new _ping_ action
+ * the _mc ping_ client now supports standard filters
+ * DDL documentation has been updated to show you can disable type validations in the DDL
+ * Fact plugins can now force fact cache invalidation, the YAML plugin will immediately load new facts when mtime on the file change
+ * Improve _1.0.0_ compatibility for _foo=/bar/_ style fact matches at the expense of _1.1.0_ compatibility
+
+### Upgrading
+
+Upgrading should be mostly painless as most things are backward compatible.
+
+We discovered that we broke backward compatibility with _1.0.0_ and _0.4.x_ Fact filters.  A filter in the form
+_foo=/bar/_ would be treated as an equality filter and not a regular expression.
+
+This releases fixes this compatibility with older versions at the expense of compatibility with _1.1.0_.  If you
+are upgrading from _1.1.0_ keep this in mind and plan accordingly, once you've upgraded a client its requests that
+contain these filters will not be correctly parsed on servers running _1.1.0_.
+
+The security plugins have changed slightly, if you wrote your own security plugin the interface to _encodereply_
+has changed slightly.  All the bundled security plugins have been updated already and older ones will just
+keep working.
+
+### Changes
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2011/02/02|Load the DDL from disk once per printrpc call and not for every result|5958|
+|2011/02/02|Include full Apache 2 license text|6113|
+|2011/01/31|Create a new single executable application framework|5897|
+|2011/01/30|Fix backward compatibility with old foo=/bar/ style fact searches|5985|
+|2011/01/30|Documentation update to reflect correct default identity behavior|6073|
+|2011/01/29|Let the YAML file force fact reloads when the files update|6057|
+|2011/01/29|Add the ability for fact plugins to force fact invalidation|6057|
+|2011/01/29|Document an approach to disable type validation in the DDL|6066|
+|2011/01/19|Add basic filters to the mc-ping command|5933|
+|2011/01/19|Add a ping action to the rpcutil agent|5937|
+|2011/01/17|Allow MC::RPC#printrpc to print single results|5918|
+|2011/01/16|Provide SimpleRPC style results when accessing the MC::Client results directly|5912|
+|2011/01/11|Add an option to Base64 encode the STOMP payload|5815|
+|2011/01/11|Fix a bug with forcing all facts to be strings|5832|
+|2011/01/08|When using reload_agents or USR1 signal no agents would be reloaded|5808|
+|2011/01/04|Use the LSB based init script on SUSE|5762|
+|2011/01/04|Remove the use of a Singleton in the logging class|5749|
+|2011/01/02|Add AES+RSA security plugin|5696|
+|2010/12/31|Security plugins now have access to the callerid of the message they are replying to|5745|
+|2010/12/30|Allow - in fact names|5727|
+|2010/12/29|Treat machines that fail security validation like ones that did not respond|5700|
+
 ## 1.1.0 - 2010/12/29
 
 This is the first in a new development series, as such there will be rapid changes

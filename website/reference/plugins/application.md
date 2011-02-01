@@ -31,7 +31,7 @@ Below you can see the single executable system in use:
 
 {% highlight console %}
 $ mc
-The Marionette Collective verion 1.1.1
+The Marionette Collective version 1.1.1
 
 /usr/sbin/mc: command (options)
 
@@ -40,7 +40,7 @@ Known commands: rpc filemgr inventory facts ping find help
 
 {% highlight console %}
 $ mc help
-The Marionette Collection verion 1.1.1
+The Marionette Collection version 1.1.1
 
   facts           Reports on usage for a specific fact
   filemgr         Generic File Manager Client
