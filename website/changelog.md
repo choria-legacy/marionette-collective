@@ -55,6 +55,7 @@ title: Changelog
 |2011/01/04|Use the LSB based init script on SUSE|5762|
 |2010/12/30|Allow - in fact names|5727|
 |2010/12/29|Treat machines that fail security validation like ones that did not respond|5700|
+|2010/12/25|Allow for network and fact source latency when calculating client timeout|5676|
 |2010/12/25|Increase the rpcutil timeout to allow for slow facts|5679|
 |*2010/12/13*|*Release 1.0.0*|5453|
 
