@@ -18,7 +18,7 @@ if known_applications.include?(app_name)
 
     MCollective::Applications.run(app_name)
 else
-    puts "The Marionette Collective verion #{MCollective.version}"
+    puts "The Marionette Collective version #{MCollective.version}"
     puts
     puts "#{$0}: command (options)"
     puts
