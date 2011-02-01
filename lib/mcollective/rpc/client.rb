@@ -57,12 +57,18 @@ module MCollective
                 # the timeout of the client so we always magically
                 # wait appropriate amounts of time.
                 #
+                # We add the discovery timeout to the ddl supplied
+                # timeout as the discovery timeout tends to be tuned
+                # for local network conditions and fact source speed
+                # which would other wise not be accounted for and
+                # some results might get missed.
+                #
                 # We do this only if the timeout is the default 5
                 # seconds, so that users cli overrides will still
                 # get applied
                 begin
                     @ddl = DDL.new(agent)
-                    @timeout = @ddl.meta[:timeout] if @timeout == 5
+                    @timeout = @ddl.meta[:timeout] + @discovery_timeout if @timeout == 5
                 rescue Exception => e
                     Log.instance.debug("Could not find DDL: #{e}")
                     @ddl = nil
