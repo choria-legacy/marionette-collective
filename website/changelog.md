@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/02/02|Include full Apache 2 license text|6113|
 |2011/01/31|Create a new single executable application framework|5897|
 |2011/01/30|Fix backward compatibility with old foo=/bar/ style fact searches|5985|
 |2011/01/30|Documentation update to reflect correct default identity behavior|6073|
@@ -51,6 +52,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/02/02|Include full Apache 2 license text|6113|
 |2011/01/29|The YAML fact plugin kept deleted facts in memory|6056|
 |2011/01/04|Use the LSB based init script on SUSE|5762|
 |2010/12/30|Allow - in fact names|5727|
