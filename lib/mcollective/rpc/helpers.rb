@@ -79,6 +79,7 @@ module MCollective
                 flags = {:verbose => false, :flatten => false}.merge(flags)
 
                 result_text = ""
+                ddl = nil
 
                 # if running in verbose mode, just use the old style print
                 # no need for all the DDL helpers obfuscating the result
@@ -87,7 +88,7 @@ module MCollective
                 else
                     [result].flatten.each do |r|
                         begin
-                            ddl = DDL.new(r.agent).action_interface(r.action.to_s)
+                            ddl ||= DDL.new(r.agent).action_interface(r.action.to_s)
 
                             sender = r[:sender]
                             status = r[:statuscode]
