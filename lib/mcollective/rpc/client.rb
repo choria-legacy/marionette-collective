@@ -271,10 +271,15 @@ module MCollective
 
             # Sets the fact filter
             def fact_filter(fact, value=nil, operator="=")
+                return if fact.nil?
+                return if fact == false
+
                 if value.nil?
-                    @filter["fact"] << Util.parse_fact_string(fact)
+                    parsed = Util.parse_fact_string(fact)
+                    @filter["fact"] << parsed unless parsed == false
                 else
-                    @filter["fact"] << Util.parse_fact_string("#{fact}#{operator}#{value}")
+                    parsed = Util.parse_fact_string("#{fact}#{operator}#{value}")
+                    @filter["fact"] << parsed unless parsed == false
                 end
 
                 @filter["fact"].compact!

@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/02/10|Fix backward compatability with empty fact strings|6278|
 |*2011/02/07*|*Release 1.1.1*|6080|
 |2011/02/02|Load the DDL from disk once per printrpc call and not for every result|5958|
 |2011/02/02|Include full Apache 2 license text|6113|
