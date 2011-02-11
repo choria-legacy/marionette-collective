@@ -13,6 +13,7 @@ disqus: true
 [SecurityWithActiveMQ]: /mcollective/reference/integration/activemq_security.html
 [ActiveMQClustering]: /mcollective/reference/integration/activemq_clusters.html
 [ActiveMQSamples]: http://github.com/puppetlabs/marionette-collective/tree/master/ext/activemq/examples/
+[ActiveMQSingleBrokerSample]: http://github.com/puppetlabs/marionette-collective/raw/master/ext/activemq/examples/single-broker/activemq.xml
 [ConfigurationReference]: /mcollective/reference/basic/configuration.html
 [Terminology]: /mcollective/terminology.html
 [SimpleRPCIntroduction]: /mcollective/simplerpc/
@@ -74,7 +75,9 @@ On the server that you chose to configure as the ActiveMQ server:
 Initially you'll just keep it simple with a single ActiveMQ broker and a basic user setup, further security information for ActiveMQ
 can be found [here][SecurityWithActiveMQ]
 
-Place the following in _/etc/activemq/activemq.xml_ you can download this file from [GitHub under single-broker][ActiveMQSamples]
+Place the following in _/etc/activemq/activemq.xml_ you can download this file from [GitHub][ActiveMQSingleBrokerSample]
+
+Other examples are also available from [GitHub][ActiveMQSamples]
 
 {% highlight xml %}
 <beans
