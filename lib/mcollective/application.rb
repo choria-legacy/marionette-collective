@@ -176,6 +176,8 @@ module MCollective
                 e.backtrace.each{|l| STDERR.puts "\tfrom #{l}"}
             end
 
+            MCollective::PluginManager["connector_plugin"].disconnect rescue true
+
             exit! 1
         end
 
@@ -185,6 +187,8 @@ module MCollective
             validate_configuration(configuration) if respond_to?(:validate_configuration)
 
             main
+
+            MCollective::PluginManager["connector_plugin"].disconnect
         rescue Exception => e
             application_failure(e)
         end

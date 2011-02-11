@@ -95,8 +95,6 @@ class MCollective::Application::Inventory<MCollective::Application
 
             break
         end
-
-        util.disconnect
     end
 
     # Helpers to create a simple DSL for scriptlets
@@ -163,8 +161,6 @@ class MCollective::Application::Inventory<MCollective::Application
 
             puts @fmt % @flds.call
         end
-
-        util.disconnect
     end
 
     # Use the ruby formatr gem to build reports using Perls formats
@@ -218,8 +214,6 @@ class MCollective::Application::Inventory<MCollective::Application
 
             body_fmt.printFormat(binding)
         end
-
-        util.disconnect
     rescue Exception => e
         STDERR.puts "Could not create report: #{e.class}: #{e}"
         exit 1

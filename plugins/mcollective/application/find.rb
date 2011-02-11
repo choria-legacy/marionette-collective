@@ -9,8 +9,6 @@ class MCollective::Application::Find<MCollective::Application
             puts resp[:senderid]
         end
 
-        client.disconnect
-
         client.display_stats(stats) if options[:verbose]
     end
 end

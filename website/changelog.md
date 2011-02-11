@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/02/11|The application framework will now disconnect from the middleware for consistancy|6292|
 |2011/02/11|Returning _nil_ from a registration plugin will skip registration|6289|
 |2011/02/11|Set loglevel to warn by default if not specified in the config file|6287|
 |2011/02/10|Fix backward compatability with empty fact strings|6278|

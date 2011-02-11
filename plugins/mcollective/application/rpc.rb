@@ -91,8 +91,6 @@ class MCollective::Application::Rpc<MCollective::Application
             mc.agent_filter(configuration[:agent])
 
             puts "Request sent with id: " + mc.send(configuration[:action], configuration[:arguments])
-
-            mc.disconnect
         else
             mc = rpcclient(configuration[:agent], {:options => options})
 
@@ -104,8 +102,6 @@ class MCollective::Application::Rpc<MCollective::Application
             printrpc mc.send(configuration[:action], configuration[:arguments])
 
             printrpcstats :caption => "#{configuration[:agent]}##{configuration[:action]} call stats"
-
-            mc.disconnect
         end
     end
 end
