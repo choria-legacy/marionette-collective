@@ -40,6 +40,7 @@ module MCollective
             @rpclimitmethod = :first
             @libdir = Array.new
             @fact_cache_time = 300
+            @loglevel = "info"
 
             if File.exists?(configfile)
                 File.open(configfile, "r").each do |line|
