@@ -188,7 +188,7 @@ module MCollective
 
             main
 
-            MCollective::PluginManager["connector_plugin"].disconnect
+            MCollective::PluginManager["connector_plugin"].disconnect rescue true
         rescue Exception => e
             application_failure(e)
         end
