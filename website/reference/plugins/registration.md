@@ -35,6 +35,10 @@ end
 You can see it's very simple, you just need to provide a _body_ method and it's return value will be sent
 to the registration agent(s)
 
+As of version 1.1.2 the registration plugin can decide if a message should be sent or not.  If your plugin
+responds with a _nil_ value the message will not be sent.  This can be useful if you wish to only send
+registration data when some condition has changed.
+
 To configure it to be used you just need the following in your config:
 
 {% highlight ini %}

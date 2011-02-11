@@ -26,10 +26,17 @@ module MCollective
                             target = Util.make_target("registration", :command)
                             reqid = Digest::MD5.hexdigest("#{config.identity}-#{Time.now.to_f.to_s}-#{target}")
                             filter = {"agent" => "registration"}
-                            req = PluginManager["security_plugin"].encoderequest(config.identity, target, body, reqid, filter)
 
-                            Log.debug("Sending registration #{reqid} to #{target}")
-                            connection.send(target, req)
+                            registration_message = body
+
+                            unless registration_message.nil?
+                                req = PluginManager["security_plugin"].encoderequest(config.identity, target, registration_message, reqid, filter)
+
+                                Log.debug("Sending registration #{reqid} to #{target}")
+                                connection.send(target, req)
+                            else
+                                Log.debug("Skipping registration due to nil body")
+                            end
 
                             sleep config.registerinterval
                         rescue Exception => e
