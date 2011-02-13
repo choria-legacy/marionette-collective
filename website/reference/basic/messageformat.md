@@ -77,6 +77,24 @@ Since facts are key => value pairs this is a bit more complex than normal as you
 filter["fact"] = [{:fact => "country", :value => "uk"}]
 {% endhighlight %}
 
+Regular expression matches are:
+
+{% highlight ruby %}
+filter["fact"] = [{:fact => "country", :value => "/uk/"}]
+{% endhighlight %}
+
+As of version 1.1.0 this has been extended to support more comparison operators:
+
+{% highlight ruby %}
+filter["fact"] = [{:fact => "country", :value => "uk", :operator => "=="}]
+{% endhighlight %}
+
+Valid operators are: ==, =~, &lt;=, =&gt;, &gt;=, =&lt;, &gt; &lt; and !=
+
+As regular expressions are now done using their own operator backwards compatability
+is lost and in mixed version environment 1.1.x clients doing regex matches on facts
+will be treated as equality on 1.0.x and older clients.
+
 ##### Identity
 
 The identity is the configured identity in the server config file, many hosts can have the same identity it's just another level of filter doesn't really mean much like a hostname that would need to be unique.

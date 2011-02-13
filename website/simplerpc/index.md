@@ -9,6 +9,7 @@ disqus: true
 [SimpleRPCAuditing]: /mcollective/simplerpc/auditing.html
 [SimpleRPCAuthorization]: /mcollective/simplerpc/authorization.html
 [SimpleRPCDDL]: /mcollective/simplerpc/ddl.html
+[SimpleRPCMessageFormat]: /mcollective/simplerpc/messageformat.html
 [RPCUtil]: /mcollective/reference/plugins/rpcutil.html
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
 [RestGateway]: http://github.com/mcollective/marionette-collective/blob/master/ext/mc-rpc-restserver.rb
@@ -29,7 +30,8 @@ SimpleRPC is a framework that provides the following:
  * The provided generic calling tool should be able to speak to most compliant agents
  * Should you need to you can still write your own clients, this should be very easy too
  * Return data should be easy to print, in most cases the framework should be able to print a sensible output with a single, provided, function.  The [SimpleRPCDDL] is used here to improve the standard one-size-fits-all methods.
- * The full capabilities of the standard Client classes should still be exposed in case you want to write advanced agents and clients
+ * The full capabilities of the standard Client classes shouldddl still be exposed in case you want to write advanced agents and clients
+ * A documented [standard message format][SimpleRPCMessageFormat] built ontop of the core format.
 
 
 We've provided full tutorials on [Writing Simple RPC Agents][SimpleRPCAgents] and [Clients][SimpleRPCClients].  There is also a [screencast that will give you a quick look at what is involved in writing agents][WritingAgentsScreenCast].
