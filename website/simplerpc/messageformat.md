@@ -86,7 +86,7 @@ A typical rely would look like:
 The statuscode and statusmsg are related and is used for error propagation
 through the collective.
 
-These are the [documented errors clients receive][ClientErrors] and will result
+These are the [documented errors clients receive][ErrorCodes] and will result
 in exceptions raised on the client in some cases.
 
 The agent's _fail_ and _fail!_ methods will manipulate these structures.

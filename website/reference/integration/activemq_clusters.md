@@ -19,6 +19,7 @@ We'll cover here how to build a multi data center network of ActiveMQ servers wi
 There is an example of a 3 node cluster in the [ext/activemq directory][SampleConfig].
 
 ## Network Design
+
 ### Network Layout
 
 ![ActiveMQ Cluster](/mcollective/images/activemq-multi-locations.png)

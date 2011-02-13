@@ -3,6 +3,7 @@ layout: default
 title: Node Reports
 disqus: true
 ---
+[Subcollectives]: ../basic/subcollectives.html
 
 # {{page.title}}
 
@@ -11,7 +12,7 @@ disqus: true
 
 As we have all facts, classes and agents for nodes we can do some custom reporting on all of these.
 
-We've added a tool - *mc-inventory* - that has a very simple scriptable report language.
+The _mc inventory_ tool is a generic node and network reporting tool, it has basic scripting abilities.
 
 **Note: This is an emerging feature, the scripting language is likely to change**
 
@@ -53,6 +54,43 @@ To obtain a full inventory for a given node you can run mc-inventory like this:
 {% endhighlight %}
 
 This gives you a good idea of all the details available for a node.
+
+## Collective List
+
+As of version _1.1.3_ we have a concept of [Subcollectives] and you can use
+the inventory application to get a quick report on all known collectives:
+
+{% highlight console %}
+$ mc inventory --list-collectives
+
+ * [ ===================================== ] 52 / 52
+
+   Collective                     Nodes
+   ==========                     =====
+   za_collective                  2
+   us_collective                  7
+   uk_collective                  19
+   de_collective                  24
+   eu_collective                  45
+   mcollective                    52
+
+                     Total nodes: 52
+
+{% endhighlight %}
+
+## Collective Map
+
+You can also create a DOT format graph of your collective:
+
+{% highlight console %}
+$ mc inventory --collective-graph collective.dot
+
+Retrieving collective info....
+Graph of 52 nodes has been written to collective.dot
+{% endhighlight %}
+
+The graph will be a simple dot graph that can be viewed with Graphviz, Gephi or
+other compatible software.
 
 ## Custom Reports
 

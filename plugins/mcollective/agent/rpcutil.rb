@@ -74,6 +74,13 @@ module MCollective
             action "ping" do
                 reply[:pong] = Time.now.to_i
             end
+
+            # Returns all configured collectives
+            action "collective_info" do
+                config = Config.instance
+                reply[:main_collective] = config.main_collective
+                reply[:collectives] = config.collectives
+            end
         end
     end
 end

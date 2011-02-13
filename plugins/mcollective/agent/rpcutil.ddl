@@ -6,6 +6,18 @@ metadata    :name        => "Utilities and Helpers for SimpleRPC Agents",
             :url         => "http://marionette-collective.org/",
             :timeout     => 10
 
+action "collective_info", :description => "Info about the main and sub collectives" do
+    display :always
+
+    output :main_collective,
+           :description => "The main Collective",
+           :display_as => "Main Collective"
+
+    output :collectives,
+           :description => "All Collectives",
+           :display_as => "All Collectives"
+end
+
 action "inventory", :description => "System Inventory" do
     display :always
 

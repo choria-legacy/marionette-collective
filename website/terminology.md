@@ -10,6 +10,7 @@ disqus: true
 [SimpleRPCAgents]: /mcollective/simplerpc/agents.html
 [SimpleRPCIntroduction]: /mcollective/simplerpc/
 [WritingFactsPlugins]: /mcollective/reference/plugins/facts.html
+[Subcollective]: /mcollective/reference/basic/subcollectives.html
 [Registration]: /mcollective/reference/plugins/registration.html
 [SimpleRPCAuthorization]: /mcollective/simplerpc/authorization.html
 
@@ -53,6 +54,11 @@ Middleware can generally carry several namespaces and therefore several Collecti
 A combination of Servers, Nodes and Middleware all operating in the same Namespace.
 
 Multiple collectives can be built sharing the same Middleware but kept separate by using different Namespaces.
+
+## Subcollective
+A server can belong to many Namespaces.  A [Subcollective] is a Namespace that only a subset of a full collectives nodes belong to.
+
+Subcolllectives are used to partition networks and to control broadcast domains in high traffic networks.
 
 ## Simple RPC
 A Remote Procedure Call system built ontop of MCollective that makes it very simple to write feature

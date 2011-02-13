@@ -144,16 +144,55 @@ module MCollective
              :disctimeout => 2,
              :timeout     => 5,
              :config      => config_file_for_user,
+             :collective  => nil,
              :filter      => empty_filter}
         end
 
-        # Constructs the full target name based on topicprefix and topicsep config options
-        def self.make_target(agent, type)
+        # Constructs an array of the full target names based on topicprefix,
+        # topicsep and collectives config options.
+        #
+        # If given a collective name it will return a single target aimed
+        # at just the one collective
+        def self.make_target(agent, type, collective=nil)
             config = Config.instance
 
-            raise("Uknown target type #{type}") unless type == :command || type == :reply
+            raise("Unknown target type #{type}") unless type == :command || type == :reply
 
-            [config.topicprefix, agent, type].join(config.topicsep)
+            if collective.nil?
+                config.collectives.map do |c|
+                    ["#{config.topicprefix}#{c}", agent, type].join(config.topicsep)
+                end
+            else
+                raise("Unknown collective '#{collective}' known collectives are '#{config.collectives.join ', '}'") unless config.collectives.include?(collective)
+
+                ["#{config.topicprefix}#{collective}", agent, type].join(config.topicsep)
+            end
+        end
+
+        # Helper to subscribe to a topic on multiple collectives or just one
+        def self.subscribe(topics)
+            connection = PluginManager["connector_plugin"]
+
+            if topics.is_a?(Array)
+                topics.each do |topic|
+                    connection.subscribe(topic)
+                end
+            else
+                connection.subscribe(topics)
+            end
+        end
+
+        # Helper to unsubscribe to a topic on multiple collectives or just one
+        def self.unsubscribe(topics)
+            connection = PluginManager["connector_plugin"]
+
+            if topics.is_a?(Array)
+                topics.each do |topic|
+                    connection.unsubscribe(topic)
+                end
+            else
+                connection.unsubscribe(topics)
+            end
         end
 
         # Wrapper around PluginManager.loadclass

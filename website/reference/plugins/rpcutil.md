@@ -94,3 +94,22 @@ A simple lightweight ping action that just returns each nodes local time
 {% highlight ruby %}
 {:pong   => 1295471526}
 {% endhighlight %}
+
+## _collective`_`info_ Action
+
+Retrieves the main and sub collectives configured on a version 1.1.3 or newer
+server
+
+For a server configured with:
+
+{% highlight ruby %}
+collectives = mcollectivedev,subdev1
+main_collective = mcollectivedev
+{% endhighlight %}
+
+The following structure gets returned:
+
+{% highlight ruby %}
+{:collectives=>["mcollectivedev", "subdev1"],
+ :main_collective=>"mcollectivedev"}
+{% endhighlight %}

@@ -16,7 +16,7 @@ module MCollective
                 puts
 
                 Applications.list.sort.each do |app|
-                    puts "  %-10s      %s" % [app, Applications[app].application_description]
+                    puts "  %-15s %s" % [app, Applications[app].application_description]
                 end
 
                 puts

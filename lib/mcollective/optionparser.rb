@@ -51,6 +51,8 @@ module MCollective
 
             @parser.parse!
 
+            @options[:collective] = Config.instance.main_collective unless @options.include?(:collective)
+
             @options
         end
 
@@ -94,6 +96,10 @@ module MCollective
         def add_common_options
             @parser.separator ""
             @parser.separator "Common Options"
+
+            @parser.on('-T', '--target COLLECTIVE', 'Target messages to a specific sub collective') do |f|
+                @options[:collective] = f
+            end
 
             @parser.on('-c', '--config FILE', 'Load configuratuion from file rather than default') do |f|
                 @options[:config] = f

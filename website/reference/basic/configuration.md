@@ -9,6 +9,7 @@ disqus: true
 [Registration]: /mcollective/reference/plugins/registration.html
 [Auditing]: /mcollective/simplerpc/auditing.html
 [Authorization]: /mcollective/simplerpc/authorization.html
+[Subcollectives]: /mcollective/reference/basic/subcollectives.html
 
 # {{page.title}}
 
@@ -27,8 +28,10 @@ Configuration is a simple *key = val* style configuration file.
 
 |Key|Sample|Description|
 |---|------|-----------|
-|topicprefix|/topic/mcollective|Prefix that gets used for all messages|
+|topicprefix|/topic/mcollective|Prefix that gets used for all messages.  Post 1.1.3 this should just be /topic/|
 |topicnamesep|.|The seperator to use between parts of the topic path|
+|collective|mcollective,subcollective|A list of [Subcollectives] to join - 1.1.3 and newer only|
+|main_collective|mcollective|The main collective to target - 1.1.3 and newer only|
 |logfile|/var/log/mcollective.log|Where to log|
 |loglevel|debug|Can be info, warn, debug, fatal, error|
 |identity|dev1.your.com|Identifier for this node, does not need to be unique, defaults to hostname if unset|

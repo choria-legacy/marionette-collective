@@ -7,6 +7,7 @@ require 'rubygems'
 require 'rspec'
 require 'rspec/mocks'
 require 'mocha'
+require 'ostruct'
 
 RSpec.configure do |config|
     config.mock_with :mocha

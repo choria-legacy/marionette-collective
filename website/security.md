@@ -16,6 +16,7 @@ disqus: true
 [MCollective STOMP Connector]: /mcollective/reference/plugins/connector_stomp.html
 [ActionPolicy]: http://code.google.com/p/mcollective-plugins/wiki/ActionPolicy
 [CentralAudit]: http://code.google.com/p/mcollective-plugins/wiki/AuditCentralRPCLog
+[Subcollectives]: reference/basic/subcollectives.html
 
 
 # {{page.title}}
@@ -123,6 +124,11 @@ import step to configure for any real setup.
 
 We have a sample [ActiveMQ Security] setup documented that has this kind of
 control.
+
+By combining this topic level restrictions with [Subcollectives] you can create
+virtually isolated groups of nodes and give certain users access to only those
+subcollectives.  Effectively partitioning out a subset of machines and giving
+secure access to just those.
 
 ## Node connections and credentials
 

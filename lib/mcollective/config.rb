@@ -8,7 +8,7 @@ module MCollective
                     :securityprovider, :factsource, :registration, :registerinterval, :topicsep,
                     :classesfile, :rpcauditprovider, :rpcaudit, :configdir, :rpcauthprovider,
                     :rpcauthorization, :color, :configfile, :rpchelptemplate, :rpclimitmethod,
-                    :logger_type, :fact_cache_time
+                    :logger_type, :fact_cache_time, :collectives, :main_collective
 
         def initialize
             @configured = false
@@ -41,6 +41,8 @@ module MCollective
             @libdir = Array.new
             @fact_cache_time = 300
             @loglevel = "info"
+            @collectives = ["mcollective"]
+            @main_collective = @collectives.first
 
             if File.exists?(configfile)
                 File.open(configfile, "r").each do |line|
@@ -60,6 +62,10 @@ module MCollective
                                     @registration = val.capitalize
                                 when "registerinterval"
                                     @registerinterval = val.to_i
+                                when "collectives"
+                                    @collectives = val.split(",").map {|c| c.strip}
+                                when "main_collective"
+                                    @main_collective = val
                                 when "topicprefix"
                                     @topicprefix = val
                                 when "logfile"

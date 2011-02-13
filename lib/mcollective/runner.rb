@@ -44,8 +44,8 @@ module MCollective
 
         # Starts the main loop, before calling this you should initialize the MCollective::Config singleton.
         def run
-            controltopic = Util.make_target("mcollective", :command)
-            @connection.subscribe(controltopic)
+            controltopics = Util.make_target("mcollective", :command)
+            Util.subscribe(controltopics)
 
             # Start the registration plugin if interval isn't 0
             begin
@@ -59,16 +59,24 @@ module MCollective
                     msg = receive
                     dest = msg[:msgtarget]
 
-                    if dest =~ /#{controltopic}/
+                    sep = Regexp.escape(@config.topicsep)
+                    prefix = Regexp.escape(@config.topicprefix)
+                    regex = "#{prefix}(.+?)#{sep}(.+?)#{sep}command"
+                    if dest.match(regex)
+                        collective = $1
+                        agent = $2
+                    else
+                        raise "Failed to handle message, could not figure out agent and collective from #{dest}"
+                    end
+
+                    if agent == "mcollective"
                         Log.debug("Handling message for mcollectived controller")
 
-                        controlmsg(msg)
-                    elsif dest =~ /#{@config.topicprefix}#{@config.topicsep}(.+)#{@config.topicsep}command/
-                        target = $1
+                        controlmsg(msg, collective)
+                    else
+                        Log.debug("Handling message for agent '#{agent}' on collective '#{collective}'")
 
-                        Log.debug("Handling message for #{target}")
-
-                        agentmsg(msg, target)
+                        agentmsg(msg, agent, collective)
                     end
                 rescue Interrupt
                     Log.warn("Exiting after interrupt signal")
@@ -87,21 +95,21 @@ module MCollective
 
         private
         # Deals with messages directed to agents
-        def agentmsg(msg, target)
+        def agentmsg(msg, target, collective)
             @agents.dispatch(msg, target, @connection) do |replies|
-                dest = Util.make_target(target, :reply)
+                dest = Util.make_target(target, :reply, collective)
                 reply(target, dest, replies, msg[:requestid], msg[:callerid]) unless replies == nil
             end
         end
 
         # Deals with messages sent to our control topic
-        def controlmsg(msg)
+        def controlmsg(msg, collective)
             begin
                 body = msg[:body]
                 requestid = msg[:requestid]
                 callerid = msg[:callerid]
 
-                replytopic = Util.make_target("mcollective", :reply)
+                replytopic = Util.make_target("mcollective", :reply, collective)
 
                 case body
                     when /^stats$/

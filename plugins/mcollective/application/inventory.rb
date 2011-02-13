@@ -29,20 +29,97 @@ class Array
 end
 
 class MCollective::Application::Inventory<MCollective::Application
-    description "Shows an inventory for a given node"
+    description "General reporting tool for nodes, collectives and subcollectives"
 
     option :script,
         :description    => "Script to run",
         :arguments      => ["--script SCRIPT"]
+
+    option :collectives,
+        :description    => "List all known collectives",
+        :arguments      => ["--list-collectives", "--lc"],
+        :default        => false,
+        :type           => :bool
+
+    option :collectivemap,
+        :description    => "Create a DOT graph of all collectives",
+        :arguments      => ["--collective-graph MAP", "--cg MAP", "--map MAP"]
+
 
     def post_option_parser(configuration)
         configuration[:node] = ARGV.shift if ARGV.size > 0
     end
 
     def validate_configuration(configuration)
-        unless configuration.include?(:node) || configuration.include?(:script)
-            raise "Need to specify either a node name or a script to run"
+        unless configuration[:node] || configuration[:script] || configuration[:collectives] || configuration[:collectivemap]
+            raise "Need to specify either a node name, script to run or other options"
         end
+    end
+
+    # Get all the known collectives and nodes that belong to them
+    def get_collectives
+        util = rpcclient("rpcutil", :options => options)
+        util.progress = false
+
+        collectives = {}
+        nodes = 0
+        total = 0
+
+        util.collective_info do |r, cinfo|
+            begin
+                if cinfo[:data] && cinfo[:data][:collectives]
+                    cinfo[:data][:collectives].each do |collective|
+                        collectives[collective] ||= []
+                        collectives[collective]  << cinfo[:sender]
+                    end
+
+                    nodes += 1
+                    total += 1
+                end
+            end
+        end
+
+        {:collectives => collectives, :nodes => nodes, :total_nodes => total}
+    end
+
+    # Writes a crude DOT graph to a file
+    def collectives_map(file)
+        File.open(file, "w") do |graph|
+            puts "Retrieving collective info...."
+            collectives = get_collectives
+
+            graph.puts 'graph {'
+
+            collectives[:collectives].keys.sort.each do |collective|
+                graph.puts '   subgraph "%s" {' % [ collective ]
+
+                collectives[:collectives][collective].each do |member|
+                    graph.puts '      "%s" -- "%s"' % [ member, collective ]
+                end
+
+                graph.puts '   }'
+            end
+
+            graph.puts '}'
+
+            puts "Graph of #{collectives[:total_nodes]} nodes has been written to #{file}"
+        end
+    end
+
+    # Prints a report of all known sub collectives
+    def collectives_report
+        collectives = get_collectives
+
+        puts "   %-30s %s" % [ "Collective", "Nodes" ]
+        puts "   %-30s %s" % [ "==========", "=====" ]
+
+        collectives[:collectives].sort_by {|key,count| count.size}.each do |collective|
+            puts "   %-30s %d" % [ collective[0], collective[1].size ]
+        end
+
+        puts
+        puts "   %30s %d" % [ "Total nodes:", collectives[:nodes] ]
+        puts
     end
 
     def node_inventory
@@ -232,6 +309,13 @@ class MCollective::Application::Inventory<MCollective::Application
             else
                 raise "Could not find script to run: #{configuration[:script]}"
             end
+
+        elsif configuration[:collectivemap]
+            collectives_map(configuration[:collectivemap])
+
+        elsif configuration[:collectives]
+            collectives_report
+
         else
             node_inventory
         end

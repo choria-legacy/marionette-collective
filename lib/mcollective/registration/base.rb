@@ -23,7 +23,7 @@ module MCollective
                 Thread.new do
                     loop do
                         begin
-                            target = Util.make_target("registration", :command)
+                            target = Util.make_target("registration", :command, config.main_collective)
                             reqid = Digest::MD5.hexdigest("#{config.identity}-#{Time.now.to_f.to_s}-#{target}")
                             filter = {"agent" => "registration"}
 

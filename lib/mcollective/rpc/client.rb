@@ -50,8 +50,10 @@ module MCollective
 
                 agent_filter agent
 
-                @client = client = MCollective::Client.new(@config)
+                @client = MCollective::Client.new(@config)
                 @client.options = options
+
+                @collective = @client.collective
 
                 # if we can find a DDL for the service override
                 # the timeout of the client so we always magically
@@ -346,7 +348,14 @@ module MCollective
                  :timeout => @timeout,
                  :verbose => @verbose,
                  :filter => @filter,
+                 :collective => @collective,
                  :config => @config}
+            end
+
+            # Sets the collective we are communicating with
+            def collective=(c)
+                @collective = c
+                @client.options[:collective] = c
             end
 
             # Sets and sanity checks the limit_targets variable

@@ -16,10 +16,9 @@ module MCollective
             Log.debug("Reloading all agents from disk")
 
             # We're loading all agents so just nuke all the old agents and unsubscribe
-            connector = PluginManager["connector_plugin"]
             @@agents.each_key do |agent|
                 PluginManager.delete "#{agent}_agent"
-                connector.unsubscribe(Util.make_target(agent, :command))
+                Util.unsubscribe(Util.make_target(agent, :command))
             end
 
             @@agents = {}
@@ -47,7 +46,7 @@ module MCollective
                 PluginManager.loadclass(classname)
                 PluginManager << {:type => "#{agentname}_agent", :class => classname}
 
-                PluginManager["connector_plugin"].subscribe(Util.make_target(agentname, :command)) unless @@agents.include?(agentname)
+                Util.subscribe(Util.make_target(agentname, :command)) unless @@agents.include?(agentname)
 
                 @@agents[agentname] = {:file => agentfile}
                 return true

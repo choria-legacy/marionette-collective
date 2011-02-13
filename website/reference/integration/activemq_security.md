@@ -23,6 +23,15 @@ The default message targets looks like this:
     /topic/mcollective.agentname.reply
 {% endhighlight %}
 
+If you are using versions newer than _1.1.3_ and you are using Subcollectives each subcollective will have topics like:
+
+{% highlight console %}
+    /topic/subcollective.agentname.command
+    /topic/subcollective.agentname.reply
+{% endhighlight %}
+
+For a node to belong to a sub collective he also need rights to these topics.
+
 The nodes only need read access to the command topics and only need write access to the reply topics. The examples below also give them admin access so these topics can be created dynamically. For simplicity we'll wildcard the agent names, you could go further and limit certain nodes to only run certain agents. Adding these controls effectively means anyone who gets onto your node will not be able to write to the command topics and so will not be able to send commands to the rest of the collective.
 
 There's one special case and that's the registration topic, if you want to enable the [registration feature][Registration] you should give the nodes access to write on the command channel for the registration agent. Nothing should reply on the registration topic so you can limit that in the ActiveMQ config.
