@@ -8,7 +8,6 @@ disqus: true
 [EC2Demo]: /mcollective/ec2demo.html
 [Stomp]: http://stomp.codehaus.org/Ruby+Client
 [DepRPMs]: http://www.marionette-collective.org/activemq/
-[Gentoo]: /mcollective/reference/os/gentoo.html
 [DebianBug]: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=562954
 [SecurityWithActiveMQ]: /mcollective/reference/integration/activemq_security.html
 [ActiveMQClustering]: http://www.devco.net/archives/2009/11/10/activemq_clustering.php
@@ -47,8 +46,6 @@ We try to keep the requirements on external Gems to a minimum, you only need:
  * [Ruby Stomp Client][Stomp]
 
 RPMs for these are available [here][DepRPMs].
-
-Information on installing mcollective and stomp from within Gentoo's portage are available [here][Gentoo].
 
 **NOTE: You need version Stomp Gem 1.1 for mcollective up to 0.4.5.  mcollective 0.4.6 onward supports 1.1 and 1.1.6 and newer**
 
@@ -163,6 +160,7 @@ For further info about ActiveMQ settings you might need see [SecurityWithActiveM
 There are also a few known to work and tested [configs in git][ActiveMQSamples].
 
 ## mcollective
+
 ### Download and Extract
 Grab a copy of the mcollective ideally you'd use a package for your distribution else there's a tarfile that
 you can use, you can extract it wherever you want, the RPMs or deps will put files in Operating System compatible

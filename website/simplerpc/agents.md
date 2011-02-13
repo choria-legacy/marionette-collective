@@ -71,6 +71,7 @@ A helper agent called [_rpcutil_][RPCUtil] is included from version _0.4.9_ onwa
 The agent name is derived from the class name, the example code creates *MCollective::Agent::Helloworld* and the agent name would be *helloworld*.
 
 <a name="Meta_Data_and_Initialization">&nbsp;</a>
+
 ### Meta Data and Initialization
 Simple RPC agents still need meta data like in [WritingAgents], without it you'll just have some defaults assigned, code below adds the meta data to our agent:
 
@@ -229,6 +230,7 @@ request[:msg]
 Accessing it via the first will give you full access to all the normal Hash methods where the 2nd will only give you access to *include?*.
 
 ## Constructing Replies
+
 ### Reply Data
 The reply data is in the *reply* variable and is an instance of *MCollective::RPC::Reply*.
 

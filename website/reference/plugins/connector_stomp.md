@@ -13,6 +13,7 @@ This code will only work with version _1.1_ and _1.1.6_ or newer of the Stomp ge
 
 
 ## Configuring
+
 ### Common Options
 The most basic configuration method is supported in all versions of the gem:
 

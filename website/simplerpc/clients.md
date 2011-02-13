@@ -258,6 +258,7 @@ The first call will set up the CLI option parsing, create clients etc, you can t
 The biggest reason that you'd write custom clients is probably if you wanted to do custom processing of the results, there are 2 options to do it.
 
 <a name="Results_and_Exceptions"> </a>
+
 ### Results and Exceptions
 Results have a set structure and depending on how you access the results you will either get Exceptions or result codes.
 

@@ -40,10 +40,6 @@ Index to basic users documentation.
  1. [Stomp Connector](plugins/connector_stomp.html)
  1. [User Contributed Plugins](http://projects.puppetlabs.com/projects/mcollective-plugins/wiki)
 
-### Operating Systems
-
- 1. [Gentoo](os/gentoo.html)
-
 ### Development
 
  1. [Release Tasks](development/releasetasks.html)

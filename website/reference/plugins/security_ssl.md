@@ -34,6 +34,7 @@ Initial code was contributed by Vladimir Vuksan and modified by R.I.Pienaar
 An [alternative plugin][AESPlugin] exist that encrypts data but is more work to setup and maintain.
 
 ## Setup
+
 ### Nodes
 To setup you need to create a SSL key pair that is shared by all nodes.
 

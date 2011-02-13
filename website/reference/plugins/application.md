@@ -122,6 +122,7 @@ Finished processing 1 / 1 hosts in 68.53 ms
 Most of the techniques documented in SimpleRPC [Clients] can be reused here, we've just simplified a lot of the common used patterns like CLI arguments and incorporated it all in a single framework.
 
 ## Reference
+
 ### Usage Messages
 
 To add custom usage messages to your application we can add lines like this:
