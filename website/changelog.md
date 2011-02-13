@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/02/13|Surpress replies to SimpleRPC clients who did not request results|6305|
 |2011/02/11|Fix Debian packaging error due to the same file in multiple packages|6276|
 |2011/02/11|The application framework will now disconnect from the middleware for consistancy|6292|
 |2011/02/11|Returning _nil_ from a registration plugin will skip registration|6289|

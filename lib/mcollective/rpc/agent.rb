@@ -106,7 +106,12 @@ module MCollective
 
                 after_processing_hook
 
-                @reply.to_hash
+                if @request.should_respond?
+                    return @reply.to_hash
+                else
+                    Log.debug("Client did not request a response, surpressing reply")
+                    return nil
+                end
             end
 
             # Generates help using the template based on the data

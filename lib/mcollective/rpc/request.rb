@@ -21,6 +21,18 @@ module MCollective
                 return @data.include?(key)
             end
 
+            # Parses the :process_results request property returning true if the
+            # caller cares for a response else false
+            def should_respond?
+                if @data.include?(:process_results)
+                    unless @data[:process_results]
+                        return false
+                    end
+                end
+
+                return true
+            end
+
             # If data is a hash, gives easy access to its members, else returns nil
             def [](key)
                 return nil unless @data.is_a?(Hash)
