@@ -9,6 +9,36 @@ This is a list of release notes for various releases, you should review these be
  * TOC Placeholder
   {:toc}
 
+## 1.1.2 - 2011/02/14
+
+This is a release in the development series of mcollective.  It features minor
+bug fixes and features.
+
+This release is for early adopters, production users should consider the 1.0.x series.
+
+### Bug Fixes
+
+ * The main fix in this release is a packaging bug in Debian systems that prevented
+   both client and server from being installed on the same machine.
+ * Backwards compatibility fix for fact filters that are empty strings
+
+### Enhancement
+
+ * Registration plugins can now return nil which will skip that specific registration
+   message.  This will enable plugins to decide based on some node state if a message
+   should be sent or not.
+
+### Changes
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2011/02/13|Surpress replies to SimpleRPC clients who did not request results|6305|
+|2011/02/11|Fix Debian packaging error due to the same file in multiple packages|6276|
+|2011/02/11|The application framework will now disconnect from the middleware for consistancy|6292|
+|2011/02/11|Returning _nil_ from a registration plugin will skip registration|6289|
+|2011/02/11|Set loglevel to warn by default if not specified in the config file|6287|
+|2011/02/10|Fix backward compatability with empty fact strings|6278|
+
 ## 1.1.1 - 2011/02/02
 
 This is a release in the development series of mcollective.  It features major new
