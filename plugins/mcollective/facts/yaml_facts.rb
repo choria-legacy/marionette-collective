@@ -46,7 +46,7 @@ module MCollective
                     mtime = File.stat(file).mtime
 
                     if mtime > @yaml_file_mtimes[file]
-                        @yaml_file_mtimes[file] = mtme
+                        @yaml_file_mtimes[file] = mtime
 
                         Log.debug("Forcing fact reload due to age of #{file}")
 
