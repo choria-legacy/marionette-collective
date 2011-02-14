@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/02/14|Remove inadvertently included package.ddl|6313|
 |2011/02/14|Handle missing libdirs without crashing|6306|
 |*2011/02/14*|*Release 1.1.2*|6303|
 |2011/02/13|Surpress replies to SimpleRPC clients who did not request results|6305|
