@@ -26,7 +26,7 @@ module MCollective
 
             @config.libdir.each do |libdir|
                 agentdir = "#{libdir}/mcollective/agent"
-                raise("Cannot find agents directory: '#{agentdir}'") unless File.directory?(agentdir)
+                next unless File.directory?(agentdir)
 
                 Dir.new(agentdir).grep(/\.rb$/).each do |agent|
                     agentname = File.basename(agent, ".rb")

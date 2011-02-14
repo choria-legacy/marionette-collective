@@ -29,7 +29,7 @@ module MCollective
 
             Config.instance.libdir.each do |libdir|
                 applicationdir = "#{libdir}/mcollective/application"
-                raise("Cannot find applications directory: '#{applicationdir}'") unless File.directory?(applicationdir)
+                next unless File.directory?(applicationdir)
 
                 Dir.entries(applicationdir).grep(/\.rb$/).each do |application|
                     applist << File.basename(application, ".rb")
