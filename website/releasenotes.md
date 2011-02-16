@@ -9,6 +9,36 @@ This is a list of release notes for various releases, you should review these be
  * TOC Placeholder
   {:toc}
 
+## 1.0.1 - 2011/02/16
+
+### Release Focus and Notes
+
+This is a minor bug fix release.
+
+### Bugs Fixed
+
+ * The YAML fact plugin failed to remove deleted facts from memory
+ * The _-_ character is now allowed in Fact names for the rpcutil agent
+ * Machines that fali security validations were not reported correctly,
+   they are now treated as having not responded at all
+ * Timeouts on RPC requests were too aggressive and did not allow for slow networks
+
+### Backwards Compatibility
+
+This release will be backward compatible with older releases.
+
+### Changes
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2011/02/02|Include full Apache 2 license text|6113|
+|2011/01/29|The YAML fact plugin kept deleted facts in memory|6056|
+|2012/01/04|Use the LSB based init script on SUSE|5762|
+|2010/12/30|Allow - in fact names|5727|
+|2010/12/29|Treat machines that fail security validation like ones that did not respond|5700|
+|2010/12/25|Allow for network and fact source latency when calculating client timeout|5676|
+|2010/12/25|Increase the rpcutil timeout to allow for slow facts|5679|
+
 ## 1.1.2 - 2011/02/14
 
 This is a release in the development series of mcollective.  It features minor
