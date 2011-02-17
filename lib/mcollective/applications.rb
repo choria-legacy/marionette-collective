@@ -80,7 +80,7 @@ module MCollective
             return if Config.instance.configured
 
             original_argv = ARGV.clone
-            original_extra_opts = ENV["MCOLLECTIVE_EXTRA_OPTS"].clone
+            original_extra_opts = ENV["MCOLLECTIVE_EXTRA_OPTS"].clone rescue nil
             configfile = nil
 
             parser = OptionParser.new
@@ -95,17 +95,21 @@ module MCollective
             # avoid option parsers own internal version handling that sux
             parser.on("-v", "--verbose")
 
-            begin
-                # optparse will parse the whole ENV in one go and refuse
-                # to play along with the retry trick I do below so in
-                # order to handle unknown options properly I parse out
-                # only -c and --config deleting everything else and
-                # then restore the environment variable later when I
-                # am done with it
-                ENV["MCOLLECTIVE_EXTRA_OPTS"] = filter_extra_options(ENV["MCOLLECTIVE_EXTRA_OPTS"].clone)
-                parser.environment("MCOLLECTIVE_EXTRA_OPTS")
-            rescue Exception => e
-                Log.error("Failed to parse MCOLLECTIVE_EXTRA_OPTS: #{e}")
+            if original_extra_opts
+                begin
+                    # optparse will parse the whole ENV in one go and refuse
+                    # to play along with the retry trick I do below so in
+                    # order to handle unknown options properly I parse out
+                    # only -c and --config deleting everything else and
+                    # then restore the environment variable later when I
+                    # am done with it
+                    ENV["MCOLLECTIVE_EXTRA_OPTS"] = filter_extra_options(ENV["MCOLLECTIVE_EXTRA_OPTS"].clone)
+                    parser.environment("MCOLLECTIVE_EXTRA_OPTS")
+                rescue Exception => e
+                    Log.error("Failed to parse MCOLLECTIVE_EXTRA_OPTS: #{e}")
+                end
+
+                ENV["MCOLLECTIVE_EXTRA_OPTS"] = original_extra_opts.clone
             end
 
             begin
@@ -114,7 +118,6 @@ module MCollective
                 retry
             end
 
-            ENV["MCOLLECTIVE_EXTRA_OPTS"] = original_extra_opts.clone
             ARGV.clear
             original_argv.each {|a| ARGV << a}
 
