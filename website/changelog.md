@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/02/17|Correctly parse MCOLLECTIVE_EXTRA_OPTS in the new unified binary framework|6354|
 |2011/02/15|Allow the signing key and Debian distribution to be customized|6321|
 |2011/02/14|Remove inadvertently included package.ddl|6313|
 |2011/02/14|Handle missing libdirs without crashing|6306|
