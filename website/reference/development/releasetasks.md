@@ -24,7 +24,7 @@ Boot up an instance of the EC2 demo AMIs
 
 {% highlight console %}
 # gem install rake
-# git clone git://github.com/mcollective/marionette-collective.git
+# git clone git://github.com/puppetlabs/marionette-collective.git
 # cd marionette-collective
 # git checkout 0.x.x
 # rake rpm
@@ -40,7 +40,7 @@ Boot up an instance of _ami-0db89079_ and do more or less the following:
 {% highlight console %}
 # apt-get update
 # apt-get install rake irb rdoc build-essential subversion devscripts dpatch cdbs rubygems git-core
-# git clone git://github.com/mcollective/marionette-collective.git
+# git clone git://github.com/puppetlabs/marionette-collective.git
 # cd marionette-collective
 # git checkout 0.x.x
 # rake deb

@@ -102,7 +102,7 @@ API and process.
 ### Managing Exim Clusters
 A command line and Dialog based UI written to manage clusters of Exim Servers.
 
-The code for this is [open source](http://github.com/ripienaar/mcollective-plugins/tree/master/agent/exim/)
+The code for this is [open source](http://github.com/puppetlabs/mcollective-plugins/tree/master/agent/exim/)
 unfortunately it predates SimpleRPC, we hope to port it soon.
 
 <object width="640" height="385"><param name="movie" value="http://www.youtube.com/v/kNvoQCpJ1V4&amp;hl=en_US&amp;fs=1?rel=0"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/kNvoQCpJ1V4&amp;hl=en_US&amp;fs=1?rel=0" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="640" height="385"></embed></object>

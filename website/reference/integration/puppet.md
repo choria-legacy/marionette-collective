@@ -6,9 +6,9 @@ disqus: true
 [FactsRLFacter]: http://code.google.com/p/mcollective-plugins/wiki/FactsRLFacter
 [PluginSync]: http://docs.reductivelabs.com/guides/plugins_in_modules.html
 [AgentPuppetd]: http://code.google.com/p/mcollective-plugins/wiki/AgentPuppetd
-[AgentPuppetca]: http://github.com/ripienaar/mcollective-plugins/tree/master/agent/puppetca/
-[AgentPuppetRal]: http://github.com/ripienaar/mcollective-plugins/tree/master/agent/puppetral/
-[PuppetCommander]: http://github.com/ripienaar/mcollective-plugins/tree/master/agent/puppetd/commander/
+[AgentPuppetca]: http://github.com/puppetlabs/mcollective-plugins/tree/master/agent/puppetca/
+[AgentPuppetRal]: http://github.com/puppetlabs/mcollective-plugins/tree/master/agent/puppetral/
+[PuppetCommander]: http://github.com/puppetlabs/mcollective-plugins/tree/master/agent/puppetd/commander/
 [RapidRuns]: http://www.devco.net/archives/2010/08/05/rapid_puppet_runs_with_mcollective.php
 [EC2Bootstrap]: http://www.devco.net/archives/2010/07/14/bootstrapping_puppet_on_ec2_with_mcollective.php
 [PuppetRalBlog]: http://www.devco.net/archives/2010/07/07/puppet_resources_on_demand.php

@@ -11,7 +11,7 @@ disqus: true
 [DebianBug]: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=562954
 [SecurityWithActiveMQ]: /mcollective/reference/integration/activemq_security.html
 [ActiveMQClustering]: http://www.devco.net/archives/2009/11/10/activemq_clustering.php
-[ActiveMQSamples]: http://github.com/mcollective/marionette-collective/tree/master/ext/activemq/examples/
+[ActiveMQSamples]: http://github.com/puppetlabs/marionette-collective/tree/master/ext/activemq/examples/
 [ConfigurationReference]: /mcollective/reference/basic/configuration.html
 [Terminology]: /mcollective/terminology.html
 [SimpleRPCIntroduction]: /mcollective/simplerpc/
