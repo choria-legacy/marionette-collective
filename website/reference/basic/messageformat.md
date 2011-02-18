@@ -3,7 +3,7 @@ layout: default
 title: Message Format
 disqus: true
 ---
-[SecurityPlugins]: http://github.com/mcollective/marionette-collective/tree/master/plugins/mcollective/security/
+[SecurityPlugins]: http://github.com/puppetlabs/marionette-collective/tree/master/plugins/mcollective/security/
 [SimpleRPCIntroduction]: /mcollective/simplerpc/
 [MessageFlow]: messageflow.html
 [ScreenCast]: /mcollective/screencasts.html#message_flow

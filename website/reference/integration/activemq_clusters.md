@@ -8,7 +8,7 @@ disqus: true
 [NetworksOfBrokers]: http://activemq.apache.org/networks-of-brokers.html
 [UsingSSL]: http://activemq.apache.org/how-do-i-use-ssl.html
 [SecurityWithActiveMQ]: /mcollective/reference/integration/activemq_security.html
-[SampleConfig]: http://github.com/mcollective/marionette-collective/tree/master/ext/activemq/
+[SampleConfig]: http://github.com/puppetlabs/marionette-collective/tree/master/ext/activemq/
 
 # {{page.title}}
 

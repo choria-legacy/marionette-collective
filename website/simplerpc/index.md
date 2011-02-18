@@ -12,7 +12,7 @@ disqus: true
 [SimpleRPCMessageFormat]: /mcollective/simplerpc/messageformat.html
 [RPCUtil]: /mcollective/reference/plugins/rpcutil.html
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
-[RestGateway]: http://github.com/mcollective/marionette-collective/blob/master/ext/mc-rpc-restserver.rb
+[RestGateway]: http://github.com/puppetlabs/marionette-collective/blob/master/ext/mc-rpc-restserver.rb
 
 # {{page.title}}
 
