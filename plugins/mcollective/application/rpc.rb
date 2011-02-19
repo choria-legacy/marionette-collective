@@ -78,6 +78,8 @@ class MCollective::Application::Rpc<MCollective::Application
                 end
             end
         end
+    rescue
+        true
     end
 
     def main

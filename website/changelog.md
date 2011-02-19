@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/02/19|Improve error handling when parsing arguments in the rpc application|6388|
 |2011/02/19|Fix error logging when file_logger creation fails|6387|
 |2011/02/17|Correctly parse MCOLLECTIVE_EXTRA_OPTS in the new unified binary framework|6354|
 |2011/02/15|Allow the signing key and Debian distribution to be customized|6321|
