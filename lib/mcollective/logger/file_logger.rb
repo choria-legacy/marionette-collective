@@ -23,7 +23,7 @@ module MCollective
                 @logger.level = map_level(level)
             rescue Exception => e
                 @logger.level = ::Logger::DEBUG
-                log(:error, "Could not set logging to #{level} using debug instead: #{e.class} #{e}")
+                log(:error, "", "Could not set logging to #{level} using debug instead: #{e.class} #{e}")
             end
 
             def valid_levels
