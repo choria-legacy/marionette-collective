@@ -229,6 +229,73 @@ request[:msg]
 
 Accessing it via the first will give you full access to all the normal Hash methods where the 2nd will only give you access to *include?*.
 
+## Running Shell Commands
+
+NOTE: Only available since 1.1.3
+
+A helper function exist that makes it easier to run shell commands and gain
+access to their _STDOUT_ and _STDERR_.
+
+We recommend everyone use this method for calling to shell commands as it forces
+*LC_ALL* to *C* as well as wait on all the children and avoids zombies, you can
+set unique working directories and shell environments that would be impossible
+using simple _system_ that is provided with Ruby.
+
+The simplest case is just to run a command and send output back to the client:
+
+{% highlight ruby %}
+reply[:status] = run("echo 'hello world'", :stdout => :out, :stderr => :err)
+{% endhighlight %}
+
+Here you will have set _reply[:out]_, _reply[:err]_ and _reply[:status]_ based
+on the output from the command
+
+You can append the output of the command to any string:
+
+{% highlight ruby %}
+out = []
+err = ""
+status = run("echo 'hello world'", :stdout => out, :stderr => err)
+{% endhighlight %}
+
+Here the STDOUT of the command will be saved in the variable _out_ and not sent
+back to the caller.  The only caveat is that the variables _out_ and _err_ should
+have the _<<_ method, so if you supplied an array each line of output will be a
+single member of the array.  In the example _out_ would be an array of lines
+while _err_ would just be a big multi line string.
+
+By default any trailing new lines will be included in the output and error:
+
+{% highlight ruby %}
+reply[:status] = run("echo 'hello world'", :stdout => :out, :stderr => :err)
+reply[:stdout].chomp!
+reply[:stderr].chomp!
+{% endhighlight %}
+
+You can shorten this to:
+
+{% highlight ruby %}
+reply[:status] = run("echo 'hello world'", :stdout => :out, :stderr => :err, :chomp => true)
+{% endhighlight %}
+
+This will remove a trailing new line from the _reply[:out]_ and _reply[:err]_.
+
+If you wanted this command to run from the _/tmp_ directory:
+
+{% highlight ruby %}
+reply[:status] = run("echo 'hello world'", :stdout => :out, :stderr => :err, :cwd => "/tmp")
+{% endhighlight %}
+
+Or if you wanted to include a shell Environment variable:
+
+{% highlight ruby %}
+reply[:status] = run("echo 'hello world'", :stdout => :out, :stderr => :err, :environment => {"FOO" => "BAR"})
+{% endhighlight %}
+
+You have to set the cwd and environment through these options, do not simply
+call _chdir_ or adjust the _ENV_ hash in an agent as that will not be safe in
+the context of a multi threaded Ruby application.
+
 ## Constructing Replies
 
 ### Reply Data

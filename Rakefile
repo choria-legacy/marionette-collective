@@ -41,7 +41,7 @@ rd = Rake::RDocTask.new(:doc) { |rdoc|
     rdoc.rdoc_dir = 'doc'
     rdoc.template = 'html'
     rdoc.title    = "#{PROJ_DOC_TITLE} version #{CURRENT_VERSION}"
-    rdoc.options << '--line-numbers' << '--inline-source' << '--main' << 'MCollective'
+    rdoc.options << '--line-numbers' << '--inline-source' << '--main' << 'MCollective' << '--exclude' << 'mcollective/vendor/'
 }
 
 desc "Run spec tests"

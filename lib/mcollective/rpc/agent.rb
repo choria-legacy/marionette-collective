@@ -138,6 +138,75 @@ module MCollective
 
 
             private
+            # Runs a command via the MC::Shell wrapper, options are as per MC::Shell
+            #
+            # The simplest use is:
+            #
+            #   out = ""
+            #   err = ""
+            #   status = run("echo 1", :stdout => out, :stderr => err)
+            #
+            #   reply[:out] = out
+            #   reply[:error] = err
+            #   reply[:exitstatus] = status
+            #
+            # This can be simplified as:
+            #
+            #   reply[:exitstatus] = run("echo 1", :stdout => :out, :stderr => :error)
+            #
+            # You can set a command specific environment and cwd:
+            #
+            #   run("echo 1", :cwd => "/tmp", :environment => {"FOO" => "BAR"})
+            #
+            # This will run 'echo 1' from /tmp with FOO=BAR in addition to a setting forcing
+            # LC_ALL = C.  To prevent LC_ALL from being set either set it specifically or:
+            #
+            #   run("echo 1", :cwd => "/tmp", :environment => nil)
+            #
+            # Exceptions here will be handled by the usual agent exception handler or any
+            # specific one you create, if you dont it will just fall through and be sent
+            # to the client
+            def run(command, options={})
+                shellopts = {}
+
+                # force stderr and stdout to be strings as the library
+                # will append data to them if given using the << method.
+                #
+                # if the data pased to :stderr or :stdin is a Symbol
+                # add that into the reply hash with that Symbol
+                [:stderr, :stdout].each do |k|
+                    if options.include?(k)
+                        if options[k].is_a?(Symbol)
+                            reply[ options[k] ] = ""
+                            shellopts[k] = reply[ options[k] ]
+                        else
+                            if options[k].respond_to?("<<")
+                                shellopts[k] = options[k]
+                            else
+                                reply.fail! "#{k} should support << while calling run(#{command})"
+                            end
+                        end
+                    end
+                end
+
+                [:stdin, :cwd, :environment].each do |k|
+                    if options.include?(k)
+                        shellopts[k] = options[k]
+                    end
+                end
+
+                shell = Shell.new(command, shellopts)
+
+                shell.runcommand
+
+                if options[:chomp]
+                    shellopts[:stdout].chomp! if shellopts[:stdout].is_a?(String)
+                    shellopts[:stderr].chomp! if shellopts[:stderr].is_a?(String)
+                end
+
+                shell.status.exitstatus
+            end
+
             # Registers meta data for the introspection hash
             def self.metadata(data)
                 [:name, :description, :author, :license, :version, :url, :timeout].each do |arg|
@@ -156,7 +225,7 @@ module MCollective
                 }
             end
 
-            # Creates a new action wit the block passed and sets some defaults
+            # Creates a new action with the block passed and sets some defaults
             #
             # action "status" do
             #    # logic here to restart service

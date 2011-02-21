@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/02/28|Create a wrapper to safely run shell commands avoiding zombies|6392|
 |2011/02/19|Introduce Subcollectives for network partitioning|5967|
 |2011/02/19|Improve error handling when parsing arguments in the rpc application|6388|
 |2011/02/19|Fix error logging when file_logger creation fails|6387|
