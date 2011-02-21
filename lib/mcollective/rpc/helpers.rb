@@ -143,12 +143,23 @@ module MCollective
                     if result.is_a?(Hash)
                         # figure out the lengths of the display as strings, we'll use
                         # it later to correctly justify the output
-                        lengths = result.keys.map{|k| ddl[:output][k][:display_as].size}
+                        lengths = result.keys.map do |k|
+                            begin
+                                ddl[:output][k][:display_as].size
+                            rescue
+                                k.to_s.size
+                            end
+                        end
 
                         result.keys.each do |k|
                             # get all the output fields nicely lined up with a
                             # 3 space front padding
-                            display_as = ddl[:output][k][:display_as]
+                            begin
+                                display_as = ddl[:output][k][:display_as]
+                            rescue
+                                display_as = k.to_s
+                            end
+
                             display_length = display_as.size
                             padding = lengths.max - display_length + 3
                             result_text << " " * padding
@@ -158,7 +169,8 @@ module MCollective
                             if result[k].is_a?(String) || result[k].is_a?(Numeric)
                                 result_text << " #{result[k]}\n"
                             else
-                                result_text << "\n\t" + result[k].pretty_inspect.split("\n").join("\n\t") + "\n"
+                                padding = " " * (lengths.max + 5)
+                                result_text << " " << result[k].pretty_inspect.split("\n").join("\n" << padding) << "\n"
                             end
                         end
                     else
