@@ -16,47 +16,30 @@ disqus: true
 We've created an Amazon hosted demo of mcollective that can give you a quick feel
 for how things work without all the hassle of setting up from scratch.
 
-It would also be a good test bed for new agents etc.
+The demo uses the new Amazon CloudFormation technology that you can access using the [Amazon Console].
+Prior to following the steps in the demo please create a SSH keypair and register it under the EC2
+tab in the console.
 
-<embed src="http://blip.tv/play/hfMOgfSIRgA" type="application/x-shockwave-flash" width="640"
-height="385" allowscriptaccess="always" allowfullscreen="true"></embed>
+The video below shows how to get going with the demo and runs through a few of the availbable options.
+For best experience please maximise the video.
 
-## AMIs
-The AMI is based in the *EU West* availability zone, we currently have just the one
-AMI id that is running mcollective 1.0.0.
+The two passwords requested during creation is completely arbitrary you can provide anything there and
+past entering them on the creation page you don't need to know them again later.  They are used internally
+to the demo without you being aware of them.
 
-| AMI ID | Description |
-| ------ | ----------- |
-| ami-23cffa57 | Server and Node for MCollective 1.0.0|
+You'll need to enter the url _http://mcollective-101-demo.s3.amazonaws.com/cloudfront`_`demo.json_ into the
+creation step.
 
-The video shows you the basic steps to get it going using the [Amazon Console][].
-
-We can create a copy of it in the US if there's demand for that.
-
-## Security Groups
-Just in case it's not clear in the video you should open ports *22* and *6163* to make
-sure it all works, technically you only need to open 6163 on the main server only the
-rest only need it for outgoing.
-
-## Starting main node
-To start the main node you need to provide some user data:
-
-{% highlight ini %}
-    mcollective=server
-{% endhighlight %}
-
-and then once it's up you should run the *start-mcollective-demo.rb*
-as root to bootstrap the first node, it'll provide user data that you should then give
-to all the test nodes you want to boot.
+<embed src="http://blip.tv/play/hfMOgqejeAA" type="application/x-shockwave-flash" width="640" height="419" allowscriptaccess="always" allowfullscreen="true" />
 
 ## Agents
 The images all have the basic agents going as well as some community ones:
 
- * [Puppet based Service][]
- * [Puppet based Package][]
- * [NRPE][]
- * [Meta Registration][]
- * [URL Tester][]
+ * [Puppet based Service]
+ * [Puppet based Package]
+ * [NRPE]
+ * [Meta Registration]
+ * [URL Tester]
 
 ## Registration
 The main node will have [Registration] setup and the community [Registration Monitor] agent,
