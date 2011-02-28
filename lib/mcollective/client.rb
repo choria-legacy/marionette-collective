@@ -54,7 +54,9 @@ module MCollective
                 @subscriptions[agent] = 1
             end
 
-            @connection.send(target, req)
+            Timeout.timeout(2) do
+                @connection.send(target, req)
+            end
 
             reqid
         end
@@ -91,11 +93,11 @@ module MCollective
         # returns an array of nodes
         def discover(filter, timeout)
             begin
-                reqid = sendreq("ping", "discovery", filter)
-                Log.debug("Waiting #{timeout} seconds for discovery replies to request #{reqid}")
-
                 hosts = []
                 Timeout.timeout(timeout) do
+                    reqid = sendreq("ping", "discovery", filter)
+                    Log.debug("Waiting #{timeout} seconds for discovery replies to request #{reqid}")
+
                     loop do
                         msg = receive(reqid)
                         Log.debug("Got discovery reply from #{msg[:senderid]}")
@@ -124,12 +126,12 @@ module MCollective
 
             STDOUT.sync = true
 
-            reqid = sendreq(body, agent, options[:filter])
-
             hosts_responded = 0
 
             begin
                 Timeout.timeout(options[:timeout]) do
+                    reqid = sendreq(body, agent, options[:filter])
+
                     loop do
                         resp = receive(reqid)
 
@@ -186,10 +188,10 @@ module MCollective
 
             raise("No matching clients found") if discovered == 0
 
-            reqid = sendreq(body, agent, options[:filter])
-
             begin
                 Timeout.timeout(options[:timeout]) do
+                    reqid = sendreq(body, agent, options[:filter])
+
                     (1..discovered).each do |c|
                         resp = receive(reqid)
 
