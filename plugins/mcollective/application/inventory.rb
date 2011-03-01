@@ -58,7 +58,7 @@ class MCollective::Application::Inventory<MCollective::Application
 
     # Get all the known collectives and nodes that belong to them
     def get_collectives
-        util = rpcclient("rpcutil", :options => options)
+        util = rpcclient("rpcutil")
         util.progress = false
 
         collectives = {}
@@ -125,7 +125,7 @@ class MCollective::Application::Inventory<MCollective::Application
     def node_inventory
         node = configuration[:node]
 
-        util = rpcclient("rpcutil", :options => options)
+        util = rpcclient("rpcutil")
         util.identity_filter node
         util.progress = false
 
@@ -227,7 +227,7 @@ class MCollective::Application::Inventory<MCollective::Application
         raise "Need to define a format" if @fmt.nil?
         raise "Need to define inventory fields" if @flds.nil?
 
-        util = rpcclient("rpcutil", :options => @options)
+        util = rpcclient("rpcutil")
         util.progress = false
 
         util.inventory do |t, resp|
@@ -280,7 +280,7 @@ class MCollective::Application::Inventory<MCollective::Application
         body_fmt.setPageLength(@page_length)
         time = Time.now
 
-        util = rpcclient("rpcutil", :options => @options)
+        util = rpcclient("rpcutil")
         util.progress = false
 
         util.inventory do |t, resp|

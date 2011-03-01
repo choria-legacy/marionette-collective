@@ -3,29 +3,54 @@ module MCollective
         include RPC
 
         class << self
+            # Intialize a blank set of options if its the first time used
+            # else returns active options
             def application_options
                 intialize_application_options unless @application_options
                 @application_options
             end
 
+            # set an option in the options hash
             def []=(option, value)
                 intialize_application_options unless @application_options
                 @application_options[option] = value
             end
 
+            # retrieves a specific option
             def [](option)
                 intialize_application_options unless @application_options
                 @application_options[option]
             end
 
+            # Sets the application description, there can be only one
+            # description per application so multiple calls will just
+            # change the description
             def description(descr)
                 self[:description] = descr
             end
 
+            # Supplies usage information, calling multiple times will
+            # create multiple usage lines in --help output
             def usage(usage)
                 self[:usage] << usage
             end
 
+            # Wrapper to create command line options
+            #
+            #  - name: varaible name that will be used to access the option value
+            #  - description: textual info shown in --help
+            #  - arguments: a list of possible arguments that can be used
+            #    to activate this option
+            #  - type: a data type that ObjectParser understand of :bool or :array
+            #  - required: true or false if this option has to be supplied
+            #  - validate: a proc that will be called with the value used to validate
+            #    the supplied value
+            #
+            #   option :foo,
+            #      :description => "The foo option"
+            #      :arguments   => ["--foo ARG"]
+            #
+            # after this the value supplied will be in configuration[:foo]
             def option(name, arguments)
                 opt = {:name => name,
                        :description => nil,
@@ -39,6 +64,7 @@ module MCollective
                 self[:cli_arguments] << opt
             end
 
+            # Creates an empty set of options
             def intialize_application_options
                 @application_options = {:description   => nil,
                                         :usage         => [],
@@ -46,15 +72,19 @@ module MCollective
             end
         end
 
+        # The application configuration built from CLI arguments
         def configuration
             @application_configuration ||= {}
             @application_configuration
         end
 
+        # The active options hash used for MC::Client and other configuration
         def options
             @options
         end
 
+        # Calls the supplied block in an option for validation, an error raised
+        # will log to STDERR and exit the application
         def validate_option(blk, name, value)
             validation_result = blk.call(value)
 
@@ -64,6 +94,8 @@ module MCollective
             end
         end
 
+        # Builds an ObjectParser config, parse the CLI options and validates based
+        # on the option config
         def application_parse_options
             @options = rpcoptions do |parser, options|
                 parser.define_head application_description if application_description
@@ -153,20 +185,26 @@ module MCollective
             application_failure(e)
         end
 
+        # Retrieve the current application description
         def application_description
             self.class.application_options[:description]
         end
 
+        # Return the current usage text false if nothing is set
         def application_usage
             usage = self.class.application_options[:usage]
 
             usage.empty? ? false : usage
         end
 
+        # Returns an array of all the arguments built using
+        # calls to optin
         def application_cli_arguments
             self.class.application_options[:cli_arguments]
         end
 
+        # Handles failure, if we're far enough in the initialization
+        # phase it will log backtraces if its in verbose mode only
         def application_failure(e)
             STDERR.puts "#{$0} failed to run: #{e} (#{e.class})"
 
@@ -181,6 +219,9 @@ module MCollective
             exit! 1
         end
 
+        # The main logic loop, builds up the options, validate configuration and calls
+        # the main as supplied by the user.  Disconnects when done and pass any exception
+        # onto the application_failure helper
         def run
             application_parse_options
 
@@ -193,10 +234,20 @@ module MCollective
             application_failure(e)
         end
 
-        # abstract
+        # Fake abstract class that logs if the user tries to use an application without
+        # supplying a main override method.
         def main
             STDERR.puts "Applications need to supply a 'main' method"
             exit 1
+        end
+
+        # Wrapper around MC::RPC#rpcclient that forcably supplies our options hash
+        # if someone forgets to pass in options in an application the filters and other
+        # cli options wouldnt take effect which could have a disasterous outcome
+        def rpcclient(agent, flags = {})
+            flags[:options] = options unless flags.include?(:options)
+
+            super
         end
     end
 end

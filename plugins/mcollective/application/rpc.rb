@@ -86,7 +86,7 @@ class MCollective::Application::Rpc<MCollective::Application
         if configuration[:no_results]
             configuration[:arguments][:process_results] = false
 
-            mc = rpcclient(configuration[:agent], {:options => options})
+            mc = rpcclient(configuration[:agent])
 
             booleanish_to_boolean(configuration[:arguments], mc.ddl.action_interface(configuration[:action])) unless mc.ddl.nil?
 
@@ -94,7 +94,7 @@ class MCollective::Application::Rpc<MCollective::Application
 
             puts "Request sent with id: " + mc.send(configuration[:action], configuration[:arguments])
         else
-            mc = rpcclient(configuration[:agent], {:options => options})
+            mc = rpcclient(configuration[:agent])
 
             booleanish_to_boolean(configuration[:arguments], mc.ddl.action_interface(configuration[:action])) unless mc.ddl.nil?
 

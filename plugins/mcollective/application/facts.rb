@@ -28,7 +28,7 @@ class MCollective::Application::Facts<MCollective::Application
     end
 
     def main
-        rpcutil = rpcclient("rpcutil", :options => options)
+        rpcutil = rpcclient("rpcutil")
         rpcutil.progress = false
 
         facts = {}
