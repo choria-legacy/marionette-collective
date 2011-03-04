@@ -12,7 +12,7 @@ disqus: true
 
 ## Overview
 The Marionette Collective 1.1.1 and newer supports a single executable - called
-mc - and have a plugin type called application that lets you create
+mco - and have a plugin type called application that lets you create
 applications for this single executable.
 
 In the past we tended to write small standalone scripts to interact with
@@ -24,22 +24,22 @@ MCollective, this had a number of issues:
  * Installation and packaging of plugins is complex
 
 We've attempted to address these concerns by creating a single point of access
-for all applications - the _mc_ script - with unified help, error reporting and
+for all applications - the _mco_ script - with unified help, error reporting and
 option parsing.
 
 Below you can see the single executable system in use:
 
 {% highlight console %}
-$ mc
+$ mco
 The Marionette Collective version 1.1.1
 
-/usr/sbin/mc: command (options)
+/usr/bin/mco: command (options)
 
 Known commands: rpc filemgr inventory facts ping find help
 {% endhighlight %}
 
 {% highlight console %}
-$ mc help
+$ mco help
 The Marionette Collection version 1.1.1
 
   facts           Reports on usage for a specific fact
@@ -52,7 +52,7 @@ The Marionette Collection version 1.1.1
 {% endhighlight %}
 
 {% highlight console %}
-$ mc rpc package status package=zsh
+$ mco rpc package status package=zsh
 Determining the amount of hosts matching filter for 2 seconds .... 51
 
  * [ ============================================================> ] 51 / 51
@@ -99,14 +99,14 @@ end
 Here's the application we wrote in action:
 
 {% highlight console %}
-$ mc echo
+$ mco echo
 The message option is mandatory
 
 Please run with --help for detailed help
 {% endhighlight %}
 
 {% highlight console %}
-$ mc echo -m test
+$ mco echo -m test
 
  * [ ============================================================> ] 1 / 1
 
@@ -131,7 +131,7 @@ To add custom usage messages to your application we can add lines like this:
 class MCollective::Application::Echo<MCollective::Application
    description "Reports on usage for a specific fact"
 
-   usage "mc echo [options] --message message"
+   usage "mco echo [options] --message message"
 end
 {% endhighlight %}
 

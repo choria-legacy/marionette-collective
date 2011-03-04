@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/03/04|Rename /usr/sbin/mc to /usr/bin/mco|6578|
 |2011/03/01|Wrap rpcclient in applications ensuring that options is always set|6308|
 |2011/02/28|Make communicating with the middleware more robust by including send calls in timeouts|6505|
 |2011/02/28|Create a wrapper to safely run shell commands avoiding zombies|6392|

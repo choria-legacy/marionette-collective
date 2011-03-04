@@ -55,6 +55,7 @@ Server for the mcollective Application Server
 %install
 rm -rf %{buildroot}
 %{__install} -d -m0755  %{buildroot}/%{ruby_sitelib}/mcollective
+%{__install} -d -m0755  %{buildroot}/usr/bin
 %{__install} -d -m0755  %{buildroot}/usr/sbin
 %{__install} -d -m0755  %{buildroot}/etc/init.d
 %{__install} -d -m0755  %{buildroot}/usr/libexec/mcollective/
@@ -76,7 +77,7 @@ rm -rf %{buildroot}
 cp -R lib/* %{buildroot}/%{ruby_sitelib}/
 cp -R plugins/* %{buildroot}/usr/libexec/mcollective/
 cp mc-* %{buildroot}/usr/sbin/
-cp mc %{buildroot}/usr/sbin/
+cp mco %{buildroot}/usr/bin/
 chmod 0755 %{buildroot}/usr/sbin/*
 
 %clean
@@ -106,6 +107,7 @@ fi
 
 %files client
 %attr(0755, root, root)/usr/sbin/mc*
+%attr(0755, root, root)/usr/bin/mco
 %doc COPYING
 %config(noreplace)/etc/mcollective/client.cfg
 %config/etc/mcollective/rpc-help.erb
