@@ -9,6 +9,78 @@ This is a list of release notes for various releases, you should review these be
  * TOC Placeholder
   {:toc}
 
+<a name="1_1_3">&nbsp;</a>
+
+## 1.1.3 - 2012/03/07
+
+This is a release in the development series of mcollective.  It features major
+new features and some bug fixes.
+
+This release is for early adopters, production users should consider the 1.0.x series.
+
+### Enhancements
+
+ * Add the ability to partition collectives into subcollectives for security and
+   network traffic management
+ * Add a exec wrapper for agents that provides unique environments and cwds in a
+   thread safe manner as well as avoid zombie processes
+ * Automatically pass Application options to rpcclient when options are not
+   specifically provided
+ * Reneame _/usr/sbin/mc_ to _/usr/bin/mco_
+
+### Bug Fixes
+
+ * Missing _libdirs_ will not cause crashes anymore
+ * Parse _MCOLLECTIVE`_`EXTRA`_`OPTS_ correctly with multiple options
+ * _file`_`logger_ failures are handled better
+ * Improve middleware communication in unreliable settings by adding timeouts
+   around middleware operations
+
+### Backwards Compatibility
+
+The configuration format has changed slightly to accomodate the concept of
+collective names and subcollectives.
+
+In older releases the configuration was:
+
+{% highlight ini %}
+topicprefix = /topic/mcollective
+{% endhighlight %}
+
+This has to change to:
+
+{% highlight ini %}
+topicprefix = /topic/
+main_collective = mcollective
+collectives = mcollective
+{% endhighlight %}
+
+When setup as above a old and new version will be compatible but as soon as you
+start configuring the new subcollective feature you will loose compatiblity
+between versions.
+
+Various defaults apply, if you configure it with these exactly topic and
+collective names you can leave off the _main`_`collective_ and _collectives_
+directives as the above settings would be their defaults
+
+### Changes
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2011/03/04|Rename /usr/sbin/mc to /usr/bin/mco|6578|
+|2011/03/01|Wrap rpcclient in applications ensuring that options is always set|6308|
+|2011/02/28|Make communicating with the middleware more robust by including send calls in timeouts|6505|
+|2011/02/28|Create a wrapper to safely run shell commands avoiding zombies|6392|
+|2011/02/19|Introduce Subcollectives for network partitioning|5967|
+|2011/02/19|Improve error handling when parsing arguments in the rpc application|6388|
+|2011/02/19|Fix error logging when file_logger creation fails|6387|
+|2011/02/17|Correctly parse MCOLLECTIVE_EXTRA_OPTS in the new unified binary framework|6354|
+|2011/02/15|Allow the signing key and Debian distribution to be customized|6321|
+|2011/02/14|Remove inadvertently included package.ddl|6313|
+|2011/02/14|Handle missing libdirs without crashing|6306|
+
+<a name="1_0_1">&nbsp;</a>
+
 ## 1.0.1 - 2011/02/16
 
 ### Release Focus and Notes
