@@ -174,7 +174,7 @@ A machine can be both at once, in which case you need to install all 3 packages.
 {% endhighlight %}
 
 
-## Configure the Client
+## Configuring
 You'll need to tweak some configs in */etc/mcollective/client.cfg*, a full reference of config settings can be
 found [here][ConfigurationReference]:
 
@@ -226,6 +226,13 @@ You should also create _/etc/mcollective/server.cfg_ here's a sample, , a full r
 {% endhighlight %}
 
 Replace the *plugin.psk* in both these files with a Pre-Shared Key of your own.
+
+*NOTE:* If you are testing the development versions - 1.1.3 and newer - you should use make a small adjustment to both config
+files above:
+
+{% highlight ini %}
+topicprefix = /topic/
+{% endhighlight %}
 
 ### Create Facts
 By default - and for this setup - we'll use a simple YAML file for a fact source, later on you can use Puppet Labs Facter or something else.

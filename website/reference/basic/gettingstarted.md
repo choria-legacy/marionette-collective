@@ -226,6 +226,13 @@ Replace the *plugin.stomp.host* with your server running ActiveMQ and replace th
 
 The STOMP connector supports other options like failover pools, see [ConnectorStomp] for full details.
 
+*NOTE:* If you are testing the development versions - 1.1.3 and newer - you should use make a small adjustment to both config
+files above:
+
+{% highlight ini %}
+topicprefix = /topic/
+{% endhighlight %}
+
 ### Create Facts
 By default - and for this setup - we'll use a simple YAML file for a fact source, later on you can use Reductive Labs Facter or something else.
 
