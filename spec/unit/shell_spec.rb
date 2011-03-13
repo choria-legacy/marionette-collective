@@ -33,25 +33,25 @@ module MCollective
             it "should check the cwd exist" do
                 expect {
                     s = Shell.new("date", :cwd => "/nonexistant")
-                }.to raise_error "Directory /nonexistant does not exist"
+                }.to raise_error("Directory /nonexistant does not exist")
             end
 
             it "should warn of illegal stdin" do
                 expect {
                     s = Shell.new("date", :stdin => nil)
-                }.to raise_error "stdin should be a String"
+                }.to raise_error("stdin should be a String")
             end
 
             it "should warn of illegal stdout" do
                 expect {
                     s = Shell.new("date", :stdout => nil)
-                }.to raise_error "stdout should support <<"
+                }.to raise_error("stdout should support <<")
             end
 
             it "should warn of illegal stderr" do
                 expect {
                     s = Shell.new("date", :stderr => nil)
-                }.to raise_error "stderr should support <<"
+                }.to raise_error("stderr should support <<")
             end
 
             it "should set stdout" do

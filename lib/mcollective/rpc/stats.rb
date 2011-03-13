@@ -89,7 +89,7 @@ module MCollective
                 if action == :start
                     @block_start = Time.now.to_f
                 elsif action == :end
-                    @blocktime += @block_start - Time.now.to_f
+                    @blocktime += Time.now.to_f - @block_start
                 else
                     raise("Uknown block action #{action}")
                 end

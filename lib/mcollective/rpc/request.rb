@@ -21,14 +21,10 @@ module MCollective
                 return @data.include?(key)
             end
 
-            # Parses the :process_results request property returning true if the
-            # caller cares for a response else false
+            # If no :process_results is specified always respond else respond
+            # based on the supplied property
             def should_respond?
-                if @data.include?(:process_results)
-                    unless @data[:process_results]
-                        return false
-                    end
-                end
+                return @data[:process_results] if @data.include?(:process_results)
 
                 return true
             end
