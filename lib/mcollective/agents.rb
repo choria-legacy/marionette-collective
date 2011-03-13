@@ -43,8 +43,10 @@ module MCollective
             PluginManager.delete("#{agentname}_agent")
 
             begin
+                single_instance = ["registration", "discovery"].include?(agentname)
+
                 PluginManager.loadclass(classname)
-                PluginManager << {:type => "#{agentname}_agent", :class => classname}
+                PluginManager << {:type => "#{agentname}_agent", :class => classname, :single_instance => single_instance}
 
                 Util.subscribe(Util.make_target(agentname, :command)) unless @@agents.include?(agentname)
 
@@ -73,13 +75,6 @@ module MCollective
             PluginManager.include?("#{agentname}_agent")
         end
 
-        # Sends a message to a specific agent
-        def send(agentname, msg, connection)
-            raise("No such agent") unless include?(agentname)
-
-            PluginManager["#{agentname}_agent"].handlemsg(msg, connection)
-        end
-
         # Returns the help for an agent after first trying to get
         # rid of some indentation infront
         def help(agentname)
@@ -96,13 +91,6 @@ module MCollective
             body.join("\n")
         end
 
-        # Determine the max amount of time a specific agent should be running
-        def timeout(agentname)
-            raise("No such agent") unless include?(agentname)
-
-            PluginManager["#{agentname}_agent"].timeout
-        end
-
         # Dispatches a message to an agent, accepts a block that will get run if there are
         # any replies to process from the agent
         def dispatch(msg, target, connection)
@@ -110,8 +98,10 @@ module MCollective
 
             Thread.new do
                 begin
-                    Timeout::timeout(timeout(target)) do
-                        replies = send(target, msg, connection)
+                    agent = PluginManager["#{target}_agent"]
+
+                    Timeout::timeout(agent.timeout) do
+                        replies = agent.handlemsg(msg, connection)
 
                         # Agents can decide if they wish to reply or not,
                         # returning nil will mean nothing goes back to the

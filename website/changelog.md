@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/03/13|Only cache registration and discovery agents, handle the rest as new instances|6692|
 |2011/03/08|PluginManager can now create new instances on demand for a plugin type|6622|
 |*2011/03/07*|*Release 1.1.3*|6609|
 |2011/03/04|Rename /usr/sbin/mc to /usr/bin/mco|6578|
