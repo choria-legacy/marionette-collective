@@ -121,13 +121,6 @@ module MCollective
                     when /^reload_agents$/
                         reply("mcollective", replytopic, "reloaded all agents", requestid, callerid) if @agents.loadagents
 
-                    when /^exit$/
-                        Log.error("Exiting due to request to controller")
-                        reply("mcollective", replytopic, "exiting after request to controller", requestid, callerid)
-
-                        @connection.disconnect
-                        exit!
-
                     else
                         Log.error("Received an unknown message to the controller")
 
