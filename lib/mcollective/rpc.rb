@@ -15,6 +15,7 @@ module MCollective
         autoload :DDL, "mcollective/rpc/ddl"
         autoload :Result, "mcollective/rpc/result"
         autoload :Helpers, "mcollective/rpc/helpers"
+        autoload :ActionRunner, "mcollective/rpc/actionrunner"
 
         # Creates a standard options hash, pass in a block to add extra headings etc
         # see Optionparser

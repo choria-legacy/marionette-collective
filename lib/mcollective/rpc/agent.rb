@@ -22,9 +22,19 @@ module MCollective
         #             action "hello" do
         #                 reply[:msg] = "Hello #{request[:name]}"
         #             end
+        #
+        #             action "foo" do
+        #                 implemented_by "/some/script.sh"
+        #             end
         #          end
         #       end
         #    end
+        #
+        # If you wish to implement the logic for an action using an external script use the
+        # implemented_by method that will cause your script to be run with 2 arguments.
+        #
+        # The first argument is a file containing JSON with the request and the 2nd argument
+        # is where the script should save its output as a JSON hash.
         #
         # We also currently have the validation code in here, this will be moved to plugins soon.
         class Agent
@@ -312,6 +322,25 @@ module MCollective
                 rescue Exception => e
                     raise UnknownRPCError, "Failed to validate #{key}: #{e}"
                 end
+            end
+
+            # handles external actions
+            def implemented_by(command, type=:json)
+                runner = ActionRunner.new(command, request, type)
+
+                res = runner.run
+
+                reply.fail! "Did not receive data from #{command}" unless res.include?(:data)
+                reply.fail! "Reply data from #{command} is not a Hash" unless res[:data].is_a?(Hash)
+
+                reply.data.merge!(res[:data])
+
+                if res[:exitstatus] > 0
+                    reply.fail "Failed to run #{command}: #{res[:stderr]}", res[:exitstatus]
+                end
+            rescue Exception => e
+                Log.warn("Unhandled #{e.class} exception during #{request.agent}##{request.action}: #{e}")
+                reply.fail! "Unexpected failure calling #{command}: #{e.class}: #{e}"
             end
 
             # Called at the end of the RPC::Agent standard initialize method

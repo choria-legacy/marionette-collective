@@ -85,6 +85,13 @@ module MCollective
                 s.status.exitstatus.should == 0
             end
 
+            it "should report correct exitcode" do
+                s = Shell.new('ruby -e "exit 1"')
+                s.runcommand
+
+                s.status.exitstatus.should == 1
+            end
+
             it "shold have correct environment" do
                 s = Shell.new('echo $LC_ALL;echo $foo', :environment => {"foo" => "bar"})
                 s.runcommand

@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/03/16|Add the ability to implement actions using external scripts|6705|
 |2011/03/15|Port mc-controller to the Application framework and deprecate the exit command|6637|
 |2011/03/13|Only cache registration and discovery agents, handle the rest as new instances|6692|
 |2011/03/08|PluginManager can now create new instances on demand for a plugin type|6622|

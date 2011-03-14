@@ -40,6 +40,12 @@ module MCollective
                         :action => @action,
                         :data => @data}
             end
+
+            def to_json
+                to_hash.merge!({:sender   => @sender,
+                               :callerid => @callerid,
+                               :uniqid   => @uniqid}).to_json
+            end
         end
     end
 end

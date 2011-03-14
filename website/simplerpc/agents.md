@@ -347,6 +347,29 @@ It won't actually raise exceptions or exit your action though you should do that
 
 From version 0.4.3 onward there is also a *fail!* instead of just *fail* it does the same basic function but also raises exceptions.  This lets you abort processing of the agent immediately without performing your own checks on *statuscode* as above later on.
 
+## Actions in external scripts
+Actions can be implemented using other programming languages as long as they support JSON.
+
+{% highlight ruby %}
+action "test" do
+    implemented_by "/some/external/script"
+end
+{% endhighlight %}
+
+The script _/some/external/script_ will be called with 2 arguments:
+
+ * The path to a file with the request in JSON format
+ * The path to a file where you should write your response as a JSON hash
+
+You can also access these 2 file paths in the *MCOLLECTIVE_REPLY_FILE* and *MCOLLECTIVE_REQUEST_FILE* environment variables
+
+Simply write your reply as a JSON hash into the reply file.
+
+The exit code of your script should correspond to the ones in [ResultsandExceptions].  Any text in STDERR will be
+logged on the server at *error* level and used in the text for the fail text.
+
+Any text to STDOUT will be logged on the server at level *info*.
+
 ## Authorization
 You can write a fine grained Authorization system to control access to actions and agents, please see [SimpleRPCAuthorization] for full details.
 

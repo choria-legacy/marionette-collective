@@ -8,6 +8,7 @@ require 'socket'
 require 'erb'
 require 'shellwords'
 require 'mcollective/monkey_patches'
+require 'tempfile'
 
 # == The Marionette Collective
 #

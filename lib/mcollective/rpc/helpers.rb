@@ -166,6 +166,7 @@ module MCollective
                     end
                 end
 
+                result_text << "\n"
                 result_text
             end
 
@@ -210,7 +211,7 @@ module MCollective
 
                             if r[:statuscode] <= 1
                                 r[:data].pretty_inspect.split("\n").each {|m| result_text += "    #{m}"}
-                                result_text += "\n"
+                                result_text << "\n\n"
                             elsif r[:statuscode] == 2
                                 # dont print anything, no useful data to display
                                 # past what was already shown
