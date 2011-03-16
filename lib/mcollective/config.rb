@@ -146,10 +146,10 @@ module MCollective
             return unless File.directory?(dir)
 
             Dir.new(dir).each do |pluginconfigfile| 
-                next unless pluginconfigfile =~ /^([\w+]).cfg$/ 
+                next unless pluginconfigfile =~ /^([\w]+).cfg$/ 
 
                 plugin = $1
-                File.open(pluginconfigfile, "r").each do |line|
+                File.open("#{dir}/#{pluginconfigfile}", "r").each do |line|
                     # strip blank lines
                     line.gsub!(/\s*$/, "")
                     next if line =~ /^#|^$/
