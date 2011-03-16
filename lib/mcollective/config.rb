@@ -124,6 +124,8 @@ module MCollective
                     end
                 end
 
+                read_plugin_config_dir("#{@configdir}/plugin.d")
+
                 @configured = true
 
                 @libdir.each {|dir| Log.warn("Cannot find libdir: #{dir}") unless File.directory?(dir)}
@@ -138,6 +140,30 @@ module MCollective
                 raise("Cannot find config file '#{configfile}'")
             end
         end
+
+        def read_plugin_config_dir(dir)
+
+            return unless File.directory?(dir)
+
+            Dir.new(dir).each do |pluginconfigfile| 
+                next unless pluginconfigfile =~ /^([\w]+).cfg$/ 
+
+                plugin = $1
+                File.open("#{dir}/#{pluginconfigfile}", "r").each do |line|
+                    # strip blank lines
+                    line.gsub!(/\s*$/, "")
+                    next if line =~ /^#|^$/
+                    if (line =~ /(.+?)\s*=\s*(.+)/)
+                        key = $1
+                        val = $2
+                        @pluginconf["#{plugin}.#{key}"] = val
+                    end
+                end
+
+            end
+
+        end
+
     end
 end
 
