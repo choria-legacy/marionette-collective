@@ -5,7 +5,7 @@ module MCollective
         description "Control the mcollective daemon"
 
         usage <<-END_OF_USAGE
-mc-controller [OPTIONS] [FILTERS] [--argument <ARGUMENT>] <COMMAND>
+mco controller [OPTIONS] [FILTERS] <COMMAND> [--argument <ARGUMENT>]
 
 The COMMAND can be one of the following:
 
@@ -20,8 +20,8 @@ The COMMAND can be one of the following:
             :type        => String
 
         def print_statistics(sender, statistics)
-            printf("%30s> total=%d replies=%d valid=%d invalid=%d " +
-                "filtered=%d passed=%d\n", sender,
+            printf("%40s> total=%d, replies=%d, valid=%d, invalid=%d, " +
+                "filtered=%d, passed=%d\n", sender,
                 statistics[:total], statistics[:replies],
                 statistics[:validated], statistics[:unvalidated],
                 statistics[:filtered], statistics[:passed])
@@ -50,44 +50,39 @@ The COMMAND can be one of the following:
         end
 
         def main
-            begin
-                client = MCollective::Client.new(options[:config])
-                client.options = options
+            client = MCollective::Client.new(options[:config])
+            client.options = options
 
-                counter = 0
+            counter = 0
 
-                command = configuration[:command]
-                command += " #{configuration[:argument]}" if configuration[:argument]
+            command = configuration[:command]
+            command += " #{configuration[:argument]}" if configuration[:argument]
 
-                statistics = client.discovered_req(command, 'mcollective') do |response|
-                    next unless response
+            statistics = client.discovered_req(command, 'mcollective') do |response|
+                next unless response
 
-                    counter += 1
+                counter += 1
 
-                    sender = response[:senderid]
-                    body   = response[:body]
+                sender = response[:senderid]
+                body   = response[:body]
 
-                    case command
-                        when /^stats$/
-                            print_statistics(sender, body[:stats])
-                        when /^reload_agent(?:.+)/
-                            printf("%30s> %s\n", sender, body)
+                case command
+                    when /^stats$/
+                        print_statistics(sender, body[:stats])
+                    when /^reload_agent(?:.+)/
+                        printf("%40s> %s\n", sender, body)
+                    else
+                        if options[:verbose]
+                            puts "#{sender}>"
+                            pp body
                         else
-                            if options[:verbose]
-                                puts "#{sender}>"
-                                pp body
-                            else
-                                puts if counter % 4 == 1
-                                print "#{sender} "
-                            end
-                    end
+                            puts if counter % 4 == 1
+                            print "#{sender} "
+                        end
                 end
-
-                client.disconnect
-            rescue Exception => e
-                STDERR.puts "Could not call remote agent: #{e}"
-                exit!
             end
+
+            client.disconnect
 
             client.display_stats(statistics, false, "mcollectived controller summary")
         end
@@ -95,4 +90,3 @@ The COMMAND can be one of the following:
 end
 
 # vim: set ts=4 sw=4 et :
-

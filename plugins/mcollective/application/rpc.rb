@@ -1,8 +1,8 @@
 class MCollective::Application::Rpc<MCollective::Application
     description "Generic RPC agent client application"
 
-    usage "mc-rpc [options] [filters] --agent <agent> --action <action> [--argument <key=val> --argument ...]"
-    usage "mc-rpc [options] [filters] <agent> <action> [<key=val> <key=val> ...]"
+    usage "mco rpc [options] [filters] --agent <agent> --action <action> [--argument <key=val> --argument ...]"
+    usage "mco rpc [options] [filters] <agent> <action> [<key=val> <key=val> ...]"
 
     option :no_results,
         :description    => "Do not process results, just send request",
