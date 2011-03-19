@@ -1,88 +1,16 @@
 #!/usr/bin/env ruby
 
 require 'mcollective'
-require 'pp'
 
-oparser = MCollective::Optionparser.new({:verbose => true}, "filter")
+if $0 =~ /mc\-(.+)$/
+    app_name = $1
 
-options = oparser.parse{|parser, options|
-    parser.define_head "Control the mcollective daemon"
-    parser.banner = "Usage: mc-controller [options] command"
-    parser.separator ""
-    parser.separator "command can be one of:"
-    parser.separator ""
-    parser.separator "   stats         - retrieve statistics from the mcollectived"
-    parser.separator "   reload_agents - reloads all agents"
-    parser.separator "   reload_agent  - reloads an agent, needs an argument"
-    parser.separator "   exit          - terminates the mcollectived"
-    parser.separator ""
-
-    parser.on('--arg', '--argument ARGUMENT', 'Argument to pass to agent') do |v|
-        options[:argument] = v
+    if MCollective::Applications.list.include?(app_name)
+        MCollective::Applications.run(app_name)
+    else
+        STDERR.puts "Cannot find the #{app_name} command in the applications plugin directory"
     end
-}
-
-if ARGV.length > 0
-    command = ARGV.shift
 else
-    STDERR.puts("Please specify a command and optional arguments")
-    exit 1
+    STDERR.puts "Do not know which command to run, please run mc help for details"
 end
 
-STDOUT.sync = true
-
-received = 0
-expected = Array.new
-
-def printstats(id, stats)
-    printf("%30s> total=%d replies=%d valid=%d invalid=%d filtered=%d passed=%d\n", id, stats[:total], stats[:replies], stats[:validated],
-            stats[:unvalidated], stats[:filtered], stats[:passed])
-end
-
-# if we're asking for restarting an agent, make sure we have
-# an agent name in argument and set appropriate filters
-if command == "reload_agent"
-    unless options[:argument]
-        puts("Please specify an agent to relaod with --argument")
-        exit 1
-    end
-
-    options[:filter]["agent"] << options[:argument]
-end
-
-begin
-    client = MCollective::Client.new(options[:config])
-    client.options = options
-
-    command += " #{options[:argument]}" if options[:argument]
-    stats = client.discovered_req(command, "mcollective") do |resp|
-        next if resp == nil
-
-        case command
-            when "stats"
-                printstats(resp[:senderid], resp[:body][:stats])
-
-            when /reload_agent/
-                printf("%30s> %s\n", resp[:senderid], resp[:body])
-
-            else
-                if options[:verbose]
-                    puts("#{resp[:senderid]}>")
-                    pp resp[:body]
-                else
-                    puts if c % 4 == 1
-                    print("#{resp[:senderid]} ")
-                end
-        end
-    end
-
-    client.disconnect
-rescue Exception => e
-    STDERR.puts "Could not call remote agent: #{e}"
-    exit 1
-end
-
-client.display_stats(stats, false, "mcollectived controller summary")
-
-
-# vi:tabstop=4:expandtab:ai
