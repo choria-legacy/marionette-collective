@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/03/21|Update rpcutil ddl file to be less strict about valid fact names|6764|
 |2011/03/21|Update default configuration files for subcollectives|6741|
 |2011/03/16|Add the ability to implement actions using external scripts|6705|
 |2011/03/15|Port mc-controller to the Application framework and deprecate the exit command|6637|
