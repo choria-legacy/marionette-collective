@@ -14,6 +14,7 @@ module MCollective
 
         describe "#cofigure" do
             it "should default to console logging if called prior to configuration" do
+                Config.instance.instance_variable_set("@configured", false)
                 Log.configure
                 Log.logger.should ==  MCollective::Logger::Console_logger
             end
