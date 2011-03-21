@@ -15,34 +15,7 @@ module MCollective
         end
 
         def loadconfig(configfile)
-            @stomp = Hash.new
-            @subscribe = Array.new
-            @pluginconf = Hash.new
-            @connector = "Stomp"
-            @securityprovider = "Psk"
-            @factsource = "Yaml"
-            @identity = Socket.gethostname
-            @registration = "Agentlist"
-            @registerinterval = 0
-            @topicsep = "."
-            @classesfile = "/var/lib/puppet/classes.txt"
-            @rpcaudit = false
-            @rpcauditprovider = ""
-            @rpcauthorization = false
-            @rpcauthprovider = ""
-            @configdir = File.dirname(configfile)
-            @color = true
-            @configfile = configfile
-            @rpchelptemplate = "/etc/mcollective/rpc-help.erb"
-            @logger_type = "file"
-            @keeplogs = 5
-            @max_log_size = 2097152
-            @rpclimitmethod = :first
-            @libdir = Array.new
-            @fact_cache_time = 300
-            @loglevel = "info"
-            @collectives = ["mcollective"]
-            @main_collective = @collectives.first
+            set_config_defaults(configfile)
 
             if File.exists?(configfile)
                 File.open(configfile, "r").each do |line|
@@ -141,12 +114,42 @@ module MCollective
             end
         end
 
-        def read_plugin_config_dir(dir)
+        def set_config_defaults(configfile)
+            @stomp = Hash.new
+            @subscribe = Array.new
+            @pluginconf = Hash.new
+            @connector = "Stomp"
+            @securityprovider = "Psk"
+            @factsource = "Yaml"
+            @identity = Socket.gethostname
+            @registration = "Agentlist"
+            @registerinterval = 0
+            @topicsep = "."
+            @classesfile = "/var/lib/puppet/classes.txt"
+            @rpcaudit = false
+            @rpcauditprovider = ""
+            @rpcauthorization = false
+            @rpcauthprovider = ""
+            @configdir = File.dirname(configfile)
+            @color = true
+            @configfile = configfile
+            @rpchelptemplate = "/etc/mcollective/rpc-help.erb"
+            @logger_type = "file"
+            @keeplogs = 5
+            @max_log_size = 2097152
+            @rpclimitmethod = :first
+            @libdir = Array.new
+            @fact_cache_time = 300
+            @loglevel = "info"
+            @collectives = ["mcollective"]
+            @main_collective = @collectives.first
+        end
 
+        def read_plugin_config_dir(dir)
             return unless File.directory?(dir)
 
-            Dir.new(dir).each do |pluginconfigfile| 
-                next unless pluginconfigfile =~ /^([\w]+).cfg$/ 
+            Dir.new(dir).each do |pluginconfigfile|
+                next unless pluginconfigfile =~ /^([\w]+).cfg$/
 
                 plugin = $1
                 File.open("#{dir}/#{pluginconfigfile}", "r").each do |line|
@@ -159,11 +162,8 @@ module MCollective
                         @pluginconf["#{plugin}.#{key}"] = val
                     end
                 end
-
             end
-
         end
-
     end
 end
 

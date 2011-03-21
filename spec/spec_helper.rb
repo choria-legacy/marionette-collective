@@ -8,6 +8,7 @@ require 'rspec'
 require 'rspec/mocks'
 require 'mocha'
 require 'ostruct'
+require 'tmpdir'
 
 RSpec.configure do |config|
     config.mock_with :mocha

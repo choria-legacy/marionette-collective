@@ -55,11 +55,14 @@ The server configuration file should be root only readable
 |classesfile|/var/lib/puppet/classes.txt|Where to find a list of classes configured by your configuration management system|
 |rpcaudit|1|Enables [SimpleRPC Auditing][Auditing]|
 |rpcauditprovider|Logfile|Enables auditing using _MCollective::Audit::Logfile_|
-|plugin.discovery.timeout|10|Sets the timeout for the discovery agent, useful if facts are very slow|
 |rpcauthorization|1|Enables [SimpleRPC Authorization][Authorization] globally|
 |rpcauthprovider|action_policy|Use the _MCollective::Util::ActionPolicy_ plugin to manage authorization|
 |rpclimitmethod|The method used for --limit-results.  Can be either _first_ or _random_|
 |fact_cache_time|300|How long to cache fact results for before refreshing from source|
+|plugin.discovery.timeout|10|Sets the timeout for the discovery agent, useful if facts are very slow|
+
+The last example sets a option for the _discovery_ plugin, you can also set this in _/etc/mcollective/plugin.d/discovery.cfg_, in that case
+you'd just set _timeout=10_ in the file.
 
 ## Client Configuration
 The client configuration file should be readable by everyone, it's not advised to put PSK's or client SSL certs in a world readable file, see below how to do that per user.

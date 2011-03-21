@@ -60,6 +60,7 @@ rm -rf %{buildroot}
 %{__install} -d -m0755  %{buildroot}/etc/init.d
 %{__install} -d -m0755  %{buildroot}/usr/libexec/mcollective/
 %{__install} -d -m0755  %{buildroot}/etc/mcollective
+%{__install} -d -m0755  %{buildroot}/etc/mcollective/plugin.d
 %{__install} -d -m0755  %{buildroot}/etc/mcollective/ssl
 %{__install} -d -m0755  %{buildroot}/etc/mcollective/ssl/clients
 %{__install} -m0755 mcollectived.rb %{buildroot}/usr/sbin/mcollectived
@@ -119,6 +120,7 @@ fi
 %config(noreplace)/etc/mcollective/server.cfg
 %config(noreplace)/etc/mcollective/facts.yaml
 %dir /etc/mcollective/ssl/clients
+%config(noreplace)/etc/mcollective/plugin.d
 
 %changelog
 * Tue Nov 03 2009 R.I.Pienaar <rip@devco.net>
