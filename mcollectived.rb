@@ -31,6 +31,10 @@ config.loadconfig(configfile) unless config.configured
 MCollective::Log.info("The Marionette Collective #{MCollective::VERSION} started logging at #{config.loglevel} level")
 
 Signal.trap("TERM") do
+    if MCollective::PluginManager.include?("connector_plugin")
+        MCollective::PluginManager["connector_plugin"].disconnect
+    end
+
     MCollective::Log.info("Received TERM signal, terminating")
     exit!
 end
