@@ -151,7 +151,7 @@ oparser = MCollective::Optionparser.new({}, "filter")
 
 options = oparser.parse{|parser, options|
     parser.define_head "Tester for the echo agent"
-    parser.banner = "Usage: sh-echo [options] msg"
+    parser.banner = "Usage: mc-echo [options] msg"
 }
 
 if ARGV.length > 0
@@ -225,7 +225,7 @@ Standard Help:
 
 {% highlight console %}
 % ./mc-echo --help
-Usage: sh-echo [options] msg
+Usage: mc-echo [options] msg
 Tester for the echo agent
 
 Common Options

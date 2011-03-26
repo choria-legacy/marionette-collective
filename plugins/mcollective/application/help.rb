@@ -12,7 +12,7 @@ module MCollective
                 ddl = MCollective::RPC::DDL.new(configuration[:agent])
                 puts ddl.help(Config.instance.rpchelptemplate)
             else
-                puts "The Marionette Collection verion #{MCollective.version}"
+                puts "The Marionette Collective version #{MCollective.version}"
                 puts
 
                 Applications.list.sort.each do |app|
