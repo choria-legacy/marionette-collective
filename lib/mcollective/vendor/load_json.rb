@@ -1,1 +1,1 @@
-$: << File.join([File.dirname(__FILE__), "systemu/json"])
+$: << File.join([File.dirname(__FILE__), "json/lib"])

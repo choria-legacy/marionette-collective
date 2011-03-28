@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/03/28|Correct loading of vendored JSON gem|6877|
 |2011/03/28|Show collective and sub collective info in the inventory application|6872|
 |2011/03/23|Disconnect from the middleware when mcollectived disconnects|6821|
 |2011/03/21|Update rpcutil ddl file to be less strict about valid fact names|6764|
