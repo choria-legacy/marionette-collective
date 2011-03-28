@@ -36,6 +36,14 @@ action "inventory", :description => "System Inventory" do
     output :version,
            :description => "MCollective Version",
            :display_as => "Version"
+
+    output :main_collective,
+           :description => "The main Collective",
+           :display_as => "Main Collective"
+
+    output :collectives,
+           :description => "All Collectives",
+           :display_as => "All Collectives"
 end
 
 action "get_fact", :description => "Retrieve a single fact from the fact store" do

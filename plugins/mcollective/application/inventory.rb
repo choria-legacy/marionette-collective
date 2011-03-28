@@ -142,6 +142,8 @@ class MCollective::Application::Inventory<MCollective::Application
                 puts "                      Version: #{nodestats[:version]}"
                 puts "                   Start Time: #{Time.at(nodestats[:starttime])}"
                 puts "                  Config File: #{nodestats[:configfile]}"
+                puts "                  Collectives: #{resp[:data][:collectives].join(', ')}" if resp[:data].include?(:collectives)
+                puts "              Main Collective: #{resp[:data][:main_collective]}" if resp[:data].include?(:main_collective)
                 puts "                   Process ID: #{nodestats[:pid]}"
                 puts "               Total Messages: #{nodestats[:total]}"
                 puts "      Messages Passed Filters: #{nodestats[:passed]}"

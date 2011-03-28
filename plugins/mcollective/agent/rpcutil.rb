@@ -15,6 +15,8 @@ module MCollective
                 reply[:facts] = PluginManager["facts_plugin"].get_facts
                 reply[:version] = MCollective.version
                 reply[:classes] = []
+                reply[:main_collective] = config.main_collective
+                reply[:collectives] = config.collectives
 
                 cfile = Config.instance.classesfile
                 if File.exist?(cfile)
