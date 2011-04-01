@@ -59,7 +59,7 @@ module MCollective
             Log.debug("Comparing #{fact} #{operator} #{value}")
             Log.debug("where :fact = '#{fact}', :operator = '#{operator}', :value = '#{value}'")
 
-            fact = Facts.get_fact(fact) ? nil : fact.clone
+            fact = Facts.get_fact(fact) ? '' : fact.clone
 
             if operator == '=~'
                 # to maintain backward compat we send the value
