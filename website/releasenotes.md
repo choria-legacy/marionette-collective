@@ -9,9 +9,70 @@ This is a list of release notes for various releases, you should review these be
  * TOC Placeholder
   {:toc}
 
+<a name="1_1_4">&nbsp;</a>
+
+## 1.1.4 - 2011/04/07
+
+This is a release in the development series of mcollective.  It features major
+new features and some bug fixes.
+
+This release is for early adopters, production users should consider the 1.0.x series.
+
+### Actions in other languages
+
+We have implemented the ability to write actions in languages other than Ruby.
+This is done via simple JSON API documented in [in our docs](simplerpc/agents.html#actions-in-external-scripts)
+
+The _ext_ directory on [GitHub](https://github.com/puppetlabs/marionette-collective/tree/master/ext/action_helpers)
+hosts wrappers for PHP, Perl and Python that makes using this interface easier.
+
+{% highlight ruby %}
+action "test" do
+    implemented_by "/some/external/script"
+end
+{% endhighlight %}
+
+Special thanks to the community members who contributed the wrappers.
+
+### Enhancements
+
+ * Actions can now be written in any language
+ * Plugin configuration can be kept in _/etc/mcollective/plugin.d_
+ * _mco inventory_ now shows collective and subcollective membership
+ * mc-controller has been deprecated for _mco controller_
+ * Agents are now ran using new instances of the classes rather than reuse the exiting
+   one to avoid concurrency related problems
+
+### Bug Fixes
+
+ * When mcollectived exits it now cleanly disconnects from the Middleware
+ * The _rpcutil_ agent is less strict about valid Fact names
+ * The default configuration files have been updated for subcollectives
+
+### Backwards Compatibility
+
+This release will be backward compatible with version _1.1.3_ for compatability
+with earlier releases see the notes for _1.1.3_ and the sub collective related
+configuration changes.
+
+### Changes
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2011/03/28|Correct loading of vendored JSON gem|6877|
+|2011/03/28|Show collective and sub collective info in the inventory application|6872|
+|2011/03/23|Disconnect from the middleware when mcollectived disconnects|6821|
+|2011/03/21|Update rpcutil ddl file to be less strict about valid fact names|6764|
+|2011/03/22|Support reading configuration from configfir/plugin.d for plugins|6623|
+|2011/03/21|Update default configuration files for subcollectives|6741|
+|2011/03/16|Add the ability to implement actions using external scripts|6705|
+|2011/03/15|Port mc-controller to the Application framework and deprecate the exit command|6637|
+|2011/03/13|Only cache registration and discovery agents, handle the rest as new instances|6692|
+|2011/03/08|PluginManager can now create new instances on demand for a plugin type|6622|
+
 <a name="1_1_3">&nbsp;</a>
 
-## 1.1.3 - 2012/03/07
+## 1.1.3 - 2011/03/07
 
 This is a release in the development series of mcollective.  It features major
 new features and some bug fixes.
