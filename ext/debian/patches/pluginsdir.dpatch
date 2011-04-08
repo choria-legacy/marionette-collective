@@ -5,23 +5,28 @@
 ## DP: fix plugins dir
 
 @DPATCH@
-diff -urNad mcollective-0.4.1~/etc/client.cfg.dist mcollective-0.4.1/etc/client.cfg.dist
---- mcollective-0.4.1~/etc/client.cfg.dist	2010-01-08 10:35:55.000000000 +0000
-+++ mcollective-0.4.1/etc/client.cfg.dist	2010-01-12 15:06:34.000000000 +0000
-@@ -1,5 +1,5 @@
- topicprefix = /topic/mcollective
+diff -urNad mcollective-1.1.4~/etc/client.cfg.dist mcollective-1.1.4/etc/client.cfg.dist
+--- mcollective-1.1.4~/etc/client.cfg.dist  2011-04-06 14:13:08.829462165 -0700
++++ mcollective-1.1.4/etc/client.cfg.dist 2011-04-06 14:12:53.129384114 -0700
+@@ -1,7 +1,7 @@
+ topicprefix = /topic/
+ main_collective = mcollective
+ collectives = mcollective
 -libdir = /usr/libexec/mcollective
 +libdir = /usr/share/mcollective/plugins
  logfile = /dev/null
  loglevel = info
  
-diff -urNad mcollective-0.4.1~/etc/server.cfg.dist mcollective-0.4.1/etc/server.cfg.dist
---- mcollective-0.4.1~/etc/server.cfg.dist	2010-01-08 10:35:55.000000000 +0000
-+++ mcollective-0.4.1/etc/server.cfg.dist	2010-01-12 15:08:51.000000000 +0000
-@@ -1,5 +1,5 @@
- topicprefix = /topic/mcollective
+diff -urNad mcollective-1.1.4~/etc/server.cfg.dist mcollective-1.1.4/etc/server.cfg.dist
+--- mcollective-1.1.4~/etc/server.cfg.dist  2011-04-06 14:12:30.889527230 -0700
++++ mcollective-1.1.4/etc/server.cfg.dist 2011-04-06 14:12:23.779407065 -0700
+@@ -1,7 +1,7 @@
+ topicprefix = /topic/
+ main_collective = mcollective
+ collectives = mcollective
 -libdir = /usr/libexec/mcollective
 +libdir = /usr/share/mcollective/plugins
  logfile = /var/log/mcollective.log
  loglevel = info
  daemonize = 1
+
