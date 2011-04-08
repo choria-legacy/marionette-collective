@@ -4,7 +4,7 @@ $LOAD_PATH.unshift("#{dir}/../lib")
 
 require 'rubygems'
 
-gem 'mocha', :version => "=0.9.10"
+gem 'mocha', '=0.9.10'
 
 require 'rspec'
 require 'mcollective'
