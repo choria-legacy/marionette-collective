@@ -145,7 +145,7 @@ task :deb => [:clean, :doc, :package] do
             end
         end
 
-        safe_system %{cp *.deb ..}
+        safe_system %{cp *.deb *.changes ..}
     end
 
 end
