@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/04/11|Correctly set timeout on the discovery agent to 5 seconds as default|7045|
 |2011/04/11|Let rpcutil#agent_inventory supply _unknown_ for missing values in agent meta data|7044|
 |*2011/04/07*|*Release 1.1.4*|6952|
 |2011/03/28|Correct loading of vendored JSON gem|6877|

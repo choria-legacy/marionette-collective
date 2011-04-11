@@ -7,10 +7,14 @@ module MCollective
             attr_reader :timeout, :meta
 
             def initialize
-                @timeout = Config.instance.pluginconf["discovery.timeout"].to_i || 5
+                config = Config.instance.pluginconf
+
+                @timeout = 5
+                @timeout = config["discovery.timeout"].to_i if config.include?("discovery.timeout")
 
                 @meta = {:license => "Apache License, Version 2",
-                         :author => "R.I.Pienaar <rip@devco.net>"}
+                         :author => "R.I.Pienaar <rip@devco.net>",
+                         :timeout => @timeout}
             end
 
             def handlemsg(msg, stomp)
