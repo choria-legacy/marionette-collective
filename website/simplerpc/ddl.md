@@ -105,10 +105,10 @@ All of this code just goes into a file, no special class or module bits needed, 
 
 Importantly you do not need to have the *service.rb* on a machine to use the DDL, this means on machines that are just used for running client programs you can just drop the *.ddl* files into the agents directory.
 
-You can view a human readable version of this using the *mc-rpc* command:
+You can view a human readable version of this using the *mc-rpc --agent-help &lt;agent&gt;* or in versions newer than 1.1.3 *mco help &lt;agent&gt;* command:
 
 {% highlight console %}
-% mc-rpc --agent-help service
+% mco help service
 SimpleRPC Service Agent
 =======================
 

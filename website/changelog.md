@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/04/11|Update the DDL documentation to reflect the _mco help_ command|7042|
 |2011/04/11|Document the use filters on the CLI|5917|
 |2011/04/11|Improve handling of unknown facts in Util#has_fact? to avoid exceptions about nil#clone|6956|
 |2011/04/11|Correctly set timeout on the discovery agent to 5 seconds as default|7045|
