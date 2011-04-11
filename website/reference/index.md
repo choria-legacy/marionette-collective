@@ -21,6 +21,7 @@ Index to basic users documentation.
 ### User Interface
 
  1. [Node Reports](ui/nodereports.html)
+ 2. [CLI Filters](ui/filters.html)
 
 ### Integration
 

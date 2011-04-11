@@ -247,7 +247,7 @@ The simplest case is just to run a command and send output back to the client:
 reply[:status] = run("echo 'hello world'", :stdout => :out, :stderr => :err)
 {% endhighlight %}
 
-Here you will have set _reply[:out]_, _reply[:err]_ and _reply[:status]_ based
+Here you will have set _reply`[`:out`]`_, _reply`[`:err`]`_ and _reply`[`:status`]`_ based
 on the output from the command
 
 You can append the output of the command to any string:
@@ -278,7 +278,7 @@ You can shorten this to:
 reply[:status] = run("echo 'hello world'", :stdout => :out, :stderr => :err, :chomp => true)
 {% endhighlight %}
 
-This will remove a trailing new line from the _reply[:out]_ and _reply[:err]_.
+This will remove a trailing new line from the _reply`[`:out`]`_ and _reply`[`:err`]`_.
 
 If you wanted this command to run from the _/tmp_ directory:
 
