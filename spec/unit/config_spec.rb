@@ -6,7 +6,12 @@ module MCollective
     describe Config do
         describe "#read_plugin_config_dir" do
             before do
-                @tmpdir = Dir.mktmpdir
+                tmpfile = Tempfile.new("mc_config_spec")
+                path = tmpfile.path
+                tmpfile.close!
+
+                @tmpdir = FileUtils.mkdir_p(path)
+
                 @plugindir = File.join([@tmpdir, "plugin.d"])
                 FileUtils.mkdir(@plugindir)
             end
