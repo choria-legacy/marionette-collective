@@ -55,7 +55,15 @@ module MCollective
                     agent = PluginManager["#{target_agent}_agent"]
                     actions = agent.methods.grep(/_agent/)
 
-                    agent_data = {:agent => target_agent}
+                    agent_data = {:agent => target_agent,
+                                  :license => "unknown",
+                                  :timeout => agent.timeout,
+                                  :description => "unknown",
+                                  :name => target_agent,
+                                  :url => "unknown",
+                                  :version => "unknown",
+                                  :author => "unknown"}
+
                     agent_data.merge!(agent.meta)
 
                     reply[:agents] << agent_data
