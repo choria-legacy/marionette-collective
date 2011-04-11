@@ -6,14 +6,16 @@ module MCollective
     describe Vendor do
         describe "#vendor_dir" do
             it "should return correct vendor directory" do
-                expected_dir = File.expand_path("../lib/mcollective/vendor")
+                specdir = File.dirname(__FILE__)
+                expected_dir = File.expand_path("#{specdir}/../../lib/mcollective/vendor")
                 Vendor.vendor_dir.should == expected_dir
             end
         end
 
         describe "#load_entry" do
             it "should attempt to load the correct path" do
-                expected_dir = File.expand_path("../lib/mcollective/vendor")
+                specdir = File.dirname(__FILE__)
+                expected_dir = File.expand_path("#{specdir}/../../lib/mcollective/vendor")
 
                 Class.any_instance.stubs("load").with("#{expected_dir}/foo").once
 
