@@ -16,7 +16,7 @@ module MCollective
             end
 
             it "should create topics for each collective" do
-                c = MCollective::Config.instance
+                c = Config.instance
                 c.instance_variable_set("@collectives", ["one", "two"])
                 c.instance_variable_set("@topicprefix", "/topic/")
                 c.instance_variable_set("@topicsep", ".")
@@ -34,7 +34,7 @@ module MCollective
             end
 
             it "should support creating a topic for a specific collective" do
-                c = MCollective::Config.instance
+                c = Config.instance
                 c.instance_variable_set("@collectives", ["one", "two"])
                 c.instance_variable_set("@topicprefix", "/topic/")
                 c.instance_variable_set("@topicsep", ".")
@@ -103,6 +103,53 @@ module MCollective
                 config_file = Util.config_file_for_user
 
                 Util.default_options.should == {:verbose => false, :disctimeout => 2, :timeout => 5, :config => config_file, :filter => empty_filter, :collective => nil}
+            end
+        end
+
+        describe "#has_fact?" do
+            it "should handle missing facts correctly" do
+                MCollective::Facts.expects("[]").with("foo").returns(nil).once
+                Util.has_fact?("foo", "1", "==").should == false
+            end
+
+            it "should handle regex in a backward compatible way" do
+                MCollective::Facts.expects("[]").with("foo").returns("foo").times(6)
+                Util.has_fact?("foo", "foo", "=~").should == true
+                Util.has_fact?("foo", "/foo/", "=~").should == true
+                Util.has_fact?("foo", "foo", "=~").should == true
+                Util.has_fact?("foo", "bar", "=~").should == false
+                Util.has_fact?("foo", "/bar/", "=~").should == false
+                Util.has_fact?("foo", "bar", "=~").should == false
+            end
+
+            it "should evaluate equality" do
+                MCollective::Facts.expects("[]").with("foo").returns("foo").twice
+                Util.has_fact?("foo", "foo", "==").should == true
+                Util.has_fact?("foo", "bar", "==").should == false
+            end
+
+            it "should handle numeric comparisons correctly" do
+                MCollective::Facts.expects("[]").with("foo").returns("1").times(8)
+                Util.has_fact?("foo", "2", ">=").should == false
+                Util.has_fact?("foo", "1", ">=").should == true
+                Util.has_fact?("foo", "2", "<=").should == true
+                Util.has_fact?("foo", "1", "<=").should == true
+                Util.has_fact?("foo", "1", "<").should == false
+                Util.has_fact?("foo", "1", ">").should == false
+                Util.has_fact?("foo", "1", "!=").should == false
+                Util.has_fact?("foo", "2", "!=").should == true
+            end
+
+            it "should handle alphabetic comparisons correctly" do
+                MCollective::Facts.expects("[]").with("foo").returns("b").times(8)
+                Util.has_fact?("foo", "c", ">=").should == false
+                Util.has_fact?("foo", "a", ">=").should == true
+                Util.has_fact?("foo", "a", "<=").should == false
+                Util.has_fact?("foo", "b", "<=").should == true
+                Util.has_fact?("foo", "b", "<").should == false
+                Util.has_fact?("foo", "b", ">").should == false
+                Util.has_fact?("foo", "b", "!=").should == false
+                Util.has_fact?("foo", "a", "!=").should == true
             end
         end
 
