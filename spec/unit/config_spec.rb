@@ -11,6 +11,7 @@ module MCollective
                 tmpfile.close!
 
                 @tmpdir = FileUtils.mkdir_p(path)
+                @tmpdir = @tmpdir[0] if @tmpdir.is_a?(Array) # ruby 1.9.2
 
                 @plugindir = File.join([@tmpdir, "plugin.d"])
                 FileUtils.mkdir(@plugindir)
