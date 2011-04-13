@@ -14,7 +14,7 @@ class SystemUniversal
 #
 # constants
 #
-  SystemUniversal::VERSION = '2.1.0' unless SystemUniversal.send(:const_defined?, :VERSION)
+  SystemUniversal::VERSION = '2.2.0' unless SystemUniversal.send(:const_defined?, :VERSION)
   def SystemUniversal.version() SystemUniversal::VERSION end
   def version() SystemUniversal::VERSION end
 #
@@ -209,7 +209,11 @@ class SystemUniversal
     if src.respond_to? 'read'
       while((buf = src.read(8192))); dst << buf; end
     else
-      src.each{|buf| dst << buf}
+      if src.respond_to?(:each_line)
+        src.each_line{|buf| dst << buf}
+      else
+        src.each{|buf| dst << buf}
+      end
     end
   end
 

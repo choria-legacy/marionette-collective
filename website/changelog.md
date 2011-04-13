@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/04/13|Update vendored systemu library for Ruby 1.9.2 compatability|7067|
 |2011/04/12|Fix failing tests on Ruby 1.9.2|7067|
 |2011/04/11|Update the DDL documentation to reflect the _mco help_ command|7042|
 |2011/04/11|Document the use filters on the CLI|5917|
