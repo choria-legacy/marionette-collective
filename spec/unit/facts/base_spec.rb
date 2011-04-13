@@ -6,6 +6,13 @@ module MCollective::Facts
     describe Base do
         before do
             class Testfacts<Base; end
+
+            MCollective::PluginManager.delete("facts_plugin")
+            MCollective::PluginManager << {:type => "facts_plugin", :class => "MCollective::Facts::Testfacts"}
+        end
+
+        after do
+            MCollective::PluginManager.delete("facts_plugin")
         end
 
         describe "#inherited" do
