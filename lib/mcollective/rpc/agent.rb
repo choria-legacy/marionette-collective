@@ -291,11 +291,10 @@ module MCollective
                         case validation
                             when :shellsafe
                                 raise InvalidRPCData, "#{key} should be a String" unless @request[key].is_a?(String)
-                                raise InvalidRPCData, "#{key} should not have > in it" if @request[key].match(/>/)
-                                raise InvalidRPCData, "#{key} should not have < in it" if @request[key].match(/</)
-                                raise InvalidRPCData, "#{key} should not have \` in it" if @request[key].match(/\`/)
-                                raise InvalidRPCData, "#{key} should not have | in it" if @request[key].match(/\|/)
 
+                                ['`', '$', ';', '|', '&&', '>', '<'].each do |chr|
+                                    raise InvalidRPCData, "#{key} should not have #{chr} in it" if @request[key].match(Regexp.escape(chr))
+                                end
 
                             when :ipv6address
                                 begin
@@ -317,11 +316,16 @@ module MCollective
 
                         end
                     else
-                        raise InvalidRPCData, "#{key} should be a #{validation}" unless  @request.data[key].is_a?(validation)
+                        raise InvalidRPCData, "#{key} should be a #{validation}" unless  @request[key].is_a?(validation)
                     end
                 rescue Exception => e
                     raise UnknownRPCError, "Failed to validate #{key}: #{e}"
                 end
+            end
+
+            # convenience wrapper around Util#shellescape
+            def shellescape(str)
+                Util.shellescape(str)
             end
 
             # handles external actions

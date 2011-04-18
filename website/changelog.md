@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/04/15|Improve the shellsafe validator and add a Util method to do shell escaping|7066|
 |2011/04/14|Update Rakefile to have a mail_patches task|6874|
 |2011/04/13|Update vendored systemu library for Ruby 1.9.2 compatability|7067|
 |2011/04/12|Fix failing tests on Ruby 1.9.2|7067|

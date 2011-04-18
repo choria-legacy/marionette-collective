@@ -180,11 +180,17 @@ The table below shows the validators we support currently
 |Type Checks|Verifies that input is of a given ruby data type|validate :msg, String|
 |IPv4 Checks|Validates an ip v4 address, note 5.5.5.5 is technically a valid address|validate :ipaddr, :ipv4address|
 |IPv6 Checks|Validates an ip v6 address|validate :ipaddr, :ipv6address|
-|system call safety checks|Makes sure the input is a string and has no &gt;&lt;backtick or pipe characters in it|validate :command, :shellsafe|
+|system call safety checks|Makes sure the input is a string and has no &gt;&lt;backtick, semi colon, dollar, ambersand or pipe characters in it|validate :command, :shellsafe|
 
 All of these checks will raise an InvalidRPCData exception, you shouldn't catch this exception as the Simple RPC framework catches those and handles them appropriately.
 
 We'll make input validators plugins so you can provide your own types of validation easily.
+
+Additionally if can escape strings being passed to a shell, escaping is done in line with the _Shellwords#shellescape_ method that is in newer version of Ruby:
+
+{% highlight ruby linenos %}
+   safe = shellescape(request[:foo])
+{% endhighlight %}
 
 ## Agent Configuration
 

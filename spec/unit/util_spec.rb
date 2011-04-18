@@ -8,6 +8,28 @@ module MCollective
             class MCollective::Connector::Stomp<MCollective::Connector::Base; end
         end
 
+        describe "#shellescape" do
+            it "should return '' for empty strings" do
+                Util.shellescape("").should == "''"
+            end
+
+            it "should quote newlines" do
+                Util.shellescape("\n").should == "'\n'"
+            end
+
+            it "should escape unwanted characters" do
+                Util.shellescape("foo;bar").should == 'foo\;bar'
+                Util.shellescape('foo`bar').should == 'foo\`bar'
+                Util.shellescape('foo$bar').should == 'foo\$bar'
+                Util.shellescape('foo|bar').should == 'foo\|bar'
+                Util.shellescape('foo&&bar').should == 'foo\&\&bar'
+                Util.shellescape('foo||bar').should == 'foo\|\|bar'
+                Util.shellescape('foo>bar').should == 'foo\>bar'
+                Util.shellescape('foo<bar').should == 'foo\<bar'
+                Util.shellescape('foobar').should == 'foobar'
+            end
+        end
+
         describe "#make_target" do
             it "should check for correct types" do
                 expect {
