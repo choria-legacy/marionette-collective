@@ -122,6 +122,33 @@ module MCollective
                 end
             end
 
+            def create_reply(reqid, agent, target, body)
+                Log.debug("Encoded a message for request #{reqid}")
+
+                {:senderid => @config.identity,
+                 :requestid => reqid,
+                 :senderagent => agent,
+                 :msgtarget => target,
+                 :msgtime => Time.now.to_i,
+                 :body => body}
+            end
+
+            def create_request(reqid, target, filter, msg, initiated_by)
+                Log.debug("Encoding a request for '#{target}' with request id #{reqid}")
+
+                req = {:body => msg,
+                       :senderid => @config.identity,
+                       :requestid => reqid,
+                       :msgtarget => target,
+                       :filter => filter,
+                       :msgtime => Time.now.to_i}
+
+                # if we're in use by a client add the callerid to the main client hashes
+                req[:callerid] = callerid if initiated_by == :client
+
+                return req
+            end
+
             # Returns a unique id for the caller, by default we just use the unix
             # user id, security plugins can provide their own means of doing ids.
             def callerid
@@ -130,22 +157,22 @@ module MCollective
 
             # Security providers should provide this, see MCollective::Security::Psk
             def validrequest?(req)
-                Log.error("validrequest? is not implimented in #{this.class}")
+                Log.error("validrequest? is not implimented in #{self.class}")
             end
 
             # Security providers should provide this, see MCollective::Security::Psk
             def encoderequest(sender, target, msg, filter={})
-                Log.error("encoderequest is not implimented in #{this.class}")
+                Log.error("encoderequest is not implimented in #{self.class}")
             end
 
             # Security providers should provide this, see MCollective::Security::Psk
             def encodereply(sender, target, msg, requestcallerid=nil)
-                Log.error("encodereply is not implimented in #{this.class}")
+                Log.error("encodereply is not implimented in #{self.class}")
             end
 
             # Security providers should provide this, see MCollective::Security::Psk
             def decodemsg(msg)
-                Log.error("decodemsg is not implimented in #{this.class}")
+                Log.error("decodemsg is not implimented in #{self.class}")
             end
         end
     end

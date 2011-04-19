@@ -95,15 +95,8 @@ module MCollective
             def encodereply(sender, target, msg, requestid, requestcallerid)
                 crypted = encrypt(serialize(msg), requestcallerid)
 
-                Log.debug("Encoded a reply for request #{requestid} for #{requestcallerid}")
-
-                req = {:senderid => @config.identity,
-                       :requestid => requestid,
-                       :senderagent => sender,
-                       :msgtarget => target,
-                       :msgtime => Time.now.to_i,
-                       :sslkey => crypted[:key],
-                       :body => crypted[:data]}
+                req = create_reply(requestid, sender, target, crypted[:data])
+                req[:sslkey] = crypted[:key]
 
                 serialize(req)
             end
@@ -112,17 +105,8 @@ module MCollective
             def encoderequest(sender, target, msg, requestid, filter={})
                 crypted = encrypt(serialize(msg), callerid)
 
-                Log.debug("Encoding a request for '#{target}' with request id #{requestid}")
-
-                req = {:senderid => @config.identity,
-                       :requestid => requestid,
-                       :msgtarget => target,
-                       :msgtime => Time.now.to_i,
-                       :body => crypted,
-                       :filter => filter,
-                       :callerid => callerid,
-                       :sslkey => crypted[:key],
-                       :body => crypted[:data]}
+                req = create_request(requestid, target, filter, crypted[:data], @initiated_by)
+                req[:sslkey] = crypted[:key]
 
                 if @config.pluginconf.include?("aes.send_pubkey") && @config.pluginconf["aes.send_pubkey"] == "1"
                     if @initiated_by == :client

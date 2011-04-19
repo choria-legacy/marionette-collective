@@ -100,15 +100,11 @@ module MCollective
                 serialized  = serialize(msg)
                 digest = makehash(serialized)
 
-                Log.debug("Encoded a message for request #{requestid}")
 
-                serialize({:senderid => @config.identity,
-                              :requestid => requestid,
-                              :senderagent => sender,
-                              :msgtarget => target,
-                              :msgtime => Time.now.to_i,
-                              :hash => digest,
-                              :body => serialized})
+                req = create_reply(requestid, sender, target, serialized)
+                req[:hash] = digest
+
+                serialize(req)
             end
 
             # Encodes a request msg
@@ -116,19 +112,10 @@ module MCollective
                 serialized = serialize(msg)
                 digest = makehash(serialized)
 
-                Log.debug("Encoding a request for '#{target}' with request id #{requestid}")
-                request = {:body => serialized,
-                           :hash => digest,
-                           :senderid => @config.identity,
-                           :requestid => requestid,
-                           :msgtarget => target,
-                           :filter => filter,
-                           :msgtime => Time.now.to_i}
+                req = create_request(requestid, target, filter, serialized, @initiated_by)
+                req[:hash] = digest
 
-                # if we're in use by a client add the callerid to the main client hashes
-                request[:callerid] = callerid
-
-                serialize(request)
+                serialize(req)
             end
 
             # Checks the SSL signature in the request body

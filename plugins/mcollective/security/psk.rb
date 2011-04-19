@@ -34,15 +34,10 @@ module MCollective
                 serialized  = Marshal.dump(msg)
                 digest = makehash(serialized)
 
-                Log.debug("Encoded a message with hash #{digest} for request #{requestid}")
+                req = create_reply(requestid, sender, target, serialized)
+                req[:hash] = digest
 
-                Marshal.dump({:senderid => @config.identity,
-                              :requestid => requestid,
-                              :senderagent => sender,
-                              :msgtarget => target,
-                              :msgtime => Time.now.to_i,
-                              :hash => digest,
-                              :body => serialized})
+                Marshal.dump(req)
             end
 
             # Encodes a request msg
@@ -50,19 +45,10 @@ module MCollective
                 serialized = Marshal.dump(msg)
                 digest = makehash(serialized)
 
-                Log.debug("Encoding a request for '#{target}' with request id #{requestid}")
-                request = {:body => serialized,
-                           :hash => digest,
-                           :senderid => @config.identity,
-                           :requestid => requestid,
-                           :msgtarget => target,
-                           :filter => filter,
-                           :msgtime => Time.now.to_i}
+                req = create_request(requestid, target, filter, serialized, @initiated_by)
+                req[:hash] = digest
 
-                # if we're in use by a client add the callerid to the main client hashes
-                request[:callerid] = callerid if @initiated_by == :client
-
-                Marshal.dump(request)
+                Marshal.dump(req)
             end
 
             # Checks the md5 hash in the request body against our psk, the request sent for validation
