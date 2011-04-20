@@ -15,4 +15,8 @@ require 'tmpdir'
 
 RSpec.configure do |config|
     config.mock_with :mocha
+
+    config.before :each do
+        MCollective::PluginManager.clear
+    end
 end

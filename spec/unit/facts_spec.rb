@@ -11,11 +11,6 @@ module MCollective
             PluginManager << {:type => "facts_plugin", :class => "MCollective::Facts::Testfacts"}
         end
 
-        after do
-            PluginManager.delete("facts_plugin")
-        end
-
-
         describe "#has_fact?" do
             it "should correctly report fact presense" do
                 Facts::Testfacts.any_instance.stubs("load_facts_from_source").returns({"foo" => "bar"})

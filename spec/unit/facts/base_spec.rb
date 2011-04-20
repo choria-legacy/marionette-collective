@@ -11,10 +11,6 @@ module MCollective::Facts
             MCollective::PluginManager << {:type => "facts_plugin", :class => "MCollective::Facts::Testfacts"}
         end
 
-        after do
-            MCollective::PluginManager.delete("facts_plugin")
-        end
-
         describe "#inherited" do
             it "should add classes to the plugin manager" do
                 MCollective::PluginManager.stubs("<<").with({:type => "facts_plugin", :class => "MCollective::Facts::Bar"})

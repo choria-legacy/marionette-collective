@@ -25,10 +25,6 @@ module MCollective::Security
             @plugin = Psk.new
         end
 
-        after do
-            MCollective::PluginManager.delete("global_stats")
-        end
-
         describe "#decodemsg" do
             it "should correctly decode a message" do
                 @plugin.stubs("validrequest?").returns(true).once

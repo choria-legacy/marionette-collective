@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/04/20|Add a clear method to the PluginManager that deletes all plugins, improve test isolation|7176|
 |2011/04/19|Abstract the creation of request and reply hashes to simplify connector plugin development|5701|
 |2011/04/15|Improve the shellsafe validator and add a Util method to do shell escaping|7066|
 |2011/04/14|Update Rakefile to have a mail_patches task|6874|

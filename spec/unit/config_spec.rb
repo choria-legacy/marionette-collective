@@ -17,10 +17,6 @@ module MCollective
                 FileUtils.mkdir(@plugindir)
             end
 
-            after do
-                FileUtils.remove_entry @tmpdir
-            end
-
             it "should not fail if the supplied directory is missing" do
                 Config.instance.read_plugin_config_dir("/nonexisting")
                 Config.instance.pluginconf.should == nil

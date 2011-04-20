@@ -63,6 +63,11 @@ module MCollective
             @plugins.keys
         end
 
+        # deletes all registered plugins
+        def self.clear
+            @plugins.clear
+        end
+
         # Gets a plugin by type
         def self.[](plugin)
             raise("No plugin #{plugin} defined") unless @plugins.include?(plugin)

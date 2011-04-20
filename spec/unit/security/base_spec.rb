@@ -23,10 +23,6 @@ module MCollective::Security
             @plugin = Base.new
         end
 
-        after do
-            MCollective::PluginManager.delete("global_stats")
-        end
-
         describe "#validate_filter?" do
             it "should pass on empty filter" do
                 MCollective::Util.stubs("empty_filter?").returns(true)
