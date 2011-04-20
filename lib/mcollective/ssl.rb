@@ -31,14 +31,20 @@ module MCollective
     # There are matching methods for using a public key to encrypt
     # data to be decrypted using a private key
     class SSL
-        attr_reader :public_key_file, :private_key_file
+        attr_reader :public_key_file, :private_key_file, :ssl_cipher
 
-        def initialize(pubkey=nil, privkey=nil, passphrase=nil)
+        def initialize(pubkey=nil, privkey=nil, passphrase=nil, cipher=nil)
             @public_key_file = pubkey
             @private_key_file = privkey
 
             @public_key  = read_key(:public, pubkey)
             @private_key = read_key(:private, privkey, passphrase)
+
+            @ssl_cipher = "aes-256-cbc"
+            @ssl_cipher = Config.instance.ssl_cipher if Config.instance.ssl_cipher
+            @ssl_cipher = cipher if cipher
+
+            raise "The supplied cipher '#{@ssl_cipher}' is not supported" unless OpenSSL::Cipher.ciphers.include?(@ssl_cipher)
         end
 
         # Encrypts supplied data using AES and then encrypts using RSA
@@ -135,7 +141,7 @@ module MCollective
 
         # encrypts a string, returns a hash of key, iv and data
         def aes_encrypt(plain_string)
-            cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
+            cipher = OpenSSL::Cipher::Cipher.new(ssl_cipher)
             cipher.encrypt
 
             key = cipher.random_key
@@ -149,7 +155,7 @@ module MCollective
 
         # decrypts a string given key, iv and data
         def aes_decrypt(key, crypt_string)
-            cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
+            cipher = OpenSSL::Cipher::Cipher.new(ssl_cipher)
 
             cipher.decrypt
             cipher.key = key

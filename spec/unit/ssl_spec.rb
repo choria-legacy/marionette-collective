@@ -44,6 +44,37 @@ module MCollective
             @ssl.decrypt_with_public(@ssl.encrypt_with_private("foo", false), false).should == "foo"
         end
 
+        describe "#initialize" do
+            it "should default to aes-256-cbc" do
+                @ssl.ssl_cipher.should == "aes-256-cbc"
+            end
+
+            it "should take the configured value when present" do
+                Config.any_instance.stubs("ssl_cipher").returns("aes-128-cbc")
+                @ssl = SSL.new("#{@rootdir}/../fixtures/test-public.pem", "#{@rootdir}/../fixtures/test-private.pem")
+
+                @ssl.ssl_cipher.should == "aes-128-cbc"
+            end
+
+            it "should set the supplied ssl cipher" do
+                @ssl = SSL.new("#{@rootdir}/../fixtures/test-public.pem", "#{@rootdir}/../fixtures/test-private.pem", nil, "aes-128-cbc")
+                @ssl.ssl_cipher.should == "aes-128-cbc"
+            end
+
+            it "should prefer the supplied cipher over configured cipher" do
+                Config.any_instance.stubs("aes_key_size").returns("foo-foo-foo")
+                @ssl = SSL.new("#{@rootdir}/../fixtures/test-public.pem", "#{@rootdir}/../fixtures/test-private.pem", nil, "aes-128-cbc")
+
+                @ssl.ssl_cipher.should == "aes-128-cbc"
+            end
+
+            it "should fail on invalid ciphers" do
+                expect {
+                    @ssl = SSL.new("#{@rootdir}/../fixtures/test-public.pem", "#{@rootdir}/../fixtures/test-private.pem", nil, "foo-foo-foo")
+                }.to raise_error("The supplied cipher 'foo-foo-foo' is not supported")
+            end
+        end
+
         describe "#read_key" do
             it "should fail on non exiting files" do
                 expect {
@@ -94,10 +125,22 @@ module MCollective
         end
 
         describe "#aes_decrypt" do
-            it "should decrypted correctly given key and data" do
+            it "should decrypt correctly given key and data" do
                 key = @ssl.base64_decode("rAaCyW6qB0XqZNa9hji0qHwrI3P47t8diLNXoemW9ss=")
                 data = @ssl.base64_decode("mSthvO/wSl0ArNOcgysTVw==")
 
+                @ssl.aes_decrypt(key, data).should == "foo"
+            end
+
+            it "should decrypt correctly given key, data and cipher" do
+                key = @ssl.base64_decode("VEma3a/R7fjw2M4d0NIctA==")
+                data = @ssl.base64_decode("FkH6qLvKTn7a+uNPe8ciHA==")
+
+                # the default aes-256-cbc should fail here, the key above is 128 bit
+                expect { @ssl.aes_decrypt(key, data) }.to raise_error(/key length too short: no start line/)
+
+                # new ssl instance configured for aes-128-cbc, should work
+                @ssl = SSL.new("#{@rootdir}/../fixtures/test-public.pem", "#{@rootdir}/../fixtures/test-private.pem", nil, "aes-128-cbc")
                 @ssl.aes_decrypt(key, data).should == "foo"
             end
         end

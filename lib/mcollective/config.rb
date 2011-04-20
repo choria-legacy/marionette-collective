@@ -8,7 +8,7 @@ module MCollective
                     :securityprovider, :factsource, :registration, :registerinterval, :topicsep,
                     :classesfile, :rpcauditprovider, :rpcaudit, :configdir, :rpcauthprovider,
                     :rpcauthorization, :color, :configfile, :rpchelptemplate, :rpclimitmethod,
-                    :logger_type, :fact_cache_time, :collectives, :main_collective
+                    :logger_type, :fact_cache_time, :collectives, :main_collective, :ssl_cipher
 
         def initialize
             @configured = false
@@ -89,7 +89,8 @@ module MCollective
                                     @logger_type = val
                                 when "fact_cache_time"
                                     @fact_cache_time = val.to_i
-
+                                when "ssl_cipher"
+                                    @ssl_cipher = val
                                 else
                                     raise("Unknown config parameter #{key}")
                             end
@@ -143,6 +144,7 @@ module MCollective
             @loglevel = "info"
             @collectives = ["mcollective"]
             @main_collective = @collectives.first
+            @ssl_cipher = "aes-256-cbc"
         end
 
         def read_plugin_config_dir(dir)
