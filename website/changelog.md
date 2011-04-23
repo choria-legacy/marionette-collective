@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/04/23|Encode the target agent and collective in requests|7223|
 |2011/04/20|Make the SSL Cipher used a config option|7191|
 |2011/04/20|Add a clear method to the PluginManager that deletes all plugins, improve test isolation|7176|
 |2011/04/19|Abstract the creation of request and reply hashes to simplify connector plugin development|5701|

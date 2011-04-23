@@ -102,10 +102,10 @@ module MCollective
             end
 
             # Encodes a request msg
-            def encoderequest(sender, target, msg, requestid, filter={})
+            def encoderequest(sender, target, msg, requestid, filter={}, target_agent=nil, target_collective=nil)
                 crypted = encrypt(serialize(msg), callerid)
 
-                req = create_request(requestid, target, filter, crypted[:data], @initiated_by)
+                req = create_request(requestid, target, filter, crypted[:data], @initiated_by, target_agent, target_collective)
                 req[:sslkey] = crypted[:key]
 
                 if @config.pluginconf.include?("aes.send_pubkey") && @config.pluginconf["aes.send_pubkey"] == "1"

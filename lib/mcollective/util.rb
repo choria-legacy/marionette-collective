@@ -238,6 +238,20 @@ module MCollective
 
             return str
         end
+
+        # Parse the msgtarget as sent in 1.1.4 and newer to figure out the
+        # agent and collective that a request is targeted at
+        def self.parse_msgtarget(target)
+            sep = Regexp.escape(Config.instance.topicsep)
+            prefix = Regexp.escape(Config.instance.topicprefix)
+            regex = "#{prefix}(.+?)#{sep}(.+?)#{sep}command"
+
+            if target.match(regex)
+                return {:collective => $1, :agent => $2}
+            else
+                raise "Failed to handle message, could not figure out agent and collective from #{target}"
+            end
+        end
     end
 end
 

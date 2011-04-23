@@ -8,6 +8,8 @@ module MCollective::Security
             @config = mock("config")
             @config.stubs(:identity).returns("test")
             @config.stubs(:configured).returns(true)
+            @config.stubs(:topicsep).returns(".")
+            @config.stubs(:topicprefix).returns("/topic/")
 
             @stats = mock("stats")
 
@@ -151,24 +153,30 @@ module MCollective::Security
                 expected = {:body => "body",
                             :senderid => "test",
                             :requestid => "reqid",
-                            :msgtarget => "target",
+                            :msgtarget => "/topic/mcollective.discovery.command",
+                            :agent => "discovery",
+                            :collective => "mcollective",
                             :filter => "filter",
                             :msgtime => @time}
 
-                @plugin.create_request("reqid", "target", "filter", "body", :server).should == expected
+                @plugin.create_request("reqid", "/topic/mcollective.discovery.command", "filter", "body", :server, "discovery", "mcollective").should == expected
+                @plugin.create_request("reqid", "/topic/mcollective.discovery.command", "filter", "body", :server).should == expected
             end
 
             it "should set the callerid when appropriate" do
                 expected = {:body => "body",
                             :senderid => "test",
                             :requestid => "reqid",
-                            :msgtarget => "target",
+                            :msgtarget => "/topic/mcollective.discovery.command",
+                            :agent => "discovery",
+                            :collective => "mcollective",
                             :filter => "filter",
                             :callerid => "callerid",
                             :msgtime => @time}
 
                 @plugin.stubs(:callerid).returns("callerid")
-                @plugin.create_request("reqid", "target", "filter", "body", :client).should == expected
+                @plugin.create_request("reqid", "/topic/mcollective.discovery.command", "filter", "body", :client, "discovery", "mcollective").should == expected
+                @plugin.create_request("reqid", "/topic/mcollective.discovery.command", "filter", "body", :client).should == expected
             end
         end
 

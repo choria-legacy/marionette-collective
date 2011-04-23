@@ -42,7 +42,14 @@ module MCollective
 
             reqid = Digest::MD5.hexdigest("#{@config.identity}-#{Time.now.to_f.to_s}-#{target}")
 
-            req = @security.encoderequest(@config.identity, target, msg, reqid, filter)
+            # Security plugins now accept an agent and collective, ones written for <= 1.1.4 dont
+            # but we still want to support them, try to call them in a compatible way if they
+            # dont support the new arguments
+            begin
+                req = @security.encoderequest(@config.identity, target, msg, reqid, filter, agent, collective)
+            rescue ArgumentError
+                req = @security.encoderequest(@config.identity, target, msg, reqid, filter)
+            end
 
             Log.debug("Sending request #{reqid} to #{target}")
 

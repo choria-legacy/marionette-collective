@@ -133,14 +133,24 @@ module MCollective
                  :body => body}
             end
 
-            def create_request(reqid, target, filter, msg, initiated_by)
+            def create_request(reqid, target, filter, msg, initiated_by, target_agent=nil, target_collective=nil)
                 Log.debug("Encoding a request for '#{target}' with request id #{reqid}")
+
+                # for backward compat with <= 1.1.4 security plugins we parse the
+                # msgtarget to figure out the agent and collective
+                unless target_agent && target_collective
+                    parsed_target = Util.parse_msgtarget(target)
+                    target_agent = parsed_target[:agent]
+                    target_collective = parsed_target[:collective]
+                end
 
                 req = {:body => msg,
                        :senderid => @config.identity,
                        :requestid => reqid,
                        :msgtarget => target,
                        :filter => filter,
+                       :collective => target_collective,
+                       :agent => target_agent,
                        :msgtime => Time.now.to_i}
 
                 # if we're in use by a client add the callerid to the main client hashes

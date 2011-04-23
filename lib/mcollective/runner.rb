@@ -57,16 +57,17 @@ module MCollective
             loop do
                 begin
                     msg = receive
-                    dest = msg[:msgtarget]
 
-                    sep = Regexp.escape(@config.topicsep)
-                    prefix = Regexp.escape(@config.topicprefix)
-                    regex = "#{prefix}(.+?)#{sep}(.+?)#{sep}command"
-                    if dest.match(regex)
-                        collective = $1
-                        agent = $2
-                    else
-                        raise "Failed to handle message, could not figure out agent and collective from #{dest}"
+                    collective = msg[:collective]
+                    agent = msg[:agent]
+
+                    # requests from older clients would not include the
+                    # :collective and :agent this parses the target in
+                    # a backward compat way for them
+                    unless collective && agent
+                        parsed_dest = Util.parse_msgtarget(msg[:msgtarget])
+                        collective = parsed_dest[:collective]
+                        agent = parsed_dest[:agent]
                     end
 
                     if agent == "mcollective"

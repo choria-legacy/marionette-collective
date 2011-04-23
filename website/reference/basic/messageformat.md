@@ -26,6 +26,12 @@ There is also a [screencast][ScreenCast] that shows this process and message for
 ## Message Flow
 For details of the flow of messages and how requests / replies travel around the network see the [MessageFlow] page.
 
+## History
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2011/04/23|Add _agent_ and _collective_ to the request hashes|7113|
+
 ### Requests sent to agents
 A sample request that gets sent to the connector can be seen here, each component is described below:
 
@@ -34,12 +40,14 @@ A sample request that gets sent to the connector can be seen here, each componen
   {"cf_class"      => ["common::linux"],
    "fact"          => [{:fact=>"country", :value=>"uk"}],
    "agent"         => ["package"]},
- :senderid  => "devel.your.com",
- :msgtarget => "/topic/mcollective.discovery.command",
- :body      => body,
- :hash      => "2d437f2904980ac32d4ebb7ca1fd740b",
- :msgtime   => 1258406924,
- :requestid => "0b54253cb5d04eb8b26ea75bbf468cbc"}
+ :senderid    => "devel.your.com",
+ :msgtarget   => "/topic/mcollective.discovery.command",
+ :agent:      => 'discovery',
+ :collective' => 'mcollective',
+ :body        => body,
+ :hash        => "2d437f2904980ac32d4ebb7ca1fd740b",
+ :msgtime     => 1258406924,
+ :requestid   => "0b54253cb5d04eb8b26ea75bbf468cbc"}
 {% endhighlight %}
 
 Once this request is created the security plugin will serialize it and sent it to the connector, in the case of the PSK security plugin this is done using Marshal.
