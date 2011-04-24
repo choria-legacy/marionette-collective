@@ -57,7 +57,7 @@ end
 The nice thing about using a standard abstraction for clients is that you often won't even need to write a client for it, we ship a standard client that you can use to call the agent above:
 
 {% highlight console %}
- % mc-rpc --agent helloworld --action echo --arg msg="Welcome to MCollective Simple RPC"
+ % mco rpc --agent helloworld --action echo --arg msg="Welcome to MCollective Simple RPC"
  Determining the amount of hosts matching filter for 2 seconds .... 1
 
  devel.your.com                          : OK
@@ -73,10 +73,10 @@ The nice thing about using a standard abstraction for clients is that you often 
        Total Time: 54.35ms
 {% endhighlight %}
 
-You could also use *mc-rpc* like this and achieve the same result:
+You could also use *mco rpc* like this and achieve the same result:
 
 {% highlight console %}
- % mc-rpc helloworld echo msg="Welcome to MCollective Simple RPC"
+ % mco rpc helloworld echo msg="Welcome to MCollective Simple RPC"
 {% endhighlight %}
 
 For multiple options just add more *key=val* pairs at the end

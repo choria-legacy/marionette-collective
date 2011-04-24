@@ -16,7 +16,7 @@ disqus: true
  * a list for the toc
  {:toc}
 
-As pointed out in the [SimpleRPCIntroduction] page you can use the _mc-rpc_ CLI
+As pointed out in the [SimpleRPCIntroduction] page you can use the _mco rpc_ CLI
 to call agents and it will do it's best to print results in a sane way.  When
 this is not enough you can write your own clients.
 
@@ -29,7 +29,8 @@ collective.  Since version 1.1.1 there is a single executable system.  You can
 apply most of the techniques documented here to writing plugins for that
 application system.  See the full reference for the plugin system
 [here][AppPlugin].  You should try to write your general agent CLIs using
-this plugin system.
+this plugin system rather than the stand alone scripts detailed below as that
+promote a unified interface that behave in a consistant manner.
 
 We've recorded a [tutorial that will give you a quick look at what is involved
 in writing agents and a very simple client][WritingAgentsScreenCast].
@@ -367,7 +368,7 @@ end
 You will need to handle exceptions yourself but you have a simpler result set to deal with
 
 ## Adding custom command line options
-You can look at the _mc-rpc_ script for a big sample, here I am just adding a simple _--msg_ option to our script so you can customize the message that will be sent and received.
+You can look at the _mco rpc_ script for a big sample, here I am just adding a simple _--msg_ option to our script so you can customize the message that will be sent and received.
 
 {% highlight ruby linenos %}
 #!/usr/bin/ruby
@@ -406,7 +407,7 @@ dev2.you.net                          : foo
 dev3.you.net                          : foo
 {% endhighlight %}
 
-Documentation for the Options Parser can be found [in it's code][OptionParser] you can also look at the various _mc-`*`_ scripts that come with the code.
+Documentation for the Options Parser can be found [in it's code][OptionParser].
 
 And finally if you add options as above rather than try to parse it yourself you will get help integration for free:
 

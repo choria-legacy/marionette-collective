@@ -265,7 +265,7 @@ You should see in the log file somethig like:
 If all is fine and you see this log message you can test with the client code:
 
 {% highlight console %}
-% mc-ping
+% mco ping
 your.domain.com                           time=74.41 ms
 
 ---- ping statistics ----
@@ -279,7 +279,7 @@ If you install the _mcollective_ and _mcollective-common_ packages along wit the
 You can explore other aspects of your machines:
 
 {% highlight console %}
-% mc-find-hosts --with-fact country=uk
+% mco find --with-fact country=uk
 your.domain.com
 {% endhighlight %}
 
@@ -289,13 +289,13 @@ If you use confiuration management tools like puppet and the nodes are setup wit
 can search for nodes with a specific class on them - the locations will configurable soon:
 
 {% highlight console %}
-% mc-find-hosts --with-class common::linux
+% mco find --with-class common::linux
 your.domain.com
 {% endhighlight %}
 
 The filter commands are important they will be the main tool you use to target only parts of your infrastructure with calls to agents.
 
-See the *--help* option to the various *mc-`*`* script for available options.  You can now look at some of the available plugins and
+See the *--help* option to the various *mco `*`* commands for available options.  You can now look at some of the available plugins and
 play around, you might need to run the server process as root if you want to play with services etc.
 
 ### Plugins

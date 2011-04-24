@@ -251,7 +251,7 @@ If you installed from a package start it with the RC script, else look in the so
 If all is setup you can test with the client code:
 
 {% highlight console %}
-% mc-ping
+% mco ping
 your.domain.com                           time=74.41 ms
 
 ---- ping statistics ----
@@ -264,7 +264,7 @@ would have seen several replies, be sure to give each a unique *identity* in the
 At this point you can start exploring the discovery features for example:
 
 {% highlight console %}
-% mc-find-hosts --with-fact country=uk
+% mco find --with-fact country=uk
 your.domain.com
 {% endhighlight %}
 
@@ -274,7 +274,7 @@ If you use confiuration management tools like puppet and the nodes are setup wit
 can search for nodes with a specific class on them - the locations will configurable soon:
 
 {% highlight console %}
-% mc-find-hosts --with-class common::linux
+% mco find --with-class common::linux
 your.domain.com
 {% endhighlight %}
 
@@ -282,7 +282,7 @@ Chef does not yet support such a list natively but we have some details on the w
 
 The filter commands are important they will be the main tool you use to target only parts of your infrastructure with calls to agents.
 
-See the *--help* option to the various *mc-`*`* script for available options.  You can now look at some of the available plugins and
+See the *--help* option to the various *mco `*`* commands for available options.  You can now look at some of the available plugins and
 play around, you might need to run the server process as root if you want to play with services etc.
 
 ### Plugins

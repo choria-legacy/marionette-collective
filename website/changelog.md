@@ -7,6 +7,12 @@ title: Changelog
  * TOC Placeholder
   {:toc}
 
+## Version 1.2.x
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|*2011/05/04*|*Release 1.2.0*|7227|
+
 ## Version 1.1.x
 
 |Date|Description|Ticket|

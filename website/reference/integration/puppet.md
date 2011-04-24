@@ -46,7 +46,7 @@ There is a [community plugin to enable Facter][FactsRLFacter] as a fact source.
 So you can use the facts provided by Facter in filters, reports etc.
 
 {% highlight console %}
-$ mc-find-hosts --with-fact lsbdistrelease=5.4
+$ mco find --with-fact lsbdistrelease=5.4
 {% endhighlight %}
 
 This includes facts pushed out with [Plugin Sync][PluginSync].
@@ -72,5 +72,5 @@ classesfile = /var/lib/puppet/state/classes.txt
 You can now use your classes lists in filters:
 
 {% highlight console %}
-$ mc-find-hosts --with-class /apache/
+$ mco find --with-class /apache/
 {% endhighlight %}

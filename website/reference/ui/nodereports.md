@@ -17,10 +17,10 @@ The _mc inventory_ tool is a generic node and network reporting tool, it has bas
 **Note: This is an emerging feature, the scripting language is likely to change**
 
 ## Node View
-To obtain a full inventory for a given node you can run mc-inventory like this:
+To obtain a full inventory for a given node you can run _mco inventory_ like this:
 
 {% highlight console %}
- % mc-inventory your.node.com
+ % mco inventory your.node.com
  Inventory for your.node.com:
 
 
@@ -96,7 +96,7 @@ other compatible software.
 
 **NOTE: This feature will only be in version 0.4.8**
 
-You can create little scriptlets and pass them into *mc-inventory* with the *--script* option.
+You can create little scriptlets and pass them into *mco inventory* with the *--script* option.
 
 You have the following data available to your reports:
 
@@ -123,7 +123,7 @@ end
 And if saved as _inventory.mc_ run it like this:
 
 {% highlight console %}
- % mc-inventory -W "productname=/IBM|BladeCenter/" --script inventory.mc
+ % mco inventory -W "productname=/IBM|BladeCenter/" --script inventory.mc
  xx12:           99xxx21         BladeCenter HS22 -[7870B3G]-
  xx9:            99xxx46         BladeCenter HS22 -[7870B3G]-
  xx10:           99xxx29         BladeCenter HS22 -[7870B3G]-
@@ -166,7 +166,7 @@ Here we create a paged report - 20 nodes per page - with a heading section and a
 The output looks like this:
 
 {% highlight console %}
- % mc-inventory -W "/dev_server/" --script inventory.mc
+ % mco inventory -W "/dev_server/" --script inventory.mc
 
              Node Report Sun Aug 01 10:30:57 +0100
 

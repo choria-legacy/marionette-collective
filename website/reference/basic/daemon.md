@@ -9,7 +9,7 @@ disqus: true
  {:toc}
 
 The main daemon that runs on nodes keeps internal stats and supports reloading of agents, we provide
-a tool - *mc-controller* - to interact with any running daemon from a client.
+a tool - *mco controller* - to interact with any running daemon from a client.
 
 If all you want is to reload all the agents without restarting the daemon you can just send it signal
 *USR1* and it will reload its agents.  This is available from version *0.4.5* onward.
@@ -19,22 +19,21 @@ again, just keep sending the signal and look at the logs.
 
 ## Details
 
-The mc-controller allows you to:
+The _mco controller_ application allows you to:
 
  * Get stats for each mcollectived
  * Reload a specific agent
  * Reload all agents
- * Exit the daemon
 
 ## Usage
-Usage is like for any other client, you run mc-controller from your management station and use filters
+Usage is like for any other client, you run _mco controller_ from your management station and use filters
 to target just the nodes you need.
 
 ## Statistics
 This will show some basic statistics about the daemon:
 
 {% highlight console %}
-% mc-controller stats
+% mco controller stats
 Determining the amount of hosts matching filter for 2 seconds .... 1
 
                 devel.your.com> total=22 replies=17 valid=22 invalid=0 filtered=0 passed=22
@@ -61,7 +60,7 @@ Each stat means:
 You can reload a specific agent if you've just copied a new one out and don't want to restart the daemons:
 
 {% highlight console %}
-% mc-controller reload_agent --arg rpctest
+% mco controller reload_agent --arg rpctest
 Determining the amount of hosts matching filter for 2 seconds .... 1
 
                 devel.your.com> reloaded rpctest agent
@@ -78,7 +77,7 @@ Determining the amount of hosts matching filter for 2 seconds .... 1
 Like the previous command but acts on all agents, this is the same as sending *USR1* signal to the process:
 
 {% highlight console %}
-% mc-controller reload_agents
+% mco controller reload_agents
 Determining the amount of hosts matching filter for 2 seconds .... 1
 
                 devel.your.com> reloaded all agents
@@ -89,22 +88,4 @@ Determining the amount of hosts matching filter for 2 seconds .... 1
   Discovery Time: 2006.71ms
       Agent Time: 182.45ms
       Total Time: 2189.16ms
-{% endhighlight %}
-
-## Exiting the daemon
-Sometimes you just want to quit the daemon without logging into the servers, this will force them all to exit:
-
-{% highlight console %}
-$ mc-controller exit
-Determining the amount of hosts matching filter for 2 seconds .... 1
-
-devel.your.com>
-"exiting after request to controller"
-
----- mcollectived controller summary ----
-           Nodes: 1 / 1
-      Start Time: Wed Feb 17 21:11:17 +0000 2010
-  Discovery Time: 2006.57ms
-      Agent Time: 79.28ms
-      Total Time: 2085.84ms
 {% endhighlight %}

@@ -36,7 +36,7 @@ to:
 So you can use the flattened versions of the information provided by Ohai in filters, reports etc.
 
 {% highlight console %}
-% mc-find-hosts --with-fact languages.java.version=1.6.0
+% mco find --with-fact languages.java.version=1.6.0
 {% endhighlight %}
 
 ## Class Filters
@@ -73,5 +73,5 @@ classesfile = /var/tmp/chefnode.txt
 You can now use your roles and recipe lists in filters:
 
 {% highlight console %}
-% mc-find-hosts --with-class role.webserver --with-class /apache/
+% mco find --with-class role.webserver --with-class /apache/
 {% endhighlight %}
