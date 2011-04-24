@@ -154,6 +154,7 @@ module MCollective::Security
                             :senderid => "test",
                             :requestid => "reqid",
                             :msgtarget => "/topic/mcollective.discovery.command",
+                            :callerid => "uid=#{Process.uid}",
                             :agent => "discovery",
                             :collective => "mcollective",
                             :filter => "filter",

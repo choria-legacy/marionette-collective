@@ -144,19 +144,15 @@ module MCollective
                     target_collective = parsed_target[:collective]
                 end
 
-                req = {:body => msg,
-                       :senderid => @config.identity,
-                       :requestid => reqid,
-                       :msgtarget => target,
-                       :filter => filter,
-                       :collective => target_collective,
-                       :agent => target_agent,
-                       :msgtime => Time.now.to_i}
-
-                # if we're in use by a client add the callerid to the main client hashes
-                req[:callerid] = callerid if initiated_by == :client
-
-                return req
+                {:body => msg,
+                 :senderid => @config.identity,
+                 :requestid => reqid,
+                 :msgtarget => target,
+                 :filter => filter,
+                 :collective => target_collective,
+                 :agent => target_agent,
+                 :callerid => callerid,
+                 :msgtime => Time.now.to_i}
             end
 
             # Returns a unique id for the caller, by default we just use the unix
