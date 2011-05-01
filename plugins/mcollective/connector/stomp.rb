@@ -51,6 +51,13 @@ module MCollective
         #     plugin.stomp.pool.max_reconnect_attempts = 0
         #     plugin.stomp.pool.randomize = false
         #     plugin.stomp.pool.timeout = -1
+        #
+        # For versions of ActiveMQ that supports message priorities
+        # you can set a priority, this will cause a "priority" header
+        # to be emitted if present:
+        #
+        #     plugin.stomp.priority = 4
+        #
         class Stomp<Base
             attr_reader :connection
 
@@ -72,6 +79,7 @@ module MCollective
                     user = nil
                     password = nil
                     @base64 = get_bool_option("stomp.base64", false)
+                    @msgpriority = get_option("stomp.priority", 0).to_i
 
                     # Maintain backward compat for older stomps
                     unless @config.pluginconf.include?("stomp.pool.size")
@@ -144,9 +152,9 @@ module MCollective
 
                 # deal with deprecation warnings in newer stomp gems
                 if @connection.respond_to?("publish")
-                    @connection.publish(target, msg)
+                    @connection.publish(target, msg, msgheaders)
                 else
-                    @connection.send(target, msg)
+                    @connection.send(target, msg, msgheaders)
                 end
             end
 
@@ -173,6 +181,13 @@ module MCollective
             end
 
             private
+            def msgheaders
+                headers = {}
+                headers = {"priority" => @msgpriority} if @msgpriority > 0
+
+                return headers
+            end
+
             # looks in the environment first then in the config file
             # for a specific option, accepts an optional default.
             #

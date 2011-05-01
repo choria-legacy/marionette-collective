@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/05/01|Support setting a priority on Stomp messages|7246|
 |2011/04/30|Handle broken and incomplete DDLs better and improve the format of DDL output|7191|
 |2011/04/23|Encode the target agent and collective in requests|7223|
 |2011/04/20|Make the SSL Cipher used a config option|7191|

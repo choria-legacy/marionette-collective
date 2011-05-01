@@ -62,3 +62,12 @@ plugin.stomp.pool.max_reconnect_attempts = 0
 plugin.stomp.pool.randomize = false
 plugin.stomp.pool.timeout = -1
 {% endhighlight %}
+
+### Message Priority
+
+As of version 5.4 of ActiveMQ messages support priorities, you can pass in the needed
+priority header by setting:
+
+{% highlight ini %}
+plugin.stomp.priority = 4
+{% endhighlight %}
