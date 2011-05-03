@@ -1,12 +1,12 @@
 #!/bin/sh
 #
-# mcollective	Application Server for STOMP based agents
+# mcollective   Application Server for STOMP based agents
 #
-# chkconfig: 345 24 76
+# chkconfig:    345 24 76
 #
-# description: mcollective lets you build powerful Stomp compatible middleware clients in ruby without having to worry too
-#              much about all the setup and management of a Stomp connection, it also provides stats, logging and so forth
-#              as a bonus.
+# description:  mcollective lets you build powerful Stomp compatible middleware clients in ruby without having to worry too
+#               much about all the setup and management of a Stomp connection, it also provides stats, logging and so forth
+#               as a bonus.
 #
 ### BEGIN INIT INFO
 # Provides:          mcollective
@@ -22,107 +22,86 @@ RUBYLIB=/usr/local/lib/site_ruby/1.8:$RUBYLIB
 export RUBYLIB
 
 mcollectived="/usr/sbin/mcollectived"
-
-# Lockfile
+pidfile="/var/run/mcollectived.pid"
 if [ -d /var/lock/subsys ]; then
-  # RedHat/CentOS/etc who use subsys
-  lock="/var/lock/subsys/mcollective"
+    # RedHat/CentOS/etc who use subsys
+    lockfile="/var/lock/subsys/mcollective"
 else
-  # The rest of them
-  lock="/var/lock/mcollective"
+    # The rest of them
+    lockfile="/var/lock/mcollective"
 fi
 
-
-# PID directory
-pidfile="/var/run/mcollectived.pid"
+# Check that binary exists
+if ! [ -f $mcollectived ]; then
+    echo "mcollectived binary not found"
+    exit 0
+fi
 
 # Source function library.
 . /etc/init.d/functions
 
-# Check that binary exists
-if ! [ -f  $mcollectived ]
-then
-  echo "mcollectived binary not found"
-  exit 0
+# Determine if we can use the -p option to daemon, killproc, and status.
+# RHEL < 5 can't.
+if status | grep -q -- '-p' 2>/dev/null; then
+    daemonopts="--pidfile $pidfile"
+    pidopts="-p $pidfile"
 fi
+
+start() {
+	echo -n "Starting mcollective: "
+    daemon ${daemonopts} --pidfile=${pidfile} ${mcollectived} \
+        --pid=${pidfile} --config="/etc/mcollective/server.cfg"
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && touch ${lockfile}
+    return $RETVAL
+}
+
+stop() {
+    echo -n "Shutting down mcollective: "
+    killproc ${pidopts} -d 10 ${mcollectived}
+    RETVAL=$?
+    echo
+    [ $RETVAL = 0 ] && rm -f ${lockfile} ${pidfile}
+    return $RETVAL
+}
+
+restart() {
+    stop
+    start
+}
+
+rh_status() {
+    status ${pidopts} ${mcollectived}
+    RETVAL=$?
+    return $RETVAL
+}
+
+rh_status_q() {
+    rh_status >/dev/null 2>&1
+}
 
 # See how we were called.
 case "$1" in
-  start)
-	echo -n "Starting mcollective: "
-
-	if [ -f ${lock} ]; then
-	    # we were not shut down correctly
-	    if [ -s ${pidfile} ]; then
-		kill `cat ${pidfile}` >/dev/null 2>&1
-	    fi
-	    rm -f ${pidfile}
-
-	    rm -f ${lock}
-	    sleep 2
-	fi
-
-	rm -f ${pidfile}
-
-	${mcollectived} --pid=${pidfile} --config="/etc/mcollective/server.cfg"
-	if [ $? = 0 ]; then
-	    success $"mcollectived"
-	    touch $lock
-	    echo
-	    exit 0
-	else
-	    failure
-            echo
-            exit 1
-	fi
-	;;
-  stop)
-	echo -n "Shutting down mcollective: "
-
-	if [ -s ${pidfile} ]; then
-	  kill `cat ${pidfile}` >/dev/null 2>&1
-	fi
-	rm -f ${pidfile}
-
-	success $"mcollectived"
-	rm -f $lock
-	echo
-	;;
-  restart)
-	$0 stop
-	sleep 2
-	$0 start
-	;;
-  condrestart)
-	if [ -f $lock ]; then
-	    $0 stop
-	    # avoid race
-	    sleep 2
-	    $0 start
-	fi
-	;;
-  status)
-	if [ -f ${lock} ]; then
-	    if [ -s ${pidfile} ]; then
-	       if [ -e /proc/`cat ${pidfile}` ]; then
-                  echo "mcollectived (`cat ${pidfile}`) is running"
-                  exit 0
-               else
-                  echo "mcollectived (`cat ${pidfile}`) is NOT running"
-                  exit 1
-               fi
-	    fi
-	else
-	    echo "mcollectived: service not started"
-	    exit 1
-	fi
-  ;;
-	force-reload)
-		echo "not implemented"
-	;;
-  *)
-	echo "Usage: mcollectived {start|stop|restart|condrestart|status}"
-	exit 1
-	;;
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        restart
+        ;;
+    condrestart)
+        rh_status_q || exit 0
+        restart
+        ;;
+    status)
+        rh_status
+        ;;
+    *)
+        echo "Usage: mcollectived {start|stop|restart|condrestart|status}"
+        RETVAL=2
+        ;;
 esac
-exit 0
+exit $RETVAL
