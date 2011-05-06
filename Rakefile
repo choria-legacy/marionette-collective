@@ -7,7 +7,7 @@ require 'find'
 
 PROJ_DOC_TITLE = "The Marionette Collective"
 PROJ_VERSION = "1.2.0"
-PROJ_RELEASE = "5"
+PROJ_RELEASE = "6"
 PROJ_NAME = "mcollective"
 PROJ_RPM_NAMES = [PROJ_NAME]
 PROJ_FILES = ["#{PROJ_NAME}.spec", "#{PROJ_NAME}.init", "#{PROJ_NAME}.init-rh", "mcollectived.rb", "COPYING", "doc", "etc", "lib", "plugins", "ext", "mco"]
