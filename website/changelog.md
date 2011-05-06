@@ -11,12 +11,14 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/05/06|Revert unintended changes to the Debian rc script|7420|
 |2011/05/06|Remove the _test_ agent that was accidentally checked in|7425|
 
 ## Version 1.2.x
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/05/06|Revert unintended changes to the Debian rc script|7420|
 |2011/05/06|Remove the _test_ agent that was accidentally checked in|7425|
 |*2011/05/04*|*Release 1.2.0*|7227|
 
