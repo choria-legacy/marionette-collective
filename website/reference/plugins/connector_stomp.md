@@ -42,9 +42,9 @@ plugin.stomp.pool.user1 = me
 plugin.stomp.pool.password1 = secret
 
 plugin.stomp.pool.host2 = stomp2
-plugin.stomp.pool.port1 = 6163
-plugin.stomp.pool.user1 = me
-plugin.stomp.pool.password1 = secret
+plugin.stomp.pool.port2 = 6163
+plugin.stomp.pool.user2 = me
+plugin.stomp.pool.password2 = secret
 {% endhighlight %}
 
 This gives it 2 servers to attempt to connect to, if the first one fails it will use the second.  As before usernames and passwords can be set with STOMP_USER, STOMP_PASSWORD.
