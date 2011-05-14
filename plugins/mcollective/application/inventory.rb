@@ -129,50 +129,77 @@ class MCollective::Application::Inventory<MCollective::Application
         util.identity_filter node
         util.progress = false
 
-        nodestats = util.custom_request("daemon_stats", {}, node, {"identity" => node})
+        nodestats = util.custom_request("daemon_stats", {}, node, {"identity" => node}).first
 
-        util.custom_request("inventory", {}, node, {"identity" => node}).each do |resp|
-            puts "Inventory for #{resp[:sender]}:"
-            puts
+        unless nodestats[:statuscode] == 0
+            STDERR.puts "Failed to retrieve daemon_stats from #{node}: #{nodestats[:statusmsg]}"
+        else
+            util.custom_request("inventory", {}, node, {"identity" => node}).each do |resp|
+                unless resp[:statuscode] == 0
+                    STDERR.puts "Failed to retrieve inventory for #{node}: #{resp[:statusmsg]}"
+                    next
+                end
 
-            if nodestats.is_a?(Array)
-                nodestats = nodestats.first[:data]
+                data = resp[:data]
 
-                puts "   Server Statistics:"
-                puts "                      Version: #{nodestats[:version]}"
-                puts "                   Start Time: #{Time.at(nodestats[:starttime])}"
-                puts "                  Config File: #{nodestats[:configfile]}"
-                puts "                  Collectives: #{resp[:data][:collectives].join(', ')}" if resp[:data].include?(:collectives)
-                puts "              Main Collective: #{resp[:data][:main_collective]}" if resp[:data].include?(:main_collective)
-                puts "                   Process ID: #{nodestats[:pid]}"
-                puts "               Total Messages: #{nodestats[:total]}"
-                puts "      Messages Passed Filters: #{nodestats[:passed]}"
-                puts "            Messages Filtered: #{nodestats[:filtered]}"
-                puts "                 Replies Sent: #{nodestats[:replies]}"
-                puts "         Total Processor Time: #{nodestats[:times][:utime]} seconds"
-                puts "                  System Time: #{nodestats[:times][:stime]} seconds"
+                begin
+                    puts "Inventory for #{resp[:sender]}:"
+                    puts
 
-                puts
+                    nodestats = nodestats[:data]
+
+                    puts "   Server Statistics:"
+                    puts "                      Version: #{nodestats[:version]}"
+                    puts "                   Start Time: #{Time.at(nodestats[:starttime])}"
+                    puts "                  Config File: #{nodestats[:configfile]}"
+                    puts "                  Collectives: #{data[:collectives].join(', ')}" if data.include?(:collectives)
+                    puts "              Main Collective: #{data[:main_collective]}" if data.include?(:main_collective)
+                    puts "                   Process ID: #{nodestats[:pid]}"
+                    puts "               Total Messages: #{nodestats[:total]}"
+                    puts "      Messages Passed Filters: #{nodestats[:passed]}"
+                    puts "            Messages Filtered: #{nodestats[:filtered]}"
+                    puts "                 Replies Sent: #{nodestats[:replies]}"
+                    puts "         Total Processor Time: #{nodestats[:times][:utime]} seconds"
+                    puts "                  System Time: #{nodestats[:times][:stime]} seconds"
+
+                    puts
+
+                    puts "   Agents:"
+                    if data[:agents].size > 0
+                        data[:agents].sort.in_groups_of(3, "") do |agents|
+                            puts "      %-15s %-15s %-15s" % agents
+                        end
+                    else
+                        puts "      No agents installed"
+                    end
+
+                    puts
+
+                    puts "   Configuration Management Classes:"
+                    if data[:classes].size > 0
+                        data[:classes].sort.in_groups_of(2, "") do |klasses|
+                            puts "      %-30s %-30s" % klasses
+                        end
+                    else
+                        puts "      No classes applied"
+                    end
+
+                    puts
+
+                    puts "   Facts:"
+                    if data[:facts].size > 0
+                        data[:facts].sort_by{|f| f[0]}.each do |f|
+                            puts "      #{f[0]} => #{f[1]}"
+                        end
+                    else
+                        puts "      No facts known"
+                    end
+
+                    break
+                rescue Exception => e
+                    STDERR.puts "Failed to display node inventory: #{e.class}: #{e}"
+                end
             end
-
-            puts "   Agents:"
-            resp[:data][:agents].sort.in_groups_of(3, "") do |agents|
-                puts "      %-15s %-15s %-15s" % agents
-            end
-            puts
-
-            puts "   Configuration Management Classes:"
-            resp[:data][:classes].sort.in_groups_of(2, "") do |klasses|
-                puts "      %-30s %-30s" % klasses
-            end
-            puts
-
-            puts "   Facts:"
-            resp[:data][:facts].sort_by{|f| f[0]}.each do |f|
-                puts "      #{f[0]} => #{f[1]}"
-            end
-
-            break
         end
     end
 
