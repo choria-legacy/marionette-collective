@@ -27,7 +27,7 @@ The two passwords requested during creation is completely arbitrary you can prov
 past entering them on the creation page you don't need to know them again later.  They are used internally
 to the demo without you being aware of them.
 
-You'll need to enter the url _http://mcollective-101-demo.s3.amazonaws.com/cloudfront`_`demo.json_ into the
+You'll need to enter the url _http://mcollective-120-demo.s3.amazonaws.com/cloudfront`_`demo.json_ into the
 creation step.
 
 <embed src="http://blip.tv/play/hfMOgqejeAA" type="application/x-shockwave-flash" width="640" height="419" allowscriptaccess="always" allowfullscreen="true" />
