@@ -49,7 +49,7 @@ fi
 
 start() {
 	echo -n "Starting mcollective: "
-    daemon ${daemonopts} --pidfile=${pidfile} ${mcollectived} \
+    daemon ${daemonopts} ${mcollectived} \
         --pid=${pidfile} --config="/etc/mcollective/server.cfg"
     RETVAL=$?
     echo
