@@ -127,6 +127,48 @@ These two code blocks have the identical outcome, the 2nd usage is recommended.
 
 Creates an action called "echo".  They don't and can't take any arguments.
 
+## Agent Activation
+In the past you had to copy an agent only to machines that they should be running on as
+all agents were activated regardless of dependencies.
+
+To make deployment simpler agents support the ability to determine if they should run
+on a particular platform.  By default SimpleRPC agents can be configured to activate
+or not:
+
+{% highlight ini %}
+plugin.helloworld.activate_agent = false
+{% endhighlight %}
+
+You can also place the following in _/etc/mcollective/plugins.d/helloworld.cfg_:
+
+{% highlight ini %}
+activate_agent = false
+{% endhighlight %}
+
+This is a simple way to enable or disable an agent on your machine, agents can also
+declare their own logic that will get called each time an agent gets loaded from disk.
+
+{% highlight ruby %}
+module MCollective
+    module Agent
+        class Helloworld<RPC::Agent
+
+            activate_when do
+                File.executable?("/usr/bin/puppet")
+            end
+        end
+    end
+end
+{% endhighlight %}
+
+If this block returns false or raises an exception then the agent will not be active on
+this machine and it will not be discovered.
+
+When the agent gets loaded it will test if _/usr/bin/puppet_ exist and only if it does
+will this agent be enabled.
+
+This feature is available since version 1.3.0
+
 ## Help and the Data Description Language
 We have a separate file that goes together with an agent and is used to describe the agent in detail, a DDL file for the above echo agent can be seen below:
 

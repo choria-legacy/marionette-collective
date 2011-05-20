@@ -2,26 +2,30 @@ module MCollective
     # A collection of agents, loads them, reloads them and dispatches messages to them.
     # It uses the PluginManager to store, load and manage instances of plugins.
     class Agents
-        def initialize
+        def initialize(agents = {})
             @config = Config.instance
             raise ("Configuration has not been loaded, can't load agents") unless @config.configured
 
-            @@agents = {}
+            @@agents = agents
 
             loadagents
         end
 
-        # Loads all agents from disk
-        def loadagents
-            Log.debug("Reloading all agents from disk")
-
-            # We're loading all agents so just nuke all the old agents and unsubscribe
+        # Deletes all agents
+        def clear!
             @@agents.each_key do |agent|
                 PluginManager.delete "#{agent}_agent"
                 Util.unsubscribe(Util.make_target(agent, :command))
             end
 
             @@agents = {}
+        end
+
+        # Loads all agents from disk
+        def loadagents
+            Log.debug("Reloading all agents from disk")
+
+            clear!
 
             @config.libdir.each do |libdir|
                 agentdir = "#{libdir}/mcollective/agent"
@@ -38,7 +42,7 @@ module MCollective
         def loadagent(agentname)
             agentfile = findagentfile(agentname)
             return false unless agentfile
-            classname = "MCollective::Agent::#{agentname.capitalize}"
+            classname = class_for_agent(agentname)
 
             PluginManager.delete("#{agentname}_agent")
 
@@ -46,22 +50,51 @@ module MCollective
                 single_instance = ["registration", "discovery"].include?(agentname)
 
                 PluginManager.loadclass(classname)
-                PluginManager << {:type => "#{agentname}_agent", :class => classname, :single_instance => single_instance}
 
-                Util.subscribe(Util.make_target(agentname, :command)) unless @@agents.include?(agentname)
+                if activate_agent?(agentname)
+                    PluginManager << {:type => "#{agentname}_agent", :class => classname, :single_instance => single_instance}
 
-                @@agents[agentname] = {:file => agentfile}
-                return true
+                    Util.subscribe(Util.make_target(agentname, :command)) unless @@agents.include?(agentname)
+
+                    @@agents[agentname] = {:file => agentfile}
+                    return true
+                else
+                    Log.debug("Not activating agent #{agentname} due to agent policy in activate? method")
+                    return false
+                end
             rescue Exception => e
                 Log.error("Loading agent #{agentname} failed: #{e}")
                 PluginManager.delete("#{agentname}_agent")
+                return false
             end
+        end
+
+        # Builds a class name string given a Agent name
+        def class_for_agent(agent)
+            "MCollective::Agent::#{agent.capitalize}"
+        end
+
+        # Checks if a plugin should be activated by
+        # calling #activate? on it if it responds to
+        # that method else always activate it
+        def activate_agent?(agent)
+            klass = Kernel.const_get("MCollective").const_get("Agent").const_get(agent.capitalize)
+
+            if klass.respond_to?("activate?")
+                return klass.activate?
+            else
+                Log.debug("#{klass} does not have an activate? method, activating as default")
+                return true
+            end
+        rescue Exception => e
+            Log.warn("Agent activation check for #{agent} failed: #{e.class}: #{e}")
+            return false
         end
 
         # searches the libdirs for agents
         def findagentfile(agentname)
             @config.libdir.each do |libdir|
-                agentfile = "#{libdir}/mcollective/agent/#{agentname}.rb"
+                agentfile = File.join([libdir, "mcollective", "agent", "#{agentname}.rb"])
                 if File.exist?(agentfile)
                     Log.debug("Found #{agentname} at #{agentfile}")
                     return agentfile
