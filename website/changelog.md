@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/05/20|Improve error reporting in the single application framework|7574|
 |2011/05/16|Allow _._ in fact names|7532|
 |2011/05/16|Fix compatability issues with RH4 init system|7448|
 |2011/05/15|Handle failures from remote nodes better in the inventory app|7524|
