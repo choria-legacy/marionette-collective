@@ -33,6 +33,40 @@ module MCollective
             end
         end
 
+        describe "#make_subscription" do
+            it "should validate target types" do
+                expect {
+                    Util.make_subscriptions("test", "test", "test")
+                }.to raise_error("Unknown target type test")
+
+                Config.any_instance.stubs(:collectives).returns(["test"])
+                Util.make_subscriptions("test", :broadcast, "test")
+            end
+
+            it "should return a subscription for each collective" do
+                Config.any_instance.stubs(:collectives).returns(["collective1", "collective2"])
+                Util.make_subscriptions("test", :broadcast).should == [{:type=>:broadcast,
+                                                                        :agent=>"test",
+                                                                        :collective=>"collective1"},
+                                                                       {:type=>:broadcast,
+                                                                        :agent=>"test",
+                                                                        :collective=>"collective2"}]
+            end
+
+            it "should validate given collective" do
+                Config.any_instance.stubs(:collectives).returns(["collective1", "collective2"])
+
+                expect {
+                    Util.make_subscriptions("test", :broadcast, "test")
+                }.to raise_error("Unknown collective 'test' known collectives are 'collective1, collective2'")
+            end
+
+            it "should return a single subscription array given a collective" do
+                Config.any_instance.stubs(:collectives).returns(["collective1", "collective2"])
+                Util.make_subscriptions("test", :broadcast, "collective1").should == [{:type=>:broadcast, :agent=>"test", :collective=>"collective1"}]
+            end
+        end
+
         describe "#make_target" do
             it "should check for correct types" do
                 expect {
@@ -70,31 +104,34 @@ module MCollective
 
         describe "#subscribe" do
             it "should subscribe to multiple topics given an Array" do
-                MCollective::Connector::Stomp.any_instance.expects(:subscribe).with("foo").once
-                MCollective::Connector::Stomp.any_instance.expects(:subscribe).with("bar").once
+                subs1 = {:agent => "test_agent", :type => "test_type", :collective => "test_collective"}
+                subs2 = {:agent => "test_agent2", :type => "test_type2", :collective => "test_collective2"}
 
-                Util.subscribe(["foo", "bar"])
+                MCollective::Connector::Stomp.any_instance.expects(:subscribe).with("test_agent", "test_type", "test_collective").once
+                MCollective::Connector::Stomp.any_instance.expects(:subscribe).with("test_agent2", "test_type2", "test_collective2").once
+
+                Util.subscribe([subs1, subs2])
             end
 
-            it "should subscribe to a single topic given a string" do
-                MCollective::Connector::Stomp.any_instance.expects(:subscribe).with("foo").once
-
-                Util.subscribe("foo")
+            it "should subscribe to a single topic given a hash" do
+                MCollective::Connector::Stomp.any_instance.expects(:subscribe).with("test_agent", "test_type", "test_collective").once
+                Util.subscribe({:agent => "test_agent", :type => "test_type", :collective => "test_collective"})
             end
         end
 
         describe "#unsubscribe" do
             it "should unsubscribe to multiple topics given an Array" do
-                MCollective::Connector::Stomp.any_instance.expects(:unsubscribe).with("foo").once
-                MCollective::Connector::Stomp.any_instance.expects(:unsubscribe).with("bar").once
+                subs1 = {:agent => "test_agent", :type => "test_type", :collective => "test_collective"}
+                subs2 = {:agent => "test_agent2", :type => "test_type2", :collective => "test_collective2"}
+                MCollective::Connector::Stomp.any_instance.expects(:unsubscribe).with("test_agent", "test_type", "test_collective").once
+                MCollective::Connector::Stomp.any_instance.expects(:unsubscribe).with("test_agent2", "test_type2", "test_collective2").once
 
-                Util.unsubscribe(["foo", "bar"])
+                Util.unsubscribe([subs1, subs2])
             end
 
-            it "should subscribe to a single topic given a string" do
-                MCollective::Connector::Stomp.any_instance.expects(:unsubscribe).with("foo").once
-
-                Util.unsubscribe("foo")
+            it "should subscribe to a single topic given a hash" do
+                MCollective::Connector::Stomp.any_instance.expects(:unsubscribe).with("test_agent", "test_type", "test_collective").once
+                Util.unsubscribe({:agent => "test_agent", :type => "test_type", :collective => "test_collective"})
             end
         end
 

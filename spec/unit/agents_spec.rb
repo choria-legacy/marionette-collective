@@ -47,7 +47,7 @@ module MCollective
                 Config.any_instance.expects(:configured).returns(true).at_least_once
                 Config.any_instance.expects(:libdir).returns([@tmpdir])
                 PluginManager.expects(:delete).with("foo_agent").once
-                Util.expects(:make_target).with("foo", :command).returns("foo_target")
+                Util.expects(:make_subscriptions).with("foo", :broadcast).returns("foo_target")
                 Util.expects(:unsubscribe).with("foo_target")
 
                 a = Agents.new({"foo" => 1})
@@ -98,8 +98,8 @@ module MCollective
                 Config.any_instance.stubs(:libdir).returns([@tmpdir])
                 Agents.any_instance.stubs("clear!").returns(true)
                 PluginManager.stubs(:loadclass).returns(true)
-                Util.stubs("subscribe").with("test_target").returns(true)
-                Util.stubs("make_target").with("test", :command).returns("test_target")
+                Util.stubs(:make_subscriptions).with("test", :broadcast).returns([{:agent => "test", :type => :broadcast, :collective => "test"}])
+                Util.stubs(:subscribe).with([{:agent => "test", :type => :broadcast, :collective => "test"}]).returns(true)
                 Agents.stubs(:findagentfile).returns(File.join([@agentsdir, "test.rb"]))
                 Agents.any_instance.stubs("activate_agent?").returns(true)
 
@@ -150,8 +150,8 @@ module MCollective
 
             it "should add the agent to the plugin manager and subscribe" do
                 PluginManager.expects("<<").with({:type => "foo_agent", :class => "MCollective::Agent::Foo", :single_instance => false})
-                Util.expects("make_target").with("foo", :command).returns("foo_target")
-                Util.expects("subscribe").with("foo_target").returns(true)
+                Util.stubs(:make_subscriptions).with("foo", :broadcast).returns([{:agent => "foo", :type => :broadcast, :collective => "test"}])
+                Util.expects("subscribe").with([{:type => :broadcast, :agent => 'foo', :collective => 'test'}]).returns(true)
                 Agents.any_instance.expects(:findagentfile).with("foo").returns(File.join([@agentsdir, "foo.rb"]))
 
                 FileUtils.touch(File.join([@agentsdir, "foo.rb"]))

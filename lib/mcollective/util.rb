@@ -172,29 +172,41 @@ module MCollective
             end
         end
 
-        # Helper to subscribe to a topic on multiple collectives or just one
-        def self.subscribe(topics)
-            connection = PluginManager["connector_plugin"]
+        def self.make_subscriptions(agent, type, collective=nil)
+            config = Config.instance
 
-            if topics.is_a?(Array)
-                topics.each do |topic|
-                    connection.subscribe(topic)
+            raise("Unknown target type #{type}") unless [:broadcast, :directed, :reply].include?(type)
+
+            if collective.nil?
+                config.collectives.map do |c|
+                    {:agent => agent, :type => type, :collective => c}
                 end
             else
-                connection.subscribe(topics)
+                raise("Unknown collective '#{collective}' known collectives are '#{config.collectives.join ', '}'") unless config.collectives.include?(collective)
+
+                [{:agent => agent, :type => type, :collective => collective}]
+            end
+        end
+
+        # Helper to subscribe to a topic on multiple collectives or just one
+        def self.subscribe(targets)
+            connection = PluginManager["connector_plugin"]
+
+            targets = [targets].flatten
+
+            targets.each do |target|
+                connection.subscribe(target[:agent], target[:type], target[:collective])
             end
         end
 
         # Helper to unsubscribe to a topic on multiple collectives or just one
-        def self.unsubscribe(topics)
+        def self.unsubscribe(targets)
             connection = PluginManager["connector_plugin"]
 
-            if topics.is_a?(Array)
-                topics.each do |topic|
-                    connection.unsubscribe(topic)
-                end
-            else
-                connection.unsubscribe(topics)
+            targets = [targets].flatten
+
+            targets.each do |target|
+                connection.unsubscribe(target[:agent], target[:type], target[:collective])
             end
         end
 

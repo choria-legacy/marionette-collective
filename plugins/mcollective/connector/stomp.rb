@@ -67,7 +67,7 @@ module MCollective
             end
 
             # Connects to the Stomp middleware
-            def connect
+            def connect(connector = ::Stomp::Connection)
                 if @connection
                     Log.debug("Already connection, not re-initializing connection")
                     return
@@ -89,7 +89,7 @@ module MCollective
                         password = get_env_or_option("STOMP_PASSWORD", "stomp.password")
 
                         Log.debug("Connecting to #{host}:#{port}")
-                        @connection = ::Stomp::Connection.new(user, password, host, port, true)
+                        @connection = connector.new(user, password, host, port, true)
                     else
                         pools = @config.pluginconf["stomp.pool.size"].to_i
                         hosts = []
@@ -117,12 +117,12 @@ module MCollective
                         connection[:max_reconnect_delay] = get_option("stomp.pool.max_reconnect_delay", 30.0).to_f
                         connection[:use_exponential_back_off] = get_bool_option("stomp.pool.use_exponential_back_off", true)
                         connection[:back_off_multiplier] = get_bool_option("stomp.pool.back_off_multiplier", 2).to_i
-                        connection[:max_reconnect_attempts] = get_option("stomp.pool.max_reconnect_attempts", 0)
+                        connection[:max_reconnect_attempts] = get_option("stomp.pool.max_reconnect_attempts", 0).to_i
                         connection[:randomize] = get_bool_option("stomp.pool.randomize", false)
                         connection[:backup] = get_bool_option("stomp.pool.backup", false)
                         connection[:timeout] = get_option("stomp.pool.timeout", -1).to_i
 
-                        @connection = ::Stomp::Connection.new(connection)
+                        @connection = connector.new(connection)
                     end
                 rescue Exception => e
                     raise("Could not connect to Stomp Server: #{e}")
@@ -159,7 +159,9 @@ module MCollective
             end
 
             # Subscribe to a topic or queue
-            def subscribe(source)
+            def subscribe(agent, type, collective)
+                source = make_target(agent, type, collective)
+
                 unless @subscriptions.include?(source)
                     Log.debug("Subscribing to #{source}")
                     @connection.subscribe(source)
@@ -168,7 +170,9 @@ module MCollective
             end
 
             # Subscribe to a topic or queue
-            def unsubscribe(source)
+            def unsubscribe(agent, type, collective)
+                source = make_target(agent, type, collective)
+
                 Log.debug("Unsubscribing from #{source}")
                 @connection.unsubscribe(source)
                 @subscriptions.delete(source)
@@ -180,7 +184,6 @@ module MCollective
                 @connection.disconnect
             end
 
-            private
             def msgheaders
                 headers = {}
                 headers = {"priority" => @msgpriority} if @msgpriority > 0
@@ -223,6 +226,15 @@ module MCollective
                 else
                     return default
                 end
+            end
+
+            def make_target(agent, type, collective)
+                raise("Unknown target type #{type}") unless [:broadcast, :directed, :reply].include?(type)
+                raise("Unknown collective '#{collective}' known collectives are '#{@config.collectives.join ', '}'") unless @config.collectives.include?(collective)
+
+                type = :command unless type == :reply
+
+                ["#{@config.topicprefix}#{collective}", agent, type].join(@config.topicsep)
             end
         end
     end

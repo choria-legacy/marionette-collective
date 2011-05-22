@@ -15,7 +15,7 @@ module MCollective
         def clear!
             @@agents.each_key do |agent|
                 PluginManager.delete "#{agent}_agent"
-                Util.unsubscribe(Util.make_target(agent, :command))
+                Util.unsubscribe(Util.make_subscriptions(agent, :broadcast))
             end
 
             @@agents = {}
@@ -54,7 +54,7 @@ module MCollective
                 if activate_agent?(agentname)
                     PluginManager << {:type => "#{agentname}_agent", :class => classname, :single_instance => single_instance}
 
-                    Util.subscribe(Util.make_target(agentname, :command)) unless @@agents.include?(agentname)
+                    Util.subscribe(Util.make_subscriptions(agentname, :broadcast)) unless @@agents.include?(agentname)
 
                     @@agents[agentname] = {:file => agentfile}
                     return true
