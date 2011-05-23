@@ -33,12 +33,16 @@ module MCollective
 
             Log.debug("Looking for configuration management classes in #{cfile}")
 
-            File.readlines(cfile).each do |k|
-                if klass.is_a?(Regexp)
-                    return true if k.chomp.match(klass)
-                else
-                    return true if k.chomp == klass
+            begin
+                File.readlines(cfile).each do |k|
+                    if klass.is_a?(Regexp)
+                        return true if k.chomp.match(klass)
+                    else
+                        return true if k.chomp == klass
+                    end
                 end
+            rescue
+                Log.warn("Could not open #{cfile} for configuration management classes lookup")
             end
 
             false
