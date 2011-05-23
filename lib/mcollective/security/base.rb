@@ -63,7 +63,7 @@ module MCollective
                         when /puppet_class|cf_class/
                             filter[key].each do |f|
                                 Log.debug("Checking for class #{f}")
-                                if Util.has_cf_class?(f) then
+                                if Util.has_cf_class?(f) or Util.has_cf_recipe?(f) then
                                     Log.debug("Passing based on configuration management class #{f}")
                                     passed += 1
                                 else

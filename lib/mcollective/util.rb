@@ -33,16 +33,43 @@ module MCollective
 
             Log.debug("Looking for configuration management classes in #{cfile}")
 
-            File.readlines(cfile).each do |k|
-                if klass.is_a?(Regexp)
-                    return true if k.chomp.match(klass)
-                else
-                    return true if k.chomp == klass
+            begin
+                File.readlines(cfile).each do |k|
+                    if klass.is_a?(Regexp)
+                        return true if k.chomp.match(klass)
+                    else
+                        return true if k.chomp == klass
+                    end
                 end
+            rescue
+                Log.debug("could not open #{cfile}")
             end
 
             false
         end
+
+        # Same as above, but looking for opcodes chef recipes
+        def self.has_cf_recipe?(klass)
+            klass = Regexp.new(klass.gsub("\/", "")) if klass.match("^/")
+            cb_dir = Config.instance.cookbookdir
+
+            Log.debug("Looking for configuration management attributes in #{cb_dir}")
+
+            recipes=[]
+            Dir.glob(cb_dir+"/*/recipes/*.rb").each do |recipe|
+                recipes.push recipe.gsub(cb_dir+"/","").gsub("/recipes/","::").gsub(".rb","")
+            end
+
+            if klass.is_a?(Regexp)
+                lookup = recipes.map { |r| r.match(klass).nil? }.uniq
+                return true if lookup.include? false
+            else
+                return true if recipes.include? klass
+            end
+
+            false
+        end
+
 
         # Gets the value of a specific fact, mostly just a duplicate of MCollective::Facts.get_fact
         # but it kind of goes with the other classes here
