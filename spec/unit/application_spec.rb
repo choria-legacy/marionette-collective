@@ -94,7 +94,7 @@ module MCollective
 
             it "should print an error to STDERR on error" do
                 IO.any_instance.expects(:puts).with("Validation of key failed: failed").at_least_once
-                Application.any_instance.stubs("exit!").returns(true)
+                Application.any_instance.stubs("exit").returns(true)
 
                 a = Application.new
                 a.validate_option(Proc.new {|v| "failed"}, "key", 1)
@@ -102,7 +102,7 @@ module MCollective
 
             it "should exit on valdation error" do
                 IO.any_instance.expects(:puts).at_least_once
-                Application.any_instance.stubs("exit!").returns(true)
+                Application.any_instance.stubs("exit").returns(true)
 
                 a = Application.new
                 a.validate_option(Proc.new {|v| "failed"}, "key", 1)
@@ -174,7 +174,7 @@ module MCollective
 
             it "should support validation" do
                 IO.any_instance.expects(:puts).with("Validation of foo failed: failed").at_least_once
-                Application.any_instance.stubs("exit!").returns(true)
+                Application.any_instance.stubs("exit").returns(true)
                 Application.any_instance.stubs("main").returns(true)
 
                 Application.option :foo,
@@ -209,7 +209,7 @@ module MCollective
             end
 
             it "should enforce required options" do
-                Application.any_instance.stubs("exit!").returns(true)
+                Application.any_instance.stubs("exit").returns(true)
                 Application.any_instance.stubs("main").returns(true)
                 OptionParser.any_instance.stubs("parse!").returns(true)
                 IO.any_instance.expects(:puts).with(anything).at_least_once
@@ -312,10 +312,10 @@ module MCollective
         describe "#main" do
             it "should detect applications without a #main" do
                 IO.any_instance.expects(:puts).with("Applications need to supply a 'main' method")
-                IO.any_instance.expects(:puts).with(regexp_matches(/SystemExit/))
-                Application.any_instance.stubs("exit!").returns(true)
 
-                Application.new.run
+                expect {
+                    Application.new.run
+                }.to raise_error(SystemExit)
             end
         end
 
