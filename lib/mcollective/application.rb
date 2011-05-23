@@ -90,7 +90,7 @@ module MCollective
 
             unless validation_result == true
                 STDERR.puts "Validation of #{name} failed: #{validation_result}"
-                exit! 1
+                exit 1
             end
         end
 
@@ -177,7 +177,7 @@ module MCollective
 
             unless validation_passed
                 STDERR.puts "\nPlease run with --help for detailed help"
-                exit! 1
+                exit 1
             end
 
             post_option_parser(configuration) if respond_to?(:post_option_parser)
@@ -216,7 +216,7 @@ module MCollective
 
             MCollective::PluginManager["connector_plugin"].disconnect rescue true
 
-            exit! 1
+            exit 1
         end
 
         # The main logic loop, builds up the options, validate configuration and calls
@@ -230,6 +230,9 @@ module MCollective
             main
 
             MCollective::PluginManager["connector_plugin"].disconnect rescue true
+
+        rescue SystemExit
+            raise
         rescue Exception => e
             application_failure(e)
         end
