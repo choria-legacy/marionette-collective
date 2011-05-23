@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/05/23|Log a warning when the CF file parsing fails rather than raise a whole ruby exception|7627|
 |2011/05/23|Allow applications to use the exit method as would normally be expected|7626|
 |2011/05/22|Refactor subscribe and unsubscribe so that middleware structure is entirely contained in the connectors|7620|
 |2011/05/21|Add the ability for agents to programatically declare if they should work on a node|7583|

@@ -41,8 +41,8 @@ module MCollective
                         return true if k.chomp == klass
                     end
                 end
-            rescue
-                Log.warn("Could not open #{cfile} for configuration management classes lookup")
+            rescue Exception => e
+                Log.warn("Parsing classes file '#{cfile}' failed: #{e.class}: #{e}")
             end
 
             false

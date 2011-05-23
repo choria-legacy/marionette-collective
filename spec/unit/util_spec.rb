@@ -11,6 +11,48 @@ module MCollective
             PluginManager << {:type => "connector_plugin", :class => MCollective::Connector::Stomp.new}
         end
 
+        describe "#has_cf_class?" do
+            before do
+                logger = mock
+                logger.stubs(:log)
+                logger.stubs(:start)
+                Log.configure(logger)
+
+                config = mock
+                config.stubs(:classesfile).returns("/some/file")
+                Config.expects(:instance).returns(config)
+            end
+
+            it "should read the classes lines from the correct file" do
+                File.expects(:readlines).with("/some/file")
+
+                Util.has_cf_class?("test")
+            end
+
+            it "should support regular expression searches" do
+                File.stubs(:readlines).returns(["test_class_test"])
+                String.any_instance.expects(:match).with("^/").returns(true)
+                String.any_instance.expects(:match).with(Regexp.new("class")).returns(true)
+
+                Util.has_cf_class?("/class/").should == true
+            end
+
+            it "should support exact string matches" do
+                File.stubs(:readlines).returns(["test_class_test"])
+                String.any_instance.expects(:match).with("^/").returns(false)
+                String.any_instance.expects(:match).with(Regexp.new("test_class_test")).never
+
+                Util.has_cf_class?("test_class_test").should == true
+            end
+
+            it "should report a warning when the classes file cannot be parsed" do
+                File.stubs(:readlines).returns(nil)
+                Log.expects(:warn).with("Parsing classes file '/some/file' failed: NoMethodError: undefined method `each' for nil:NilClass")
+
+                Util.has_cf_class?("test_class_test").should == false
+            end
+        end
+
         describe "#shellescape" do
             it "should return '' for empty strings" do
                 Util.shellescape("").should == "''"

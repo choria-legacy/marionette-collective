@@ -12,6 +12,7 @@ require 'rspec/mocks'
 require 'mocha'
 require 'ostruct'
 require 'tmpdir'
+require 'tempfile'
 
 require 'monkey_patches/instance_variable_defined'
 
