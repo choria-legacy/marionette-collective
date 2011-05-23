@@ -8,7 +8,8 @@ module MCollective
                     :securityprovider, :factsource, :registration, :registerinterval, :topicsep,
                     :classesfile, :rpcauditprovider, :rpcaudit, :configdir, :rpcauthprovider,
                     :rpcauthorization, :color, :configfile, :rpchelptemplate, :rpclimitmethod,
-                    :logger_type, :fact_cache_time, :collectives, :main_collective, :ssl_cipher
+                    :logger_type, :fact_cache_time, :collectives, :main_collective, :ssl_cipher,
+                    :cookbookdir
 
         def initialize
             @configured = false
@@ -91,6 +92,8 @@ module MCollective
                                     @fact_cache_time = val.to_i
                                 when "ssl_cipher"
                                     @ssl_cipher = val
+                                when "cookbookdir"
+                                    @cookbookdir = val
                                 else
                                     raise("Unknown config parameter #{key}")
                             end
@@ -145,6 +148,7 @@ module MCollective
             @collectives = ["mcollective"]
             @main_collective = @collectives.first
             @ssl_cipher = "aes-256-cbc"
+            @cookbookdir = "/var/cache/chef/cookbooks"
         end
 
         def read_plugin_config_dir(dir)
