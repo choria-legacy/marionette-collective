@@ -143,7 +143,6 @@ module MCollective
             def self.activate?
                 agent_name = self.to_s.split("::").last.downcase
 
-                Log.debug("Meh? : #{respond_to?("meh")}")
                 Log.debug("Starting default activation checks for #{agent_name}")
 
                 should_activate = Config.instance.pluginconf["#{agent_name}.activate_agent"]

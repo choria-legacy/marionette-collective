@@ -147,7 +147,7 @@ module MCollective
         def reply(sender, target, msg, requestid, callerid)
             reply = @security.encodereply(sender, target, msg, requestid, callerid)
 
-            @connection.send(target, reply)
+            @connection.publish(target, reply)
 
             @stats.sent
         end

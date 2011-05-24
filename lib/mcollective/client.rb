@@ -62,7 +62,7 @@ module MCollective
             end
 
             Timeout.timeout(2) do
-                @connection.send(target, req)
+                @connection.publish(target, req)
             end
 
             reqid

@@ -158,7 +158,7 @@ module MCollective
                 end
             end
 
-            describe "#send" do
+            describe "#publish" do
                 before do
                     @connection.stubs("respond_to?").with("publish").returns(true)
                     @connection.stubs(:publish).with("test", "msg", {}).returns(true)
@@ -170,7 +170,7 @@ module MCollective
                     @c.instance_variable_set("@base64", true)
                     @c.expects(:msgheaders).returns({})
 
-                    @c.send("test", "msg")
+                    @c.publish("test", "msg")
                 end
 
                 it "should not base64 encode if not configured to do so" do
@@ -179,14 +179,14 @@ module MCollective
 
                     SSL.expects(:base64_encode).never
 
-                    @c.send("test", "msg")
+                    @c.publish("test", "msg")
                 end
 
                 it "should use the publish method if it exists" do
                     @connection.expects(:publish).with("test", "msg", {}).once
                     @c.stubs(:msgheaders).returns({})
 
-                    @c.send("test", "msg")
+                    @c.publish("test", "msg")
                 end
 
                 it "should use the send method if publish does not exist" do
@@ -194,14 +194,14 @@ module MCollective
                     @connection.expects(:send).with("test", "msg", {}).once
                     @c.stubs(:msgheaders).returns({})
 
-                    @c.send("test", "msg")
+                    @c.publish("test", "msg")
                 end
 
-                it "should send the correct message to the correct target with msgheaders" do
+                it "should publish the correct message to the correct target with msgheaders" do
                     @connection.expects(:publish).with("test", "msg", {"test" => "test"}).once
                     @c.expects(:msgheaders).returns({"test" => "test"})
 
-                    @c.send("test", "msg")
+                    @c.publish("test", "msg")
                 end
 
             end

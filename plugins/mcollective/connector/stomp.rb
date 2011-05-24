@@ -145,7 +145,7 @@ module MCollective
             end
 
             # Sends a message to the Stomp connection
-            def send(target, msg)
+            def publish(target, msg)
                 Log.debug("Sending a message to Stomp target '#{target}'")
 
                 msg = SSL.base64_encode(msg) if @base64

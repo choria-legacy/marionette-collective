@@ -7,7 +7,7 @@ module MCollective
     # receive       - Receive data from the middleware, should act like a blocking call only returning if/when data
     #                 was received.  It should get data from all subscribed channels/topics.  Individual messages
     #                 should be returned as MCollective::Request objects with the payload provided
-    # send          - Takes a target and msg, should send the message to the supplied target topic or destination
+    # publish       - Takes a target and msg, should send the message to the supplied target topic or destination
     # subscribe     - Adds a subscription to a specific message source
     # unsubscribe   - Removes a subscription to a specific message source
     # disconnect    - Disconnects from the middleware

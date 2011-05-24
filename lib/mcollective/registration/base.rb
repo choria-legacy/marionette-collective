@@ -33,7 +33,7 @@ module MCollective
                                 req = PluginManager["security_plugin"].encoderequest(config.identity, target, registration_message, reqid, filter)
 
                                 Log.debug("Sending registration #{reqid} to #{target}")
-                                connection.send(target, req)
+                                connection.publish(target, req)
                             else
                                 Log.debug("Skipping registration due to nil body")
                             end
