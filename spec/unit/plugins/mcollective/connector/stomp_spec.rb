@@ -159,12 +159,16 @@ module MCollective
             end
 
             describe "#send" do
+                before do
+                    @connection.stubs("respond_to?").with("publish").returns(true)
+                    @connection.stubs(:publish).with("test", "msg", {}).returns(true)
+                end
+
                 it "should base64 encode a message if configured to do so" do
-                    @connection.expects(:publish)
-                    SSL.expects(:base64_encode).with("msg").once
+                    SSL.expects(:base64_encode).with("msg").returns("msg").once
 
                     @c.instance_variable_set("@base64", true)
-                    @c.expects(:msgheaders)
+                    @c.expects(:msgheaders).returns({})
 
                     @c.send("test", "msg")
                 end
@@ -186,6 +190,7 @@ module MCollective
                 end
 
                 it "should use the send method if publish does not exist" do
+                    @connection.expects("respond_to?").with('publish').returns(false)
                     @connection.expects(:send).with("test", "msg", {}).once
                     @c.stubs(:msgheaders).returns({})
 
