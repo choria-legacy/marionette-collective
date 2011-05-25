@@ -8,7 +8,8 @@ module MCollective
                     :securityprovider, :factsource, :registration, :registerinterval, :topicsep,
                     :classesfile, :rpcauditprovider, :rpcaudit, :configdir, :rpcauthprovider,
                     :rpcauthorization, :color, :configfile, :rpchelptemplate, :rpclimitmethod,
-                    :logger_type, :fact_cache_time, :collectives, :main_collective, :ssl_cipher
+                    :logger_type, :fact_cache_time, :collectives, :main_collective, :ssl_cipher,
+                    :registration_collective
 
         def initialize
             @configured = false
@@ -33,6 +34,8 @@ module MCollective
                                     @topicsep = val
                                 when "registration"
                                     @registration = val.capitalize
+                                when "registration_collective"
+                                    @registration_collective = val
                                 when "registerinterval"
                                     @registerinterval = val.to_i
                                 when "collectives"
@@ -125,6 +128,7 @@ module MCollective
             @identity = Socket.gethostname
             @registration = "Agentlist"
             @registerinterval = 0
+            @registration_collective = nil
             @topicsep = "."
             @classesfile = "/var/lib/puppet/classes.txt"
             @rpcaudit = false

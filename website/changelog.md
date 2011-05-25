@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/05/25|Make the target collective for registration messages configurable|7650|
 |2011/05/24|Rename the connector plugins send method to publish to avoid issues ruby Object#send|7623|
 |2011/05/23|Log a warning when the CF file parsing fails rather than raise a whole ruby exception|7627|
 |2011/05/23|Allow applications to use the exit method as would normally be expected|7626|

@@ -17,33 +17,71 @@ module MCollective
             # The actual registration notices comes from the 'body' method of the registration
             # plugins.
             def run(connection)
-                config = Config.instance
-                return if config.registerinterval == 0
+                return false if interval == 0
 
                 Thread.new do
                     loop do
                         begin
-                            target = Util.make_target("registration", :command, config.main_collective)
-                            reqid = Digest::MD5.hexdigest("#{config.identity}-#{Time.now.to_f.to_s}-#{target}")
-                            filter = {"agent" => "registration"}
+                            publish(body, connection)
 
-                            registration_message = body
-
-                            unless registration_message.nil?
-                                req = PluginManager["security_plugin"].encoderequest(config.identity, target, registration_message, reqid, filter)
-
-                                Log.debug("Sending registration #{reqid} to #{target}")
-                                connection.publish(target, req)
-                            else
-                                Log.debug("Skipping registration due to nil body")
-                            end
-
-                            sleep config.registerinterval
+                            sleep interval
                         rescue Exception => e
                             Log.error("Sending registration message failed: #{e}")
-                            sleep config.registerinterval
+                            sleep interval
                         end
                     end
+                end
+            end
+
+            def config
+                Config.instance
+            end
+
+            def identity
+                config.identity
+            end
+
+            def msg_filter
+                {"agent" => "registration"}
+            end
+
+            def msg_id(target)
+                reqid = Digest::MD5.hexdigest("#{config.identity}-#{Time.now.to_f.to_s}-#{target}")
+            end
+
+            def msg_target
+                Util.make_target("registration", :command, target_collective)
+            end
+
+            def target_collective
+                main_collective = config.main_collective
+
+                collective = config.registration_collective || main_collective
+
+                unless config.collectives.include?(collective)
+                    Log.warn("Sending registration to #{main_collective}: #{collective} is not a valid collective")
+                    collective = main_collective
+                end
+
+                return collective
+            end
+
+            def interval
+                config.registerinterval
+            end
+
+            def publish(message, connection)
+                unless message
+                    Log.debug("Skipping registration due to nil body")
+                else
+                    target = msg_target
+                    reqid = msg_id(target)
+
+                    req = PluginManager["security_plugin"].encoderequest(identity, target, message, reqid, msg_filter)
+
+                    Log.debug("Sending registration #{reqid} to #{target}")
+
+                    connection.publish(target, req)
                 end
             end
         end

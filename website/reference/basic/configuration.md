@@ -53,6 +53,7 @@ The server configuration file should be root only readable
 |factsource|Facter|Which fact plugin to use|
 |registration|Agentlist|[Registration] plugin to use|
 |registerinterval|120|How many seconds to sleep between registration messages, setting this to zero disables registration|
+|registration_collective|development|Which sub-collective to send registration messages to|
 |classesfile|/var/lib/puppet/classes.txt|Where to find a list of classes configured by your configuration management system|
 |rpcaudit|1|Enables [SimpleRPC Auditing][Auditing]|
 |rpcauditprovider|Logfile|Enables auditing using _MCollective::Audit::Logfile_|
