@@ -326,45 +326,41 @@ module MCollective
             # TODO: this should be plugins, 1 per validatin method so users can add their own
             #       at the moment i have it here just to proof the point really
             def validate(key, validation)
-                raise MissingRPCData, "please supply a #{key}" unless @request.include?(key)
+                raise MissingRPCData, "please supply a #{key} argument" unless @request.include?(key)
 
-                begin
-                    if validation.is_a?(Regexp)
-                        raise InvalidRPCData, "#{key} should match #{validation}" unless @request[key].match(validation)
+                if validation.is_a?(Regexp)
+                    raise InvalidRPCData, "#{key} should match #{validation}" unless @request[key].match(validation)
 
-                    elsif validation.is_a?(Symbol)
-                        case validation
-                            when :shellsafe
-                                raise InvalidRPCData, "#{key} should be a String" unless @request[key].is_a?(String)
+                elsif validation.is_a?(Symbol)
+                    case validation
+                        when :shellsafe
+                            raise InvalidRPCData, "#{key} should be a String" unless @request[key].is_a?(String)
 
-                                ['`', '$', ';', '|', '&&', '>', '<'].each do |chr|
-                                    raise InvalidRPCData, "#{key} should not have #{chr} in it" if @request[key].match(Regexp.escape(chr))
-                                end
+                            ['`', '$', ';', '|', '&&', '>', '<'].each do |chr|
+                                raise InvalidRPCData, "#{key} should not have #{chr} in it" if @request[key].match(Regexp.escape(chr))
+                            end
 
-                            when :ipv6address
-                                begin
-                                    require 'ipaddr'
-                                    ip = IPAddr.new(@request[key])
-                                    raise InvalidRPCData, "#{key} should be an ipv6 address" unless ip.ipv6?
-                                rescue
-                                    raise InvalidRPCData, "#{key} should be an ipv6 address"
-                                end
+                        when :ipv6address
+                            begin
+                                require 'ipaddr'
+                                ip = IPAddr.new(@request[key])
+                                raise InvalidRPCData, "#{key} should be an ipv6 address" unless ip.ipv6?
+                            rescue
+                                raise InvalidRPCData, "#{key} should be an ipv6 address"
+                            end
 
-                            when :ipv4address
-                                begin
-                                    require 'ipaddr'
-                                    ip = IPAddr.new(@request[key])
-                                    raise InvalidRPCData, "#{key} should be an ipv4 address" unless ip.ipv4?
-                                rescue
-                                    raise InvalidRPCData, "#{key} should be an ipv4 address"
-                                end
+                        when :ipv4address
+                            begin
+                                require 'ipaddr'
+                                ip = IPAddr.new(@request[key])
+                                raise InvalidRPCData, "#{key} should be an ipv4 address" unless ip.ipv4?
+                            rescue
+                                raise InvalidRPCData, "#{key} should be an ipv4 address"
+                            end
 
-                        end
-                    else
-                        raise InvalidRPCData, "#{key} should be a #{validation}" unless  @request[key].is_a?(validation)
                     end
-                rescue Exception => e
-                    raise UnknownRPCError, "Failed to validate #{key}: #{e}"
+                else
+                    raise InvalidRPCData, "#{key} should be a #{validation}" unless  @request[key].is_a?(validation)
                 end
             end
 
