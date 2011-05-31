@@ -317,6 +317,19 @@ module MCollective
                     Application.new.run
                 }.to raise_error(SystemExit)
             end
+
+            it "should raise SystemExit exceptions for exit events" do
+                connector = mock
+                connector.expects(:disconnect)
+                PluginManager.expects("[]").with("connector_plugin").returns(connector)
+
+                a = Application.new
+                a.expects(:main).raises(SystemExit)
+
+                expect {
+                    a.run
+                }.to raise_error(SystemExit)
+            end
         end
 
         describe "#configuration" do
@@ -337,6 +350,16 @@ module MCollective
 
                 ARGV.clear
                 @argv_backup.each{|a| ARGV << a}
+            end
+        end
+
+        describe "#disconnect" do
+            it "should disconnect from the connector plugin" do
+                connector = mock
+                connector.expects(:disconnect)
+                PluginManager.expects("[]").with("connector_plugin").returns(connector)
+
+                Application.new.disconnect
             end
         end
     end

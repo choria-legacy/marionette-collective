@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/05/31|Disconnect from the middleware when an application calls exit|7712|
 |2011/05/29|Validations failure in RPC agents will now raise the correct exceptions as documented|7711|
 |2011/05/25|Make the target collective for registration messages configurable|7650|
 |2011/05/24|Rename the connector plugins send method to publish to avoid issues ruby Object#send|7623|

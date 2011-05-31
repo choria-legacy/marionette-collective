@@ -214,7 +214,7 @@ module MCollective
                 e.backtrace.each{|l| STDERR.puts "\tfrom #{l}"}
             end
 
-            MCollective::PluginManager["connector_plugin"].disconnect rescue true
+            disconnect
 
             exit 1
         end
@@ -229,12 +229,18 @@ module MCollective
 
             main
 
-            MCollective::PluginManager["connector_plugin"].disconnect rescue true
+            disconnect
 
         rescue SystemExit
+            disconnect
             raise
         rescue Exception => e
             application_failure(e)
+        end
+
+        def disconnect
+            MCollective::PluginManager["connector_plugin"].disconnect
+        rescue
         end
 
         # Fake abstract class that logs if the user tries to use an application without
