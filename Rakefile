@@ -68,11 +68,14 @@ task :dmg => [:clean, :doc] do
 
     raise "\n\n================\nTo create DMGs, rake must be run as root.  Exiting.\n================" unless Process.uid == 0
 
-    unless File.exist?("/usr/local/share/luggage/examples/mcollective/Makefile")
-      puts "\n\n================\n'/usr/local/share/luggage/examples/mcollective/Makefile' was not found."
-      puts "Visit http://github.com/glarizza/luggage and clone to /usr/local/share.\n================"
-      raise "Exiting."
-    end 
+    if not File.exist?("/usr/local/share/luggage/examples/mcollective/Makefile")
+      if File.directory?("/usr/local/share")
+        safe_system("git clone git@github.com:glarizza/luggage.git /usr/local/share/luggage")
+      else
+        FileUtils.mkdir_p("/usr/local/share")
+        safe_system("git clone git@github.com:glarizza/luggage.git /usr/local/share/luggage")
+      end
+    end
 
     safe_system("cd /usr/local/share/luggage/examples/mcollective && make dmg PACKAGE_VERSION=#{PROJ_VERSION} TYPE=CLIENT")
     safe_system("cd /usr/local/share/luggage/examples/mcollective && make dmg PACKAGE_VERSION=#{PROJ_VERSION} TYPE=COMMON")
