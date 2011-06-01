@@ -68,6 +68,22 @@ restart() {
     start
 }
 
+reload_agents() {
+    echo -n "Reloading mcollective agents: "
+    killproc ${pidopts} ${mcollectived} -USR1
+    RETVAL=$?
+    echo
+    return $RETVAL
+}
+
+reload_loglevel() {
+    echo -n "Cycling mcollective logging level: "
+    killproc ${pidopts} ${mcollectived} -USR2
+    RETVAL=$?
+    echo
+    return $RETVAL
+}
+
 rh_status() {
     status ${pidopts} ${mcollectived}
     RETVAL=$?
@@ -93,11 +109,17 @@ case "$1" in
         rh_status_q || exit 0
         restart
         ;;
+    reload-agents)
+        reload_agents
+        ;;
+    reload-loglevel)
+        reload_loglevel
+        ;;
     status)
         rh_status
         ;;
     *)
-        echo "Usage: mcollectived {start|stop|restart|condrestart|status}"
+        echo "Usage: mcollectived {start|stop|restart|condrestart|reload-agents|reload-loglevel|status}"
         RETVAL=2
         ;;
 esac
