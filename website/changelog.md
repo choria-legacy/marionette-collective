@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/06/02|Correct parsing of MCOLLECTIVE_EXTRA_OPTS in cases where no config related settings were set|7755|
 |2011/05/23|Allow applications to use the exit method as would normally be expected|7626|
 |2011/05/16|Allow _._ in fact names|7532|
 |2011/05/16|Fix compatability issues with RH4 init system|7448|
