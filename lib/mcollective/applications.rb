@@ -56,6 +56,8 @@ module MCollective
                     return word
                 elsif word =~ /\-\-config=/
                     return word
+                else
+                    return ""
                 end
             end
         end
