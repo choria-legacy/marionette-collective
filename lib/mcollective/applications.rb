@@ -55,10 +55,10 @@ module MCollective
                     return word
                 elsif word =~ /\-\-config=/
                     return word
-                else
-                    return ""
                 end
             end
+
+            return ""
         end
 
         # We need to know the config file in order to know the libdir
