@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/06/06|Remove the sshkey, it's being moved to the plugin repository|7794|
 |2011/06/02|Correct parsing of MCOLLECTIVE_EXTRA_OPTS in cases where no config related settings were set|7755|
 |2011/05/31|Disconnect from the middleware when an application calls exit|7712|
 |2011/05/29|Validations failure in RPC agents will now raise the correct exceptions as documented|7711|
