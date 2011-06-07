@@ -2,13 +2,6 @@
 
 require 'mcollective'
 
-OptionParser.new do |opts|
-    opts.on("--version", "-v", "Version information") do
-        puts MCollective.version
-        exit
-    end
-end.parse!
-
 known_applications = MCollective::Applications.list
 
 # links from mc-ping to mc will result in ping being run
