@@ -97,6 +97,8 @@ module MCollective
         # Builds an ObjectParser config, parse the CLI options and validates based
         # on the option config
         def application_parse_options
+            @options ||= {:verbose => false}
+
             @options = rpcoptions do |parser, options|
                 parser.define_head application_description if application_description
                 parser.banner = ""
