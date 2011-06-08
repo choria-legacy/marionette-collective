@@ -9,6 +9,64 @@ This is a list of release notes for various releases, you should review these be
  * TOC Placeholder
   {:toc}
 
+<a name="1_3_0">&nbsp;</a>
+
+## 1.3.0 - 2011/06/08
+
+This is a release in the development series of mcollective.  It features major
+new features, some bug fixes and internal structure refactoring.
+
+This release is for early adopters, production users should consider the 1.2.x series.
+
+### Enhancements
+
+ * Agents can now programatically declare if they should work on a node
+ * Applications can now use the exit method as normal and clean disconnects will be done
+ * The target collective for registration messages is configurable.  In the past it defaulted to main_collective
+
+### Bug Fixes
+
+ * Error reporting in applications, agents and mcolletive core has been improved
+ * The RC script works better on Red Hat 4 based systems
+
+### Other Changes
+
+ * The connector layer is being improved to make it easier to use other middleware.
+   This release starts this process but it's far from complete.
+ * The sshkey plugin was removed from core and moved to the plugins project
+
+### Backwards Compatibility
+
+If you were using the sshkey plugin you need to ensure your CM system is copying it out prior to this
+upgrade as the packages will not contain it anymore.
+
+If you have your own connectors other than the STOMP one we supply you should wait to upgrade till 1.3.1
+at which point you will need to make extensive changes to your plugins internals.  If your CM is copying
+out the connector you have to ensure that when this version of MCollective start that the new plugin is
+in place.
+
+### Changes
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2011/06/07|Exceptions raised during option parsing were not handled and resulted in stack traces|7796|
+|2011/06/06|Remove the sshkey, it's being moved to the plugin repository|7794|
+|2011/06/02|Correct parsing of MCOLLECTIVE_EXTRA_OPTS in cases where no config related settings were set|7755|
+|2011/05/31|Disconnect from the middleware when an application calls exit|7712|
+|2011/05/29|Validations failure in RPC agents will now raise the correct exceptions as documented|7711|
+|2011/05/25|Make the target collective for registration messages configurable|7650|
+|2011/05/24|Rename the connector plugins send method to publish to avoid issues ruby Object#send|7623|
+|2011/05/23|Log a warning when the CF file parsing fails rather than raise a whole ruby exception|7627|
+|2011/05/23|Allow applications to use the exit method as would normally be expected|7626|
+|2011/05/22|Refactor subscribe and unsubscribe so that middleware structure is entirely contained in the connectors|7620|
+|2011/05/21|Add the ability for agents to programatically declare if they should work on a node|7583|
+|2011/05/20|Improve error reporting in the single application framework|7574|
+|2011/05/16|Allow _._ in fact names|7532|
+|2011/05/16|Fix compatability issues with RH4 init system|7448|
+|2011/05/15|Handle failures from remote nodes better in the inventory app|7524|
+|2011/05/06|Revert unintended changes to the Debian rc script|7420|
+|2011/05/06|Remove the _test_ agent that was accidentally checked in|7425|
+
 <a name="1_2_0">&nbsp;</a>
 
 ## 1.2.0 - 2011/05/04
