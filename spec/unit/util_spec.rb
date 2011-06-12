@@ -109,41 +109,6 @@ module MCollective
             end
         end
 
-        describe "#make_target" do
-            it "should check for correct types" do
-                expect {
-                    Util.make_target("foo", "foo")
-                }.to raise_error("Unknown target type foo")
-            end
-
-            it "should create topics for each collective" do
-                c = Config.instance
-                c.instance_variable_set("@collectives", ["one", "two"])
-                c.instance_variable_set("@topicprefix", "/topic/")
-                c.instance_variable_set("@topicsep", ".")
-
-                Util.make_target("foo", :command).should == ["/topic/one.foo.command", "/topic/two.foo.command"]
-            end
-
-            it "should validate the requested collective exist" do
-                c = MCollective::Config.instance
-                c.instance_variable_set("@collectives", ["one", "two"])
-
-                expect {
-                    Util.make_target("foo", :command, "meh")
-                }.to raise_error("Unknown collective 'meh' known collectives are 'one, two'")
-            end
-
-            it "should support creating a topic for a specific collective" do
-                c = Config.instance
-                c.instance_variable_set("@collectives", ["one", "two"])
-                c.instance_variable_set("@topicprefix", "/topic/")
-                c.instance_variable_set("@topicsep", ".")
-
-                Util.make_target("foo", :command, "one").should == "/topic/one.foo.command"
-            end
-        end
-
         describe "#subscribe" do
             it "should subscribe to multiple topics given an Array" do
                 subs1 = {:agent => "test_agent", :type => "test_type", :collective => "test_collective"}
@@ -316,22 +281,6 @@ module MCollective
             it "should parse equal to" do
                 Util.parse_fact_string("foo==bar").should == {:fact => "foo", :value => "bar", :operator => "=="}
                 Util.parse_fact_string("foo == bar").should == {:fact => "foo", :value => "bar", :operator => "=="}
-            end
-        end
-
-        describe "#parse_msgtarget" do
-            it "should correctly parse supplied targets based on config" do
-                Config.any_instance.stubs("topicsep").returns(".")
-                Config.any_instance.stubs("topicprefix").returns("/topic/")
-
-                Util.parse_msgtarget("/topic/mcollective.discovery.command").should == {:collective => "mcollective", :agent => "discovery"}
-            end
-
-            it "should raise an error on failure" do
-                Config.any_instance.stubs("topicsep").returns(".")
-                Config.any_instance.stubs("topicprefix").returns("/topic/")
-
-                expect { Util.parse_msgtarget("foo") }.to raise_error(/could not figure out agent and collective from foo/)
             end
         end
     end

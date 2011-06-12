@@ -33,21 +33,6 @@ module MCollective
                 end
             end
 
-            describe "#msg_id" do
-                it "should create the message id correctly" do
-                    Digest::MD5.expects(:hexdigest).with(regexp_matches(/rspec-.+-test/))
-                    @reg.msg_id("test")
-                end
-            end
-
-            describe "#msg_target" do
-                it "should create a target for the correct agent and collective" do
-                    @reg.expects(:target_collective).returns("test").once
-                    Util.expects(:make_target).with("registration", :command, "test").once
-                    @reg.msg_target
-                end
-            end
-
             describe "#target_collective" do
                 it "should return the configured registration_collective" do
                     @config.expects(:registration_collective).returns("registration").once
@@ -68,24 +53,23 @@ module MCollective
             describe "#publish" do
                 it "should skip registration for empty messages" do
                     Log.expects(:debug).with("Skipping registration due to nil body")
-                    @reg.publish(nil, nil)
+                    @reg.publish(nil)
                 end
 
-                it "should encode the request via the security plugin and publish correctly" do
-                    security_plugin = mock
-                    connection = mock
+                it "should publish via the message object" do
+                    message = mock
+                    message.expects(:encode!)
+                    message.expects(:publish)
+                    message.expects(:requestid).returns("123")
+                    message.expects(:collective).returns("mcollective")
 
-                    PluginManager.expects("[]").with("security_plugin").returns(security_plugin)
+                    Message.expects(:new).returns(message)
 
-                    @reg.expects(:msg_target).returns("target").once
-                    @reg.expects(:msg_id).with("target").returns("msgid").once
-                    @reg.expects(:msg_filter).returns("msgfilter").once
+                    Log.expects(:debug).with("Sending registration 123 to collective mcollective")
 
-                    security_plugin.expects(:encoderequest).with("rspec", "target", "message", "msgid", "msgfilter").returns("req").once
-                    connection.expects(:publish).with("target", "req")
-                    Log.expects(:debug).with("Sending registration msgid to target")
+                    @reg.expects(:target_collective).returns("mcollective")
 
-                    @reg.publish("message", connection)
+                    @reg.publish("message")
                 end
             end
         end

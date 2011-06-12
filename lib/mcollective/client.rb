@@ -38,20 +38,10 @@ module MCollective
         # Sends a request and returns the generated request id, doesn't wait for
         # responses and doesn't execute any passed in code blocks for responses
         def sendreq(msg, agent, filter = {})
-            target = Util.make_target(agent, :command, collective)
+            request = Message.new(msg, nil, {:agent => agent, :type => :request, :collective => collective, :filter => filter})
+            request.encode!
 
-            reqid = Digest::MD5.hexdigest("#{@config.identity}-#{Time.now.to_f.to_s}-#{target}")
-
-            # Security plugins now accept an agent and collective, ones written for <= 1.1.4 dont
-            # but we still want to support them, try to call them in a compatible way if they
-            # dont support the new arguments
-            begin
-                req = @security.encoderequest(@config.identity, target, msg, reqid, filter, agent, collective)
-            rescue ArgumentError
-                req = @security.encoderequest(@config.identity, target, msg, reqid, filter)
-            end
-
-            Log.debug("Sending request #{reqid} to #{target}")
+            Log.debug("Sending request #{request.requestid} to the #{request.agent} agent in collective #{request.collective}")
 
             unless @subscriptions.include?(agent)
                 subscription = Util.make_subscriptions(agent, :reply, collective)
@@ -62,10 +52,10 @@ module MCollective
             end
 
             Timeout.timeout(2) do
-                @connection.publish(target, req)
+                request.publish
             end
 
-            reqid
+            request.requestid
         end
 
         # Blocking call that waits for ever for a message to arrive.
@@ -75,16 +65,17 @@ module MCollective
         # case the current connection will just ignore all messages not directed at it
         # and keep waiting for more till it finds a matching message.
         def receive(requestid = nil)
-            msg = nil
+            reply = nil
 
             begin
-                msg = @connection.receive
+                reply = @connection.receive
+                reply.type = :reply
 
-                msg = @security.decodemsg(msg)
+                reply.decode!
 
-                msg[:senderid] = Digest::MD5.hexdigest(msg[:senderid]) if ENV.include?("MCOLLECTIVE_ANON")
+                reply.payload[:senderid] = Digest::MD5.hexdigest(reply.payload[:senderid]) if ENV.include?("MCOLLECTIVE_ANON")
 
-                raise(MsgDoesNotMatchRequestID, "Message reqid #{requestid} does not match our reqid #{msg[:requestid]}") if msg[:requestid] != requestid
+                raise(MsgDoesNotMatchRequestID, "Message reqid #{requestid} does not match our reqid #{reply.requestid}") unless reply.requestid == requestid
             rescue SecurityValidationFailed => e
                 Log.warn("Ignoring a message that did not pass security validations")
                 retry
@@ -93,7 +84,7 @@ module MCollective
                 retry
             end
 
-            msg
+            reply
         end
 
         # Performs a discovery of nodes matching the filter passed
@@ -106,9 +97,9 @@ module MCollective
                     Log.debug("Waiting #{timeout} seconds for discovery replies to request #{reqid}")
 
                     loop do
-                        msg = receive(reqid)
-                        Log.debug("Got discovery reply from #{msg[:senderid]}")
-                        hosts << msg[:senderid]
+                        reply = receive(reqid)
+                        Log.debug("Got discovery reply from #{reply.payload[:senderid]}")
+                        hosts << reply.payload[:senderid]
                     end
                 end
             rescue Timeout::Error => e
@@ -144,7 +135,7 @@ module MCollective
 
                         hosts_responded += 1
 
-                        yield(resp)
+                        yield(resp.payload)
 
                         break if (waitfor != 0 && hosts_responded >= waitfor)
                     end
@@ -205,7 +196,7 @@ module MCollective
                         hosts_responded << resp[:senderid]
                         hosts_not_responded.delete(resp[:senderid]) if hosts_not_responded.include?(resp[:senderid])
 
-                        yield(resp)
+                        yield(resp.payload)
                     end
                 end
             rescue Interrupt => e

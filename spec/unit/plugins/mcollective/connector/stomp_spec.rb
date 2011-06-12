@@ -24,6 +24,13 @@ module MCollective
 
                 Config.stubs(:instance).returns(@config)
 
+                @msg = mock
+                @msg.stubs(:base64_encode!)
+                @msg.stubs(:payload).returns("msg")
+                @msg.stubs(:agent).returns("agent")
+                @msg.stubs(:type).returns(:reply)
+                @msg.stubs(:collective).returns("mcollective")
+
                 @subscription = mock
                 @subscription.stubs("<<").returns(true)
                 @subscription.stubs("include?").returns(false)
@@ -127,34 +134,17 @@ module MCollective
 
             describe "#receive" do
                 it "should receive from the middleware" do
-                    msg = mock
-                    msg.stubs(:body).returns("msg")
+                    payload = mock
+                    payload.stubs(:body).returns("msg")
+                    payload.stubs(:headers).returns("headers")
 
-                    @connection.expects(:receive).returns(msg)
-                    received = @c.receive
-                    received.payload.should == "msg"
-                end
+                    @connection.expects(:receive).returns(payload)
 
-                it "should base64 decode if configured to do so" do
-                    msg = mock
-                    msg.stubs(:body).returns("msg")
-
-                    @connection.expects(:receive).returns(msg)
-                    SSL.expects(:base64_decode).with("msg").once
-
+                    Message.expects(:new).with("msg", payload, :base64 => true, :headers => "headers").returns("message")
                     @c.instance_variable_set("@base64", true)
 
-                    @c.receive
-                end
-
-                it "should not base64 decode if not configured to do so" do
-                    msg = mock
-                    msg.stubs(:body).returns("msg")
-
-                    @connection.expects(:receive).returns(msg)
-                    SSL.expects(:base64_decode).with("msg").never
-
-                    @c.receive
+                    received = @c.receive
+                    received.should == "message"
                 end
             end
 
@@ -165,43 +155,47 @@ module MCollective
                 end
 
                 it "should base64 encode a message if configured to do so" do
-                    SSL.expects(:base64_encode).with("msg").returns("msg").once
-
                     @c.instance_variable_set("@base64", true)
                     @c.expects(:msgheaders).returns({})
+                    @c.expects(:make_target).returns("test")
+                    @connection.expects(:publish).with("test", "msg", {})
 
-                    @c.publish("test", "msg")
+                    @c.publish(@msg)
                 end
 
                 it "should not base64 encode if not configured to do so" do
-                    @connection.stubs(:publish)
-                    @c.stubs(:msgheaders)
+                    @c.instance_variable_set("@base64", false)
+                    @c.expects(:msgheaders).returns({})
+                    @c.expects(:make_target).returns("test")
 
-                    SSL.expects(:base64_encode).never
+                    @connection.expects(:publish).with("test", "msg", {})
 
-                    @c.publish("test", "msg")
+                    @c.publish(@msg)
                 end
 
                 it "should use the publish method if it exists" do
                     @connection.expects(:publish).with("test", "msg", {}).once
                     @c.stubs(:msgheaders).returns({})
+                    @c.expects(:make_target).returns("test")
 
-                    @c.publish("test", "msg")
+                    @c.publish(@msg)
                 end
 
                 it "should use the send method if publish does not exist" do
                     @connection.expects("respond_to?").with('publish').returns(false)
                     @connection.expects(:send).with("test", "msg", {}).once
                     @c.stubs(:msgheaders).returns({})
+                    @c.expects(:make_target).returns("test")
 
-                    @c.publish("test", "msg")
+                    @c.publish(@msg)
                 end
 
                 it "should publish the correct message to the correct target with msgheaders" do
                     @connection.expects(:publish).with("test", "msg", {"test" => "test"}).once
                     @c.expects(:msgheaders).returns({"test" => "test"})
+                    @c.expects(:make_target).returns("test")
 
-                    @c.publish("test", "msg")
+                    @c.publish(@msg)
                 end
 
             end
@@ -211,6 +205,7 @@ module MCollective
                     @c.make_target("test", :broadcast, "mcollective").should == "/topic/mcollective.test.command"
                     @c.make_target("test", :directed, "mcollective").should == "/topic/mcollective.test.command"
                     @c.make_target("test", :reply, "mcollective").should == "/topic/mcollective.test.reply"
+                    @c.make_target("test", :request, "mcollective").should == "/topic/mcollective.test.command"
                 end
 
                 it "should raise an error for unknown collectives" do

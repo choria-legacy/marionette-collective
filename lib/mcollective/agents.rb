@@ -126,15 +126,15 @@ module MCollective
 
         # Dispatches a message to an agent, accepts a block that will get run if there are
         # any replies to process from the agent
-        def dispatch(msg, target, connection)
-            Log.debug("Dispatching a message to agent #{target}")
+        def dispatch(request, connection)
+            Log.debug("Dispatching a message to agent #{request.agent}")
 
             Thread.new do
                 begin
-                    agent = PluginManager["#{target}_agent"]
+                    agent = PluginManager["#{request.agent}_agent"]
 
                     Timeout::timeout(agent.timeout) do
-                        replies = agent.handlemsg(msg, connection)
+                        replies = agent.handlemsg(request.payload, connection)
 
                         # Agents can decide if they wish to reply or not,
                         # returning nil will mean nothing goes back to the
@@ -144,9 +144,9 @@ module MCollective
                         end
                     end
                 rescue Timeout::Error => e
-                    Log.warn("Timeout while handling message for #{target}")
+                    Log.warn("Timeout while handling message for #{request.agent}")
                 rescue Exception => e
-                    Log.error("Execution of #{target} failed: #{e}")
+                    Log.error("Execution of #{request.agent} failed: #{e}")
                     Log.error(e.backtrace.join("\n\t\t"))
                 end
             end

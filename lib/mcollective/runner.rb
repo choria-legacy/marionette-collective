@@ -55,28 +55,12 @@ module MCollective
 
             loop do
                 begin
-                    msg = receive
+                    request = receive
 
-                    collective = msg[:collective]
-                    agent = msg[:agent]
-
-                    # requests from older clients would not include the
-                    # :collective and :agent this parses the target in
-                    # a backward compat way for them
-                    unless collective && agent
-                        parsed_dest = Util.parse_msgtarget(msg[:msgtarget])
-                        collective = parsed_dest[:collective]
-                        agent = parsed_dest[:agent]
-                    end
-
-                    if agent == "mcollective"
-                        Log.debug("Handling message for mcollectived controller")
-
-                        controlmsg(msg, collective)
+                    if request.agent == "mcollective"
+                        controlmsg(request)
                     else
-                        Log.debug("Handling message for agent '#{agent}' on collective '#{collective}'")
-
-                        agentmsg(msg, agent, collective)
+                        agentmsg(request)
                     end
                 rescue Interrupt
                     Log.warn("Exiting after interrupt signal")
@@ -95,31 +79,29 @@ module MCollective
 
         private
         # Deals with messages directed to agents
-        def agentmsg(msg, target, collective)
-            @agents.dispatch(msg, target, @connection) do |replies|
-                dest = Util.make_target(target, :reply, collective)
-                reply(target, dest, replies, msg[:requestid], msg[:callerid]) unless replies == nil
+        def agentmsg(request)
+            Log.debug("Handling message for agent '#{request.agent}' on collective '#{request.collective}'")
+
+            @agents.dispatch(request, @connection) do |reply_message|
+                reply(reply_message, request) if reply_message
             end
         end
 
         # Deals with messages sent to our control topic
-        def controlmsg(msg, collective)
+        def controlmsg(request)
+            Log.debug("Handling message for mcollectived controller")
+
             begin
-                body = msg[:body]
-                requestid = msg[:requestid]
-                callerid = msg[:callerid]
-
-                replytopic = Util.make_target("mcollective", :reply, collective)
-
-                case body
+                case request.payload[:body]
                     when /^stats$/
-                        reply("mcollective", replytopic, @stats.to_hash, requestid, callerid)
+                        reply(@stats.to_hash, request)
 
                     when /^reload_agent (.+)$/
-                        reply("mcollective", replytopic, "reloaded #{$1} agent", requestid, callerid) if @agents.loadagent($1)
+                        reply("reloaded #{$1} agent", request) if @agents.loadagent($1)
 
                     when /^reload_agents$/
-                        reply("mcollective", replytopic, "reloaded all agents", requestid, callerid) if @agents.loadagents
+
+                        reply("reloaded all agents", request) if @agents.loadagents
 
                     else
                         Log.error("Received an unknown message to the controller")
@@ -132,22 +114,22 @@ module MCollective
 
         # Receive a message from the connection handler
         def receive
-            msg = @connection.receive
+            request = @connection.receive
+            request.type = :request
 
             @stats.received
 
-            msg = @security.decodemsg(msg)
+            request.decode!
+            request.validate
 
-            raise(NotTargettedAtUs, "Received message is not targetted to us")  unless @security.validate_filter?(msg[:filter])
-
-            msg
+            request
         end
 
         # Sends a reply to a specific target topic
-        def reply(sender, target, msg, requestid, callerid)
-            reply = @security.encodereply(sender, target, msg, requestid, callerid)
-
-            @connection.publish(target, reply)
+        def reply(msg, request)
+            msg = Message.new(msg, nil, :request => request)
+            msg.encode!
+            msg.publish
 
             @stats.sent
         end

@@ -140,11 +140,10 @@ module MCollective::Security
                 expected = {:senderid => "test",
                             :requestid => "reqid",
                             :senderagent => "agent",
-                            :msgtarget => "target",
                             :msgtime => @time,
                             :body => "body"}
 
-                @plugin.create_reply("reqid", "agent", "target", "body").should == expected
+                @plugin.create_reply("reqid", "agent", "body").should == expected
             end
         end
 
@@ -153,22 +152,19 @@ module MCollective::Security
                 expected = {:body => "body",
                             :senderid => "test",
                             :requestid => "reqid",
-                            :msgtarget => "/topic/mcollective.discovery.command",
                             :callerid => "uid=#{Process.uid}",
                             :agent => "discovery",
                             :collective => "mcollective",
                             :filter => "filter",
                             :msgtime => @time}
 
-                @plugin.create_request("reqid", "/topic/mcollective.discovery.command", "filter", "body", :server, "discovery", "mcollective").should == expected
-                @plugin.create_request("reqid", "/topic/mcollective.discovery.command", "filter", "body", :server).should == expected
+                @plugin.create_request("reqid", "filter", "body", :server, "discovery", "mcollective").should == expected
             end
 
             it "should set the callerid when appropriate" do
                 expected = {:body => "body",
                             :senderid => "test",
                             :requestid => "reqid",
-                            :msgtarget => "/topic/mcollective.discovery.command",
                             :agent => "discovery",
                             :collective => "mcollective",
                             :filter => "filter",
@@ -176,8 +172,7 @@ module MCollective::Security
                             :msgtime => @time}
 
                 @plugin.stubs(:callerid).returns("callerid")
-                @plugin.create_request("reqid", "/topic/mcollective.discovery.command", "filter", "body", :client, "discovery", "mcollective").should == expected
-                @plugin.create_request("reqid", "/topic/mcollective.discovery.command", "filter", "body", :client).should == expected
+                @plugin.create_request("reqid", "filter", "body", :client, "discovery", "mcollective").should == expected
             end
         end
 
@@ -197,14 +192,14 @@ module MCollective::Security
         describe "#encoderequest" do
             it "should log an error when not implimented" do
                 MCollective::Log.expects(:error).with("encoderequest is not implimented in MCollective::Security::Base")
-                @plugin.encoderequest(nil, nil, nil, nil)
+                @plugin.encoderequest(nil, nil, nil)
             end
         end
 
         describe "#encodereply" do
             it "should log an error when not implimented" do
                 MCollective::Log.expects(:error).with("encodereply is not implimented in MCollective::Security::Base")
-                @plugin.encodereply(nil, nil, nil, nil)
+                @plugin.encodereply(nil, nil, nil)
             end
         end
 

@@ -11,6 +11,8 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/06/12|Remove assumptions about middleware structure from the core and move it to the connector plugins|7619|
+|*2011/06/08*|*Release 1.3.0*|7796|
 |2011/06/07|Exceptions raised during option parsing were not handled and resulted in stack traces|7796|
 |2011/06/06|Remove the sshkey, it's being moved to the plugin repository|7794|
 |2011/06/02|Correct parsing of MCOLLECTIVE_EXTRA_OPTS in cases where no config related settings were set|7755|

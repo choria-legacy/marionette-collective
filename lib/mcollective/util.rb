@@ -155,27 +155,6 @@ module MCollective
              :filter      => empty_filter}
         end
 
-        # Constructs an array of the full target names based on topicprefix,
-        # topicsep and collectives config options.
-        #
-        # If given a collective name it will return a single target aimed
-        # at just the one collective
-        def self.make_target(agent, type, collective=nil)
-            config = Config.instance
-
-            raise("Unknown target type #{type}") unless type == :command || type == :reply
-
-            if collective.nil?
-                config.collectives.map do |c|
-                    ["#{config.topicprefix}#{c}", agent, type].join(config.topicsep)
-                end
-            else
-                raise("Unknown collective '#{collective}' known collectives are '#{config.collectives.join ', '}'") unless config.collectives.include?(collective)
-
-                ["#{config.topicprefix}#{collective}", agent, type].join(config.topicsep)
-            end
-        end
-
         def self.make_subscriptions(agent, type, collective=nil)
             config = Config.instance
 
@@ -253,20 +232,6 @@ module MCollective
             str.gsub!(/\n/, "'\n'")
 
             return str
-        end
-
-        # Parse the msgtarget as sent in 1.1.4 and newer to figure out the
-        # agent and collective that a request is targeted at
-        def self.parse_msgtarget(target)
-            sep = Regexp.escape(Config.instance.topicsep)
-            prefix = Regexp.escape(Config.instance.topicprefix)
-            regex = "#{prefix}(.+?)#{sep}(.+?)#{sep}command"
-
-            if target.match(regex)
-                return {:collective => $1, :agent => $2}
-            else
-                raise "Failed to handle message, could not figure out agent and collective from #{target}"
-            end
         end
     end
 end

@@ -134,27 +134,22 @@ module MCollective
                 Log.debug("Waiting for a message from Stomp")
                 msg = @connection.receive
 
-                # STOMP puts the payload in the body variable, pass that
-                # into the payload of MCollective::Request and discard all the
-                # other headers etc that stomp provides
-                if @base64
-                    Request.new(SSL.base64_decode(msg.body))
-                else
-                    Request.new(msg.body)
-                end
+                Message.new(msg.body, msg, :base64 => @base64, :headers => msg.headers)
             end
 
             # Sends a message to the Stomp connection
-            def publish(target, msg)
-                Log.debug("Sending a message to Stomp target '#{target}'")
+            def publish(msg)
+                msg.base64_encode! if @base64
 
-                msg = SSL.base64_encode(msg) if @base64
+                target = make_target(msg.agent, msg.type, msg.collective)
+
+                Log.debug("Sending a message to Stomp target '#{target}'")
 
                 # deal with deprecation warnings in newer stomp gems
                 if @connection.respond_to?("publish")
-                    @connection.publish(target, msg, msgheaders)
+                    @connection.publish(target, msg.payload, msgheaders)
                 else
-                    @connection.send(target, msg, msgheaders)
+                    @connection.send(target, msg.payload, msgheaders)
                 end
             end
 
@@ -229,12 +224,21 @@ module MCollective
             end
 
             def make_target(agent, type, collective)
-                raise("Unknown target type #{type}") unless [:broadcast, :directed, :reply].include?(type)
+                raise("Unknown target type #{type}") unless [:directed, :broadcast, :reply, :request].include?(type)
                 raise("Unknown collective '#{collective}' known collectives are '#{@config.collectives.join ', '}'") unless @config.collectives.include?(collective)
 
-                type = :command unless type == :reply
+                case type
+                    when :reply
+                        topicsuffix = :reply
+                    when :broadcast
+                        topicsuffix = :command
+                    when :request
+                        topicsuffix = :command
+                    when :directed
+                        topicsuffix = :command
+                end
 
-                ["#{@config.topicprefix}#{collective}", agent, type].join(@config.topicsep)
+                ["#{@config.topicprefix}#{collective}", agent, topicsuffix].join(@config.topicsep)
             end
         end
     end

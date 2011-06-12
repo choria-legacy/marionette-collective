@@ -30,22 +30,22 @@ module MCollective
             end
 
             # Encodes a reply
-            def encodereply(sender, target, msg, requestid, requestcallerid=nil)
+            def encodereply(sender, msg, requestid, requestcallerid=nil)
                 serialized  = Marshal.dump(msg)
                 digest = makehash(serialized)
 
-                req = create_reply(requestid, sender, target, serialized)
+                req = create_reply(requestid, sender, serialized)
                 req[:hash] = digest
 
                 Marshal.dump(req)
             end
 
             # Encodes a request msg
-            def encoderequest(sender, target, msg, requestid, filter={}, target_agent=nil, target_collective=nil)
+            def encoderequest(sender, msg, requestid, filter, target_agent, target_collective)
                 serialized = Marshal.dump(msg)
                 digest = makehash(serialized)
 
-                req = create_request(requestid, target, filter, serialized, @initiated_by, target_agent, target_collective)
+                req = create_request(requestid, filter, serialized, @initiated_by, target_agent, target_collective)
                 req[:hash] = digest
 
                 Marshal.dump(req)

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
-require File.dirname(__FILE__) + '/../../spec_helper'
-require File.dirname(__FILE__) + '/../../../plugins/mcollective/security/psk.rb'
+require File.dirname(__FILE__) + '/../../../../spec_helper'
+require File.dirname(__FILE__) + '/../../../../../plugins/mcollective/security/psk.rb'
 
 module MCollective::Security
     describe Psk do
@@ -51,7 +51,7 @@ module MCollective::Security
                 Marshal.stubs("dump").with("test message").returns("marshal_test_message").once
                 Marshal.stubs("dump").with({:hash => '2dbeb0d7938a08a34eacd2c1dab25602', :test => 'test'}).returns("marshal_test_reply").once
 
-                @plugin.encodereply("sender", "target", "test message", "requestid", "callerid").should == "marshal_test_reply"
+                @plugin.encodereply("sender", "test message", "requestid", "callerid").should == "marshal_test_reply"
             end
         end
 
@@ -61,7 +61,7 @@ module MCollective::Security
                 Marshal.stubs("dump").with("test message").returns("marshal_test_message").once
                 Marshal.stubs("dump").with({:hash => '2dbeb0d7938a08a34eacd2c1dab25602', :test => 'test'}).returns("marshal_test_request").once
 
-                @plugin.encoderequest("sender", "target", "test message", "requestid", "filter").should == "marshal_test_request"
+                @plugin.encoderequest("sender", "test message", "requestid", "filter", "agent", "collective").should == "marshal_test_request"
             end
         end
 

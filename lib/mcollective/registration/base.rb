@@ -22,7 +22,7 @@ module MCollective
                 Thread.new do
                     loop do
                         begin
-                            publish(body, connection)
+                            publish(body)
 
                             sleep interval
                         rescue Exception => e
@@ -37,20 +37,8 @@ module MCollective
                 Config.instance
             end
 
-            def identity
-                config.identity
-            end
-
             def msg_filter
                 {"agent" => "registration"}
-            end
-
-            def msg_id(target)
-                reqid = Digest::MD5.hexdigest("#{config.identity}-#{Time.now.to_f.to_s}-#{target}")
-            end
-
-            def msg_target
-                Util.make_target("registration", :command, target_collective)
             end
 
             def target_collective
@@ -70,18 +58,16 @@ module MCollective
                 config.registerinterval
             end
 
-            def publish(message, connection)
+            def publish(message)
                 unless message
                     Log.debug("Skipping registration due to nil body")
                 else
-                    target = msg_target
-                    reqid = msg_id(target)
+                    req = Message.new(message, nil, {:type => :request, :agent => "registration", :collective => target_collective, :filter => msg_filter})
+                    req.encode!
 
-                    req = PluginManager["security_plugin"].encoderequest(identity, target, message, reqid, msg_filter)
+                    Log.debug("Sending registration #{req.requestid} to collective #{req.collective}")
 
-                    Log.debug("Sending registration #{reqid} to #{target}")
-
-                    connection.publish(target, req)
+                    req.publish
                 end
             end
         end

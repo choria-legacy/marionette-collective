@@ -117,7 +117,7 @@ The value of _identity_ in the configuration file.
 
 #### :msgtarget
 
-The Middleware topic or channel the message is being sent to
+The Middleware topic or channel the message is being sent to.  This is not being used since later 1.1.x and since 1.3.1 it is not included in messages anymore.
 
 #### :body
 
