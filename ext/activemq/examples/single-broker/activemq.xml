@@ -6,6 +6,12 @@
   http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd
   http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
 
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <value>file:${activemq.base}/conf/credentials.properties</value>
+        </property>
+    </bean>
+
     <broker xmlns="http://activemq.apache.org/schema/core" brokerName="localhost" useJmx="true">
         <managementContext>
             <managementContext createConnector="false"/>
@@ -53,4 +59,5 @@
             <transportConnector name="stomp" uri="stomp://0.0.0.0:6163"/>
         </transportConnectors>
     </broker>
+    <import resource="jetty.xml"/>
 </beans>

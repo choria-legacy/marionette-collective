@@ -6,6 +6,13 @@
   http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd   
   http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
 
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <value>file:${activemq.base}/conf/credentials.properties</value>
+        </property>
+    </bean>
+
+
     <broker xmlns="http://activemq.apache.org/schema/core" brokerName="broker3" useJmx="true">
         <!-- Destination specific policies using destination names or wildcards
              this sets enableAudit = true on all topics, thus avoiding duplicates -->
