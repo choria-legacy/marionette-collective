@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/06/16|Add the ability for nodes to subscribe to per-node queues, off by default|7225|
 |2011/06/12|Remove assumptions about middleware structure from the core and move it to the connector plugins|7619|
 |*2011/06/08*|*Release 1.3.0*|7796|
 |2011/06/07|Exceptions raised during option parsing were not handled and resulted in stack traces|7796|

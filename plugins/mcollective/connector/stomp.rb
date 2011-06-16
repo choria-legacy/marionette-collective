@@ -227,18 +227,23 @@ module MCollective
                 raise("Unknown target type #{type}") unless [:directed, :broadcast, :reply, :request].include?(type)
                 raise("Unknown collective '#{collective}' known collectives are '#{@config.collectives.join ', '}'") unless @config.collectives.include?(collective)
 
+                prefix = @config.topicprefix
+
                 case type
                     when :reply
-                        topicsuffix = :reply
+                        suffix = :reply
                     when :broadcast
-                        topicsuffix = :command
+                        suffix = :command
                     when :request
-                        topicsuffix = :command
+                        suffix = :command
                     when :directed
-                        topicsuffix = :command
+                        prefix = @config.queueprefix
+                        # use a md5 since hostnames might have illegal characters that
+                        # the middleware dont understand
+                        suffix = Digest::MD5.hexdigest(@config.identity)
                 end
 
-                ["#{@config.topicprefix}#{collective}", agent, topicsuffix].join(@config.topicsep)
+                ["#{prefix}#{collective}", agent, suffix].join(@config.topicsep)
             end
         end
     end

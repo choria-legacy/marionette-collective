@@ -45,6 +45,7 @@ module MCollective
         # Starts the main loop, before calling this you should initialize the MCollective::Config singleton.
         def run
             Util.subscribe(Util.make_subscriptions("mcollective", :broadcast))
+            Util.subscribe(Util.make_subscriptions("mcollective", :directed)) if @config.direct_addressing
 
             # Start the registration plugin if interval isn't 0
             begin

@@ -9,7 +9,7 @@ module MCollective
                     :classesfile, :rpcauditprovider, :rpcaudit, :configdir, :rpcauthprovider,
                     :rpcauthorization, :color, :configfile, :rpchelptemplate, :rpclimitmethod,
                     :logger_type, :fact_cache_time, :collectives, :main_collective, :ssl_cipher,
-                    :registration_collective
+                    :registration_collective, :direct_addressing, :queueprefix
 
         def initialize
             @configured = false
@@ -44,6 +44,8 @@ module MCollective
                                     @main_collective = val
                                 when "topicprefix"
                                     @topicprefix = val
+                                when "queueprefix"
+                                    @queueprefix = val
                                 when "logfile"
                                     @logfile = val
                                 when "keeplogs"
@@ -62,6 +64,8 @@ module MCollective
                                     end
                                 when "identity"
                                     @identity = val
+                                when "direct_addressing"
+                                    val =~ /^1|y/i ? @direct_addressing = true : @direct_addressing = false
                                 when "color"
                                     val =~ /^1|y/i ? @color = true : @color = false
                                 when "daemonize"
@@ -130,6 +134,8 @@ module MCollective
             @registerinterval = 0
             @registration_collective = nil
             @topicsep = "."
+            @topicprefix = "/topic/"
+            @queueprefix = "/queue/"
             @classesfile = "/var/lib/puppet/classes.txt"
             @rpcaudit = false
             @rpcauditprovider = ""
@@ -149,6 +155,7 @@ module MCollective
             @collectives = ["mcollective"]
             @main_collective = @collectives.first
             @ssl_cipher = "aes-256-cbc"
+            @direct_addressing = false
         end
 
         def read_plugin_config_dir(dir)

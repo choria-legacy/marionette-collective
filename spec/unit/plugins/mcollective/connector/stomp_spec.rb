@@ -202,8 +202,10 @@ module MCollective
 
             describe "#make_target" do
                 it "should create correct targets" do
+                    @config.expects(:queueprefix).returns("/queue/")
+
                     @c.make_target("test", :broadcast, "mcollective").should == "/topic/mcollective.test.command"
-                    @c.make_target("test", :directed, "mcollective").should == "/topic/mcollective.test.command"
+                    @c.make_target("test", :directed, "mcollective").should == "/queue/mcollective.test.2bc84dc69b73db9383b9c6711d2011b7"
                     @c.make_target("test", :reply, "mcollective").should == "/topic/mcollective.test.reply"
                     @c.make_target("test", :request, "mcollective").should == "/topic/mcollective.test.command"
                 end
