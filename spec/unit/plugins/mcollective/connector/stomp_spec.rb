@@ -106,6 +106,8 @@ module MCollective
 
                     @config.expects(:pluginconf).returns(pluginconf).at_least_once
 
+                    Stomp::EventLogger.expects(:new).returns("logger")
+
                     connector = mock
                     connector.expects(:new).with(:backup => true,
                                                  :back_off_multiplier => 2,
@@ -115,6 +117,7 @@ module MCollective
                                                  :max_reconnect_attempts => 5,
                                                  :initial_reconnect_delay => 0.02,
                                                  :randomize => true,
+                                                 :logger => "logger",
                                                  :hosts => [{:passcode => 'password1',
                                                              :host => 'host1',
                                                              :port => 6163,

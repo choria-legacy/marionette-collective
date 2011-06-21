@@ -33,6 +33,9 @@ If you are seeing issues with the Stomp gem logging protocol errors and resettin
 ### Failover Pools
 Newer versions of the Stomp gem supports failover between multiple Stomp servers, you need at least _1.1.6_ to use this.
 
+If you are using version _1.1.9_ and newer of the Stomp Gem and this method of configuration you will also receive more detailed
+logging about connections, failures and other significant events.
+
 {% highlight ini %}
 connector = stomp
 plugin.stomp.pool.size = 2
