@@ -61,7 +61,7 @@ module MCollective
                 begin
                     @ddl = DDL.new(@agent_name)
                 rescue Exception => e
-                    Log.warn("Failed to load DDL for agent: #{e.class}: #{e}")
+                    Log.debug("Failed to load DDL for agent: #{e.class}: #{e}")
                     @ddl = nil
                 end
 
