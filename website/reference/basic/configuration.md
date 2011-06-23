@@ -28,7 +28,8 @@ Configuration is a simple *key = val* style configuration file.
 
 |Key|Sample|Description|
 |---|------|-----------|
-|topicprefix|/topic/mcollective|Prefix that gets used for all messages.  Post 1.1.3 this should just be /topic/|
+|topicprefix|/topic/|Prefix that gets used for all messages.|
+|queueprefix|/queue/|Prefix that gets used for all queued messages.|
 |topicnamesep|.|The seperator to use between parts of the topic path|
 |collectives|mcollective,subcollective|A list of [Subcollectives] to join - 1.1.3 and newer only|
 |main_collective|mcollective|The main collective to target - 1.1.3 and newer only|
@@ -43,6 +44,8 @@ Configuration is a simple *key = val* style configuration file.
 |rpchelptemplate|/etc/mcollective/rpc-help.erb|The path to the erb template used for generating help|
 |logger_type|file|Valid logger types, currently file, syslog or console|
 |ssl_cipher|aes-256-cbc|This sets the cipher in use by the SSL code, see _man enc_ for a list supported by OpenSSL|
+|direct_addressing|n|Enable or disable directed requests|
+|direct_addressing_threshold|10|When direct requests are enabled, send direct messages for less than or equal to this many hosts|
 
 ## Server Configuration
 The server configuration file should be root only readable

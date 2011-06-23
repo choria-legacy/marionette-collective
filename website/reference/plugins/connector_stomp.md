@@ -11,6 +11,17 @@ The stomp connector uses the [STOMP] rubygem to connect to compatible servers.  
 
 This code will only work with version _1.1_ and _1.1.6_ or newer of the Stomp gem, the in between versions have threading issues.
 
+As this connector tries to be as generic as possible it is hard to support all the advanced features of MCollective using it.  We do not recommend you use the directed mode
+using this plugin, instead look towards specific ones written for ActiveMQ or your chosen middleware.
+
+## Middleware Layout
+
+For broadcast messages this connector will create _topics_ with names like _/topic/&lt;collective&gt;.&lt;agent&gt;.command_ and replies will go to
+_/topic/&lt;collective&gt;.&lt;agent&gt;.reply_
+
+For directed messages it will create queues with names like _/queue/&lt;collective&gt;.mcollective.&lt;md5 hash of identity&gt;_.
+
+You should configure appropriate ACLs on your middleware to allow this scheme
 
 ## Configuring
 

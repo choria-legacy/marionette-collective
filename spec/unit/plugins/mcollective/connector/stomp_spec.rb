@@ -176,39 +176,54 @@ module MCollective
                     @c.publish(@msg)
                 end
 
-                it "should use the publish method if it exists" do
-                    @connection.expects(:publish).with("test", "msg", {}).once
-                    @c.stubs(:msgheaders).returns({})
-                    @c.expects(:make_target).returns("test")
+                it "should publish direct requests for each discovered host" do
+                    @msg.expects(:type).returns(:direct_request).times(3)
+                    @msg.expects(:discovered_hosts).returns(["one", "two"])
+
+                    @c.expects(:make_target).with("agent", :direct_request, "mcollective", "one").returns("target_one")
+                    @c.expects(:make_target).with("agent", :direct_request, "mcollective", "two").returns("target_two")
+
+                    @c.expects(:publish_msg).with("target_one", "msg")
+                    @c.expects(:publish_msg).with("target_two", "msg")
 
                     @c.publish(@msg)
+                end
+            end
+
+            describe "#publish_msg" do
+                it "should use the publish method if it exists" do
+                    @connection.expects("respond_to?").with("publish").returns(true)
+                    @connection.expects(:publish).with("test", "msg", {}).once
+                    @c.stubs(:msgheaders).returns({})
+
+                    @c.publish_msg("test", "msg")
                 end
 
                 it "should use the send method if publish does not exist" do
                     @connection.expects("respond_to?").with('publish').returns(false)
                     @connection.expects(:send).with("test", "msg", {}).once
                     @c.stubs(:msgheaders).returns({})
-                    @c.expects(:make_target).returns("test")
 
-                    @c.publish(@msg)
+                    @c.publish_msg("test", "msg")
                 end
 
                 it "should publish the correct message to the correct target with msgheaders" do
+                    @connection.expects("respond_to?").with("publish").returns(true)
                     @connection.expects(:publish).with("test", "msg", {"test" => "test"}).once
                     @c.expects(:msgheaders).returns({"test" => "test"})
-                    @c.expects(:make_target).returns("test")
 
-                    @c.publish(@msg)
+                    @c.publish_msg("test", "msg")
                 end
 
             end
 
             describe "#make_target" do
                 it "should create correct targets" do
-                    @config.expects(:queueprefix).returns("/queue/")
+                    @config.expects(:queueprefix).returns("/queue/").twice
 
                     @c.make_target("test", :broadcast, "mcollective").should == "/topic/mcollective.test.command"
-                    @c.make_target("test", :directed, "mcollective").should == "/queue/mcollective.test.2bc84dc69b73db9383b9c6711d2011b7"
+                    @c.make_target("test", :directed, "mcollective").should == "/queue/mcollective.2bc84dc69b73db9383b9c6711d2011b7"
+                    @c.make_target("test", :direct_request, "mcollective", "rspec").should == "/queue/mcollective.2bc84dc69b73db9383b9c6711d2011b7"
                     @c.make_target("test", :reply, "mcollective").should == "/topic/mcollective.test.reply"
                     @c.make_target("test", :request, "mcollective").should == "/topic/mcollective.test.command"
                 end

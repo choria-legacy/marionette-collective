@@ -423,7 +423,10 @@ module MCollective
                 @ddl.validate_request(action, args) if @ddl
 
                 req = new_request(action.to_s, args)
-                return @client.sendreq(req, @agent, @filter)
+
+                message = Message.new(req, nil, {:agent => @agent, :type => :request, :collective => @collective, :filter => filter, :options => options})
+
+                return @client.sendreq(message, nil)
             end
 
             # Handles traditional calls to the remote agents with full stats
@@ -448,11 +451,14 @@ module MCollective
 
                 twirl = Progress.new
 
+                message = Message.new(req, nil, {:agent => @agent, :type => :request, :collective => @collective, :filter => filter, :options => opts})
+                message.discovered_hosts = disc.clone
+
                 result = []
                 respcount = 0
 
                 if disc.size > 0
-                    @client.req(req, @agent, opts, disc.size) do |resp|
+                    @client.req(message) do |resp|
                         respcount += 1
 
                         if block_given?

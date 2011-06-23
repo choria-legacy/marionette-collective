@@ -4,9 +4,6 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 module MCollective
     describe Message do
-        before do
-        end
-
         describe "#initialize" do
             it "should set defaults" do
                 m = Message.new("payload", "message")
@@ -20,6 +17,8 @@ module MCollective
                 m.filter.should == Util.empty_filter
                 m.requestid.should == nil
                 m.base64?.should == false
+                m.options.should == false
+                m.discovered_hosts.should == nil
             end
 
             it "should set all supplied options" do
@@ -30,6 +29,7 @@ module MCollective
                                                       :headers => {:rspec => "test"},
                                                       :type => :rspec,
                                                       :filter => "filter",
+                                                      :options => "options",
                                                       :collective => "collective")
                 m.payload.should == "payload"
                 m.message.should == "message"
@@ -40,6 +40,7 @@ module MCollective
                 m.type.should == :rspec
                 m.filter.should == "filter"
                 m.base64?.should == true
+                m.options.should == "options"
             end
 
             it "if given a request it should set options based on the request" do
@@ -208,6 +209,36 @@ module MCollective
                 PluginManager.expects("[]").returns(connector)
 
                 m.publish
+            end
+
+            it "should support direct addressing" do
+                m = Message.new("msg", "message", :type => :request)
+                m.discovered_hosts = ["one", "two", "three"]
+
+                Config.any_instance.expects(:direct_addressing).returns(true)
+                Config.any_instance.expects(:direct_addressing_threshold).returns(10)
+
+                connector = mock
+                connector.expects(:publish).with(m)
+                PluginManager.expects("[]").returns(connector)
+
+                m.publish
+                m.type.should == :direct_request
+            end
+
+            it "should only direct publish below the configured threshold" do
+                m = Message.new("msg", "message", :type => :request)
+                m.discovered_hosts = ["one", "two", "three"]
+
+                Config.any_instance.expects(:direct_addressing).returns(true)
+                Config.any_instance.expects(:direct_addressing_threshold).returns(1)
+
+                connector = mock
+                connector.expects(:publish).with(m)
+                PluginManager.expects("[]").returns(connector)
+
+                m.publish
+                m.type.should == :request
             end
         end
 

@@ -9,7 +9,8 @@ module MCollective
                     :classesfile, :rpcauditprovider, :rpcaudit, :configdir, :rpcauthprovider,
                     :rpcauthorization, :color, :configfile, :rpchelptemplate, :rpclimitmethod,
                     :logger_type, :fact_cache_time, :collectives, :main_collective, :ssl_cipher,
-                    :registration_collective, :direct_addressing, :queueprefix
+                    :registration_collective, :direct_addressing, :direct_addressing_threshold,
+                    :queueprefix
 
         def initialize
             @configured = false
@@ -66,6 +67,8 @@ module MCollective
                                     @identity = val
                                 when "direct_addressing"
                                     val =~ /^1|y/i ? @direct_addressing = true : @direct_addressing = false
+                                when "direct_addressing_threshold"
+                                    @direct_addressing_threshold = val.to_i
                                 when "color"
                                     val =~ /^1|y/i ? @color = true : @color = false
                                 when "daemonize"
@@ -156,6 +159,7 @@ module MCollective
             @main_collective = @collectives.first
             @ssl_cipher = "aes-256-cbc"
             @direct_addressing = false
+            @direct_addressing_threshold = 10
         end
 
         def read_plugin_config_dir(dir)

@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/06/30|Add the ability to do point to point comms for requests affecting small numbers of hosts|7988|
 |2011/06/21|Add support for Stomp Gem version 1.1.9 callback based logging|7960|
 |2011/06/21|On the server side log missing DDL files at debug and not warning level|7961|
 |2011/06/16|Add the ability for nodes to subscribe to per-node queues, off by default|7225|

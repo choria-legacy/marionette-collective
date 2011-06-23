@@ -2,7 +2,8 @@ module MCollective
     # container for a message, its headers, agent, collective and other meta data
     class Message
         attr_reader :payload, :message, :request
-        attr_accessor :headers, :agent, :collective, :type, :filter, :requestid
+        attr_accessor :headers, :agent, :collective, :type, :filter
+        attr_accessor :requestid, :discovered_hosts, :options
 
         # payload              - the message body without headers etc, just the text
         # message              - the original message received from the middleware
@@ -13,6 +14,7 @@ module MCollective
         # options[:type]       - an indicator about the type of message, :message, :request or :reply
         # options[:request]    - if this is a reply this should old the message we are replying to
         # options[:filter]     - for requests, the filter to encode into the message
+        # options[:options]    - the normal client options hash
         def initialize(payload, message, options = {})
             options = {:base64 => false,
                        :agent => nil,
@@ -20,16 +22,19 @@ module MCollective
                        :type => :message,
                        :request => nil,
                        :filter => Util.empty_filter,
+                       :options => false,
                        :collective => nil}.merge(options)
 
             @payload = payload
             @message = message
             @requestid = nil
+            @discovered_hosts = nil
 
             @type = options[:type]
             @headers = options[:headers]
             @base64 = options[:base64]
             @filter = options[:filter]
+            @options = options[:options]
 
             if options[:request]
                 @request = options[:request]
@@ -97,7 +102,21 @@ module MCollective
 
         # publish a reply message by creating a target name and sending it
         def publish
-            PluginManager["connector_plugin"].publish(self)
+            Timeout.timeout(2) do
+                # If we've been specificaly told about hosts that were discovered
+                # use that information to do P2P calls if appropriate else just
+                # send it as is.
+                if @discovered_hosts && Config.instance.direct_addressing
+                    if @discovered_hosts.size <= Config.instance.direct_addressing_threshold
+                        @type = :direct_request
+                        Log.debug("Handling #{requestid} as a direct request")
+                    end
+
+                    PluginManager["connector_plugin"].publish(self)
+                else
+                    PluginManager["connector_plugin"].publish(self)
+                end
+            end
         end
 
         def create_reqid

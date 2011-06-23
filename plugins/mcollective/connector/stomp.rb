@@ -176,15 +176,20 @@ module MCollective
             def publish(msg)
                 msg.base64_encode! if @base64
 
-                target = make_target(msg.agent, msg.type, msg.collective)
+                if msg.type == :direct_request
+                    msg.discovered_hosts.each do |node|
+                        target = make_target(msg.agent, msg.type, msg.collective, node)
 
-                Log.debug("Sending a message to Stomp target '#{target}'")
+                        Log.debug("Sending a direct message to STOMP target '#{target}'")
 
-                # deal with deprecation warnings in newer stomp gems
-                if @connection.respond_to?("publish")
-                    @connection.publish(target, msg.payload, msgheaders)
+                        publish_msg(target, msg.payload)
+                    end
                 else
-                    @connection.send(target, msg.payload, msgheaders)
+                    target = make_target(msg.agent, msg.type, msg.collective)
+
+                    Log.debug("Sending a broadcast message to STOMP target '#{target}'")
+
+                    publish_msg(target, msg.payload)
                 end
             end
 
@@ -196,6 +201,16 @@ module MCollective
                     Log.debug("Subscribing to #{source}")
                     @connection.subscribe(source)
                     @subscriptions << source
+                end
+            end
+
+            # Actually sends the message to the middleware
+            def publish_msg(target, msg)
+                # deal with deprecation warnings in newer stomp gems
+                if @connection.respond_to?("publish")
+                    @connection.publish(target, msg, msgheaders)
+                else
+                    @connection.send(target, msg, msgheaders)
                 end
             end
 
@@ -258,8 +273,8 @@ module MCollective
                 end
             end
 
-            def make_target(agent, type, collective)
-                raise("Unknown target type #{type}") unless [:directed, :broadcast, :reply, :request].include?(type)
+            def make_target(agent, type, collective, target_node=nil)
+                raise("Unknown target type #{type}") unless [:directed, :broadcast, :reply, :request, :direct_request].include?(type)
                 raise("Unknown collective '#{collective}' known collectives are '#{@config.collectives.join ', '}'") unless @config.collectives.include?(collective)
 
                 prefix = @config.topicprefix
@@ -271,14 +286,19 @@ module MCollective
                         suffix = :command
                     when :request
                         suffix = :command
+                    when :direct_request
+                        agent = nil
+                        prefix = @config.queueprefix
+                        suffix = Digest::MD5.hexdigest(target_node)
                     when :directed
+                        agent = nil
                         prefix = @config.queueprefix
                         # use a md5 since hostnames might have illegal characters that
                         # the middleware dont understand
                         suffix = Digest::MD5.hexdigest(@config.identity)
                 end
 
-                ["#{prefix}#{collective}", agent, suffix].join(@config.topicsep)
+                ["#{prefix}#{collective}", agent, suffix].compact.join(@config.topicsep)
             end
         end
     end

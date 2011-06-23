@@ -38,7 +38,13 @@ module MCollective
         # Sends a request and returns the generated request id, doesn't wait for
         # responses and doesn't execute any passed in code blocks for responses
         def sendreq(msg, agent, filter = {})
-            request = Message.new(msg, nil, {:agent => agent, :type => :request, :collective => collective, :filter => filter})
+            if msg.is_a?(Message)
+                request = msg
+                agent = request.agent
+            else
+                request = Message.new(msg, nil, {:agent => agent, :type => :request, :collective => collective, :filter => filter})
+            end
+
             request.encode!
 
             Log.debug("Sending request #{request.requestid} to the #{request.agent} agent in collective #{request.collective}")
@@ -51,9 +57,7 @@ module MCollective
                 @subscriptions[agent] = 1
             end
 
-            Timeout.timeout(2) do
-                request.publish
-            end
+            request.publish
 
             request.requestid
         end
@@ -117,7 +121,13 @@ module MCollective
         #
         # It returns a hash of times and timeouts for discovery and total run is taken from the options
         # hash which in turn is generally built using MCollective::Optionparser
-        def req(body, agent, options=false, waitfor=0)
+        def req(body, agent=nil, options=false, waitfor=0)
+            if body.is_a?(Message)
+                agent = body.agent
+                options = body.options
+                waitfor = body.discovered_hosts.size || 0
+            end
+
             stat = {:starttime => Time.now.to_f, :discoverytime => 0, :blocktime => 0, :totaltime => 0}
 
             options = @options unless options
