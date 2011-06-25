@@ -193,8 +193,8 @@ module MCollective
                     (1..discovered).each do |c|
                         resp = receive(reqid)
 
-                        hosts_responded << resp[:senderid]
-                        hosts_not_responded.delete(resp[:senderid]) if hosts_not_responded.include?(resp[:senderid])
+                        hosts_responded << resp.payload[:senderid]
+                        hosts_not_responded.delete(resp.payload[:senderid]) if hosts_not_responded.include?(resp.payload[:senderid])
 
                         yield(resp.payload)
                     end
