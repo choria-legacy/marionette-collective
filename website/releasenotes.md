@@ -9,6 +9,37 @@ This is a list of release notes for various releases, you should review these be
  * TOC Placeholder
   {:toc}
 
+<a name="1_2_1">&nbsp;</a>
+
+## 1.2.1 - 2011/06/30
+
+This is a maintenance release in the production series of MCollective and is a recommended
+upgrade for all users of 1.2.0.
+
+### Bug Fixes
+
+ * Improve error handling in the inventory application
+ * Fix compatablity problems with RedHat 4 init scripts
+ * Allow . in Fact names
+ * Allow applications to use the exit method
+ * Correct parsing of the MCOLLECTIVE_EXTRA_OPTS environment variable
+
+### Backwards compatibility
+
+This release should be 100% backward compatable with version 1.2.0
+
+#### Changes since 1.2.0
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2011/06/02|Correct parsing of MCOLLECTIVE_EXTRA_OPTS in cases where no config related settings were set|7755|
+|2011/05/23|Allow applications to use the exit method as would normally be expected|7626|
+|2011/05/16|Allow _._ in fact names|7532|
+|2011/05/16|Fix compatability issues with RH4 init system|7448|
+|2011/05/15|Handle failures from remote nodes better in the inventory app|7524|
+|2011/05/06|Revert unintended changes to the Debian rc script|7420|
+|2011/05/06|Remove the _test_ agent that was accidentally checked in|7425|
+
 <a name="1_2_0">&nbsp;</a>
 
 ## 1.2.0 - 2011/05/04
