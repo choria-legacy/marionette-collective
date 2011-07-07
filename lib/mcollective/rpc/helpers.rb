@@ -76,49 +76,57 @@ module MCollective
             # hostnames, it will just print the result as if it's one huge result,
             # handy for things like showing a combined mailq.
             def self.rpcresults(result, flags = {})
-                flags = {:verbose => false, :flatten => false}.merge(flags)
+                flags = {:verbose => false, :flatten => false, :format => :console}.merge(flags)
 
                 result_text = ""
                 ddl = nil
 
                 # if running in verbose mode, just use the old style print
                 # no need for all the DDL helpers obfuscating the result
-                if flags[:verbose]
-                    result_text = old_rpcresults(result, flags)
+                if flags[:format] == :json
+                    if STDOUT.tty?
+                        result_text = JSON.pretty_generate(result)
+                    else
+                        result_text = result.to_json
+                    end
                 else
-                    [result].flatten.each do |r|
-                        begin
-                            ddl ||= DDL.new(r.agent).action_interface(r.action.to_s)
+                    if flags[:verbose]
+                        result_text = old_rpcresults(result, flags)
+                    else
+                        [result].flatten.each do |r|
+                            begin
+                                ddl ||= DDL.new(r.agent).action_interface(r.action.to_s)
 
-                            sender = r[:sender]
-                            status = r[:statuscode]
-                            message = r[:statusmsg]
-                            display = ddl[:display]
-                            result = r[:data]
+                                sender = r[:sender]
+                                status = r[:statuscode]
+                                message = r[:statusmsg]
+                                display = ddl[:display]
+                                result = r[:data]
 
-                            # appand the results only according to what the DDL says
-                            case display
-                                when :ok
-                                    if status == 0
+                                # appand the results only according to what the DDL says
+                                case display
+                                    when :ok
+                                        if status == 0
+                                            result_text << text_for_result(sender, status, message, result, ddl)
+                                        end
+
+                                    when :failed
+                                        if status > 0
+                                            result_text << text_for_result(sender, status, message, result, ddl)
+                                        end
+
+                                    when :always
                                         result_text << text_for_result(sender, status, message, result, ddl)
-                                    end
 
-                                when :failed
-                                    if status > 0
-                                        result_text << text_for_result(sender, status, message, result, ddl)
-                                    end
+                                    when :flatten
+                                        result_text << text_for_flattened_result(status, result)
 
-                                when :always
-                                    result_text << text_for_result(sender, status, message, result, ddl)
-
-                                when :flatten
-                                    result_text << text_for_flattened_result(status, result)
-
+                                end
+                            rescue Exception => e
+                                # no DDL so just do the old style print unchanged for
+                                # backward compat
+                                result_text = old_rpcresults(result, flags)
                             end
-                        rescue Exception => e
-                            # no DDL so just do the old style print unchanged for
-                            # backward compat
-                            result_text = old_rpcresults(result, flags)
                         end
                     end
                 end
@@ -262,6 +270,11 @@ module MCollective
 
                 parser.on('--limit-nodes [COUNT]', '--ln [COUNT]', 'Send request to only a subset of nodes, can be a percentage') do |v|
                     options[:mcollective_limit_targets] = v
+                end
+
+                parser.on('--json', '-j', 'Produce JSON output') do |v|
+                    options[:progress_bar] = false
+                    options[:output_format] = :json
                 end
             end
         end

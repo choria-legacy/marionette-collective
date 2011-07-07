@@ -44,7 +44,7 @@ module MCollective
                 end
             end
 
-            describe "each" do
+            describe "#each" do
                 it "should itterate all the pairs" do
                     data = {}
 
@@ -52,6 +52,13 @@ module MCollective
 
                     data[:foo].should == "bar"
                     data[:bar].should == "baz"
+                end
+            end
+
+            describe "#to_json" do
+                it "should correctly json encode teh data" do
+                    result = Result.new("tester", "test", {:statuscode => 0, :statusmsg => "OK", :sender => "rspec",  :data => {:foo => "bar", :bar => "baz"}})
+                    JSON.load(result.to_json).should == {"agent" => "tester", "action" => "test", "statuscode" => 0, "statusmsg" => "OK", "sender" => "rspec", "data" => {"foo" => "bar", "bar" => "baz"}}
                 end
             end
         end

@@ -4,7 +4,7 @@ module MCollective
         # and just brings in a lot of convention and standard approached.
         class Client
             attr_accessor :discovery_timeout, :timeout, :verbose, :filter, :config, :progress
-            attr_reader :client, :stats, :ddl, :agent, :limit_targets
+            attr_reader :client, :stats, :ddl, :agent, :limit_targets, :output_format
 
             @@initial_options = nil
 
@@ -47,6 +47,7 @@ module MCollective
                 @discovered_agents = nil
                 @progress = options[:progress_bar]
                 @limit_targets = options[:mcollective_limit_targets]
+                @output_format = options[:output_format] || :console
 
                 agent_filter agent
 
@@ -324,6 +325,8 @@ module MCollective
             def discover(flags={})
                 flags.include?(:verbose) ? verbose = flags[:verbose] : verbose = @verbose
 
+                verbose = false unless @output_format == :console
+
                 if @discovered_agents == nil
                     @stats.time_discovery :start
 
@@ -349,6 +352,7 @@ module MCollective
                  :verbose => @verbose,
                  :filter => @filter,
                  :collective => @collective,
+                 :output_format => @output_format,
                  :config => @config}
             end
 

@@ -107,6 +107,8 @@ module MCollective
         # This will use "Foo" as the caption to the stats in verbose
         # mode
         def printrpcstats(flags={})
+            return unless @options[:output_format] == :console
+
             verbose = @options[:verbose] rescue verbose = false
             caption = flags[:caption] || "rpc stats"
 
@@ -131,10 +133,11 @@ module MCollective
             verbose = @options[:verbose] rescue verbose = false
             verbose = flags[:verbose] || verbose
             flatten = flags[:flatten] || false
+            format = @options[:output_format]
 
-            result_text =  Helpers.rpcresults(result, {:verbose => verbose, :flatten => flatten})
+            result_text =  Helpers.rpcresults(result, {:verbose => verbose, :flatten => flatten, :format => format})
 
-            if result.is_a?(Array)
+            if result.is_a?(Array) && format == :console
                 puts "\n%s\n" % [ result_text ]
             else
                 # when we get just one result to print dont pad them all with

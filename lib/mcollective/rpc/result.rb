@@ -27,6 +27,15 @@ module MCollective
             def each
                 @results.each_pair {|k,v| yield(k,v) }
             end
+
+            def to_json(*a)
+                {:agent => @agent,
+                 :action => @action,
+                 :sender => @results[:sender],
+                 :statuscode => @results[:statuscode],
+                 :statusmsg => @results[:statusmsg],
+                 :data => @results[:data]}.to_json(*a)
+            end
         end
     end
 end
