@@ -283,5 +283,28 @@ module MCollective
                 Util.parse_fact_string("foo == bar").should == {:fact => "foo", :value => "bar", :operator => "=="}
             end
         end
+
+        describe "#eval_compound_statement" do
+            it "should return correctly on a regex class statement" do
+                Util.expects(:has_cf_class?).with("/foo/").returns(true)
+                Util.eval_compound_statement({"statement" => "/foo/"}).should == true
+                Util.expects(:has_cf_class?).with("/foo/").returns(false)
+                Util.eval_compound_statement({"statement" => "/foo/"}).should == false
+            end
+
+            it "should return correcly for string and regex facts" do
+                Util.expects(:has_fact?).with("foo", "bar", "==").returns(true)
+                Util.eval_compound_statement({"statement" => "foo=bar"}).should == "true"
+                Util.expects(:has_fact?).with("foo", "/bar/", "=~").returns(false)
+                Util.eval_compound_statement({"statement" => "foo=/bar/"}).should == "false"
+            end
+
+            it "should return correctly on a string class statement" do
+                Util.expects(:has_cf_class?).with("foo").returns(true)
+                Util.eval_compound_statement({"statement" => "foo"}).should == true
+                Util.expects(:has_cf_class?).with("foo").returns(false)
+                Util.eval_compound_statement({"statement" => "foo"}).should == false
+            end
+        end
     end
 end

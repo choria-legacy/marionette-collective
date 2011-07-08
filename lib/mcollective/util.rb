@@ -233,6 +233,24 @@ module MCollective
 
             return str
         end
+
+        def self.eval_compound_statement(expression)
+            if expression.values.first =~ /^\//
+                return Util.has_cf_class?(expression.values.first)
+            elsif expression.values.first =~ />=|<=|=|<|>/
+                optype = expression.values.first.match(/>=|<=|=|<|>/)
+                name, value = expression.values.first.split(optype[0])
+                unless value.split("")[0] == "/"
+                    optype[0] == "=" ? optype = "==" : optype = optype[0]
+                else
+                    optype = "=~"
+                end
+
+                return Util.has_fact?(name,value, optype).to_s
+            else
+                return Util.has_cf_class?(expression.values.first)
+            end
+        end
     end
 end
 

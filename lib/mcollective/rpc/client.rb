@@ -303,6 +303,12 @@ module MCollective
                 reset
             end
 
+            # Set a compound filter
+            def compound_filter(filter)
+                @filter["compound"] = Matcher::Parser.new(filter).execution_stack
+                reset
+            end
+
             # Resets various internal parts of the class, most importantly it clears
             # out the cached discovery
             def reset

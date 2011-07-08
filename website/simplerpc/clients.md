@@ -186,7 +186,7 @@ mc.fact_filter "country", "uk"
 printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
 {% endhighlight %}
 
-You can set other filters like _agent`_`filter_ and _identity`_`filter_.
+You can set other filters like _agent`_`filter_, _identity`_`filter_ and _compound`_`filter_.
 
 As of version 1.1.0 the fact_filter method supports a few other forms in adition to above:
 

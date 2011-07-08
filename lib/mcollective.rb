@@ -46,6 +46,7 @@ module MCollective
     autoload :Registration, "mcollective/registration"
     autoload :PluginManager, "mcollective/pluginmanager"
     autoload :RPC, "mcollective/rpc"
+    autoload :Matcher, "mcollective/matcher"
     autoload :Message, "mcollective/message"
     autoload :SSL, "mcollective/ssl"
     autoload :Application, "mcollective/application"
