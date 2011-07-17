@@ -123,7 +123,8 @@ module MCollective
             {"fact"     => [],
              "cf_class" => [],
              "agent"    => [],
-             "identity" => []}
+             "identity" => [],
+             "compound" => []}
         end
 
         # Picks a config file defaults to ~/.mcollective

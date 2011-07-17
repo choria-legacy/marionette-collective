@@ -235,7 +235,7 @@ module MCollective
                 # merge the supplied filter with the standard empty one
                 # we could just use the merge method but I want to be sure
                 # we dont merge in stuff that isnt actually valid
-                ["identity", "fact", "agent", "cf_class"].each do |ftype|
+                ["identity", "fact", "agent", "cf_class", "compound"].each do |ftype|
                     if filter.include?(ftype)
                         custom_filter[ftype] = [filter[ftype], custom_filter[ftype]].flatten
                     end
@@ -250,8 +250,7 @@ module MCollective
 
                 # Handle fire and forget requests
                 if args.include?(:process_results) && args[:process_results] == false
-                    @filter = custom_filter
-                    return fire_and_forget_request(action, args)
+                    return fire_and_forget_request(action, args, custom_filter)
                 end
 
                 # Now do a call pretty much exactly like in method_missing except with our own
@@ -429,10 +428,12 @@ module MCollective
             # nodes so they can make decisions based on that.
             #
             # Should only be called via method_missing
-            def fire_and_forget_request(action, args)
+            def fire_and_forget_request(action, args, filter=nil)
                 @ddl.validate_request(action, args) if @ddl
 
                 req = new_request(action.to_s, args)
+
+                filter = options[:filter] unless filter
 
                 message = Message.new(req, nil, {:agent => @agent, :type => :request, :collective => @collective, :filter => filter, :options => options})
 
@@ -461,7 +462,7 @@ module MCollective
 
                 twirl = Progress.new
 
-                message = Message.new(req, nil, {:agent => @agent, :type => :request, :collective => @collective, :filter => filter, :options => opts})
+                message = Message.new(req, nil, {:agent => @agent, :type => :request, :collective => @collective, :filter => opts[:filter], :options => opts})
                 message.discovered_hosts = disc.clone
 
                 result = []
