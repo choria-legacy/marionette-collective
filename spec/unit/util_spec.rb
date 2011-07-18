@@ -282,6 +282,12 @@ module MCollective
                 Util.parse_fact_string("foo==bar").should == {:fact => "foo", :value => "bar", :operator => "=="}
                 Util.parse_fact_string("foo == bar").should == {:fact => "foo", :value => "bar", :operator => "=="}
             end
+
+            it "should fail for facts in the wrong format" do
+                expect {
+                    Util.parse_fact_string("foo")
+                }.to raise_error("Could not parse fact foo it does not appear to be in a valid format")
+            end
         end
 
         describe "#eval_compound_statement" do

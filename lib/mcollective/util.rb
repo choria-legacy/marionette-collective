@@ -211,9 +211,9 @@ module MCollective
                 return {:fact => $1, :value => "/#{$2}/", :operator => '=~' }
             elsif fact =~ /^([^= ]+?)[ ]*=[ ]*(.+)/
                 return {:fact => $1, :value => $2, :operator => '==' }
+            else
+                raise "Could not parse fact #{fact} it does not appear to be in a valid format"
             end
-
-            return false
         end
 
         # Escapes a string so it's safe to use in system() or backticks
