@@ -73,6 +73,8 @@ The nice thing about using a standard abstraction for clients is that you often 
        Total Time: 54.35ms
 {% endhighlight %}
 
+Note: This example is not complete. Please see the [agents][SimpleRPCAgents] and [clients][SimpleRPCClients] pages for a walkthrough.
+
 You could also use *mco rpc* like this and achieve the same result:
 
 {% highlight console %}

@@ -20,7 +20,7 @@ The agent will send back everything that got sent to it, not overly useful but e
 
 ## The Agent
 
-Agents go into a directory configured in the _server.cfg_ using the _libdir_ directive.  You should have _mcollective/agents_ directory under that, restart the daemon when you've put it there.
+Agents go into a directory configured in the _server.cfg_ using the _libdir_ directive.  You should have _mcollective/agent_ directory under that, restart the daemon when you've put it there.
 
 Create a file echo.rb with the following, I'll walk through each part:
 
@@ -58,7 +58,7 @@ end
 Once you have it running you can test your agent works as below, we'll send the word _hello_ to the agent and we'll see if we get it back:
 
 {% highlight console %}
-% ./mc-call-agent --config etc/client.cfg --agent echo --arg hello
+% /usr/sbin/mc-call-agent --config etc/client.cfg --agent echo --arg hello
 Determining the amount of hosts matching filter for 2 seconds .... 1
 
 devel.your.com>

@@ -181,7 +181,7 @@ metadata :name        => "SimpleRPC Sample Agent",
          :url         => "http://projects.puppetlabs.com/projects/mcollective-plugins/wiki",
          :timeout     => 60
 
-action "echo", description "Echos back any message it receives" do
+action "echo", :description "Echos back any message it receives" do
    input :msg,
          :prompt      => "Service Name",
          :description => "The service to get the status for",
