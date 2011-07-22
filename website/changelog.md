@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/07/22|Add missing meta data to the discovery agent|8497|
 |2011/07/18|Raise an error if unvalid format fact filters are supplied|8419|
 |2011/07/14|Add a rich discovery query language|8181|
 |2011/07/08|Do not set RUBYLIB in the RC scripts, the OS should do the right thing|8063|

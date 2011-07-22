@@ -14,7 +14,11 @@ module MCollective
 
                 @meta = {:license => "Apache License, Version 2",
                          :author => "R.I.Pienaar <rip@devco.net>",
-                         :timeout => @timeout}
+                         :timeout => @timeout,
+                         :name => "Discovery Agent",
+                         :version => MCollective.version,
+                         :url => "http://www.marionette-collective.org",
+                         :description => "MCollective Discovery Agent"}
             end
 
             def handlemsg(msg, stomp)
