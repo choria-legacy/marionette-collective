@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/07/22|Add -version to the mco utility|7822|
 |2011/07/22|Add missing meta data to the discovery agent|8497|
 |2011/07/18|Raise an error if unvalid format fact filters are supplied|8419|
 |2011/07/14|Add a rich discovery query language|8181|
