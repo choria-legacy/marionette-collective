@@ -64,10 +64,10 @@ module MCollective
 
             @parser.on('-W', '--with FILTER', 'Combined classes and facts filter') do |f|
                 f.split(" ").each do |filter|
-                    fact_parsed = parse_fact(filter)
-                    if fact_parsed
+                    begin
+                        fact_parsed = parse_fact(filter)
                         @options[:filter]["fact"] << fact_parsed
-                    else
+                    rescue
                         @options[:filter]["cf_class"] << filter
                     end
                 end
