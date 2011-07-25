@@ -74,7 +74,7 @@ module MCollective
             end
 
             @parser.on('-S', '--select FILTER', 'Compound filter combining facts and classes') do |f|
-                @options[:filter]["compound"] = MCollective::Matcher::Parser.new(f).execution_stack
+                @options[:filter]["compound"] << MCollective::Matcher::Parser.new(f).execution_stack
             end
 
             @parser.on('-F', '--wf', '--with-fact fact=val', 'Match hosts with a certain fact') do |f|

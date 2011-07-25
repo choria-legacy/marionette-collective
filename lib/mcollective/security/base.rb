@@ -73,22 +73,24 @@ module MCollective
                             end
 
                         when "compound"
-                            filter[key].each do |expression|
+                            filter[key].each do |compound|
                                 result = []
 
-                                case expression.keys.first
-                                when "statement"
-                                    result << Util.eval_compound_statement(expression).to_s
-                                when "and"
-                                    result << "&&"
-                                when "or"
-                                    result << "||"
-                                when "("
-                                    result << "("
-                                when ")"
-                                    result << ")"
-                                when "not"
-                                    result << "!"
+                                compound.each do |expression|
+                                    case expression.keys.first
+                                        when "statement"
+                                            result << Util.eval_compound_statement(expression).to_s
+                                        when "and"
+                                            result << "&&"
+                                        when "or"
+                                            result << "||"
+                                        when "("
+                                            result << "("
+                                        when ")"
+                                            result << ")"
+                                        when "not"
+                                            result << "!"
+                                    end
                                 end
 
                                 result = eval(result.join(" "))
