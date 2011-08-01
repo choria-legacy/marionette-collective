@@ -68,13 +68,17 @@ task :dmg => [:clean, :doc] do
 
     raise "\n\n================\nTo create DMGs, rake must be run as root.  Exiting.\n================" unless Process.uid == 0
 
-    if not File.exist?("/usr/local/share/luggage/examples/mcollective/Makefile")
-      if File.directory?("/usr/local/share")
-        safe_system("git clone git@github.com:glarizza/luggage.git /usr/local/share/luggage")
-      else
+    if not File.directory?("/usr/local/share/luggage")
+      if not File.directory?("/usr/local/share")
         FileUtils.mkdir_p("/usr/local/share")
-        safe_system("git clone git@github.com:glarizza/luggage.git /usr/local/share/luggage")
+      else
+        safe_system("git clone git://github.com/unixorn/luggage.git /usr/local/share/luggage")
+        FileUtils.rm_r("/usr/local/share/luggage/examples")
       end
+    end
+
+    if not File.exists?("/usr/local/share/luggage/examples/mcollective/Makefile")
+      safe_system("git clone git://github.com/unixorn/luggage-examples.git /usr/local/share/luggage/examples")
     end
 
     safe_system("cd /usr/local/share/luggage/examples/mcollective && make dmg PACKAGE_VERSION=#{PROJ_VERSION} TYPE=CLIENT")
