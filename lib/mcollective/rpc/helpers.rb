@@ -174,8 +174,12 @@ module MCollective
 
                             result_text << "#{display_as}:"
 
-                            if result[k].is_a?(String) || result[k].is_a?(Numeric)
-                                result_text << " #{result[k]}\n"
+                            if [String, Numeric].include?(result[k].class)
+                                result[k].to_s.split("\n").each_with_index do |line, i|
+                                    i == 0 ? padtxt = " " : padtxt = " " * (padding + display_length + 2)
+
+                                    result_text << "#{padtxt}#{line}\n"
+                                end
                             else
                                 padding = " " * (lengths.max + 5)
                                 result_text << " " << result[k].pretty_inspect.split("\n").join("\n" << padding) << "\n"
