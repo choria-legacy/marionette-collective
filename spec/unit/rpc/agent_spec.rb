@@ -45,6 +45,15 @@ module MCollective
                     @agent.send(:validate, :goodip6, :ipv6address)
                 end
 
+                it "should correctly validate boolean data" do
+                    @agent.request = {:true => true, :false => false, :string => "foo", :number => 1}
+
+                    @agent.send(:validate, :true, :boolean)
+                    @agent.send(:validate, :false, :boolean)
+                    expect { @agent.send(:validate, :string, :boolean) }.to raise_error(InvalidRPCData)
+                    expect { @agent.send(:validate, :number, :boolean) }.to raise_error(InvalidRPCData)
+                end
+
                 it "should correctly identify characters that are not shell safe" do
                     @agent.request = {:backtick => 'foo`bar',
                                       :semicolon => 'foo;bar',

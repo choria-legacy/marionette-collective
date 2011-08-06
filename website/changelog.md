@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/08/06|Add a boolean validator to SimpleRPC agents|8799|
 |2011/08/06|Justify text results better when using printrpc|8807|
 |2011/07/22|Add -version to the mco utility|7822|
 |2011/07/22|Add missing meta data to the discovery agent|8497|

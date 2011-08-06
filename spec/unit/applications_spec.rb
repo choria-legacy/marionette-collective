@@ -123,7 +123,7 @@ module MCollective
             end
 
             it "should print a friendly error and exit on failure" do
-                Applications.expects("load_config").returns(true).once
+                Applications.expects("load_config").raises(Exception)
                 IO.any_instance.expects(:puts).with(regexp_matches(/Failed to generate application list/)).once
 
                 expect {

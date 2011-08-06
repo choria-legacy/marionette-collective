@@ -358,6 +358,8 @@ module MCollective
                                 raise InvalidRPCData, "#{key} should be an ipv4 address"
                             end
 
+                        when :boolean
+                            raise InvalidRPCData, "#{key} should be boolean" unless [TrueClass, FalseClass].include?(@request[key].class)
                     end
                 else
                     raise InvalidRPCData, "#{key} should be a #{validation}" unless  @request[key].is_a?(validation)
