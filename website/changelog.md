@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/08/06|Avoid reloading the authorization class over and over from disk on each request|8703|
 |2011/08/06|Add a boolean validator to SimpleRPC agents|8799|
 |2011/08/06|Justify text results better when using printrpc|8807|
 |2011/07/22|Add -version to the mco utility|7822|

@@ -300,7 +300,7 @@ module MCollective
                 plugin = plugin.to_s.split("_").map {|v| v.capitalize}.join
                 pluginname = "MCollective::Util::#{plugin}"
 
-                PluginManager.loadclass(pluginname)
+                PluginManager.loadclass(pluginname) unless MCollective::Util.constants.include?(plugin)
 
                 class_eval("
                     def authorization_hook(request)
