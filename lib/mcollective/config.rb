@@ -139,7 +139,7 @@ module MCollective
             @topicsep = "."
             @topicprefix = "/topic/"
             @queueprefix = "/queue/"
-            @classesfile = "/var/lib/puppet/classes.txt"
+            @classesfile = "/var/lib/puppet/state/classes.txt"
             @rpcaudit = false
             @rpcauditprovider = ""
             @rpcauthorization = false
