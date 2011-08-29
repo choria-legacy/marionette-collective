@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/08/29|Enforce a 60 second TTL on all messages by default|8325|
 |2011/08/29|Change the default classes.txt file to be in line with Puppet defaults|9133|
 |2011/08/06|Add reload-agents and reload-loglevel commands to the redhat RC script|7730|
 |2011/08/06|Avoid reloading the authorization class over and over from disk on each request|8703|

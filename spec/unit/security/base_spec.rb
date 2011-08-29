@@ -156,9 +156,10 @@ module MCollective::Security
                             :agent => "discovery",
                             :collective => "mcollective",
                             :filter => "filter",
+                            :ttl => 20,
                             :msgtime => @time}
 
-                @plugin.create_request("reqid", "filter", "body", :server, "discovery", "mcollective").should == expected
+                @plugin.create_request("reqid", "filter", "body", :server, "discovery", "mcollective", 20).should == expected
             end
 
             it "should set the callerid when appropriate" do
@@ -169,6 +170,7 @@ module MCollective::Security
                             :collective => "mcollective",
                             :filter => "filter",
                             :callerid => "callerid",
+                            :ttl => 60,
                             :msgtime => @time}
 
                 @plugin.stubs(:callerid).returns("callerid")

@@ -30,6 +30,7 @@ module MCollective
     class NotTargettedAtUs<RuntimeError;end
     class SecurityValidationFailed<RuntimeError;end
     class DDLValidationError<RuntimeError;end
+    class MsgTTLExpired<RuntimeError;end
 
     autoload :Config, "mcollective/config"
     autoload :Log, "mcollective/log"

@@ -68,6 +68,9 @@ module MCollective
                     @connection.disconnect
                     exit!
 
+                rescue MsgTTLExpired => e
+                    Log.warn(e)
+
                 rescue NotTargettedAtUs => e
                     Log.debug("Message does not pass filters, ignoring")
 

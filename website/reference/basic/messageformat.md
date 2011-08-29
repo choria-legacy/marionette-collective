@@ -47,6 +47,7 @@ A sample request that gets sent to the connector can be seen here, each componen
  :body        => body,
  :hash        => "2d437f2904980ac32d4ebb7ca1fd740b",
  :msgtime     => 1258406924,
+ :ttl         => 60,
  :requestid   => "0b54253cb5d04eb8b26ea75bbf468cbc"}
 {% endhighlight %}
 
@@ -134,6 +135,10 @@ This is an example of something specific to the security provider, this is used 
 #### :msgtime
 
 The unix timestamp that the message was sent at.
+
+#### :ttl
+
+Each request has a TTL, messages older than this gets discarded.  Added in version 1.3.1
 
 #### :requestid
 

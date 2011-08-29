@@ -108,11 +108,11 @@ module MCollective
             end
 
             # Encodes a request msg
-            def encoderequest(sender, msg, requestid, filter, target_agent, target_collective)
+            def encoderequest(sender, msg, requestid, filter, target_agent, target_collective, ttl=60)
                 serialized = serialize(msg)
                 digest = makehash(serialized)
 
-                req = create_request(requestid, filter, serialized, @initiated_by, target_agent, target_collective)
+                req = create_request(requestid, filter, serialized, @initiated_by, target_agent, target_collective, ttl)
                 req[:hash] = digest
 
                 serialize(req)

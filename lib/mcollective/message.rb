@@ -1,9 +1,9 @@
 module MCollective
     # container for a message, its headers, agent, collective and other meta data
     class Message
-        attr_reader :payload, :message, :request
+        attr_reader :message, :request, :validated, :msgtime, :payload
         attr_accessor :headers, :agent, :collective, :type, :filter
-        attr_accessor :requestid, :discovered_hosts, :options
+        attr_accessor :requestid, :discovered_hosts, :options, :ttl
 
         # payload              - the message body without headers etc, just the text
         # message              - the original message received from the middleware
@@ -15,6 +15,7 @@ module MCollective
         # options[:request]    - if this is a reply this should old the message we are replying to
         # options[:filter]     - for requests, the filter to encode into the message
         # options[:options]    - the normal client options hash
+        # options[:ttl]        - the maximum amount of seconds this message can be valid for
         def initialize(payload, message, options = {})
             options = {:base64 => false,
                        :agent => nil,
@@ -23,6 +24,7 @@ module MCollective
                        :request => nil,
                        :filter => Util.empty_filter,
                        :options => false,
+                       :ttl => 60,
                        :collective => nil}.merge(options)
 
             @payload = payload
@@ -35,6 +37,10 @@ module MCollective
             @base64 = options[:base64]
             @filter = options[:filter]
             @options = options[:options]
+            @ttl = options[:ttl]
+            @msgtime = 0
+
+            @validated = false
 
             if options[:request]
                 @request = options[:request]
@@ -76,7 +82,7 @@ module MCollective
                     @payload = PluginManager["security_plugin"].encodereply(agent, payload, requestid, request.payload[:callerid])
                 when :request
                     @requestid = create_reqid
-                    @payload = PluginManager["security_plugin"].encoderequest(Config.instance.identity, payload, requestid, filter, agent, collective)
+                    @payload = PluginManager["security_plugin"].encoderequest(Config.instance.identity, payload, requestid, filter, agent, collective, ttl)
                 else
                     raise "Cannot encode #{type} messages"
             end
@@ -87,17 +93,21 @@ module MCollective
 
             @payload = PluginManager["security_plugin"].decodemsg(self)
 
-            @collective = payload[:collective] if payload.include?(:collective)
-            @agent = payload[:agent] if payload.include?(:agent)
-            @filter = payload[:filter] if payload.include?(:filter)
-            @requestid = payload[:requestid] if payload.include?(:requestid)
+            [:collective, :agent, :filter, :requestid, :ttl, :msgtime].each do |prop|
+                instance_variable_set("@#{prop}", payload[prop]) if payload.include?(prop)
+            end
         end
 
-        # Validates the message is targeted at us using the security plugin
+        # Perform validation against the message by checking filters and ttl
         def validate
             raise "Can only validate request messages" unless type == :request
 
+            msg_age = Time.now.to_i - msgtime
+            raise(MsgTTLExpired, "Message #{requestid} created at #{msgtime} is #{msg_age} seconds old, TTL is #{ttl}") if msg_age > ttl
+
             raise(NotTargettedAtUs, "Received message is not targetted to us") unless PluginManager["security_plugin"].validate_filter?(payload[:filter])
+
+            @validated = true
         end
 
         # publish a reply message by creating a target name and sending it

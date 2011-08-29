@@ -19,6 +19,9 @@ module MCollective
                 m.base64?.should == false
                 m.options.should == false
                 m.discovered_hosts.should == nil
+                m.ttl.should == 60
+                m.validated.should == false
+                m.msgtime.should == 0
             end
 
             it "should set all supplied options" do
@@ -30,6 +33,7 @@ module MCollective
                                                       :type => :rspec,
                                                       :filter => "filter",
                                                       :options => "options",
+                                                      :ttl => 30,
                                                       :collective => "collective")
                 m.payload.should == "payload"
                 m.message.should == "message"
@@ -41,6 +45,7 @@ module MCollective
                 m.filter.should == "filter"
                 m.base64?.should == true
                 m.options.should == "options"
+                m.ttl.should == 30
             end
 
             it "if given a request it should set options based on the request" do
@@ -123,7 +128,7 @@ module MCollective
 
             it "should encode requests using the security plugin #encoderequest" do
                 security = mock
-                security.expects(:encoderequest).with("identity", 'payload', '123', Util.empty_filter, 'rspec_agent', 'mcollective')
+                security.expects(:encoderequest).with("identity", 'payload', '123', Util.empty_filter, 'rspec_agent', 'mcollective', 60)
                 PluginManager.expects("[]").with("security_plugin").returns(security)
 
                 Config.any_instance.expects(:identity).returns("identity").twice
@@ -151,6 +156,8 @@ module MCollective
                 msg.stubs("[]").with(:agent).returns("rspecagent")
                 msg.stubs("[]").with(:filter).returns("filter")
                 msg.stubs("[]").with(:requestid).returns("1234")
+                msg.stubs("[]").with(:ttl).returns(30)
+                msg.stubs("[]").with(:msgtime).returns(1314628987)
 
                 security = mock
                 security.expects(:decodemsg).returns(msg)
@@ -163,6 +170,7 @@ module MCollective
                 m.agent.should == "rspecagent"
                 m.filter.should == "filter"
                 m.requestid.should == "1234"
+                m.ttl.should == 30
             end
         end
 
@@ -181,7 +189,9 @@ module MCollective
 
                 payload = mock
                 payload.expects("[]").with(:filter).returns({})
+
                 m = Message.new(payload, "message", :type => :request)
+                m.instance_variable_set("@msgtime", Time.now.to_i)
 
                 expect {
                     m.validate
@@ -196,7 +206,32 @@ module MCollective
                 payload = mock
                 payload.expects("[]").with(:filter).returns({})
                 m = Message.new(payload, "message", :type => :request)
+                m.instance_variable_set("@msgtime", Time.now.to_i)
                 m.validate
+            end
+
+            it "should set the @validated property" do
+                sec = mock
+                sec.expects(:validate_filter?).returns(true)
+                PluginManager.expects("[]").returns(sec)
+
+                payload = mock
+                payload.expects("[]").with(:filter).returns({})
+                m = Message.new(payload, "message", :type => :request)
+                m.instance_variable_set("@msgtime", Time.now.to_i)
+
+                m.validated.should == false
+                m.validate
+                m.validated.should == true
+            end
+
+            it "should not validate for messages older than TTL" do
+                m = Message.new("", "message", :type => :request)
+                m.instance_variable_set("@msgtime", (Time.now.to_i - 120))
+
+                expect {
+                    m.validate
+                }.to raise_error(MsgTTLExpired)
             end
         end
 

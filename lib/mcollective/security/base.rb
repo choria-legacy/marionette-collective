@@ -164,8 +164,8 @@ module MCollective
                  :body => body}
             end
 
-            def create_request(reqid, filter, msg, initiated_by, target_agent, target_collective)
-                Log.debug("Encoding a request for agent '#{target_agent}' in collective #{target_collective}  with request id #{reqid}")
+            def create_request(reqid, filter, msg, initiated_by, target_agent, target_collective, ttl=60)
+                Log.debug("Encoding a request for agent '#{target_agent}' in collective #{target_collective} with request id #{reqid}")
 
                 {:body => msg,
                  :senderid => @config.identity,
@@ -174,6 +174,7 @@ module MCollective
                  :collective => target_collective,
                  :agent => target_agent,
                  :callerid => callerid,
+                 :ttl => ttl,
                  :msgtime => Time.now.to_i}
             end
 
