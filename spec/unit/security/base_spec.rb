@@ -13,7 +13,7 @@ module MCollective::Security
 
             @stats = mock("stats")
 
-            @time = Time.now.to_i
+            @time = Time.now
             ::Time.stubs(:now).returns(@time)
 
             MCollective::Log.stubs(:debug).returns(true)
@@ -140,7 +140,7 @@ module MCollective::Security
                 expected = {:senderid => "test",
                             :requestid => "reqid",
                             :senderagent => "agent",
-                            :msgtime => @time,
+                            :msgtime => @time.to_i,
                             :body => "body"}
 
                 @plugin.create_reply("reqid", "agent", "body").should == expected
@@ -157,7 +157,7 @@ module MCollective::Security
                             :collective => "mcollective",
                             :filter => "filter",
                             :ttl => 20,
-                            :msgtime => @time}
+                            :msgtime => @time.to_i}
 
                 @plugin.create_request("reqid", "filter", "body", :server, "discovery", "mcollective", 20).should == expected
             end
@@ -171,7 +171,7 @@ module MCollective::Security
                             :filter => "filter",
                             :callerid => "callerid",
                             :ttl => 60,
-                            :msgtime => @time}
+                            :msgtime => @time.to_i}
 
                 @plugin.stubs(:callerid).returns("callerid")
                 @plugin.create_request("reqid", "filter", "body", :client, "discovery", "mcollective").should == expected

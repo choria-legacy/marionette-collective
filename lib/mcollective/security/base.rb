@@ -160,7 +160,7 @@ module MCollective
                 {:senderid => @config.identity,
                  :requestid => reqid,
                  :senderagent => agent,
-                 :msgtime => Time.now.to_i,
+                 :msgtime => Time.now.utc.to_i,
                  :body => body}
             end
 
@@ -175,7 +175,7 @@ module MCollective
                  :agent => target_agent,
                  :callerid => callerid,
                  :ttl => ttl,
-                 :msgtime => Time.now.to_i}
+                 :msgtime => Time.now.utc.to_i}
             end
 
             # Returns a unique id for the caller, by default we just use the unix
