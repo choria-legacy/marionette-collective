@@ -45,11 +45,14 @@ To configure it to be used you just need the following in your config:
 {% highlight ini %}
 registerinterval = 300
 registration = Agentlist
+
+# only valid since 1.3.0 and newer
 registration_collective = development
 {% endhighlight %}
 
 This will cause the plugin to be called every 300 seconds to the development collective, if you do not configure
-a target collective explicitely it will target the main collective for the given node.
+a target collective explicitely it will target the main collective for the given node.  Prior to version 1.3.0
+all registration messages are targeted at the main collective and is not configurable.
 
 We do not provide the receiving end of this in the core mcollective. You will need to write an agent called
 *registration* and do something useful with the data you receive from all the nodes. You can find
