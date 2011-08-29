@@ -226,7 +226,7 @@ module MCollective
             end
 
             it "should not validate for messages older than TTL" do
-                m = Message.new("", "message", :type => :request)
+                m = Message.new({:callerid => "caller", :senderid => "sender"}, "message", :type => :request)
                 m.instance_variable_set("@msgtime", (Time.now.to_i - 120))
 
                 expect {
