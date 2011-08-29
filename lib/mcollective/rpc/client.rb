@@ -48,6 +48,7 @@ module MCollective
                 @progress = options[:progress_bar]
                 @limit_targets = options[:mcollective_limit_targets]
                 @output_format = options[:output_format] || :console
+                @force_direct_request = false
 
                 agent_filter agent
 
@@ -219,13 +220,22 @@ module MCollective
             # If you just wanted to contact one machine for example with a client that
             # already has other filter options setup you can do:
             #
-            # puppet.custom_request("runonce", {}, {:identity => "your.box.com"},
-            #                       ["your.box.com"])
+            # puppet.custom_request("runonce", {}, ["your.box.com"], {:identity => "your.box.com"})
             #
             # This will do runonce action on just 'your.box.com', no discovery will be
             # done and after receiving just one response it will stop waiting for responses
+            #
+            # If direct_addressing is enabled in the config file you can provide an empty
+            # hash as a filter, this will force that request to be a directly addressed
+            # request which technically does not need filters.  If you try to use this
+            # mode with direct addressing disabled an exception will be raise
             def custom_request(action, args, expected_agents, filter = {}, &block)
                 @ddl.validate_request(action, args) if @ddl
+
+                if filter == {} && !Config.instance.direct_addressing
+                    raise "Attempted to do a filterless custom_request without direct_addressing enabled, preventing unexpected call to all nodes"
+                end
+
 
                 @stats.reset
 
@@ -320,8 +330,16 @@ module MCollective
                 agent_filter @agent
             end
 
-            # Does discovery based on the filters set, i a discovery was
+            # Does discovery based on the filters set, if a discovery was
             # previously done return that else do a new discovery.
+            #
+            # Alternatively if identity filters are given and none of them are
+            # regular expressions then just use the provided data as discovered
+            # data, avoiding discovery
+            #
+            # Discovery can be forece if direct_addressing is enabled by passing
+            # in an array of hosts with :hosts or JSON data like those produced
+            # by mcollective rpc JSON output
             #
             # Will show a message indicating its doing discovery if running
             # verbose or if the :verbose flag is passed in.
@@ -332,15 +350,53 @@ module MCollective
 
                 verbose = false unless @output_format == :console
 
-                if @discovered_agents == nil
+                unless @discovered_agents
+                    # if either hosts or json is supplied try to figure out discovery data from there
+                    # if direct_addressing is not enabled this is a critical error as the user might
+                    # not have supplied filters so raise an exception
+                    if flags[:hosts] || flags[:json]
+                        raise "Can only supply discovery data if direct_addressing is enabled" unless Config.instance.direct_addressing
+
+                        hosts = []
+
+                        if flags[:hosts]
+                            hosts = Helpers.extract_hosts_from_array(flags[:hosts])
+                        elsif flags[:json]
+                            hosts = Helpers.extract_hosts_from_json(flags[:json])
+                        end
+
+                        raise "Could not find any hosts in discovery data provided" if hosts.empty?
+
+                        @discovered_agents = hosts
+                        @force_direct_request = true
+
+                    # if an identity filter is supplied and it is all strings no regex we can use that
+                    # as discovery data, technically the identity filter is then redundant if we are
+                    # in direct addressing mode and we could empty it out but this use case should
+                    # only really be for a few -I's on the cli
+                    #
+                    # For safety we leave the filter in place for now, that way we can support this
+                    # enhancement also in broadcast mode
+                    elsif options[:filter]["identity"].size > 0
+                        regex_filters = options[:filter]["identity"].select{|i| i.match("^\/")}.size
+
+                        if regex_filters == 0
+                            @discovered_agents = options[:filter]["identity"].clone
+                            @force_direct_request = true if Config.instance.direct_addressing
+                        end
+                    end
+                end
+
+                # All else fails we do it the hard way using a traditional broadcast
+                unless @discovered_agents
                     @stats.time_discovery :start
 
                     STDERR.print("Determining the amount of hosts matching filter for #{discovery_timeout} seconds .... ") if verbose
                     @discovered_agents = @client.discover(@filter, @discovery_timeout)
+                    @force_direct_request = false
                     STDERR.puts(@discovered_agents.size) if verbose
 
                     @stats.time_discovery :end
-
                 end
 
                 @stats.discovered_agents(@discovered_agents)
@@ -454,21 +510,30 @@ module MCollective
                     args[:process_results] = true
                 end
 
-                # Do discovery when no specific discovery
-                # array is given
-                disc = discover if disc == :auto
+                # Do discovery when no specific discovery array is given
+                #
+                # If an array is given set the force_direct_request hint that
+                # will tell the message object to be a direct request one
+                if disc == :auto
+                    @force_direct_request = false
+                    discovered = discover
+                else
+                    @force_direct_request = true if Config.instance.direct_addressing
+                    discovered = disc
+                end
 
                 req = new_request(action.to_s, args)
 
                 twirl = Progress.new
 
                 message = Message.new(req, nil, {:agent => @agent, :type => :request, :collective => @collective, :filter => opts[:filter], :options => opts})
-                message.discovered_hosts = disc.clone
+                message.discovered_hosts = discovered.clone
+                message.type = :direct_request if @force_direct_request
 
                 result = []
                 respcount = 0
 
-                if disc.size > 0
+                if discovered.size > 0
                     @client.req(message) do |resp|
                         respcount += 1
 
@@ -477,7 +542,7 @@ module MCollective
                         else
                             if @progress
                                 puts if respcount == 1
-                                print twirl.twirl(respcount, disc.size)
+                                print twirl.twirl(respcount, discovered.size)
                             end
 
                             result << process_results_without_block(resp, action)

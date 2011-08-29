@@ -117,7 +117,7 @@ module MCollective::Security
                 @stats.stubs(:filtered).never
 
                 MCollective::Log.expects(:debug).with("Message passed the filter checks").once
-                MCollective::Log.expects(:debug).with("Passing based on identity = test").once
+                MCollective::Log.expects(:debug).with("Passing based on identity").once
 
                 @plugin.validate_filter?({"identity" => ["test"]}).should == true
             end
@@ -129,9 +129,35 @@ module MCollective::Security
                 @stats.stubs(:filtered).once
 
                 MCollective::Log.expects(:debug).with("Message failed the filter checks").once
-                MCollective::Log.expects(:debug).with("Failed based on identity = test").once
+                MCollective::Log.expects(:debug).with("Failed based on identity").once
 
                 @plugin.validate_filter?({"identity" => ["test"]}).should == false
+            end
+
+            it "should treat multiple identity filters correctly" do
+                MCollective::Util.stubs("has_identity?").with("foo").returns(false)
+                MCollective::Util.stubs("has_identity?").with("bar").returns(true)
+
+                @stats.stubs(:passed).once
+                @stats.stubs(:filtered).never
+
+                MCollective::Log.expects(:debug).with("Message passed the filter checks").once
+                MCollective::Log.expects(:debug).with("Passing based on identity").once
+
+                @plugin.validate_filter?({"identity" => ["foo", "bar"]}).should == true
+            end
+
+            it "should fail if no identity matches are found" do
+                MCollective::Util.stubs("has_identity?").with("foo").returns(false)
+                MCollective::Util.stubs("has_identity?").with("bar").returns(false)
+
+                @stats.stubs(:passed).never
+                @stats.stubs(:filtered).once
+
+                MCollective::Log.expects(:debug).with("Message failed the filter checks").once
+                MCollective::Log.expects(:debug).with("Failed based on identity").once
+
+                @plugin.validate_filter?({"identity" => ["foo", "bar"]}).should == false
             end
         end
 

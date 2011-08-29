@@ -83,23 +83,25 @@ class MCollective::Application::Rpc<MCollective::Application
     end
 
     def main
+        mc = rpcclient(configuration[:agent])
+
+        mc.agent_filter(configuration[:agent])
+
+        booleanish_to_boolean(configuration[:arguments], mc.ddl.action_interface(configuration[:action])) unless mc.ddl.nil?
+
         if configuration[:no_results]
             configuration[:arguments][:process_results] = false
 
-            mc = rpcclient(configuration[:agent])
-
-            booleanish_to_boolean(configuration[:arguments], mc.ddl.action_interface(configuration[:action])) unless mc.ddl.nil?
-
-            mc.agent_filter(configuration[:agent])
-
             puts "Request sent with id: " + mc.send(configuration[:action], configuration[:arguments])
         else
-            mc = rpcclient(configuration[:agent])
-
-            booleanish_to_boolean(configuration[:arguments], mc.ddl.action_interface(configuration[:action])) unless mc.ddl.nil?
-
-            mc.agent_filter(configuration[:agent])
-            mc.discover :verbose => true
+            # if there's stuff on STDIN assume its JSON that came from another
+            # rpc or printrpc, we feed that in as discovery data
+            unless STDIN.tty?
+                discovery_data = STDIN.read
+                mc.discover(:json => discovery_data)
+            else
+                mc.discover :verbose => true
+            end
 
             printrpc mc.send(configuration[:action], configuration[:arguments])
 

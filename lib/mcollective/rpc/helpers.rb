@@ -11,12 +11,43 @@ module MCollective
                 found.include?(true)
             end
 
+            # Parse JSON output as produced by printrpc and extract
+            # the "sender" of each rpc response
+            #
+            # The simplist valid JSON based data would be:
+            #
+            # [
+            #  {"sender" => "example.com"},
+            #  {"sender" => "another.com"}
+            # ]
+            def self.extract_hosts_from_json(json)
+                hosts = JSON.parse(json)
+
+                raise "JSON hosts list is not an array" unless hosts.is_a?(Array)
+
+                hosts.map do |host|
+                    raise "JSON host list is not an array of Hashes" unless host.is_a?(Hash)
+                    raise "JSON host list does not have senders in it" unless host.include?("sender")
+
+                    host["sender"]
+                end.uniq
+            end
+
+            # Given an array of something, make sure each is a string
+            # chomp off any new lines and return just the array of hosts
+            def self.extract_hosts_from_array(hosts)
+                [hosts].flatten.map do |host|
+                    raise "#{host} should be a string" unless host.is_a?(String)
+                    host.chomp
+                end
+            end
+
             # Figures out the columns and liens of the current tty
             #
             # Returns [0, 0] if it can't figure it out or if you're
             # not running on a tty
             def self.terminal_dimensions
-                return [0, 0] unless STDIN.tty?
+                return [0, 0] unless STDOUT.tty?
 
                 if ENV["COLUMNS"] && ENV["LINES"]
                     return [ENV["COLUMNS"].to_i, ENV["LINES"].to_i]

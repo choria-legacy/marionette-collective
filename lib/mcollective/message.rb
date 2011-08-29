@@ -1,9 +1,11 @@
 module MCollective
     # container for a message, its headers, agent, collective and other meta data
     class Message
-        attr_reader :message, :request, :validated, :msgtime, :payload
-        attr_accessor :headers, :agent, :collective, :type, :filter
+        attr_reader :message, :request, :validated, :msgtime, :payload, :type
+        attr_accessor :headers, :agent, :collective, :filter
         attr_accessor :requestid, :discovered_hosts, :options, :ttl
+
+        VALIDTYPES = [:message, :request, :direct_request, :reply]
 
         # payload              - the message body without headers etc, just the text
         # message              - the original message received from the middleware
@@ -11,7 +13,7 @@ module MCollective
         # options[:agent]      - the agent the message is for/from
         # options[:collective] - the collective its for/from
         # options[:headers]    - the message headers
-        # options[:type]       - an indicator about the type of message, :message, :request or :reply
+        # options[:type]       - an indicator about the type of message, :message, :request, :direct_request or :reply
         # options[:request]    - if this is a reply this should old the message we are replying to
         # options[:filter]     - for requests, the filter to encode into the message
         # options[:options]    - the normal client options hash
@@ -55,6 +57,29 @@ module MCollective
             base64_decode!
         end
 
+        # Sets the message type to one of the known types.  In the case of :direct_request
+        # the list of hosts to communicate with should have been set with #discovered_hosts
+        # else an exception will be raised.  This is for extra security, we never accidentally
+        # want to send a direct request without a list of hosts or something weird like that
+        # as it might result in a filterless broadcast being sent.
+        #
+        # Additionally you simply cannot set :direct_request if direct_addressing was not enabled
+        # this is to force a workflow that doesnt not yield in a mistake when someone might assume
+        # direct_addressing is enabled when its not.
+        def type=(type)
+            if type == :direct_request
+                raise "Direct requests is not enabled using the direct_addressing config option" unless Config.instance.direct_addressing
+
+                unless @discovered_hosts && !@discovered_hosts.empty?
+                    raise "Can only set type to :direct_request if discovered_hosts have been set"
+                end
+            end
+
+            raise "Unknown message type #{type}" unless VALIDTYPES.include?(type)
+
+            @type = type
+        end
+
         def base64_decode!
             return unless @base64
 
@@ -80,7 +105,7 @@ module MCollective
 
                     @requestid = request.payload[:requestid]
                     @payload = PluginManager["security_plugin"].encodereply(agent, payload, requestid, request.payload[:callerid])
-                when :request
+                when :request, :direct_request
                     @requestid = create_reqid
                     @payload = PluginManager["security_plugin"].encoderequest(Config.instance.identity, payload, requestid, filter, agent, collective, ttl)
                 else

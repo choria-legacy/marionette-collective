@@ -127,12 +127,15 @@ module MCollective
                             end
 
                         when "identity"
-                            filter[key].each do |f|
-                                if Util.has_identity?(f)
-                                    Log.debug("Passing based on identity = #{f}")
+                            unless filter[key].empty?
+                                # Identity filters should not be 'and' but 'or' as each node can only have one identity
+                                matched = filter[key].select{|f| Util.has_identity?(f)}.size
+
+                                if matched == 1
+                                    Log.debug("Passing based on identity")
                                     passed += 1
                                 else
-                                    Log.debug("Failed based on identity = #{f}")
+                                    Log.debug("Failed based on identity")
                                     failed += 1
                                 end
                             end

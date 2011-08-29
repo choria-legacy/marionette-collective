@@ -227,6 +227,26 @@ printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
 
 Here we make one _echo_ call - which would do a discovery - we then reset the client, adjust filters and call it again.  The 2nd call would do a new discovery and have new client lists etc.
 
+## Supplying your own discovery information
+
+As of version _1.3.1_ a new core messaging mode has been introduced that enables direct non filtered communicatin to specific nodes.  This has enabled us to provide an discovery-optional
+mode but only if the collective is configured to support direct messaging.
+
+{%highlight ruby %}
+mc = rpcclient("helloworld")
+
+mc.discover(:hosts => ["host1", "host2", "host3"]
+
+printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
+{% endhighlight %}
+
+This will immediately, without doing discovery, communicate just with these 3 hosts.  It will do normal failure reporting as with normal discovery based
+requests but will just be much faster as the 2 second discovery overhead is avoided.
+
+The goal with this feature is for cases such as deployment tools where you have a known expectation of which machines to deploy to and you always want
+to know if that fails.  In that use case a discovery based approach is not 100% suitable as you won't know about down machines.  This way you can provide
+your own source of truth.
+
 ## Only sending requests to a subset of discovered nodes
 By default all nodes that get discovered will get the request.  This isn't always desirable maybe you want to deploy only to a random subset of hosts or maybe you have a service exposed over MCollective that you want to treat as a HA service and so only speak with one host that provides the functionality.
 

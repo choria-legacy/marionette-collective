@@ -108,6 +108,41 @@ module MCollective
             end
         end
 
+        describe "#type=" do
+            it "should only allow types to be set when discovered hosts were given" do
+                m = Message.new("payload", "message")
+                Config.instance.instance_variable_set("@direct_addressing", true)
+
+                expect {
+                    m.type = :direct_request
+                }.to raise_error("Can only set type to :direct_request if discovered_hosts have been set")
+            end
+
+            it "should not allow direct_request to be set if direct addressing isnt enabled" do
+                m = Message.new("payload", "message")
+                Config.instance.instance_variable_set("@direct_addressing", false)
+
+                expect {
+                    m.type = :direct_request
+                }.to raise_error("Direct requests is not enabled using the direct_addressing config option")
+            end
+
+            it "should only accept valid types" do
+                m = Message.new("payload", "message")
+                Config.instance.instance_variable_set("@direct_addressing", true)
+
+                expect {
+                    m.type = :foo
+                }.to raise_error("Unknown message type foo")
+            end
+
+            it "should set the type" do
+                m = Message.new("payload", "message")
+                m.type = :request
+                m.type.should == :request
+            end
+        end
+
         describe "#encode!" do
             it "should encode replies using the security plugin #encodereply" do
                 request = mock
@@ -128,15 +163,17 @@ module MCollective
 
             it "should encode requests using the security plugin #encoderequest" do
                 security = mock
-                security.expects(:encoderequest).with("identity", 'payload', '123', Util.empty_filter, 'rspec_agent', 'mcollective', 60)
-                PluginManager.expects("[]").with("security_plugin").returns(security)
+                security.expects(:encoderequest).with("identity", 'payload', '123', Util.empty_filter, 'rspec_agent', 'mcollective', 60).twice
+                PluginManager.expects("[]").with("security_plugin").returns(security).twice
 
-                Config.any_instance.expects(:identity).returns("identity").twice
+                Config.any_instance.expects(:identity).returns("identity").times(4)
 
-                Message.any_instance.expects(:requestid).returns("123")
+                Message.any_instance.expects(:requestid).returns("123").twice
 
                 m = Message.new("payload", "message", :type => :request, :agent => "rspec_agent", :collective => "mcollective")
+                m.encode!
 
+                m = Message.new("payload", "message", :type => :direct_request, :agent => "rspec_agent", :collective => "mcollective")
                 m.encode!
             end
         end

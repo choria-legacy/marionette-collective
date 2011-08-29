@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/09/9|Use direct messaging where possible for identity filters and make the rpc application direct aware|8466|
 |2011/08/29|Enforce a 60 second TTL on all messages by default|8325|
 |2011/08/29|Change the default classes.txt file to be in line with Puppet defaults|9133|
 |2011/08/06|Add reload-agents and reload-loglevel commands to the redhat RC script|7730|
