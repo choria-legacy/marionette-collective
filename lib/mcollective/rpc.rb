@@ -50,12 +50,24 @@ module MCollective
         # It will take a few flags:
         #    :configfile => "etc/client.cfg"
         #    :options => options
+        #    :exit_on_failure => true
         #
         # Options would be a build up options hash from the Optionparser
         # you can use the rpcoptions helper to create this
+        #
+        # :exit_on_failure is true by default, and causes the application to
+        # exit if there is a failure constructing the RPC client. Set this flag
+        # to false to cause an Exception to be raised instead.
         def rpcclient(agent, flags = {})
             configfile = flags[:configfile] || "/etc/mcollective/client.cfg"
             options = flags[:options] || nil
+
+            if flags.key?(:exit_on_failure)
+                exit_on_failure = flags[:exit_on_failure]
+            else
+                # We exit on failure by default for CLI-friendliness
+                exit_on_failure = true
+            end
 
             begin
                 if options
@@ -66,8 +78,12 @@ module MCollective
                     @options = rpc.options
                 end
             rescue Exception => e
-                puts("Could not create RPC client: #{e}")
-                exit!
+                if exit_on_failure
+                    puts("Could not create RPC client: #{e}")
+                    exit!
+                else
+                    raise e
+                end
             end
 
             if block_given?
