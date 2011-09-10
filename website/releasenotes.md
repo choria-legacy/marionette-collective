@@ -9,6 +9,152 @@ This is a list of release notes for various releases, you should review these be
  * TOC Placeholder
   {:toc}
 
+<a name="1_3_1">&nbsp;</a>
+
+## 1.3.1 - 2011/09/xx
+
+This is a release in the development series of MCollective.  It feature major new features
+and bug fixes.
+
+This release is for early adopters, production users should consider the 1.2.x series.
+
+### Enhancements
+
+ * Messaging has been completely reworked internally to be more generic and easier to integrate
+   with other middleware
+ * When using Stomp 1.1.9 detailed connection logs are kept showing connections, reconnections
+   and communication errors
+ * A new point to point - but still via the middleware - communications ability has been introduced
+ * When point to point comms is enabled, favour this mode when small number of nodes are being addressed
+ * Add -j to any SimpleRPC client. Clients using _printrpc_ will automatically support a new JSON output format
+ * A new rich discovery language was added using the -S flag
+ * SimpleRPC validators can now also validate boolean data
+ * The default location of _classes.txt_ has changed to be in line with Puppet defaults.
+ * A default TTL of 60 seconds are set on all messages.  This is a start towards replay protection and is needed
+   for the new point to point comms style
+ * Discovery is now optional.  If you supply an identity filter discovery will be bypassed.  Additionally discovery
+   can be supplied in arrays, text or JSON formats.  This requires the new point to point comms model.
+
+### Bug Fixes
+
+ * Missing DDL files on the servers are now logged at debug level to minimise noise in the logs
+ * The RC scripts set RUBYLIB, remove this and rely on the operating system to be set up correctly
+ * Invalid fact filters supplied on the CLI now raises an error rather than create empty filters
+
+### New Discovery Language
+
+Previously dicovery was very limited, filters were simply run one after the other and you could not do
+anything complex like a mix of OR and AND boolean logic.
+
+A new compact discovery language was introduced perfect for use on the command line, an example below:
+
+{% highlight console %}
+$ mco find -S "((fqdn=/example.com/ or fqdn=/another.com/) or customer=acme) and apache and physicalprocessorcount>2"
+{% endhighlight %}
+
+The EBNF for this language can be seen below, it's available on the command line and the API
+
+{% highlight %}
+compound = ["("] expression [")"] {["("] expression [")"]}
+expression = [!|not]statement ["and"|"or"] [!|not] statement
+char = A-Z | a-z | < | > | => | =< | _ | - |* | / { A-Z | a-z | < | > | => | =< | _ | - | * | / | }
+int = 0|1|2|3|4|5|6|7|8|9{|0|1|2|3|4|5|6|7|8|9|0}
+{% endhighlight %}
+
+### Point to Point comms
+
+Previously MCollective could only broadcast messages and was tied to a discovery model.  This is in line
+with the initial goals of the project, having solved that we want to mix in a more traditional messaging
+style.
+
+The messaging layer now supports per node destinations that allows you to address a node, even if its down,
+doesn't yet exist or if you cannot come up with a filter that would match a group of arbitrarily selected
+nodes.
+
+When this mode is in use you tell it using either text, arrays or JSON data which machines to communicate with
+it will then talk directly to those nodes via the middleware and if any of them are down you will get the
+usual no responses report after DDL configured timeout, this is a smooth transparent to the end user mix
+in communication modes.
+
+It is ideal for building deployers, web apps and so forth where you know exactly which nodes should be there
+and you'd like to influence the MCollective network addressing, perhaps from a CMDB you built yourself.
+
+This is the start towards an assured style of delivery, you can consider it the TCP to MCollective's UDP.
+Both modes of communication will be supported in the future and both will have access to all the same agents
+clients etc.
+
+This is feature is still maturing, you enable it using the _direct`_`addressing_ configuration option.  At
+present the STOMP connector supports it but it is not optimized for networks larger than 20 to 30 hosts.  A
+new connector is being developed that uses ActiveMQ features to achieve this efficiently.
+
+### Pluggable / Optional Discovery
+
+If you did _mco rpc rpcutil ping -I box.example.com -I another.example.com_ mcollective will now just assume
+you know what you want, it won't do a discover to confirm those machines exist or not, it will just go and
+talk with them.  This is a big end user visible speed improvement.  If however you did a filter like _-I /example.com/_
+it cannot know which machines you want to reach and so a traditional broadcast discovery is done first.
+
+When the direct addressing mode is enabled various behind the scenes optimizations are being done:
+
+ * If a discovery is done and it finds you only want to address 10 or fewer nodes it will use direct mode for that
+   request.  This avoids a second needless broadcast.  This is less efficient to the middleware but does not send
+   needless messages to uninterested nodes that would then just ignore them.
+ * The _rpc_ application supports piping output from one to the next.  Example of this below.
+
+{% highlight console %}
+$ mco rpc package update package=foo -W customer=acme -j|mco rpc service restart service=bar
+{% endhighlight %}
+
+This will update a package on machines matching _customer=foo_ and then restart the service _bar_ on those machines.
+
+The first request is doing traditional discovery based on the fact while the 2nd request is not doing discovery
+at all, it uses the JSON output enabled by -j as discovery data and then restart the service on only those machines.
+
+These abilities are exposed in the SimpleRPC client API and you can write your own schemes, query your own databases etc
+
+### Backwards Compatability
+
+This is a big release and the entire messaging system has been redesigned, rewritten and has had features added.
+As such there might be problems running mixed 1.2.x and 1.3.1 networks, we'd ask users to test this in lab situations
+and provide us feedback to improve the eventual transition from 1.2.x to 1.4.x.  We did though aim to maintain backward
+compatability and the intention is to fix any bugs reported where a default configured 1.3.x cannot co-habit with a
+previous 1.2.x build.
+
+Enabling the new direct addressing mode is a big configuration change both in your collective and the middleware as such
+soon as you enable it there will be compatability issues until all your nodes are up to the same level.  Specifically old
+nodes will just ignore your direct requests.
+
+The default location for _classes.txt_ has changed to _/var/lib/puppet/state/classes.txt_ you need to ensure
+this file exists or configure either MCollective or Puppet accordingly else your classes filters will break
+
+Messages are now valid for only 60 seconds, nodes will _ignore_ messages older than 60 seconds.  This means
+your clocks have to be in sync on your entire collective.  We use UTC time for the TTL check so your machines
+can be in different time zones.  At present the 60 second threshold is hard coded, it will become configurble on a
+per message basis in future.
+
+#### Changes since 1.3.0
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2011/09/9|Use direct messaging where possible for identity filters and make the rpc application direct aware|8466|
+|2011/08/29|Enforce a 60 second TTL on all messages by default|8325|
+|2011/08/29|Change the default classes.txt file to be in line with Puppet defaults|9133|
+|2011/08/06|Add reload-agents and reload-loglevel commands to the redhat RC script|7730|
+|2011/08/06|Avoid reloading the authorization class over and over from disk on each request|8703|
+|2011/08/06|Add a boolean validator to SimpleRPC agents|8799|
+|2011/08/06|Justify text results better when using printrpc|8807|
+|2011/07/22|Add --version to the mco utility|7822|
+|2011/07/22|Add missing meta data to the discovery agent|8497|
+|2011/07/18|Raise an error if invalid format fact filters are supplied|8419|
+|2011/07/14|Add a rich discovery query language|8181|
+|2011/07/08|Do not set RUBYLIB in the RC scripts, the OS should do the right thing|8063|
+|2011/07/07|Add a -j argument to all SimpleRPC clients that causes printrpc to produce JSON data|8280|
+|2011/06/30|Add the ability to do point to point comms for requests affecting small numbers of hosts|7988|
+|2011/06/21|Add support for Stomp Gem version 1.1.9 callback based logging|7960|
+|2011/06/21|On the server side log missing DDL files at debug and not warning level|7961|
+|2011/06/16|Add the ability for nodes to subscribe to per-node queues, off by default|7225|
+|2011/06/12|Remove assumptions about middleware structure from the core and move it to the connector plugins|7619|
+
 <a name="1_2_1">&nbsp;</a>
 
 ## 1.2.1 - 2011/06/30

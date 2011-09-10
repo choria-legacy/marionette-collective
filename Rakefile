@@ -6,12 +6,13 @@ require 'rake/clean'
 require 'find'
 
 PROJ_DOC_TITLE = "The Marionette Collective"
-PROJ_VERSION = "1.3.0"
-PROJ_RELEASE = "6"
+PROJ_VERSION = "1.3.1"
+PROJ_RELEASE = "19"
 PROJ_NAME = "mcollective"
 PROJ_RPM_NAMES = [PROJ_NAME]
 PROJ_FILES = ["#{PROJ_NAME}.spec", "#{PROJ_NAME}.init", "#{PROJ_NAME}.init-rh", "mcollectived.rb", "COPYING", "doc", "etc", "lib", "plugins", "ext", "mco"]
 PROJ_FILES.concat(Dir.glob("mc-*"))
+RDOC_EXCLUDES = ["mcollective/vendor", "spec", "ext", "website", "plugins"]
 
 ENV["RPM_VERSION"] ? CURRENT_VERSION = ENV["RPM_VERSION"] : CURRENT_VERSION = PROJ_VERSION
 ENV["BUILD_NUMBER"] ? CURRENT_RELEASE = ENV["BUILD_NUMBER"] : CURRENT_RELEASE = PROJ_RELEASE
@@ -41,7 +42,11 @@ rd = Rake::RDocTask.new(:doc) { |rdoc|
     rdoc.rdoc_dir = 'doc'
     rdoc.template = 'html'
     rdoc.title    = "#{PROJ_DOC_TITLE} version #{CURRENT_VERSION}"
-    rdoc.options << '--line-numbers' << '--inline-source' << '--main' << 'MCollective' << '--exclude' << 'mcollective/vendor/'
+    rdoc.options << '--line-numbers' << '--inline-source' << '--main' << 'MCollective'
+
+    RDOC_EXCLUDES.each do |ext|
+        rdoc.options << '--exclude' << ext
+    end
 }
 
 desc "Run spec tests"

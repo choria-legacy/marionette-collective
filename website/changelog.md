@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|*2011/09/xx*|*Release 1.3.1*|*9133*|
 |2011/09/9|Use direct messaging where possible for identity filters and make the rpc application direct aware|8466|
 |2011/08/29|Enforce a 60 second TTL on all messages by default|8325|
 |2011/08/29|Change the default classes.txt file to be in line with Puppet defaults|9133|
@@ -18,9 +19,9 @@ title: Changelog
 |2011/08/06|Avoid reloading the authorization class over and over from disk on each request|8703|
 |2011/08/06|Add a boolean validator to SimpleRPC agents|8799|
 |2011/08/06|Justify text results better when using printrpc|8807|
-|2011/07/22|Add -version to the mco utility|7822|
+|2011/07/22|Add --version to the mco utility|7822|
 |2011/07/22|Add missing meta data to the discovery agent|8497|
-|2011/07/18|Raise an error if unvalid format fact filters are supplied|8419|
+|2011/07/18|Raise an error if invalid format fact filters are supplied|8419|
 |2011/07/14|Add a rich discovery query language|8181|
 |2011/07/08|Do not set RUBYLIB in the RC scripts, the OS should do the right thing|8063|
 |2011/07/07|Add a -j argument to all SimpleRPC clients that causes printrpc to produce JSON data|8280|
