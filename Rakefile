@@ -136,16 +136,16 @@ task :deb => [:clean, :doc, :package] do
 
             if ENV['SIGNED'] == '1'
                     if ENV['SIGNWITH']
-                            safe_system %{debuild -i -b -k#{ENV['SIGNWITH']}}
+                            safe_system %{debuild -i -k#{ENV['SIGNWITH']}}
                     else
-                            safe_system %{debuild -i -b}
+                            safe_system %{debuild -i}
                     end
             else
-                safe_system %{debuild -i -us -uc -b}
+                safe_system %{debuild -i -us -uc}
             end
         end
 
-        safe_system %{cp *.deb *.changes ..}
+        safe_system %{cp *.deb *.dsc *.diff.gz *.orig.tar.gz *.changes ..}
     end
 
 end
