@@ -11,7 +11,7 @@ This is a list of release notes for various releases, you should review these be
 
 <a name="1_3_1">&nbsp;</a>
 
-## 1.3.1 - 2011/09/xx
+## 1.3.1 - 2011/09/16
 
 This is a release in the development series of MCollective.  It feature major new features
 and bug fixes.
