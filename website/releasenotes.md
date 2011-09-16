@@ -54,12 +54,10 @@ $ mco find -S "((fqdn=/example.com/ or fqdn=/another.com/) or customer=acme) and
 
 The EBNF for this language can be seen below, it's available on the command line and the API
 
-{% highlight %}
-compound = ["("] expression [")"] {["("] expression [")"]}
-expression = [!|not]statement ["and"|"or"] [!|not] statement
-char = A-Z | a-z | < | > | => | =< | _ | - |* | / { A-Z | a-z | < | > | => | =< | _ | - | * | / | }
-int = 0|1|2|3|4|5|6|7|8|9{|0|1|2|3|4|5|6|7|8|9|0}
-{% endhighlight %}
+    compound = ["("] expression [")"] {["("] expression [")"]}
+    expression = [!|not]statement ["and"|"or"] [!|not] statement
+    char = A-Z | a-z | < | > | => | =< | _ | - |* | / { A-Z | a-z | < | > | => | =< | _ | - | * | / | }
+    int = 0|1|2|3|4|5|6|7|8|9{|0|1|2|3|4|5|6|7|8|9|0}
 
 ### Point to Point comms
 
@@ -83,7 +81,7 @@ This is the start towards an assured style of delivery, you can consider it the 
 Both modes of communication will be supported in the future and both will have access to all the same agents
 clients etc.
 
-This is feature is still maturing, you enable it using the _direct`_`addressing_ configuration option.  At
+This is feature is still maturing, you enable it using the _direct\_\addressing_ configuration option.  At
 present the STOMP connector supports it but it is not optimized for networks larger than 20 to 30 hosts.  A
 new connector is being developed that uses ActiveMQ features to achieve this efficiently.
 
@@ -259,7 +257,7 @@ This release brings to general availability all the features added in the
  * The concept of sub-collectives were introduced that help you partition
    your MCollective traffic for network isolation, traffic management and security
  * The single executable framework has been introduced replacing the old
-   _mc-`*`_ commands
+   _mc-\*_ commands
  * A new AES+RSA security plugin was added that provides strong encryption,
    client authentication and message security
  * New fact matching operators <=, >=, <, >, !=, == and =~.
@@ -268,7 +266,7 @@ This release brings to general availability all the features added in the
  * Plugins can now be configured using the _plugins.d_ directory
  * A convenient and robust exec wrapper has been written to assist in calling
    external scripts
- * The _MCOLLECTIVE_EXTRA_OPTS_ environment variable has been added that will
+ * The _MCOLLECTIVE\_EXTRA\_OPTS_ environment variable has been added that will
    add options to all client scripts
  * Network timeout handling has been improved to better take account of latency
  * Registration plugins can elect to skip sending of registration data by
@@ -293,10 +291,10 @@ This release brings to general availability all the features added in the
 
 ### Deprecations and removed functionality
 
- * The old _mc-`*`_ commands are being removed in favor for the new _mco_ command.
+ * The old _mc-\*_ commands are being removed in favor for the new _mco_ command.
    The old style is still available and your existing scripts will keep working but
    porting to the new single executable system is very easy and encouraged.
- * _MCOLLECTIVE_TIMEOUT_ and _MCOLLECTIVE_DTIMEOUT_ were removed in favor of _MCOLLECTIVE_EXTRA_OPTS_
+ * _MCOLLECTIVE_TIMEOUT_ and _MCOLLECTIVE_DTIMEOUT_ were removed in favor of _MCOLLECTIVE\_EXTRA\_OPTS_
  * _mc-controller_ could exit all mcollectived instances, this feature was not ported
    to the new _mco controller_ application
 
@@ -458,7 +456,7 @@ This release is for early adopters, production users should consider the 1.0.x s
 ### Bug Fixes
 
  * Missing _libdirs_ will not cause crashes anymore
- * Parse _MCOLLECTIVE`_`EXTRA`_`OPTS_ correctly with multiple options
+ * Parse _MCOLLECTIVE\_EXTRA\_OPTS_ correctly with multiple options
  * _file`_`logger_ failures are handled better
  * Improve middleware communication in unreliable settings by adding timeouts
    around middleware operations
@@ -501,7 +499,7 @@ directives as the above settings would be their defaults
 |2011/02/19|Introduce Sub-collectives for network partitioning|5967|
 |2011/02/19|Improve error handling when parsing arguments in the rpc application|6388|
 |2011/02/19|Fix error logging when file_logger creation fails|6387|
-|2011/02/17|Correctly parse MCOLLECTIVE_EXTRA_OPTS in the new unified binary framework|6354|
+|2011/02/17|Correctly parse MCOLLECTIVE\_EXTRA\_OPTS in the new unified binary framework|6354|
 |2011/02/15|Allow the signing key and Debian distribution to be customized|6321|
 |2011/02/14|Remove inadvertently included package.ddl|6313|
 |2011/02/14|Handle missing libdirs without crashing|6306|
