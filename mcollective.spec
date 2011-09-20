@@ -102,16 +102,22 @@ fi
 %doc COPYING
 %{ruby_sitelib}/mcollective.rb
 %{ruby_sitelib}/mcollective
-/usr/libexec/mcollective
+/usr/libexec/mcollective/mcollective/agent
+/usr/libexec/mcollective/mcollective/audit
+/usr/libexec/mcollective/mcollective/connector
+/usr/libexec/mcollective/mcollective/facts
+/usr/libexec/mcollective/mcollective/registration
+/usr/libexec/mcollective/mcollective/security
 %dir /etc/mcollective
 %dir /etc/mcollective/ssl
 
 %files client
-%attr(0755, root, root)/usr/sbin/mc*
+%attr(0755, root, root)/usr/sbin/mc-call-agent
 %attr(0755, root, root)/usr/bin/mco
 %doc COPYING
 %config(noreplace)/etc/mcollective/client.cfg
 %config/etc/mcollective/rpc-help.erb
+/usr/libexec/mcollective/mcollective/application
 
 %files
 %doc COPYING

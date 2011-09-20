@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/09/20|Remove deprecated mc- scripts|9402|
 |2011/09/20|Keep track of messages that has expired and expose the stat in rpcutil and inventory application|9456|
 |*2011/09/16*|*Release 1.3.1*|*9133*|
 |2011/09/9|Use direct messaging where possible for identity filters and make the rpc application direct aware|8466|

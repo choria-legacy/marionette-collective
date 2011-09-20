@@ -1,3 +1,4 @@
 usr/bin/mco usr/bin/
 usr/sbin/mc-* usr/sbin/
 etc/mcollective/client.cfg etc/mcollective
+usr/share/mcollective/plugins/mcollective/application usr/share/mcollective/plugins/mcollective
