@@ -11,7 +11,8 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
-|*2011/09/xx*|*Release 1.3.1*|*9133*|
+|2011/09/20|Keep track of messages that has expired and expose the stat in rpcutil and inventory application|9456|
+|*2011/09/16*|*Release 1.3.1*|*9133*|
 |2011/09/9|Use direct messaging where possible for identity filters and make the rpc application direct aware|8466|
 |2011/08/29|Enforce a 60 second TTL on all messages by default|8325|
 |2011/08/29|Change the default classes.txt file to be in line with Puppet defaults|9133|

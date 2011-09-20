@@ -120,6 +120,10 @@ action "daemon_stats", :description => "Get statistics from the running daemon" 
     output :version,
            :description => "MCollective Version",
            :display_as => "Version"
+
+    output :ttlexpired,
+           :description => "Messages that did pass TTL checks",
+           :display_as => "TTL Expired"
 end
 
 action "agent_inventory", :description => "Inventory of all agents on the server" do

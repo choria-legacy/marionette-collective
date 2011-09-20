@@ -158,6 +158,7 @@ class MCollective::Application::Inventory<MCollective::Application
                     puts "               Total Messages: #{nodestats[:total]}"
                     puts "      Messages Passed Filters: #{nodestats[:passed]}"
                     puts "            Messages Filtered: #{nodestats[:filtered]}"
+                    puts "             Expired Messages: #{nodestats[:ttlexpired]}"
                     puts "                 Replies Sent: #{nodestats[:replies]}"
                     puts "         Total Processor Time: #{nodestats[:times][:utime]} seconds"
                     puts "                  System Time: #{nodestats[:times][:stime]} seconds"

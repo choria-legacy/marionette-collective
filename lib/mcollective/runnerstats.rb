@@ -10,8 +10,15 @@ module MCollective
             @passed = 0
             @total = 0
             @replies = 0
+            @ttlexpired = 0
 
             @mutex = Mutex.new
+        end
+
+        # Records a message that failed TTL checks
+        def ttlexpired
+            Log.debug("Incrementing ttl expired stat")
+            @ttlexpired += 1
         end
 
         # Records a message that passed the filters
@@ -59,6 +66,7 @@ module MCollective
                      :filtered => @filtered,
                      :starttime => @starttime,
                      :total => @total,
+                     :ttlexpired => @ttlexpired,
                      :replies => @replies}
 
             reply = {:stats => stats,
