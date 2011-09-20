@@ -115,7 +115,7 @@ And then you should add a user or two, to keep it simple we'll just add one user
                   <authorizationEntry queue=">" write="admins" read="admins" admin="admins" />
                   <authorizationEntry topic=">" write="admins" read="admins" admin="admins" />
                   <authorizationEntry topic="mcollective.>" write="mcollective" read="mcollective" admin="mcollective" />
-                  <authorizationEntry topic="mcollective.>" write="mcollective" read="mcollective" admin="mcollective" />
+                  <authorizationEntry queue="mcollective.>" write="mcollective" read="mcollective" admin="mcollective" />
                   <authorizationEntry topic="ActiveMQ.Advisory.>" read="everyone" write="everyone" admin="everyone"/>
                 </authorizationEntries>
               </authorizationMap>
@@ -174,7 +174,6 @@ Mostly what you'll need to change is the *identity*, *plugin.stomp.`*`* and the 
 
 {% highlight ini %}
   # main config
-  topicprefix = /topic/mcollective
   libdir = /usr/libexec/mcollective
   logfile = /dev/null
   loglevel = debug
@@ -196,7 +195,6 @@ You should also create _/etc/mcollective/server.cfg_ here's a sample, , a full r
 
 {% highlight ini %}
   # main config
-  topicprefix = /topic/mcollective
   libdir = /usr/libexec/mcollective
   logfile = /var/log/mcollective.log
   daemonize = 1
@@ -225,13 +223,6 @@ You should also create _/etc/mcollective/server.cfg_ here's a sample, , a full r
 Replace the *plugin.stomp.host* with your server running ActiveMQ and replace the *plugin.psk* with a Pre-Shared Key of your own.
 
 The STOMP connector supports other options like failover pools, see [ConnectorStomp] for full details.
-
-*NOTE:* If you are testing the development versions - 1.1.3 and newer - you should use make a small adjustment to both config
-files above:
-
-{% highlight ini %}
-topicprefix = /topic/
-{% endhighlight %}
 
 ### Create Facts
 By default - and for this setup - we'll use a simple YAML file for a fact source, later on you can use Reductive Labs Facter or something else.

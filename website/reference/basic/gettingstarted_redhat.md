@@ -53,7 +53,7 @@ We strongly recommend you set up a local Yum repository that will host all the p
  * Stomp Ruby Gem - [EPEL]
  * [MCollective][MCDownloads] - mcollective-1.x.x-1.el5.noarch.rpm, mcollective-common-1.x.x-1.el5.noarch.rpm, mcollective-client-1.x.x-1.el5.noarch.rpm
 
-The rest of this guide will assume you set up a Yum repository.
+The rest of this guide will assume you set up a Yum repository.  Puppet Labs hosts a Yum repository with all these dependencies at _yum.puppetlabs.com_.
 
 ## ActiveMQ
 ActiveMQ is currently the most used and tested middleware for use with MCollective.
@@ -107,7 +107,7 @@ Other examples are also available from [GitHub][ActiveMQSamples]
                   <authorizationEntry queue=">" write="admins" read="admins" admin="admins" />
                   <authorizationEntry topic=">" write="admins" read="admins" admin="admins" />
                   <authorizationEntry topic="mcollective.>" write="mcollective" read="mcollective" admin="mcollective" />
-                  <authorizationEntry topic="mcollective.>" write="mcollective" read="mcollective" admin="mcollective" />
+                  <authorizationEntry queue="mcollective.>" write="mcollective" read="mcollective" admin="mcollective" />
                   <authorizationEntry topic="ActiveMQ.Advisory.>" read="everyone" write="everyone" admin="everyone"/>
                 </authorizationEntries>
               </authorizationMap>
@@ -182,7 +182,6 @@ We're assuming you called the machine running ActiveMQ *stomp.example.net* pleas
 
 {% highlight ini %}
   # main config
-  topicprefix = /topic/mcollective
   libdir = /usr/libexec/mcollective
   logfile = /dev/null
   loglevel = error
@@ -203,7 +202,6 @@ You should also create _/etc/mcollective/server.cfg_ here's a sample, , a full r
 
 {% highlight ini %}
   # main config
-  topicprefix = /topic/mcollective
   libdir = /usr/libexec/mcollective
   logfile = /var/log/mcollective.log
   daemonize = 1
@@ -226,13 +224,6 @@ You should also create _/etc/mcollective/server.cfg_ here's a sample, , a full r
 {% endhighlight %}
 
 Replace the *plugin.psk* in both these files with a Pre-Shared Key of your own.
-
-*NOTE:* If you are testing the development versions - 1.1.3 and newer - you should use make a small adjustment to both config
-files above:
-
-{% highlight ini %}
-topicprefix = /topic/
-{% endhighlight %}
 
 ### Create Facts
 By default - and for this setup - we'll use a simple YAML file for a fact source, later on you can use Puppet Labs Facter or something else.
