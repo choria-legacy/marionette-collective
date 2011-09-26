@@ -23,6 +23,7 @@ The design goal of the plugin are two fold:
 
  * give different security credentials to clients and servers to avoid a compromised server from sending new client requests.
  * create a token that uniquely identify the client - based on the filename of the public key.  This creates a strong identity token for [SimpleRPCAuthorization].
+ * As of 1.3.2 it cryptographically protect the TTL and Message Time properties of requests.  Aiding in securing against replay atacks.
 
 Serialization uses Marshal or YAML, which means data types in and out of mcollective
 will be preserved from client to server and reverse.
@@ -55,6 +56,13 @@ server.cfg:
   plugin.ssl_client_cert_dir = /etc/mcollective/ssl/clients/
 {% endhighlight %}
 
+TTL and Message Times are protected by default since 1.3.2, this means older clients will not be able to
+communicate with servers running this version of the security plugin.  You can make it warn but not
+deny older clients:
+
+{% highlight ini %}
+  plugin.ssl.enforce_ttl = 0
+{% endhighlight %}
 
 ### Users and Clients
 Now you should create a key pair for every one of your clients, here we create one

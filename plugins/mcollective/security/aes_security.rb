@@ -11,6 +11,8 @@ module MCollective
         # - Requests are encrypted using the clients private key and anyone that has
         #   the public key can see the request.  Thus an atacker may see the requests
         #   given access to network or machine due to the broadcast nature of mcollective
+        # - The message time and TTL of messages are cryptographically secured making the
+        #   ensuring messages can not be replayed with fake TTLs or times
         # - Replies are encrypted using the calling clients public key.  Thus no-one but
         #   the caller can view the contents of replies.
         # - Servers can all have their own RSA keys, or share one, or reuse keys created
@@ -48,6 +50,9 @@ module MCollective
         #    # Cache public keys promiscuously from the network
         #    plugin.aes.learn_pubkeys = 1
         #
+        #    # Log but accept messages that may have been tampered with
+        #    plugin.aes.enforce_ttl = 0
+        #
         #    # The servers public and private keys
         #    plugin.aes.server_private = /etc/mcollective/ssl/server-private.pem
         #    plugin.aes.server_public = /etc/mcollective/ssl/server-public.pem
@@ -80,6 +85,25 @@ module MCollective
                     body[:body] = deserialize(decrypt(cryptdata, nil))
                 else
                     body[:body] = deserialize(decrypt(cryptdata, body[:callerid]))
+
+                    # If we got a hash it's possible that this is a message with secure
+                    # TTL and message time, attempt to decode that and transform into a
+                    # traditional message.
+                    #
+                    # If it's not a hash it might be a old style message like old discovery
+                    # ones that would just be a string so we allow that unaudited but only
+                    # if enforce_ttl is disabled.  This is primarly to allow a mixed old and
+                    # new plugin infrastructure to work
+                    if body[:body].is_a?(Hash)
+                        update_secure_property(body, :aes_ttl, :ttl, "TTL")
+                        update_secure_property(body, :aes_msgtime, :msgtime, "Message Time")
+
+                        body[:body] = body[:body][:aes_msg] if body[:body].include?(:aes_msg)
+                    else
+                        unless @config.pluginconf["aes.enforce_ttl"] == "0"
+                            raise "Message %s is in an unknown or older security protocol, ignoring" % [request_description(body)]
+                        end
+                    end
                 end
 
                 return body
@@ -89,6 +113,30 @@ module MCollective
             rescue Exception => e
                 Log.warn("Could not decrypt message from client: #{e.class}: #{e}")
                 raise SecurityValidationFailed, "Could not decrypt message"
+            end
+
+            # To avoid tampering we turn the origin body into a hash and copy some of the protocol keys
+            # like :ttl and :msg_time into the hash before encrypting it.
+            #
+            # This function compares and updates the unencrypted ones based on the encrypted ones.  By
+            # default it enforces matching and presense by raising exceptions, if aes.enforce_ttl is set
+            # to 0 it will only log warnings about violations
+            def update_secure_property(msg, secure_property, property, description)
+                req = request_description(msg)
+
+                unless @config.pluginconf["aes.enforce_ttl"] == "0"
+                    raise "Request #{req} does not have a secure #{description}" unless msg[:body].include?(secure_property)
+                    raise "Request #{req} #{description} does not match encrypted #{description} - possible tampering"  unless msg[:body][secure_property] == msg[property]
+                else
+                    if msg[:body].include?(secure_property)
+                        Log.warn("Request #{req} #{description} does not match encrypted #{description} - possible tampering") unless msg[:body][secure_property] == msg[property]
+                    else
+                        Log.warn("Request #{req} does not have a secure #{description}") unless msg[:body].include?(secure_property)
+                    end
+                end
+
+                msg[property] = msg[:body][secure_property] if msg[:body].include?(secure_property)
+                msg[:body].delete(secure_property)
             end
 
             # Encodes a reply
@@ -103,9 +151,18 @@ module MCollective
 
             # Encodes a request msg
             def encoderequest(sender, msg, requestid, filter, target_agent, target_collective, ttl=60)
-                crypted = encrypt(serialize(msg), callerid)
+                req = create_request(requestid, filter, nil, @initiated_by, target_agent, target_collective, ttl)
 
-                req = create_request(requestid, filter, crypted[:data], @initiated_by, target_agent, target_collective, ttl)
+                # embed the ttl and msgtime in the crypted data later we will use these in
+                # the decoding of a message to set the message ones from secure sources. this
+                # is to ensure messages are not tampered with to facility replay attacks etc
+                aes_msg = {:aes_msg => msg,
+                           :aes_ttl => ttl,
+                           :aes_msgtime => req[:msgtime]}
+
+                crypted = encrypt(serialize(aes_msg), callerid)
+
+                req[:body] = crypted[:data]
                 req[:sslkey] = crypted[:key]
 
                 if @config.pluginconf.include?("aes.send_pubkey") && @config.pluginconf["aes.send_pubkey"] == "1"
@@ -243,6 +300,10 @@ module MCollective
             def client_cert_dir
                 raise("No plugin.aes.client_cert_dir configuration option specified") unless @config.pluginconf.include?("aes.client_cert_dir")
                 @config.pluginconf["aes.client_cert_dir"]
+            end
+
+            def request_description(msg)
+                "%s from %s@%s" % [msg[:requestid], msg[:callerid], msg[:senderid]]
             end
 
             # Takes our cert=foo callerids and return the foo bit else nil

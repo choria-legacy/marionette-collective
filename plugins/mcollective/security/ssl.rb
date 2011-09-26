@@ -68,6 +68,9 @@ module MCollective
         #   plugin.ssl_server_public = /etc/mcollective/ssl/server-public.pem
         #   plugin.ssl_client_cert_dir = /etc/mcollective/etc/ssl/clients/
         #
+        #   # Log but accept messages that may have been tampered with
+        #   plugin.ssl.enforce_ttl = 0
+        #
         # Serialization can be configured to use either Marshal or YAML, data types
         # in and out of mcollective will be preserved from client to server and reverse
         #
@@ -89,10 +92,46 @@ module MCollective
 
                 if validrequest?(body)
                     body[:body] = deserialize(body[:body])
+
+                    if body[:body].is_a?(Hash)
+                        update_secure_property(body, :ssl_ttl, :ttl, "TTL")
+                        update_secure_property(body, :ssl_msgtime, :msgtime, "Message Time")
+
+                        body[:body] = body[:body][:ssl_msg] if body[:body].include?(:ssl_msg)
+                    else
+                        unless @config.pluginconf["ssl.enforce_ttl"] == nil
+                            raise "Message %s is in an unknown or older security protocol, ignoring" % [request_description(body)]
+                        end
+                    end
+
                     return body
                 else
                     nil
                 end
+            end
+
+            # To avoid tampering we turn the origin body into a hash and copy some of the protocol keys
+            # like :ttl and :msg_time into the hash before hashing it.
+            #
+            # This function compares and updates the unhashed ones based on the hashed ones.  By
+            # default it enforces matching and presense by raising exceptions, if ssl.enforce_ttl is set
+            # to 0 it will only log warnings about violations
+            def update_secure_property(msg, secure_property, property, description)
+                req = request_description(msg)
+
+                unless @config.pluginconf["ssl.enforce_ttl"] == "0"
+                    raise "Request #{req} does not have a secure #{description}" unless msg[:body].include?(secure_property)
+                    raise "Request #{req} #{description} does not match encrypted #{description} - possible tampering"  unless msg[:body][secure_property] == msg[property]
+                else
+                    if msg[:body].include?(secure_property)
+                        Log.warn("Request #{req} #{description} does not match encrypted #{description} - possible tampering") unless msg[:body][secure_property] == msg[property]
+                    else
+                        Log.warn("Request #{req} does not have a secure #{description}") unless msg[:body].include?(secure_property)
+                    end
+                end
+
+                msg[property] = msg[:body][secure_property] if msg[:body].include?(secure_property)
+                msg[:body].delete(secure_property)
             end
 
             # Encodes a reply
@@ -109,11 +148,17 @@ module MCollective
 
             # Encodes a request msg
             def encoderequest(sender, msg, requestid, filter, target_agent, target_collective, ttl=60)
-                serialized = serialize(msg)
+                req = create_request(requestid, filter, "", @initiated_by, target_agent, target_collective, ttl)
+
+                ssl_msg = {:ssl_msg => msg,
+                           :ssl_ttl => ttl,
+                           :ssl_msgtime => req[:msgtime]}
+
+                serialized = serialize(ssl_msg)
                 digest = makehash(serialized)
 
-                req = create_request(requestid, filter, serialized, @initiated_by, target_agent, target_collective, ttl)
                 req[:hash] = digest
+                req[:body] = serialized
 
                 serialize(req)
             end
@@ -275,6 +320,11 @@ module MCollective
             def rsakey(key)
                 OpenSSL::PKey::RSA.new(key)
             end
+
+            def request_description(msg)
+                "%s from %s@%s" % [msg[:requestid], msg[:callerid], msg[:senderid]]
+            end
+
         end
     end
 end

@@ -55,6 +55,14 @@ ActiveMQ can use LDAP and other security providers, details of this is out of
 scope here, you should use their documentation or the recently released book
 for details of that.
 
+### MCollective Protocol Security
+As of version 1.3.1 the main protocol used by MCollective keeps track of message
+creation time and a per message TTL.  Messages that are older than the TTL are not
+accepted in future we will also do full replay protection.
+
+As of version 1.3.2 both the AES+RSA and the SSL plugin secures these 2 properties
+cryptographically to make sure they are not tampered with.
+
 ### The AES+RSA securith plugin
 When using the [AES security plugin] each user also gets a private and public
 key, like with SSH you need to ensure that the private keys remain private
@@ -72,6 +80,9 @@ pass the rest of the MCollective agents, auditing etc can securely know who
 initiated a request.
 
 This caller is used later during Authorization and Auditing.
+
+The plugin secures the TTL and Message Time properties of the message making sure
+someone cannot intercept, tamper and replay these messages.
 
 This plugin comes with a significant setup, maintenance and performance overhead
 if all you need is to securely identify users use the SSL security plugin instead.
@@ -91,6 +102,9 @@ validation pass the rest of the MCollective agents, auditing etc can securely
 know who initiated a request.
 
 This caller is used later during Authorization and Auditing.
+
+The plugin secures the TTL and Message Time properties of the message making sure
+someone cannot intercept, tamper and replay these messages.
 
 ## Connection to Middleware
 

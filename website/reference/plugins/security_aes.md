@@ -26,6 +26,9 @@ The design goals of this plugin are:
  * Requests are encrypted using the clients private key and anyone that has
    the public key can see the request.  Thus an atacker may see the requests
    given access to a public key of the requester.
+ * Request TTLs and Message Times are cryptographically secured and tampered
+   messages are not accepted by default. This is a first line defence in message
+   replaying and tampering. Introduced in version 1.3.2
  * Replies are encrypted using the calling clients public key.  Thus no-one but
    the caller can view the contents of replies.
  * Servers can all have their own SSL keys, or share one, or reuse keys created
@@ -279,6 +282,5 @@ Clients will still need their own keys made and distributed.
 |plugin.aes.client_cert_dir|/etc/mcollective/ssl/clients|Where to store and load client public keys|
 |plugin.aes.server_private|/etc/mcollective/ssl/server-private.pem|Server private key|
 |plugin.aes.server_public|/etc/mcollective/ssl/server-public.pem|Server public key|
-
-
+|plugin.aes.enforce_ttl|1|Enforce TTL and Message time security, warn only when disabled.  1.3.2 and newer only|
 
