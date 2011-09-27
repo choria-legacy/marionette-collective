@@ -42,12 +42,13 @@ module MCollective
                 request = msg
                 agent = request.agent
             else
-                request = Message.new(msg, nil, {:agent => agent, :type => :request, :collective => collective, :filter => filter})
+                ttl = @options[:ttl] || @config.ttl
+                request = Message.new(msg, nil, {:agent => agent, :type => :request, :collective => collective, :filter => filter, :ttl => ttl})
             end
 
             request.encode!
 
-            Log.debug("Sending request #{request.requestid} to the #{request.agent} agent in collective #{request.collective}")
+            Log.debug("Sending request #{request.requestid} to the #{request.agent} agent with ttl #{request.ttl} in collective #{request.collective}")
 
             unless @subscriptions.include?(agent)
                 subscription = Util.make_subscriptions(agent, :reply, collective)

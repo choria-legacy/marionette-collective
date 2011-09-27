@@ -15,11 +15,13 @@ module MCollective
 
                 @plugindir = File.join([@tmpdir, "plugin.d"])
                 FileUtils.mkdir(@plugindir)
+
+                Config.instance.set_config_defaults("")
             end
 
             it "should not fail if the supplied directory is missing" do
                 Config.instance.read_plugin_config_dir("/nonexisting")
-                Config.instance.pluginconf.should == nil
+                Config.instance.pluginconf.should == {}
             end
 
             it "should skip files that do not match the expected filename pattern" do

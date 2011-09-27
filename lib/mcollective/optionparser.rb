@@ -121,6 +121,10 @@ module MCollective
                 @options[:verbose] = false
             end
 
+            @parser.on('--ttl TTL', 'Set the message validity period') do |v|
+                @options[:ttl] = v.to_i
+            end
+
             @parser.on('-v', '--verbose', 'Be verbose') do |v|
                 @options[:verbose] = v
             end

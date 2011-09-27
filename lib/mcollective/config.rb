@@ -10,7 +10,7 @@ module MCollective
                     :rpcauthorization, :color, :configfile, :rpchelptemplate, :rpclimitmethod,
                     :logger_type, :fact_cache_time, :collectives, :main_collective, :ssl_cipher,
                     :registration_collective, :direct_addressing, :direct_addressing_threshold,
-                    :queueprefix
+                    :queueprefix, :ttl
 
         def initialize
             @configured = false
@@ -101,6 +101,8 @@ module MCollective
                                     @fact_cache_time = val.to_i
                                 when "ssl_cipher"
                                     @ssl_cipher = val
+                                when "ttl"
+                                    @ttl = val.to_i
                                 else
                                     raise("Unknown config parameter #{key}")
                             end
@@ -160,6 +162,7 @@ module MCollective
             @ssl_cipher = "aes-256-cbc"
             @direct_addressing = false
             @direct_addressing_threshold = 10
+            @ttl = 60
         end
 
         def read_plugin_config_dir(dir)

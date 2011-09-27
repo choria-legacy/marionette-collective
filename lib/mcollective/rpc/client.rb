@@ -3,7 +3,7 @@ module MCollective
         # The main component of the Simple RPC client system, this wraps around MCollective::Client
         # and just brings in a lot of convention and standard approached.
         class Client
-            attr_accessor :discovery_timeout, :timeout, :verbose, :filter, :config, :progress
+            attr_accessor :discovery_timeout, :timeout, :verbose, :filter, :config, :progress, :ttl
             attr_reader :client, :stats, :ddl, :agent, :limit_targets, :output_format
 
             @@initial_options = nil
@@ -18,44 +18,45 @@ module MCollective
             # which is a wrapper around this that can be used as a Mixin
             def initialize(agent, flags = {})
                 if flags.include?(:options)
-                    options = flags[:options]
+                    initial_options = flags[:options]
 
                 elsif @@initial_options
-                    options = Marshal.load(@@initial_options)
+                    initial_options = Marshal.load(@@initial_options)
 
                 else
                     oparser = MCollective::Optionparser.new({:verbose => false, :progress_bar => true, :mcollective_limit_targets => false}, "filter")
 
-                    options = oparser.parse do |parser, options|
+                    initial_options = oparser.parse do |parser, opts|
                         if block_given?
-                            yield(parser, options)
+                            yield(parser, opts)
                         end
 
-                        Helpers.add_simplerpc_options(parser, options)
+                        Helpers.add_simplerpc_options(parser, initial_options)
                     end
 
-                    @@initial_options = Marshal.dump(options)
+                    @@initial_options = Marshal.dump(initial_options)
                 end
 
                 @stats = Stats.new
                 @agent = agent
-                @discovery_timeout = options[:disctimeout]
-                @timeout = options[:timeout]
-                @verbose = options[:verbose]
-                @filter = options[:filter]
-                @config = options[:config]
+                @discovery_timeout = initial_options[:disctimeout]
+                @timeout = initial_options[:timeout]
+                @verbose = initial_options[:verbose]
+                @filter = initial_options[:filter]
+                @config = initial_options[:config]
                 @discovered_agents = nil
-                @progress = options[:progress_bar]
-                @limit_targets = options[:mcollective_limit_targets]
-                @output_format = options[:output_format] || :console
+                @progress = initial_options[:progress_bar]
+                @limit_targets = initial_options[:mcollective_limit_targets]
+                @output_format = initial_options[:output_format] || :console
                 @force_direct_request = false
 
                 agent_filter agent
 
                 @client = MCollective::Client.new(@config)
-                @client.options = options
+                @client.options = initial_options
 
                 @collective = @client.collective
+                @ttl = initial_options[:ttl] || Config.instance.ttl
 
                 # if we can find a DDL for the service override
                 # the timeout of the client so we always magically
@@ -414,6 +415,7 @@ module MCollective
                  :filter => @filter,
                  :collective => @collective,
                  :output_format => @output_format,
+                 :ttl => @ttl,
                  :config => @config}
             end
 

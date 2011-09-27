@@ -247,6 +247,21 @@ The goal with this feature is for cases such as deployment tools where you have 
 to know if that fails.  In that use case a discovery based approach is not 100% suitable as you won't know about down machines.  This way you can provide
 your own source of truth.
 
+When using the direct mode messages have a TTL associated with them that defaults to 60 seconds.  Since 1.3.2 you can set the TTL globally in the configuration
+file but you can also set it on the client:
+
+{%highlight ruby %}
+mc = rpcclient("helloworld")
+mc.ttl = 3600
+
+mc.discover(:hosts => ["host1", "host2", "host3"]
+
+printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
+{% endhighlight %}
+
+With the TTL set to 3600 if any of the hosts are down at the time of the request the request will wait on the middleware and should they come back up
+before 3600 has passed since request time they will then perform the requested action.
+
 ## Only sending requests to a subset of discovered nodes
 By default all nodes that get discovered will get the request.  This isn't always desirable maybe you want to deploy only to a random subset of hosts or maybe you have a service exposed over MCollective that you want to treat as a HA service and so only speak with one host that provides the functionality.
 

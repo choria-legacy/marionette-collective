@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/10/03|Allow the TTL of requests to be set in the config file and the SimpleRPC API|9399|
 |2011/09/26|Cryptographically secure the TTL and Message Time of requests when using AES and SSL plugins|9400|
 |2011/09/20|Update default shipped configurations to provide a better out of the box experience|9452|
 |2011/09/20|Remove deprecated mc- scripts|9402|

@@ -25,7 +25,7 @@ module MCollective
                        :type => :message,
                        :request => nil,
                        :filter => Util.empty_filter,
-                       :options => false,
+                       :options => {},
                        :ttl => 60,
                        :collective => nil}.merge(options)
 
@@ -39,7 +39,8 @@ module MCollective
             @base64 = options[:base64]
             @filter = options[:filter]
             @options = options[:options]
-            @ttl = options[:ttl]
+
+            @ttl = @options[:ttl] || Config.instance.ttl
             @msgtime = 0
 
             @validated = false

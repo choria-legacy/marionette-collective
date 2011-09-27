@@ -4,6 +4,10 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 module MCollective
     describe Message do
+        before do
+            Config.instance.set_config_defaults("")
+        end
+
         describe "#initialize" do
             it "should set defaults" do
                 m = Message.new("payload", "message")
@@ -17,7 +21,7 @@ module MCollective
                 m.filter.should == Util.empty_filter
                 m.requestid.should == nil
                 m.base64?.should == false
-                m.options.should == false
+                m.options.should == {}
                 m.discovered_hosts.should == nil
                 m.ttl.should == 60
                 m.validated.should == false
@@ -32,8 +36,7 @@ module MCollective
                                                       :headers => {:rspec => "test"},
                                                       :type => :rspec,
                                                       :filter => "filter",
-                                                      :options => "options",
-                                                      :ttl => 30,
+                                                      :options => {:ttl => 30},
                                                       :collective => "collective")
                 m.payload.should == "payload"
                 m.message.should == "message"
@@ -44,7 +47,7 @@ module MCollective
                 m.type.should == :rspec
                 m.filter.should == "filter"
                 m.base64?.should == true
-                m.options.should == "options"
+                m.options.should == {:ttl => 30}
                 m.ttl.should == 30
             end
 

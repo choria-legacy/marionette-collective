@@ -46,6 +46,7 @@ Configuration is a simple *key = val* style configuration file.
 |ssl_cipher|aes-256-cbc|This sets the cipher in use by the SSL code, see _man enc_ for a list supported by OpenSSL|
 |direct_addressing|n|Enable or disable directed requests|
 |direct_addressing_threshold|10|When direct requests are enabled, send direct messages for less than or equal to this many hosts|
+|ttl|60|Sets the default TTL for requests - 1.3.2 and newer only|
 
 ## Server Configuration
 The server configuration file should be root only readable
