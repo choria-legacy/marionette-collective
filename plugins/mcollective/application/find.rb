@@ -1,14 +1,14 @@
 class MCollective::Application::Find<MCollective::Application
-    description "Find hosts matching criteria"
+  description "Find hosts matching criteria"
 
-    def main
-        client = MCollective::Client.new(options[:config])
-        client.options = options
+  def main
+    client = MCollective::Client.new(options[:config])
+    client.options = options
 
-        stats = client.req("ping", "discovery") do |resp|
-            puts resp[:senderid]
-        end
-
-        client.display_stats(stats) if options[:verbose]
+    stats = client.req("ping", "discovery") do |resp|
+      puts resp[:senderid]
     end
+
+    client.display_stats(stats) if options[:verbose]
+  end
 end

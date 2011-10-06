@@ -11,15 +11,15 @@ class Object
 end
 
 class SystemUniversal
-#
-# constants
-#
+  #
+  # constants
+  #
   SystemUniversal::VERSION = '2.2.0' unless SystemUniversal.send(:const_defined?, :VERSION)
   def SystemUniversal.version() SystemUniversal::VERSION end
   def version() SystemUniversal::VERSION end
-#
-# class methods
-#
+  #
+  # class methods
+  #
 
   @host = Socket.gethostname
   @ppid = Process.ppid
@@ -29,10 +29,10 @@ class SystemUniversal
   c = ::Config::CONFIG
   ruby = File.join(c['bindir'], c['ruby_install_name']) << c['EXEEXT']
   @ruby = if system('%s -e 42' % ruby)
-    ruby
-  else
-    system('%s -e 42' % 'ruby') ? 'ruby' : warn('no ruby in PATH/CONFIG')
-  end
+            ruby
+          else
+            system('%s -e 42' % 'ruby') ? 'ruby' : warn('no ruby in PATH/CONFIG')
+          end
 
   class << SystemUniversal
     %w( host ppid pid ruby turd ).each{|a| attr_accessor a}
@@ -42,9 +42,9 @@ class SystemUniversal
     end
   end
 
-#
-# instance methods
-#
+  #
+  # instance methods
+  #
 
   def initialize argv, opts = {}, &block
     getopt = getopts opts
@@ -76,18 +76,18 @@ class SystemUniversal
           IO.popen "#{ quote(@ruby) } #{ quote(c['program']) }", 'r+' do |pipe|
             line = pipe.gets
             case line
-              when %r/^pid: \d+$/
-                cid = Integer line[%r/\d+/] 
-              else
-                begin
-                  buf = pipe.read
-                  buf = "#{ line }#{ buf }"
-                  e = Marshal.load buf
-                  raise unless Exception === e
-                  raise e
-                rescue
-                  raise "wtf?\n#{ buf }\n"
-                end
+            when %r/^pid: \d+$/
+              cid = Integer line[%r/\d+/] 
+            else
+              begin
+                buf = pipe.read
+                buf = "#{ line }#{ buf }"
+                e = Marshal.load buf
+                raise unless Exception === e
+                raise e
+              rescue
+                raise "wtf?\n#{ buf }\n"
+              end
             end
             thread = new_thread cid, @block if @block
             pipe.read rescue nil
@@ -231,16 +231,16 @@ class SystemUniversal
       end
 
       break(
-        if b
-          begin
-            b.call tmp
-          ensure
-            FileUtils.rm_rf tmp unless SystemU.turd 
-          end
-        else
-          tmp
-        end
-      )
+            if b
+              begin
+                b.call tmp
+              ensure
+                FileUtils.rm_rf tmp unless SystemU.turd 
+              end
+            else
+              tmp
+            end
+            )
     }
   end
 
@@ -263,7 +263,7 @@ end
 if defined? JRUBY_VERSION
   require 'jruby'
   import org.jruby.RubyProcess
-        
+  
   class SystemUniversal
     def systemu
       split_argv = JRuby::PathHelper.smart_split_command @argv
@@ -275,9 +275,9 @@ if defined? JRUBY_VERSION
 
       exit_code = process.wait_for
       [
-        RubyProcess::RubyStatus.new_process_status(JRuby.runtime, exit_code), 
-        stdout.join, 
-        stderr.join
+       RubyProcess::RubyStatus.new_process_status(JRuby.runtime, exit_code), 
+       stdout.join, 
+       stderr.join
       ]
     end
     
@@ -300,7 +300,7 @@ if defined? JRUBY_VERSION
     end
   end
 end
-  
+
 
 
 SystemU = SystemUniversal unless defined? SystemU
@@ -319,9 +319,9 @@ Systemu = SystemUniversal unless defined? Systemu
 
 
 if $0 == __FILE__
-#
-# date
-#
+  #
+  # date
+  #
   date = %q( ruby -e"  t = Time.now; STDOUT.puts t; STDERR.puts t  " )
 
   status, stdout, stderr = systemu date
@@ -332,9 +332,9 @@ if $0 == __FILE__
 
   status = systemu date, 2=>(stderr = '')
   p [status, stderr]
-#
-# sleep
-#
+  #
+  # sleep
+  #
   sleep = %q( ruby -e"  p(sleep(1))  " )
   status, stdout, stderr = systemu sleep 
   p [status, stdout, stderr]
@@ -342,15 +342,15 @@ if $0 == __FILE__
   sleep = %q( ruby -e"  p(sleep(42))  " )
   status, stdout, stderr = systemu(sleep){|cid| Process.kill 9, cid}
   p [status, stdout, stderr]
-#
-# env 
-#
+  #
+  # env 
+  #
   env = %q( ruby -e"  p ENV['A']  " )
   status, stdout, stderr = systemu env, :env => {'A' => 42} 
   p [status, stdout, stderr]
-#
-# cwd 
-#
+  #
+  # cwd 
+  #
   env = %q( ruby -e"  p Dir.pwd  " )
   status, stdout, stderr = systemu env, :cwd => Dir.tmpdir
   p [status, stdout, stderr]

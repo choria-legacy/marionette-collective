@@ -41,21 +41,21 @@ module JSON
         path = File.dirname(__FILE__)
         @icon_cache[name] = Gdk::Pixbuf.new(File.join(path, name + '.xpm'))
       end
-     @icon_cache[name]
+      @icon_cache[name]
     end
 
     # Opens an error dialog on top of _window_ showing the error message
     # _text_.
     def Editor.error_dialog(window, text)
       dialog = MessageDialog.new(window, Dialog::MODAL, 
-        MessageDialog::ERROR, 
-        MessageDialog::BUTTONS_CLOSE, text)
+                                 MessageDialog::ERROR, 
+                                 MessageDialog::BUTTONS_CLOSE, text)
       dialog.show_all
       dialog.run
     rescue TypeError
       dialog = MessageDialog.new(Editor.window, Dialog::MODAL, 
-        MessageDialog::ERROR, 
-        MessageDialog::BUTTONS_CLOSE, text)
+                                 MessageDialog::ERROR, 
+                                 MessageDialog::BUTTONS_CLOSE, text)
       dialog.show_all
       dialog.run
     ensure
@@ -67,8 +67,8 @@ module JSON
     # _false_.
     def Editor.question_dialog(window, text)
       dialog = MessageDialog.new(window, Dialog::MODAL, 
-        MessageDialog::QUESTION, 
-        MessageDialog::BUTTONS_YES_NO, text)
+                                 MessageDialog::QUESTION, 
+                                 MessageDialog::BUTTONS_YES_NO, text)
       dialog.show_all
       dialog.run do |response|
         return Gtk::Dialog::RESPONSE_YES === response
@@ -120,10 +120,10 @@ module JSON
     def Editor.data2model(data, model = nil, parent = nil)
       model ||= TreeStore.new(Gdk::Pixbuf, String, String)
       iter = if block_given?
-        yield model
-      else
-        model.append(parent)
-      end
+               yield model
+             else
+               model.append(parent)
+             end
       case data
       when Hash
         iter.type = 'Hash'
@@ -234,7 +234,7 @@ module JSON
         if keyval
           self.signal_connect(:'key-press-event') do |item, event|
             if event.state & Gdk::Window::ModifierType::CONTROL_MASK != 0 and
-              event.keyval == keyval
+                event.keyval == keyval
               callback.call item
             end
           end
@@ -268,7 +268,7 @@ module JSON
           if ALL_TYPES.include?(old_type)
             @clipboard_data = Editor.model2data(current)
             type, content = ask_for_element(parent, current.type,
-              current.content)
+                                            current.content)
             if type
               current.type, current.content = type, content
               current.remove_subtree(model)
@@ -277,7 +277,7 @@ module JSON
             end
           else
             toplevel.display_status(
-              "Cannot change node of type #{old_type} in tree!")
+                                    "Cannot change node of type #{old_type} in tree!")
           end
         end
       end
@@ -339,17 +339,17 @@ module JSON
                 window.change
               else
                 toplevel.display_status(
-                  "Cannot paste non-#{current.type} data into '#{current.type}'!")
+                                        "Cannot paste non-#{current.type} data into '#{current.type}'!")
               end
             else
               toplevel.display_status(
-                "Cannot paste node below '#{current.type}'!")
+                                      "Cannot paste node below '#{current.type}'!")
             end
           else
             toplevel.display_status("Nothing to paste in clipboard!")
           end
         else
-            toplevel.display_status("Append a node into the root first!")
+          toplevel.display_status("Append a node into the root first!")
         end
       end
 
@@ -369,17 +369,17 @@ module JSON
               end
               expand_collapse(current)
               toplevel.display_status("Inserted an element to " +
-                "'#{parent_type}' before index #{selected_index}.")
+                                      "'#{parent_type}' before index #{selected_index}.")
               window.change
             else
               toplevel.display_status(
-                "Cannot insert node below '#{parent_type}'!")
+                                      "Cannot insert node below '#{parent_type}'!")
             end
           else
             toplevel.display_status("Nothing to paste in clipboard!")
           end
         else
-            toplevel.display_status("Append a node into the root first!")
+          toplevel.display_status("Append a node into the root first!")
         end
       end
 
@@ -394,7 +394,7 @@ module JSON
             iter = create_node(parent, 'Key', key)
             iter = create_node(iter, type, content)
             toplevel.display_status(
-              "Added a (key, value)-pair to '#{parent_type}'.")
+                                    "Added a (key, value)-pair to '#{parent_type}'.")
             window.change
           when 'Array'
             type, content = ask_for_element(parent)
@@ -428,14 +428,14 @@ module JSON
             iter = model.insert_before(parent, current)
             iter.type, iter.content = type, content
             toplevel.display_status("Inserted an element to " +
-              "'#{parent_type}' before index #{selected_index}.")
+                                    "'#{parent_type}' before index #{selected_index}.")
             window.change
           else
             toplevel.display_status(
-              "Cannot insert node below '#{parent_type}'!")
+                                    "Cannot insert node below '#{parent_type}'!")
           end
         else
-            toplevel.display_status("Append a node into the root first!")
+          toplevel.display_status("Append a node into the root first!")
         end
       end
 
@@ -448,7 +448,7 @@ module JSON
             expand_row(current.path, true)
           end
         else
-            toplevel.display_status("Append a node into the root first!")
+          toplevel.display_status("Append a node into the root first!")
         end
       end
 
@@ -460,13 +460,13 @@ module JSON
         add_item("Copy node", ?C, &method(:copy_node))
         add_item("Paste node (appending)", ?A, &method(:paste_node_appending))
         add_item("Paste node (inserting before)", ?I,
-          &method(:paste_node_inserting_before))
+                 &method(:paste_node_inserting_before))
         add_separator
         add_item("Append new node", ?a, &method(:append_new_node))
         add_item("Insert new node before", ?i, &method(:insert_new_node))
         add_separator 
         add_item("Collapse/Expand node (recursively)", ?e,
-          &method(:collapse_expand))
+                 &method(:collapse_expand))
 
         menu.show_all
         signal_connect(:button_press_event) do |widget, event|
@@ -578,9 +578,9 @@ module JSON
               next
             end
           elsif @search.match(i[CONTENT_COL])
-             set_cursor(i.path, nil, false)
-             @iter = i
-             break
+            set_cursor(i.path, nil, false)
+            @iter = i
+            break
           end
         end
       end
@@ -598,9 +598,9 @@ module JSON
               next
             end
           elsif @search.match(i[CONTENT_COL])
-             set_cursor(i.path, nil, false)
-             @iter = i
-             break
+            set_cursor(i.path, nil, false)
+            @iter = i
+            break
           end
         end
       end
@@ -636,7 +636,7 @@ module JSON
             toplevel.display_status("Only Array nodes can be sorted!")
           end
         else
-            toplevel.display_status("Select an Array to sort first!")
+          toplevel.display_status("Select an Array to sort first!")
         end
       end
 
@@ -683,7 +683,7 @@ module JSON
         title.submenu = menu
         add_item('Collapsed nodes', nil, CheckMenuItem, &method(:collapsed_nodes))
         @pretty_item = add_item('Pretty saving', nil, CheckMenuItem,
-          &method(:pretty_saving))
+                                &method(:pretty_saving))
         @pretty_item.active = true
         window.unchange
         title
@@ -719,21 +719,21 @@ module JSON
       def add_columns
         cell = CellRendererPixbuf.new
         column = TreeViewColumn.new('Icon', cell,
-          'pixbuf'      => ICON_COL
-        )
+                                    'pixbuf'      => ICON_COL
+                                    )
         append_column(column)
 
         cell = CellRendererText.new
         column = TreeViewColumn.new('Type', cell,
-          'text'      => TYPE_COL
-        )
+                                    'text'      => TYPE_COL
+                                    )
         append_column(column)
 
         cell = CellRendererText.new
         cell.editable = true
         column = TreeViewColumn.new('Content', cell,
-          'text'       => CONTENT_COL
-        )
+                                    'text'       => CONTENT_COL
+                                    )
         cell.signal_connect(:edited, &method(:cell_edited))
         append_column(column)
       end
@@ -815,12 +815,12 @@ module JSON
       # the editor treeview.
       def create_node(parent, type, content)
         iter = if parent
-          model.append(parent)
-        else
-          new_model = Editor.data2model(nil)
-          toplevel.view_new_model(new_model)
-          new_model.iter_first
-        end
+                 model.append(parent)
+               else
+                 new_model = Editor.data2model(nil)
+                 toplevel.view_new_model(new_model)
+                 new_model.iter_first
+               end
         iter.type, iter.content = type, content
         expand_collapse(parent) if parent
         iter
@@ -831,9 +831,9 @@ module JSON
         key_input = type_input = value_input = nil
 
         dialog = Dialog.new("New (key, value) pair for Hash", nil, nil,
-          [ Stock::OK, Dialog::RESPONSE_ACCEPT ],
-          [ Stock::CANCEL, Dialog::RESPONSE_REJECT ]
-        )
+                            [ Stock::OK, Dialog::RESPONSE_ACCEPT ],
+                            [ Stock::CANCEL, Dialog::RESPONSE_REJECT ]
+                            )
         dialog.width_request = 640
 
         hbox = HBox.new(false, 5)
@@ -902,11 +902,11 @@ module JSON
         type_input = value_input = nil
 
         dialog = Dialog.new(
-          "New element into #{parent ? parent.type : 'root'}",
-          nil, nil,
-          [ Stock::OK, Dialog::RESPONSE_ACCEPT ],
-          [ Stock::CANCEL, Dialog::RESPONSE_REJECT ]
-        )
+                            "New element into #{parent ? parent.type : 'root'}",
+                            nil, nil,
+                            [ Stock::OK, Dialog::RESPONSE_ACCEPT ],
+                            [ Stock::CANCEL, Dialog::RESPONSE_REJECT ]
+                            )
         hbox = HBox.new(false, 5)
         hbox.pack_start(Label.new("Type:"), false)
         hbox.pack_start(type_input = ComboBox.new(true))
@@ -940,15 +940,15 @@ module JSON
           if response == Dialog::RESPONSE_ACCEPT
             type = types[type_input.active]
             @content = case type
-            when 'Numeric'
-              if (t = value_input.text) == 'Infinity'
-                1 / 0.0
-              else
-                Integer(t) rescue Float(t) rescue 0
-              end
-            else
-              value_input.text
-            end.to_s
+                       when 'Numeric'
+                         if (t = value_input.text) == 'Infinity'
+                           1 / 0.0
+                         else
+                           Integer(t) rescue Float(t) rescue 0
+                         end
+                       else
+                         value_input.text
+                       end.to_s
             return type, @content
           end
         end
@@ -962,11 +962,11 @@ module JSON
       # sorting.
       def ask_for_order
         dialog = Dialog.new(
-          "Give an order criterium for 'x'.",
-          nil, nil,
-          [ Stock::OK, Dialog::RESPONSE_ACCEPT ],
-          [ Stock::CANCEL, Dialog::RESPONSE_REJECT ]
-        )
+                            "Give an order criterium for 'x'.",
+                            nil, nil,
+                            [ Stock::OK, Dialog::RESPONSE_ACCEPT ],
+                            [ Stock::CANCEL, Dialog::RESPONSE_REJECT ]
+                            )
         hbox = HBox.new(false, 5)
 
         hbox.pack_start(Label.new("Order:"), false)
@@ -995,11 +995,11 @@ module JSON
       # string.
       def ask_for_find_term(search = nil)
         dialog = Dialog.new(
-          "Find a node matching regex in tree.",
-          nil, nil,
-          [ Stock::OK, Dialog::RESPONSE_ACCEPT ],
-          [ Stock::CANCEL, Dialog::RESPONSE_REJECT ]
-        )
+                            "Find a node matching regex in tree.",
+                            nil, nil,
+                            [ Stock::OK, Dialog::RESPONSE_ACCEPT ],
+                            [ Stock::CANCEL, Dialog::RESPONSE_REJECT ]
+                            )
         hbox = HBox.new(false, 5)
 
         hbox.pack_start(Label.new("Regex:"), false)
@@ -1139,7 +1139,7 @@ module JSON
       # Opens a dialog, asking, if changes should be saved to a file.
       def ask_save
         if Editor.question_dialog(self,
-          "Unsaved changes to JSON model. Save?")
+                                  "Unsaved changes to JSON model. Save?")
           if @filename
             file_save
           else
@@ -1241,7 +1241,7 @@ module JSON
       rescue SystemCallError => e
         Editor.error_dialog(self, "Failed to store JSON file: #{e}!")
       end
-  
+      
       # Load the file named _filename_ into the editor as a JSON document.
       def load_file(filename)
         if filename
@@ -1317,11 +1317,11 @@ module JSON
       # Ask for location URI a to load data from. Returns the URI as a string.
       def ask_for_location
         dialog = Dialog.new(
-          "Load data from location...",
-          nil, nil,
-          [ Stock::OK, Dialog::RESPONSE_ACCEPT ],
-          [ Stock::CANCEL, Dialog::RESPONSE_REJECT ]
-        )
+                            "Load data from location...",
+                            nil, nil,
+                            [ Stock::OK, Dialog::RESPONSE_ACCEPT ],
+                            [ Stock::CANCEL, Dialog::RESPONSE_REJECT ]
+                            )
         hbox = HBox.new(false, 5)
 
         hbox.pack_start(Label.new("Location:"), false)

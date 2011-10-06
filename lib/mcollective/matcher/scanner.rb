@@ -1,83 +1,83 @@
 module MCollective
-    module Matcher
-        class Scanner
-            attr_accessor :arguments, :token_index
+  module Matcher
+    class Scanner
+      attr_accessor :arguments, :token_index
 
-            def initialize(arguments)
-                @token_index = 0
-                @arguments = arguments
+      def initialize(arguments)
+        @token_index = 0
+        @arguments = arguments
+      end
+
+      # Scans the input string and identifies single language tokens
+      def get_token
+        if @token_index >= @arguments.size
+          return nil
+        end
+
+        begin
+          case @arguments.split("")[@token_index]
+          when "("
+            return "(", "("
+
+          when ")"
+            return ")", ")"
+
+          when "n"
+            if (@arguments.split("")[@token_index + 1] == "o") && (@arguments.split("")[@token_index + 2] == "t") && ((@arguments.split("")[@token_index + 3] == " ") || (@arguments.split("")[@token_index + 3] == "("))
+              @token_index += 2
+              return "not", "not"
+            else
+              gen_statement
             end
 
-            # Scans the input string and identifies single language tokens
-            def get_token
-                if @token_index >= @arguments.size
-                    return nil
-                end
+          when "!"
+            return "not", "not"
 
-                begin
-                    case @arguments.split("")[@token_index]
-                        when "("
-                            return "(", "("
-
-                        when ")"
-                            return ")", ")"
-
-                        when "n"
-                            if (@arguments.split("")[@token_index + 1] == "o") && (@arguments.split("")[@token_index + 2] == "t") && ((@arguments.split("")[@token_index + 3] == " ") || (@arguments.split("")[@token_index + 3] == "("))
-                                @token_index += 2
-                                return "not", "not"
-                            else
-                                gen_statement
-                            end
-
-                        when "!"
-                            return "not", "not"
-
-                        when "a"
-                            if (@arguments.split("")[@token_index + 1] == "n") && (@arguments.split("")[@token_index + 2] == "d") && ((@arguments.split("")[@token_index + 3] == " ") || (@arguments.split("")[@token_index + 3] == "("))
-                                @token_index += 2
-                                return "and", "and"
-                            else
-                                gen_statement
-                            end
-
-                        when "o"
-                            if (@arguments.split("")[@token_index + 1] == "r") && ((@arguments.split("")[@token_index + 2] == " ") || (@arguments.split("")[@token_index + 2] == "("))
-                                @token_index += 1
-                                return "or", "or"
-                            else
-                                gen_statement
-                            end
-
-                        when " "
-                            return " ", " "
-
-                        else
-                            gen_statement
-                    end
-                end
-            rescue NoMethodError => e
-                pp e
-                raise "Cannot end statement with 'and', 'or', 'not'"
+          when "a"
+            if (@arguments.split("")[@token_index + 1] == "n") && (@arguments.split("")[@token_index + 2] == "d") && ((@arguments.split("")[@token_index + 3] == " ") || (@arguments.split("")[@token_index + 3] == "("))
+              @token_index += 2
+              return "and", "and"
+            else
+              gen_statement
             end
 
-            private
-            # Helper generates a statement token
-            def gen_statement
-                current_token_value = ""
-                j = @token_index
+          when "o"
+            if (@arguments.split("")[@token_index + 1] == "r") && ((@arguments.split("")[@token_index + 2] == " ") || (@arguments.split("")[@token_index + 2] == "("))
+              @token_index += 1
+              return "or", "or"
+            else
+              gen_statement
+            end
 
-                begin
-                    if (@arguments.split("")[j] == "/")
-                        begin
-                            current_token_value << @arguments.split("")[j]
-                            j += 1
-                            if @arguments.split("")[j] == "/"
-                                current_token_value << "/"
-                                break
-                            end
-                        end until (j >= @arguments.size) || (@arguments.split("")[j] =~ /\//)
-                    elsif (@arguments.split("")[j] =~ /=|<|>/)
+          when " "
+            return " ", " "
+
+          else
+            gen_statement
+          end
+        end
+      rescue NoMethodError => e
+        pp e
+        raise "Cannot end statement with 'and', 'or', 'not'"
+      end
+
+      private
+      # Helper generates a statement token
+      def gen_statement
+        current_token_value = ""
+        j = @token_index
+
+        begin
+          if (@arguments.split("")[j] == "/")
+            begin
+              current_token_value << @arguments.split("")[j]
+              j += 1
+              if @arguments.split("")[j] == "/"
+                current_token_value << "/"
+                break
+              end
+            end until (j >= @arguments.size) || (@arguments.split("")[j] =~ /\//)
+          elsif (@arguments.split("")[j] =~ /=|<|>/)
                         while !(@arguments.split("")[j] =~ /=|<|>/)
                             current_token_value << @arguments.split("")[j]
                             j += 1

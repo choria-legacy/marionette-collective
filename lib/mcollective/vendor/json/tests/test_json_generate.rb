@@ -103,46 +103,46 @@ EOT
   def test_pretty_state
     state = PRETTY_STATE_PROTOTYPE.dup
     assert_equal({
-      :allow_nan    => false,
-      :array_nl     => "\n",
-      :ascii_only   => false,
-      :depth        => 0,
-      :indent       => "  ",
-      :max_nesting  => 19,
-      :object_nl    => "\n",
-      :space        => " ",
-      :space_before => "",
-    }.sort_by { |n,| n.to_s }, state.to_h.sort_by { |n,| n.to_s })
+                   :allow_nan    => false,
+                   :array_nl     => "\n",
+                   :ascii_only   => false,
+                   :depth        => 0,
+                   :indent       => "  ",
+                   :max_nesting  => 19,
+                   :object_nl    => "\n",
+                   :space        => " ",
+                   :space_before => "",
+                 }.sort_by { |n,| n.to_s }, state.to_h.sort_by { |n,| n.to_s })
   end
 
   def test_safe_state
     state = SAFE_STATE_PROTOTYPE.dup
     assert_equal({
-      :allow_nan    => false,
-      :array_nl     => "",
-      :ascii_only   => false,
-      :depth        => 0,
-      :indent       => "",
-      :max_nesting  => 19,
-      :object_nl    => "",
-      :space        => "",
-      :space_before => "",
-    }.sort_by { |n,| n.to_s }, state.to_h.sort_by { |n,| n.to_s })
+                   :allow_nan    => false,
+                   :array_nl     => "",
+                   :ascii_only   => false,
+                   :depth        => 0,
+                   :indent       => "",
+                   :max_nesting  => 19,
+                   :object_nl    => "",
+                   :space        => "",
+                   :space_before => "",
+                 }.sort_by { |n,| n.to_s }, state.to_h.sort_by { |n,| n.to_s })
   end
 
   def test_fast_state
     state = FAST_STATE_PROTOTYPE.dup
     assert_equal({
-      :allow_nan    => false,
-      :array_nl     => "",
-      :ascii_only   => false,
-      :depth        => 0,
-      :indent       => "",
-      :max_nesting  => 0,
-      :object_nl    => "",
-      :space        => "",
-      :space_before => "",
-    }.sort_by { |n,| n.to_s }, state.to_h.sort_by { |n,| n.to_s })
+                   :allow_nan    => false,
+                   :array_nl     => "",
+                   :ascii_only   => false,
+                   :depth        => 0,
+                   :indent       => "",
+                   :max_nesting  => 0,
+                   :object_nl    => "",
+                   :space        => "",
+                   :space_before => "",
+                 }.sort_by { |n,| n.to_s }, state.to_h.sort_by { |n,| n.to_s })
   end
 
   def test_allow_nan
