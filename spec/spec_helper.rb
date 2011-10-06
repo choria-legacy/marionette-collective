@@ -17,9 +17,9 @@ require 'tempfile'
 require 'monkey_patches/instance_variable_defined'
 
 RSpec.configure do |config|
-    config.mock_with :mocha
+  config.mock_with :mocha
 
-    config.before :each do
-        MCollective::PluginManager.clear
-    end
+  config.before :each do
+    MCollective::PluginManager.clear
+  end
 end

@@ -84,9 +84,9 @@ class TC_JSONAddition < Test::Unit::TestCase
     a_hash = JSON.parse(json, :create_additions => false)
     assert_kind_of Hash, a_hash
     assert_equal(
-      {"args"=>[666], "json_class"=>"TC_JSONAddition::A"}.sort_by { |k,| k },
-      a_hash.sort_by { |k,| k }
-    )
+                 {"args"=>[666], "json_class"=>"TC_JSONAddition::A"}.sort_by { |k,| k },
+                 a_hash.sort_by { |k,| k }
+                 )
   end
 
   def test_extended_json_fail1

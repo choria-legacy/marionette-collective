@@ -35,15 +35,15 @@ def create_server(err, dir, port)
   err.puts "Surf to:", "http://#{Socket.gethostname}:#{port}"
 
   s = HTTPServer.new(
-    :Port         => port,
-    :DocumentRoot => dir,
-    :Logger       => WEBrick::Log.new(err),
-    :AccessLog    => [
-      [ err, WEBrick::AccessLog::COMMON_LOG_FORMAT  ],
-      [ err, WEBrick::AccessLog::REFERER_LOG_FORMAT ],
-      [ err, WEBrick::AccessLog::AGENT_LOG_FORMAT   ]
-    ]
-  )
+                     :Port         => port,
+                     :DocumentRoot => dir,
+                     :Logger       => WEBrick::Log.new(err),
+                     :AccessLog    => [
+                                       [ err, WEBrick::AccessLog::COMMON_LOG_FORMAT  ],
+                                       [ err, WEBrick::AccessLog::REFERER_LOG_FORMAT ],
+                                       [ err, WEBrick::AccessLog::AGENT_LOG_FORMAT   ]
+                                      ]
+                     )
   s.mount("/json", JSONServlet)
   s
 end

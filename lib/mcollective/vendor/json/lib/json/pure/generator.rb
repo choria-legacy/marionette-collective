@@ -61,10 +61,10 @@ module JSON
                       )+ |
                       [\x80-\xc1\xf5-\xff]       # invalid
                     )/nx) { |c|
-                      c.size == 1 and raise GeneratorError, "invalid utf8 byte: '#{c}'"
-                      s = JSON.iconv('utf-16be', 'utf-8', c).unpack('H*')[0]
-                      s.gsub!(/.{4}/n, '\\\\u\&')
-                    }
+        c.size == 1 and raise GeneratorError, "invalid utf8 byte: '#{c}'"
+        s = JSON.iconv('utf-16be', 'utf-8', c).unpack('H*')[0]
+        s.gsub!(/.{4}/n, '\\\\u\&')
+      }
       string.force_encoding(::Encoding::UTF_8)
       string
     rescue => e

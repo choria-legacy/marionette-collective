@@ -154,16 +154,16 @@ module JSON
       # Unescape characters in strings.
       UNESCAPE_MAP = Hash.new { |h, k| h[k] = k.chr }
       UNESCAPE_MAP.update({
-        ?"  => '"',
-        ?\\ => '\\',
-        ?/  => '/',
-        ?b  => "\b",
-        ?f  => "\f",
-        ?n  => "\n",
-        ?r  => "\r",
-        ?t  => "\t",
-        ?u  => nil, 
-      })
+                            ?"  => '"',
+                            ?\\ => '\\',
+                            ?/  => '/',
+                            ?b  => "\b",
+                            ?f  => "\f",
+                            ?n  => "\n",
+                            ?r  => "\r",
+                            ?t  => "\t",
+                            ?u  => nil, 
+                          })
 
       EMPTY_8BIT_STRING = ''
       if ::String.method_defined?(:encode)

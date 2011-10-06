@@ -54,18 +54,18 @@ end
 
 filename = nil
 json = JSON[
-  if args.empty?
-    STDIN.read
-  else
-    File.read filename = args.first
-  end
-]
+            if args.empty?
+              STDIN.read
+            else
+              File.read filename = args.first
+            end
+           ]
 
 output = if opts['s']
-  JSON.fast_generate json
-else # default is -l
-  JSON.pretty_generate json
-end
+           JSON.fast_generate json
+         else # default is -l
+           JSON.pretty_generate json
+         end
 
 if opts['i'] && filename
   cp filename, "#{filename}.#{opts['i']}"
