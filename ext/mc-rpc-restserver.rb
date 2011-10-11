@@ -18,17 +18,17 @@ include MCollective::RPC
 #
 # Returns all the answers as a JSON data block
 get '/mcollective/:agent/:action/*' do
-    mc = rpcclient(params[:agent])
-    mc.discover
+  mc = rpcclient(params[:agent])
+  mc.discover
 
-    arguments = {}
+  arguments = {}
 
-    # split up the wildcard params into key=val pairs and
-    # build the arguments hash
-    params[:splat].each do |arg|
-        arguments[$1.to_sym] = $2 if arg =~ /^(.+?)=(.+)$/
-    end
+  # split up the wildcard params into key=val pairs and
+  # build the arguments hash
+  params[:splat].each do |arg|
+    arguments[$1.to_sym] = $2 if arg =~ /^(.+?)=(.+)$/
+  end
 
-    JSON.dump(mc.send(params[:action], arguments).map{|r| r.results})
+  JSON.dump(mc.send(params[:action], arguments).map{|r| r.results})
 end
 

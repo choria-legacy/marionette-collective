@@ -27,7 +27,7 @@ class TC_JSON < Test::Unit::TestCase
       |x| [x]
     end
     @ary_to_parse = ["1", '"foo"', "3.14", "4711.0", "2.718", "null",
-      "[1,-2,3]", "false", "true"].map do
+                     "[1,-2,3]", "false", "true"].map do
       |x| "[#{x}]"
     end
     @hash = {
@@ -41,7 +41,7 @@ class TC_JSON < Test::Unit::TestCase
       'i' => 0.001
     }
     @json = '{"a":2,"b":3.141,"c":"c","d":[1,"b",3.14],"e":{"foo":"bar"},'\
-      '"g":"\\"\\u0000\\u001f","h":1.0E3,"i":1.0E-3}'
+    '"g":"\\"\\u0000\\u001f","h":1.0E3,"i":1.0E-3}'
   end
 
   def test_construction
@@ -136,7 +136,7 @@ class TC_JSON < Test::Unit::TestCase
     assert_equal(['"'], parse('["\""]'))
     assert_equal(['\\"\\'], parse('["\\\\\\"\\\\"]'))
     assert_equal(["\"\b\n\r\t\0\037"],
-      parse('["\"\b\n\r\t\u0000\u001f"]'))
+                 parse('["\"\b\n\r\t\u0000\u001f"]'))
     for i in 0 ... @ary.size
       assert_equal(@ary[i], parse(@ary_to_parse[i]))
     end
@@ -148,8 +148,8 @@ class TC_JSON < Test::Unit::TestCase
     assert_equal([1], parse('[1]'))
     assert_equal([1], parse('  [ 1  ]  '))
     assert_equal(@ary,
-      parse('[[1],["foo"],[3.14],[47.11e+2],[2718.0E-3],[null],[[1,-2,3]]'\
-      ',[false],[true]]'))
+                 parse('[[1],["foo"],[3.14],[47.11e+2],[2718.0E-3],[null],[[1,-2,3]]'\
+                       ',[false],[true]]'))
     assert_equal(@ary, parse(%Q{   [   [1] , ["foo"]  ,  [3.14] \t ,  [47.11e+2] 
       , [2718.0E-3 ],\r[ null] , [[1, -2, 3 ]], [false ],[ true]\n ]  }))
   end
@@ -249,8 +249,8 @@ class TC_JSON < Test::Unit::TestCase
 }
 EOT
     assert_equal(
-      { "key1" => "value1", "key2" => "value2", "key3" => "value3" },
-      parse(json))
+                 { "key1" => "value1", "key2" => "value2", "key3" => "value3" },
+                 parse(json))
     json = <<EOT
 {
   "key1":"value1"  /* multi line
@@ -354,9 +354,9 @@ EOT
 
   def test_symbolize_names
     assert_equal({ "foo" => "bar", "baz" => "quux" },
-      JSON.parse('{"foo":"bar", "baz":"quux"}'))
+                 JSON.parse('{"foo":"bar", "baz":"quux"}'))
     assert_equal({ :foo => "bar", :baz => "quux" },
-      JSON.parse('{"foo":"bar", "baz":"quux"}', :symbolize_names => true))
+                 JSON.parse('{"foo":"bar", "baz":"quux"}', :symbolize_names => true))
   end
 
   def test_load_dump

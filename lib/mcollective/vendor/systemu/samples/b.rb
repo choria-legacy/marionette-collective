@@ -3,10 +3,10 @@
 # either stdout or stderr is supplied those objects should respond_to? '<<'
 # and only status will be returned
 #
-  require 'systemu'
+require 'systemu'
 
-  date = %q( ruby -e"  t = Time.now; STDOUT.puts t; STDERR.puts t  " )
+date = %q( ruby -e"  t = Time.now; STDOUT.puts t; STDERR.puts t  " )
 
-  stdout, stderr = '', ''
-  status = systemu date, 'stdout' => stdout, 'stderr' => stderr
-  p [ status, stdout, stderr ]
+stdout, stderr = '', ''
+status = systemu date, 'stdout' => stdout, 'stderr' => stderr
+p [ status, stdout, stderr ]
