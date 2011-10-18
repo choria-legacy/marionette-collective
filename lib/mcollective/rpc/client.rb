@@ -197,8 +197,7 @@ module MCollective
 
           custom_request(action, args, target_nodes, {"identity" => /^(#{target_nodes.join('|')})$/}, &block)
         else
-          # Normal agent requests as per client.action(args)
-          call_agent(action, args, options, &block)
+          call_agent(action, args, options, :auto, &block)
         end
       end
 
@@ -517,7 +516,6 @@ module MCollective
         # If an array is given set the force_direct_request hint that
         # will tell the message object to be a direct request one
         if disc == :auto
-          @force_direct_request = false
           discovered = discover
         else
           @force_direct_request = true if Config.instance.direct_addressing
