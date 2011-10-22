@@ -41,6 +41,7 @@ end
 
 if config.daemonize
   MCollective::Log.debug("Starting in the background (#{config.daemonize})")
+
   MCollective::Runner.daemonize do
     if pid
       begin
@@ -57,5 +58,3 @@ else
   runner = MCollective::Runner.new(configfile)
   runner.run
 end
-
-# vi:tabstop=4:expandtab:ai

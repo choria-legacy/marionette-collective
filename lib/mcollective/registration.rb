@@ -14,4 +14,3 @@ module MCollective
     autoload :Base, "mcollective/registration/base"
   end
 end
-# vi:tabstop=4:expandtab:ai

@@ -14,4 +14,3 @@ module MCollective
     autoload :Scanner, "mcollective/matcher/scanner"
   end
 end
-# vi:tabstop=4:expandtab:ai

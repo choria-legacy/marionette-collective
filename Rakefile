@@ -203,4 +203,3 @@ task :mail_patches do
     # Finally, clean up the patches
     sh "rm 00*.patch"
 end
-# vi:tabstop=4:expandtab:ai

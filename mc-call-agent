@@ -52,5 +52,3 @@ rescue Exception => e
 end
 
 client.display_stats(stats)
-
-# vi:tabstop=4:expandtab:ai

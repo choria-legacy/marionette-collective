@@ -16,4 +16,3 @@ module MCollective
     autoload :Base, "mcollective/connector/base"
   end
 end
-# vi:tabstop=4:expandtab:ai

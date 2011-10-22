@@ -24,4 +24,3 @@ module MCollective
     autoload :Base, "mcollective/security/base"
   end
 end
-# vi:tabstop=4:expandtab:ai

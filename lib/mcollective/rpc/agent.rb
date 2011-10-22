@@ -44,12 +44,12 @@ module MCollective
       def initialize
         # Default meta data unset
         @meta = {:timeout     => 10,
-          :name        => "Unknown",
-          :description => "Unknown",
-          :author      => "Unknown",
-          :license     => "Unknown",
-          :version     => "Unknown",
-          :url         => "Unknown"}
+                 :name        => "Unknown",
+                 :description => "Unknown",
+                 :author      => "Unknown",
+                 :license     => "Unknown",
+                 :version     => "Unknown",
+                 :url         => "Unknown"}
 
         @timeout = meta[:timeout] || 10
         @logger = Log.instance
@@ -303,133 +303,131 @@ module MCollective
         PluginManager.loadclass(pluginname) unless MCollective::Util.constants.include?(plugin)
 
         class_eval("
-                    def authorization_hook(request)
-                      #{pluginname}.authorize(request)
-                    end
-                    ")
+                      def authorization_hook(request)
+                   #{pluginname}.authorize(request)
+                      end
+                   ")
+      end
+
+      # Validates a data member, if validation is a regex then it will try to match it
+      # else it supports testing object types only:
+      #
+      # validate :msg, String
+      # validate :msg, /^[\w\s]+$/
+      #
+      # There are also some special helper validators:
+      #
+      # validate :command, :shellsafe
+      # validate :command, :ipv6address
+      # validate :command, :ipv4address
+      #
+      # It will raise appropriate exceptions that the RPC system understand
+      #
+      # TODO: this should be plugins, 1 per validatin method so users can add their own
+      #       at the moment i have it here just to proof the point really
+      def validate(key, validation)
+        raise MissingRPCData, "please supply a #{key} argument" unless @request.include?(key)
+
+        if validation.is_a?(Regexp)
+          raise InvalidRPCData, "#{key} should match #{validation}" unless @request[key].match(validation)
+
+        elsif validation.is_a?(Symbol)
+          case validation
+          when :shellsafe
+            raise InvalidRPCData, "#{key} should be a String" unless @request[key].is_a?(String)
+
+            ['`', '$', ';', '|', '&&', '>', '<'].each do |chr|
+              raise InvalidRPCData, "#{key} should not have #{chr} in it" if @request[key].match(Regexp.escape(chr))
             end
 
-            # Validates a data member, if validation is a regex then it will try to match it
-            # else it supports testing object types only:
-            #
-            # validate :msg, String
-            # validate :msg, /^[\w\s]+$/
-            #
-            # There are also some special helper validators:
-            #
-            # validate :command, :shellsafe
-            # validate :command, :ipv6address
-            # validate :command, :ipv4address
-            #
-            # It will raise appropriate exceptions that the RPC system understand
-            #
-            # TODO: this should be plugins, 1 per validatin method so users can add their own
-            #       at the moment i have it here just to proof the point really
-            def validate(key, validation)
-              raise MissingRPCData, "please supply a #{key} argument" unless @request.include?(key)
-
-              if validation.is_a?(Regexp)
-                raise InvalidRPCData, "#{key} should match #{validation}" unless @request[key].match(validation)
-
-              elsif validation.is_a?(Symbol)
-                case validation
-                when :shellsafe
-                  raise InvalidRPCData, "#{key} should be a String" unless @request[key].is_a?(String)
-
-                  ['`', '$', ';', '|', '&&', '>', '<'].each do |chr|
-                    raise InvalidRPCData, "#{key} should not have #{chr} in it" if @request[key].match(Regexp.escape(chr))
-                  end
-
-                when :ipv6address
-                  begin
-                    require 'ipaddr'
-                    ip = IPAddr.new(@request[key])
-                    raise InvalidRPCData, "#{key} should be an ipv6 address" unless ip.ipv6?
-                  rescue
-                    raise InvalidRPCData, "#{key} should be an ipv6 address"
-                  end
-
-                when :ipv4address
-                  begin
-                    require 'ipaddr'
-                    ip = IPAddr.new(@request[key])
-                    raise InvalidRPCData, "#{key} should be an ipv4 address" unless ip.ipv4?
-                  rescue
-                    raise InvalidRPCData, "#{key} should be an ipv4 address"
-                  end
-
-                when :boolean
-                  raise InvalidRPCData, "#{key} should be boolean" unless [TrueClass, FalseClass].include?(@request[key].class)
-                end
-              else
-                raise InvalidRPCData, "#{key} should be a #{validation}" unless  @request[key].is_a?(validation)
-              end
+          when :ipv6address
+            begin
+              require 'ipaddr'
+              ip = IPAddr.new(@request[key])
+              raise InvalidRPCData, "#{key} should be an ipv6 address" unless ip.ipv6?
+            rescue
+              raise InvalidRPCData, "#{key} should be an ipv6 address"
             end
 
-            # convenience wrapper around Util#shellescape
-            def shellescape(str)
-              Util.shellescape(str)
+          when :ipv4address
+            begin
+              require 'ipaddr'
+              ip = IPAddr.new(@request[key])
+              raise InvalidRPCData, "#{key} should be an ipv4 address" unless ip.ipv4?
+            rescue
+              raise InvalidRPCData, "#{key} should be an ipv4 address"
             end
 
-            # handles external actions
-            def implemented_by(command, type=:json)
-              runner = ActionRunner.new(command, request, type)
-
-              res = runner.run
-
-              reply.fail! "Did not receive data from #{command}" unless res.include?(:data)
-              reply.fail! "Reply data from #{command} is not a Hash" unless res[:data].is_a?(Hash)
-
-              reply.data.merge!(res[:data])
-
-              if res[:exitstatus] > 0
-                reply.fail "Failed to run #{command}: #{res[:stderr]}", res[:exitstatus]
-              end
-            rescue Exception => e
-              Log.warn("Unhandled #{e.class} exception during #{request.agent}##{request.action}: #{e}")
-              reply.fail! "Unexpected failure calling #{command}: #{e.class}: #{e}"
-            end
-
-            # Called at the end of the RPC::Agent standard initialize method
-            # use this to adjust meta parameters, timeouts and any setup you
-            # need to do.
-            #
-            # This will not be called right when the daemon starts up, we use
-            # lazy loading and initialization so it will only be called the first
-            # time a request for this agent arrives.
-            def startup_hook
-            end
-
-            # Called just after a message was received from the middleware before
-            # it gets passed to the handlers.  @request and @reply will already be
-            # set, the msg passed is the message as received from the normal
-            # mcollective runner and the connection is the actual connector.
-            def before_processing_hook(msg, connection)
-            end
-
-            # Called at the end of processing just before the response gets sent
-            # to the middleware.
-            #
-            # This gets run outside of the main exception handling block of the agent
-            # so you should handle any exceptions you could raise yourself.  The reason
-            # it is outside of the block is so you'll have access to even status codes
-            # set by the exception handlers.  If you do raise an exception it will just
-            # be passed onto the runner and processing will fail.
-            def after_processing_hook
-            end
-
-            # Gets called right after a request was received and calls audit plugins
-            #
-            # Agents can disable auditing by just overriding this method with a noop one
-            # this might be useful for agents that gets a lot of requests or simply if you
-            # do not care for the auditing in a specific agent.
-            def audit_request(msg, connection)
-              PluginManager["rpcaudit_plugin"].audit_request(msg, connection) if @config.rpcaudit
-            rescue Exception => e
-              Log.warn("Audit failed - #{e} - continuing to process message")
-            end
+          when :boolean
+            raise InvalidRPCData, "#{key} should be boolean" unless [TrueClass, FalseClass].include?(@request[key].class)
           end
+        else
+          raise InvalidRPCData, "#{key} should be a #{validation}" unless  @request[key].is_a?(validation)
         end
       end
 
-      # vi:tabstop=4:expandtab:ai
+      # convenience wrapper around Util#shellescape
+      def shellescape(str)
+        Util.shellescape(str)
+      end
+
+      # handles external actions
+      def implemented_by(command, type=:json)
+        runner = ActionRunner.new(command, request, type)
+
+        res = runner.run
+
+        reply.fail! "Did not receive data from #{command}" unless res.include?(:data)
+        reply.fail! "Reply data from #{command} is not a Hash" unless res[:data].is_a?(Hash)
+
+        reply.data.merge!(res[:data])
+
+        if res[:exitstatus] > 0
+          reply.fail "Failed to run #{command}: #{res[:stderr]}", res[:exitstatus]
+        end
+      rescue Exception => e
+        Log.warn("Unhandled #{e.class} exception during #{request.agent}##{request.action}: #{e}")
+        reply.fail! "Unexpected failure calling #{command}: #{e.class}: #{e}"
+      end
+
+      # Called at the end of the RPC::Agent standard initialize method
+      # use this to adjust meta parameters, timeouts and any setup you
+      # need to do.
+      #
+      # This will not be called right when the daemon starts up, we use
+      # lazy loading and initialization so it will only be called the first
+      # time a request for this agent arrives.
+      def startup_hook
+      end
+
+      # Called just after a message was received from the middleware before
+      # it gets passed to the handlers.  @request and @reply will already be
+      # set, the msg passed is the message as received from the normal
+      # mcollective runner and the connection is the actual connector.
+      def before_processing_hook(msg, connection)
+      end
+
+      # Called at the end of processing just before the response gets sent
+      # to the middleware.
+      #
+      # This gets run outside of the main exception handling block of the agent
+      # so you should handle any exceptions you could raise yourself.  The reason
+      # it is outside of the block is so you'll have access to even status codes
+      # set by the exception handlers.  If you do raise an exception it will just
+      # be passed onto the runner and processing will fail.
+      def after_processing_hook
+      end
+
+      # Gets called right after a request was received and calls audit plugins
+      #
+      # Agents can disable auditing by just overriding this method with a noop one
+      # this might be useful for agents that gets a lot of requests or simply if you
+      # do not care for the auditing in a specific agent.
+      def audit_request(msg, connection)
+        PluginManager["rpcaudit_plugin"].audit_request(msg, connection) if @config.rpcaudit
+      rescue Exception => e
+        Log.warn("Audit failed - #{e} - continuing to process message")
+      end
+    end
+  end
+end

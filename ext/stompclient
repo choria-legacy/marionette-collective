@@ -154,5 +154,3 @@ loop do
         puts("ERROR: unrecognised input: #{line}")
     end
 end
-
-# vi:tabstop=4:expandtab:ai

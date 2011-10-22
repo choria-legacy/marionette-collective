@@ -63,5 +63,3 @@ module MCollective
     VERSION
   end
 end
-
-# vi:tabstop=4:expandtab:ai

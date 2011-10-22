@@ -143,5 +143,3 @@ module MCollective
 
   end
 end
-
-# vi:tabstop=4:expandtab:ai
