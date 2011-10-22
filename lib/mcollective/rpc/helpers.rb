@@ -300,11 +300,17 @@ module MCollective
         end
 
         parser.on('--one', '-1', 'Send request to only one discovered nodes') do |v|
-          options[:mcollective_limit_targets] = "1"
+          options[:mcollective_limit_targets] = 1
         end
 
         parser.on('--limit-nodes [COUNT]', '--ln [COUNT]', 'Send request to only a subset of nodes, can be a percentage') do |v|
-          options[:mcollective_limit_targets] = v
+          raise "Invalid limit specified: #{v} valid limits are /^\d+%*$/" unless v =~ /^\d+%*$/
+
+          if v =~ /^\d+$/
+            options[:mcollective_limit_targets] = v.to_i
+          else
+            options[:mcollective_limit_targets] = v
+          end
         end
 
         parser.on('--json', '-j', 'Produce JSON output') do |v|

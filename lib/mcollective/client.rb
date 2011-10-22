@@ -94,7 +94,13 @@ module MCollective
 
     # Performs a discovery of nodes matching the filter passed
     # returns an array of nodes
-    def discover(filter, timeout)
+    #
+    # An integer limit can be supplied this will have the effect
+    # of the discovery being cancelled soon as it reached the
+    # requested limit of hosts
+    def discover(filter, timeout, limit=0)
+      raise "Limit has to be an integer" unless limit.is_a?(Fixnum)
+
       begin
         hosts = []
         Timeout.timeout(timeout) do
@@ -105,6 +111,8 @@ module MCollective
             reply = receive(reqid)
             Log.debug("Got discovery reply from #{reply.payload[:senderid]}")
             hosts << reply.payload[:senderid]
+
+            return hosts if limit > 0 && hosts.size == limit
           end
         end
       rescue Timeout::Error => e

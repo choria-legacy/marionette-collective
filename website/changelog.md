@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/10/22|Speed up discovery when limit targets are set|10133|
 |2011/10/03|Allow the RPC client to raise an exception rather than exit on failure|9360|
 |2011/10/03|Allow the TTL of requests to be set in the config file and the SimpleRPC API|9399|
 |2011/09/26|Cryptographically secure the TTL and Message Time of requests when using AES and SSL plugins|9400|

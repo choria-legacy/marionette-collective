@@ -392,7 +392,17 @@ module MCollective
           @stats.time_discovery :start
 
           STDERR.print("Determining the amount of hosts matching filter for #{discovery_timeout} seconds .... ") if verbose
-          @discovered_agents = @client.discover(@filter, @discovery_timeout)
+
+          # if the requested limit is a pure number and not a percent
+          # and if we're configured to use the first found hosts as the
+          # limit method then pass in the limit thus minimizing the amount
+          # of work we do in the discover phase and speeding it up significantly
+          if Config.instance.rpclimitmethod == :first and @limit_targets.is_a?(Fixnum)
+            @discovered_agents = @client.discover(@filter, @discovery_timeout, @limit_targets)
+          else
+            @discovered_agents = @client.discover(@filter, @discovery_timeout)
+          end
+
           @force_direct_request = false
           STDERR.puts(@discovered_agents.size) if verbose
 
@@ -429,6 +439,7 @@ module MCollective
       def limit_targets=(limit)
         if limit.is_a?(String)
           raise "Invalid limit specified: #{limit} valid limits are /^\d+%*$/" unless limit =~ /^\d+%*$/
+
           @limit_targets = limit
         elsif limit.respond_to?(:to_i)
           limit = limit.to_i
