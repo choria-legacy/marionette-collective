@@ -93,14 +93,16 @@ module MCollective
         if validrequest?(body)
           body[:body] = deserialize(body[:body])
 
-          if body[:body].is_a?(Hash)
-            update_secure_property(body, :ssl_ttl, :ttl, "TTL")
-            update_secure_property(body, :ssl_msgtime, :msgtime, "Message Time")
+          unless @initiated_by == :client
+            if body[:body].is_a?(Hash)
+              update_secure_property(body, :ssl_ttl, :ttl, "TTL")
+              update_secure_property(body, :ssl_msgtime, :msgtime, "Message Time")
 
-            body[:body] = body[:body][:ssl_msg] if body[:body].include?(:ssl_msg)
-          else
-            unless @config.pluginconf["ssl.enforce_ttl"] == nil
-              raise "Message %s is in an unknown or older security protocol, ignoring" % [request_description(body)]
+              body[:body] = body[:body][:ssl_msg] if body[:body].include?(:ssl_msg)
+            else
+              unless @config.pluginconf["ssl.enforce_ttl"] == nil
+                raise "Message %s is in an unknown or older security protocol, ignoring" % [request_description(body)]
+              end
             end
           end
 
