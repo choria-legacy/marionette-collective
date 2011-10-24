@@ -176,6 +176,18 @@ In user interfaces this might be displayed as a drop down list selector or anoth
 
 The value input should be either _true_ or _false_ actual boolean values.  This feature was introduced in version _0.4.9_.
 
+#### :integer type
+
+The value input should be an integer number like _1_ or _100_ but not _1.1_.  This feature was introduced in version _1.3.2_
+
+#### :float type
+
+The value input should be a floating point number like _1.0_ but not _1_.  This feature was introduced in version _1.3.2_
+
+#### :number type
+
+The value input should be an integer or a floating point number. This feature was introduced in version _1.3.2_
+
 #### :any type
 
 The value input can be any type, this allows you to send rich objects like arrays of hashes around, it effectively disables validation of the type of input

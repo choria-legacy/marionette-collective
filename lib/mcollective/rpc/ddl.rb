@@ -36,22 +36,25 @@ module MCollective
     class DDL
       attr_reader :meta
 
-      def initialize(agent)
+      def initialize(agent, loadddl=true)
         @actions = {}
         @meta = {}
         @config = MCollective::Config.instance
         @agent = agent
 
-        if ddlfile = findddlfile(agent)
-          instance_eval(File.read(ddlfile))
-        else
-          raise("Can't find DDL for agent '#{agent}'")
+        if loadddl
+          if ddlfile = findddlfile(agent)
+            instance_eval(File.read(ddlfile))
+          else
+            raise("Can't find DDL for agent '#{agent}'")
+          end
         end
       end
 
       def findddlfile(agent)
         @config.libdir.each do |libdir|
-          ddlfile = "#{libdir}/mcollective/agent/#{agent}.ddl"
+          ddlfile = File.join([libdir, "mcollective", "agent", "#{agent}.ddl"])
+
           if File.exist?(ddlfile)
             Log.debug("Found #{agent} ddl at #{ddlfile}")
             return ddlfile
@@ -119,22 +122,22 @@ module MCollective
         end
 
         @actions[action][:input][argument] = {:prompt => properties[:prompt],
-          :description => properties[:description],
-          :type => properties[:type],
-          :optional => properties[:optional]}
+                                              :description => properties[:description],
+                                              :type => properties[:type],
+                                              :optional => properties[:optional]}
 
         case properties[:type]
-        when :string
-          raise "Input type :string needs a :validation" unless properties.include?(:validation)
-          raise "String inputs need a :maxlength" unless properties.include?(:validation)
+          when :string
+            raise "Input type :string needs a :validation argument" unless properties.include?(:validation)
+            raise "Input type :string needs a :maxlength argument" unless properties.include?(:maxlength)
 
-          @actions[action][:input][argument][:validation] = properties[:validation]
-          @actions[action][:input][argument][:maxlength] = properties[:maxlength]
+            @actions[action][:input][argument][:validation] = properties[:validation]
+            @actions[action][:input][argument][:maxlength] = properties[:maxlength]
 
-        when :list
-          raise "Input type :list needs a :list argument" unless properties.include?(:list)
+          when :list
+            raise "Input type :list needs a :list argument" unless properties.include?(:list)
 
-          @actions[action][:input][argument][:list] = properties[:list]
+            @actions[action][:input][argument][:list] = properties[:list]
         end
       end
 
@@ -143,21 +146,21 @@ module MCollective
       # See the documentation for action for how to use this
       def output(argument, properties)
         raise "Cannot figure out what action input #{argument} belongs to" unless @current_action
-        raise "Output #{argument} needs a description" unless properties.include?(:description)
-        raise "Output #{argument} needs a description" unless properties.include?(:display_as)
+        raise "Output #{argument} needs a description argument" unless properties.include?(:description)
+        raise "Output #{argument} needs a display_as argument" unless properties.include?(:display_as)
 
         action = @current_action
 
         @actions[action][:output][argument] = {:description => properties[:description],
-          :display_as  => properties[:display_as]}
+                                               :display_as  => properties[:display_as]}
       end
 
       # Sets the display preference to either :ok, :failed, :flatten or :always
       # operates on action level
       def display(pref)
         # defaults to old behavior, complain if its supplied and invalid
-        unless [:ok, :failed, :always].include?(pref)
-          raise "Display preference #{pref} :ok, :failed, :flatten or :always"
+        unless [:ok, :failed, :flatten, :always].include?(pref)
+          raise "Display preference #{pref} is not valid, should be :ok, :failed, :flatten or :always"
         end
 
         action = @current_action
@@ -167,7 +170,7 @@ module MCollective
       # Generates help using the template based on the data
       # created with metadata and input
       def help(template)
-        template = IO.readlines(template).join
+        template = IO.read(template)
         meta = @meta
         actions = @actions
 
@@ -213,31 +216,42 @@ module MCollective
           # :list has a array of valid values
           if arguments.keys.include?(key)
             case input[key][:type]
-            when :string
-              raise DDLValidationError, "Input #{key} should be a string" unless arguments[key].is_a?(String)
+              when :string
+                raise DDLValidationError, "Input #{key} should be a string" unless arguments[key].is_a?(String)
 
-              if input[key][:maxlength].to_i > 0
-                if arguments[key].size > input[key][:maxlength].to_i
-                  raise DDLValidationError, "Input #{key} is longer than #{input[key][:maxlength]}"
+                if input[key][:maxlength].to_i > 0
+                  if arguments[key].size > input[key][:maxlength].to_i
+                    raise DDLValidationError, "Input #{key} is longer than #{input[key][:maxlength]} character(s)"
+                  end
                 end
-              end
 
-              unless arguments[key].match(Regexp.new(input[key][:validation]))
-                raise DDLValidationError, "Input #{key} does not match validation regex #{input[key][:validation]}"
-              end
+                unless arguments[key].match(Regexp.new(input[key][:validation]))
+                  raise DDLValidationError, "Input #{key} does not match validation regex #{input[key][:validation]}"
+                end
 
-            when :list
-              unless input[key][:list].include?(arguments[key])
-                raise DDLValidationError, "Input #{key} doesn't match list #{input[key][:list].join(', ')}"
-              end
+              when :list
+                unless input[key][:list].include?(arguments[key])
+                  raise DDLValidationError, "Input #{key} doesn't match list #{input[key][:list].join(', ')}"
+                end
 
-            when :boolean
-              unless [TrueClass, FalseClass].include?(arguments[key].class)
-                raise DDLValidationError, "Input #{key} should be a boolean"
-              end
+              when :boolean
+                unless [TrueClass, FalseClass].include?(arguments[key].class)
+                  raise DDLValidationError, "Input #{key} should be a boolean"
+                end
+
+              when :integer
+                raise DDLValidationError, "Input #{key} should be a integer" unless arguments[key].is_a?(Fixnum)
+
+              when :float
+                raise DDLValidationError, "Input #{key} should be a floating point number" unless arguments[key].is_a?(Float)
+
+              when :number
+                raise DDLValidationError, "Input #{key} should be a number" unless arguments[key].is_a?(Numeric)
             end
           end
         end
+
+        true
       end
     end
   end
