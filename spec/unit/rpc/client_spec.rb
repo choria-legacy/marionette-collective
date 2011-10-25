@@ -13,6 +13,9 @@ module MCollective
           @client.stubs("options=")
           @client.stubs(:collective).returns("mcollective")
 
+          @stderr = stub
+          @stdout = stub
+
           Config.any_instance.stubs(:loadconfig).with("/nonexisting").returns(true)
           MCollective::Client.expects(:new).returns(@client)
         end
@@ -86,19 +89,19 @@ module MCollective
 
         it "should print status to stderr if in verbose mode" do
           @client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
-          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => true, :disctimeout => 2}})
+          @stderr.expects(:print).with("Determining the amount of hosts matching filter for 2 seconds .... ")
+          @stderr.expects(:puts).with(1)
 
-          STDERR.expects(:print).with("Determining the amount of hosts matching filter for 2 seconds .... ")
-          STDERR.expects(:puts).with(1)
+          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => true, :disctimeout => 2, :stderr => @stderr, :stdout => @stdout}})
           client.discover
         end
 
         it "should not print status to stderr if in verbose mode" do
           @client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
-          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
+          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2, :stderr => @stderr, :stdout => @stdout}})
 
-          STDERR.expects(:print).never
-          STDERR.expects(:puts).never
+          @stderr.expects(:print).never
+          @stderr.expects(:puts).never
 
           client.discover
         end

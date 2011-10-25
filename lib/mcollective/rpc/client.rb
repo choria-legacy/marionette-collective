@@ -79,8 +79,22 @@ module MCollective
           @ddl = nil
         end
 
-        STDERR.sync = true
-        STDOUT.sync = true
+        # allows stderr and stdout to be overridden for testing
+        # but also for web apps that might not want a bunch of stuff
+        # generated to actual file handles
+        if initial_options[:stderr]
+          @stderr = initial_options[:stderr]
+        else
+          @stderr = STDERR
+          @stderr.sync = true
+        end
+
+        if initial_options[:stderr]
+          @stdout = initial_options[:stderr]
+        else
+          @stdout = STDOUT
+          @stdout.sync = true
+        end
       end
 
       # Disconnects cleanly from the middleware
@@ -393,7 +407,7 @@ module MCollective
         unless @discovered_agents
           @stats.time_discovery :start
 
-          STDERR.print("Determining the amount of hosts matching filter for #{discovery_timeout} seconds .... ") if verbose
+          @stderr.print("Determining the amount of hosts matching filter for #{discovery_timeout} seconds .... ") if verbose
 
           # if the requested limit is a pure number and not a percent
           # and if we're configured to use the first found hosts as the
@@ -406,7 +420,7 @@ module MCollective
           end
 
           @force_direct_request = false
-          STDERR.puts(@discovered_agents.size) if verbose
+          @stderr.puts(@discovered_agents.size) if verbose
 
           @stats.time_discovery :end
         end
