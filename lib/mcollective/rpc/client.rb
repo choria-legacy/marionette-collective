@@ -350,6 +350,8 @@ module MCollective
 
         verbose = false unless @output_format == :console
 
+        reset if flags[:hosts] || flags[:json]
+
         unless @discovered_agents
           # if either hosts or json is supplied try to figure out discovery data from there
           # if direct_addressing is not enabled this is a critical error as the user might
@@ -370,13 +372,13 @@ module MCollective
             @discovered_agents = hosts
             @force_direct_request = true
 
-            # if an identity filter is supplied and it is all strings no regex we can use that
-            # as discovery data, technically the identity filter is then redundant if we are
-            # in direct addressing mode and we could empty it out but this use case should
-            # only really be for a few -I's on the cli
-            #
-            # For safety we leave the filter in place for now, that way we can support this
-            # enhancement also in broadcast mode
+          # if an identity filter is supplied and it is all strings no regex we can use that
+          # as discovery data, technically the identity filter is then redundant if we are
+          # in direct addressing mode and we could empty it out but this use case should
+          # only really be for a few -I's on the cli
+          #
+          # For safety we leave the filter in place for now, that way we can support this
+          # enhancement also in broadcast mode
           elsif options[:filter]["identity"].size > 0
             regex_filters = options[:filter]["identity"].select{|i| i.match("^\/")}.size
 

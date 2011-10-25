@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/10/25|When discovery information is provided always accept it without requiring reset first|10265|
 |2011/10/24|Add :number, :integer and :float to the DDL and rpc application|9902|
 |2011/10/22|Speed up discovery when limit targets are set|10133|
 |2011/10/22|Do not attempt to validate TTL and Message Times on replies in the SSL plugin|10226|
