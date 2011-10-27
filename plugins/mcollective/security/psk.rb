@@ -75,20 +75,20 @@ module MCollective
         end
 
         case callertype
-        when :gid
-          id  = "gid=#{Process.gid}"
+          when :gid
+            id  = "gid=#{Process.gid}"
 
-        when :group
-          id = "group=#{Etc.getgrgid(Process.gid).name}"
+          when :group
+            id = "group=#{Etc.getgrgid(Process.gid).name}"
 
-        when :user
-          id = "user=#{Etc.getlogin}"
+          when :user
+            id = "user=#{Etc.getlogin}"
 
-        when :identity
-          id = "identity=#{@config.identity}"
+          when :identity
+            id = "identity=#{@config.identity}"
 
-        else
-          id ="uid=#{Process.uid}"
+          else
+            id ="uid=#{Process.uid}"
         end
 
         Log.debug("Setting callerid to #{id} based on callertype=#{callertype}")

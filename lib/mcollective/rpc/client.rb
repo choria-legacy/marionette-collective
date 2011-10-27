@@ -133,6 +133,8 @@ module MCollective
       def new_request(action, data)
         callerid = PluginManager["security_plugin"].callerid
 
+        raise 'callerid received from security plugin is not valid' unless PluginManager["security_plugin"].valid_callerid?(callerid)
+
         {:agent  => @agent,
           :action => action,
           :caller => callerid,

@@ -31,86 +31,88 @@ module MCollective
               val = $2
 
               case key
-              when "topicsep"
-                @topicsep = val
-              when "registration"
-                @registration = val.capitalize
-              when "registration_collective"
-                @registration_collective = val
-              when "registerinterval"
-                @registerinterval = val.to_i
-              when "collectives"
-                @collectives = val.split(",").map {|c| c.strip}
-              when "main_collective"
-                @main_collective = val
-              when "topicprefix"
-                @topicprefix = val
-              when "queueprefix"
-                @queueprefix = val
-              when "logfile"
-                @logfile = val
-              when "keeplogs"
-                @keeplogs = val.to_i
-              when "max_log_size"
-                @max_log_size = val.to_i
-              when "loglevel"
-                @loglevel = val
-              when "libdir"
-                paths = val.split(/:/)
-                paths.each do |path|
-                  @libdir << path
-                  unless $LOAD_PATH.include?(path)
-                    $LOAD_PATH << path
+                when "topicsep"
+                  @topicsep = val
+                when "registration"
+                  @registration = val.capitalize
+                when "registration_collective"
+                  @registration_collective = val
+                when "registerinterval"
+                  @registerinterval = val.to_i
+                when "collectives"
+                  @collectives = val.split(",").map {|c| c.strip}
+                when "main_collective"
+                  @main_collective = val
+                when "topicprefix"
+                  @topicprefix = val
+                when "queueprefix"
+                  @queueprefix = val
+                when "logfile"
+                  @logfile = val
+                when "keeplogs"
+                  @keeplogs = val.to_i
+                when "max_log_size"
+                  @max_log_size = val.to_i
+                when "loglevel"
+                  @loglevel = val
+                when "libdir"
+                  paths = val.split(/:/)
+                  paths.each do |path|
+                    @libdir << path
+                    unless $LOAD_PATH.include?(path)
+                      $LOAD_PATH << path
+                    end
                   end
-                end
-              when "identity"
-                @identity = val
-              when "direct_addressing"
-                val =~ /^1|y/i ? @direct_addressing = true : @direct_addressing = false
-              when "direct_addressing_threshold"
-                @direct_addressing_threshold = val.to_i
-              when "color"
-                val =~ /^1|y/i ? @color = true : @color = false
-              when "daemonize"
-                val =~ /^1|y/i ? @daemonize = true : @daemonize = false
-              when "securityprovider"
-                @securityprovider = val.capitalize
-              when "factsource"
-                @factsource = val.capitalize
-              when "connector"
-                @connector = val.capitalize
-              when "classesfile"
-                @classesfile = val
-              when /^plugin.(.+)$/
-                @pluginconf[$1] = val
-              when "rpcaudit"
-                val =~ /^1|y/i ? @rpcaudit = true : @rpcaudit = false
-              when "rpcauditprovider"
-                @rpcauditprovider = val.capitalize
-              when "rpcauthorization"
-                val =~ /^1|y/i ? @rpcauthorization = true : @rpcauthorization = false
-              when "rpcauthprovider"
-                @rpcauthprovider = val.capitalize
-              when "rpchelptemplate"
-                @rpchelptemplate = val
-              when "rpclimitmethod"
-                @rpclimitmethod = val.to_sym
-              when "logger_type"
-                @logger_type = val
-              when "fact_cache_time"
-                @fact_cache_time = val.to_i
-              when "ssl_cipher"
-                @ssl_cipher = val
-              when "ttl"
-                @ttl = val.to_i
-              else
-                raise("Unknown config parameter #{key}")
+                when "identity"
+                  @identity = val
+                when "direct_addressing"
+                  val =~ /^1|y/i ? @direct_addressing = true : @direct_addressing = false
+                when "direct_addressing_threshold"
+                  @direct_addressing_threshold = val.to_i
+                when "color"
+                  val =~ /^1|y/i ? @color = true : @color = false
+                when "daemonize"
+                  val =~ /^1|y/i ? @daemonize = true : @daemonize = false
+                when "securityprovider"
+                  @securityprovider = val.capitalize
+                when "factsource"
+                  @factsource = val.capitalize
+                when "connector"
+                  @connector = val.capitalize
+                when "classesfile"
+                  @classesfile = val
+                when /^plugin.(.+)$/
+                  @pluginconf[$1] = val
+                when "rpcaudit"
+                  val =~ /^1|y/i ? @rpcaudit = true : @rpcaudit = false
+                when "rpcauditprovider"
+                  @rpcauditprovider = val.capitalize
+                when "rpcauthorization"
+                  val =~ /^1|y/i ? @rpcauthorization = true : @rpcauthorization = false
+                when "rpcauthprovider"
+                  @rpcauthprovider = val.capitalize
+                when "rpchelptemplate"
+                  @rpchelptemplate = val
+                when "rpclimitmethod"
+                  @rpclimitmethod = val.to_sym
+                when "logger_type"
+                  @logger_type = val
+                when "fact_cache_time"
+                  @fact_cache_time = val.to_i
+                when "ssl_cipher"
+                  @ssl_cipher = val
+                when "ttl"
+                  @ttl = val.to_i
+                else
+                  raise("Unknown config parameter #{key}")
               end
             end
           end
         end
 
         read_plugin_config_dir("#{@configdir}/plugin.d")
+
+        raise 'Identities can only match /\w\.\-/' unless @identity.match(/^[\w\.\-]+$/)
 
         @configured = true
 

@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/10/27|callerid, certificate names, and identity names can now only have \w . and - in them|10327|
 |2011/10/25|When discovery information is provided always accept it without requiring reset first|10265|
 |2011/10/24|Add :number, :integer and :float to the DDL and rpc application|9902|
 |2011/10/22|Speed up discovery when limit targets are set|10133|

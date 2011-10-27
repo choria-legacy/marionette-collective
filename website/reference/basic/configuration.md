@@ -35,7 +35,7 @@ Configuration is a simple *key = val* style configuration file.
 |main_collective|mcollective|The main collective to target - 1.1.3 and newer only|
 |logfile|/var/log/mcollective.log|Where to log|
 |loglevel|debug|Can be info, warn, debug, fatal, error|
-|identity|dev1.your.com|Identifier for this node, does not need to be unique, defaults to hostname if unset|
+|identity|dev1.your.com|Identifier for this node, does not need to be unique, defaults to hostname if unset and must match _/\w\.\-/_ if set|
 |keeplogs|5|The amount of logs to keep|
 |max_log_size|2097152|Max size in bytes for log files before rotation happens|
 |libdir|/usr/libexec/mcollective:/site/mcollective|Where to look for plugins|

@@ -151,13 +151,13 @@ module MCollective
         request = mock
         request.stubs(:agent).returns("rspec_agent")
         request.stubs(:collective).returns("collective")
-        request.stubs(:payload).returns({:requestid => "123", :callerid => "callerid"})
+        request.stubs(:payload).returns({:requestid => "123", :callerid => "id=callerid"})
 
         security = mock
-        security.expects(:encodereply).with('rspec_agent', 'payload', '123', 'callerid')
+        security.expects(:encodereply).with('rspec_agent', 'payload', '123', 'id=callerid')
+        security.expects(:valid_callerid?).with("id=callerid").returns(true)
 
-        PluginManager.expects("[]").with("security_plugin").returns(security)
-
+        PluginManager.expects("[]").with("security_plugin").returns(security).twice
 
         m = Message.new("payload", "message", :request => request, :type => :reply)
 
@@ -178,6 +178,23 @@ module MCollective
 
         m = Message.new("payload", "message", :type => :direct_request, :agent => "rspec_agent", :collective => "mcollective")
         m.encode!
+      end
+
+      it "should not allow bad callerids when replying" do
+        request = mock
+        request.stubs(:agent).returns("rspec_agent")
+        request.stubs(:collective).returns("collective")
+        request.stubs(:payload).returns({:requestid => "123", :callerid => "caller/id"})
+
+        security = mock
+        security.expects(:valid_callerid?).with("caller/id").returns(false)
+        PluginManager.expects("[]").with("security_plugin").returns(security)
+
+        m = Message.new("payload", "message", :request => request, :type => :reply)
+
+        expect {
+          m.encode!
+        }.to raise_error('callerid in original request is not valid, surpressing reply to potentially forged request')
       end
     end
 
@@ -211,6 +228,20 @@ module MCollective
         m.filter.should == "filter"
         m.requestid.should == "1234"
         m.ttl.should == 30
+      end
+
+      it "should not allow bad callerids from the security plugin on requests" do
+        security = mock
+        security.expects(:decodemsg).returns({:callerid => "foo/bar"})
+        security.expects(:valid_callerid?).with("foo/bar").returns(false)
+
+        PluginManager.expects("[]").with("security_plugin").returns(security).twice
+
+        m = Message.new("payload", "message", :type => :request)
+
+        expect {
+          m.decode!
+        }.to raise_error('callerid in request is not valid, surpressing reply to potentially forged request')
       end
     end
 

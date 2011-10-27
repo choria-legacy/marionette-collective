@@ -204,6 +204,22 @@ module MCollective::Security
       end
     end
 
+    describe "#valid_callerid?" do
+      it "should not pass invalid callerids" do
+        @plugin.valid_callerid?("foo-bar").should == false
+        @plugin.valid_callerid?("foo=bar=baz").should == false
+        @plugin.valid_callerid?('foo=bar\baz').should == false
+        @plugin.valid_callerid?("foo=bar/baz").should == false
+        @plugin.valid_callerid?("foo=bar|baz").should == false
+      end
+
+      it "should pass valid callerids" do
+        @plugin.valid_callerid?("cert=foo-bar").should == true
+        @plugin.valid_callerid?("uid=foo.bar").should == true
+        @plugin.valid_callerid?("uid=foo.bar.123").should == true
+      end
+    end
+
     describe "#callerid" do
       it "should return a unix UID based callerid" do
         @plugin.callerid.should == "uid=#{Process.uid}"

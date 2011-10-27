@@ -153,8 +153,8 @@ module MCollective
         req = create_request(requestid, filter, "", @initiated_by, target_agent, target_collective, ttl)
 
         ssl_msg = {:ssl_msg => msg,
-          :ssl_ttl => ttl,
-          :ssl_msgtime => req[:msgtime]}
+                   :ssl_ttl => ttl,
+                   :ssl_msgtime => req[:msgtime]}
 
         serialized = serialize(ssl_msg)
         digest = makehash(serialized)
@@ -187,13 +187,17 @@ module MCollective
       # sets the caller id to the md5 of the public key
       def callerid
         if @initiated_by == :client
-          "cert=#{File.basename(client_public_key).gsub(/\.pem$/, '')}"
+          id = "cert=#{File.basename(client_public_key).gsub(/\.pem$/, '')}"
+          raise "Invalid callerid generated from client public key" unless valid_callerid?(id)
         else
           # servers need to set callerid as well, not usually needed but
           # would be if you're doing registration or auditing or generating
           # requests for some or other reason
-          "cert=#{File.basename(server_public_key).gsub(/\.pem$/, '')}"
+          id = "cert=#{File.basename(server_public_key).gsub(/\.pem$/, '')}"
+          raise "Invalid callerid generated from server public key" unless valid_callerid?(id)
         end
+
+        return id
       end
 
       private
@@ -204,10 +208,10 @@ module MCollective
         Log.debug("Serializing using #{serializer}")
 
         case serializer
-        when "yaml"
-          return YAML.dump(msg)
-        else
-          return Marshal.dump(msg)
+          when "yaml"
+            return YAML.dump(msg)
+          else
+            return Marshal.dump(msg)
         end
       end
 
@@ -246,7 +250,7 @@ module MCollective
         if @initiated_by == :client
           return server_public_key
         else
-          if callerid =~ /cert=(.+)/
+          if callerid =~ /cert=([\w\.\-]+)/
             cid = $1
 
             if File.exist?("#{client_cert_dir}/#{cid}.pem")

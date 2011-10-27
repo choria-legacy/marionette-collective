@@ -39,6 +39,8 @@ An [alternative plugin][AESPlugin] exist that encrypts data but is more work to 
 ### Nodes
 To setup you need to create a SSL key pair that is shared by all nodes.
 
+The certificate names must match /\w\.\-/.
+
 {% highlight console %}
  % openssl genrsa -out server-private.pem 1024
  % openssl rsa -in server-private.pem -out server-public.pem -outform PEM -pubout
@@ -68,6 +70,8 @@ deny older clients:
 Now you should create a key pair for every one of your clients, here we create one
 for user john - you could also if you are less concerned with client id create one
 pair and share it with all clients:
+
+The certificate names must match /\w\.\-/.
 
 {% highlight console %}
  % openssl genrsa -out john-private.pem 1024

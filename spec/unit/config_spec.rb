@@ -4,6 +4,39 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 module MCollective
   describe Config do
+    describe "#loadconfig" do
+      it "should not allow any path like construct for identities" do
+        # Taken from puppet test cases
+        ['../foo', '..\\foo', './../foo', '.\\..\\foo',
+          '/foo', '//foo', '\\foo', '\\\\goo',
+          "test\0/../bar", "test\0\\..\\bar",
+          "..\\/bar", "/tmp/bar", "/tmp\\bar", "tmp\\bar",
+          " / bar", " /../ bar", " \\..\\ bar",
+          "c:\\foo", "c:/foo", "\\\\?\\UNC\\bar", "\\\\foo\\bar",
+          "\\\\?\\c:\\foo", "//?/UNC/bar", "//foo/bar",
+          "//?/c:/foo"
+        ].each do |input|
+          File.expects(:open).with("/nonexisting", "r").returns(StringIO.new("identity = #{input}"))
+          File.expects(:exists?).with("/nonexisting").returns(true)
+
+          expect {
+            Config.instance.loadconfig("/nonexisting")
+          }.to raise_error('Identities can only match /\w\.\-/')
+        end
+      end
+
+      it "should allow valid identities" do
+        ["foo", "foo_bar", "foo-bar", "foo-bar-123", "foo.bar", "foo_bar_123"].each do |input|
+          File.expects(:open).with("/nonexisting", "r").returns(StringIO.new("identity = #{input}"))
+          File.expects(:exists?).with("/nonexisting").returns(true)
+          PluginManager.stubs(:loadclass)
+          PluginManager.stubs("<<")
+
+          Config.instance.loadconfig("/nonexisting")
+        end
+      end
+    end
+
     describe "#read_plugin_config_dir" do
       before do
         tmpfile = Tempfile.new("mc_config_spec")

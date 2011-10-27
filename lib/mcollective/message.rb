@@ -101,16 +101,17 @@ module MCollective
 
     def encode!
       case type
-      when :reply
-        raise "Cannot encode a reply message if no request has been associated with it" unless request
+        when :reply
+          raise "Cannot encode a reply message if no request has been associated with it" unless request
+          raise 'callerid in original request is not valid, surpressing reply to potentially forged request' unless PluginManager["security_plugin"].valid_callerid?(request.payload[:callerid])
 
-        @requestid = request.payload[:requestid]
-        @payload = PluginManager["security_plugin"].encodereply(agent, payload, requestid, request.payload[:callerid])
-      when :request, :direct_request
-        @requestid = create_reqid
-        @payload = PluginManager["security_plugin"].encoderequest(Config.instance.identity, payload, requestid, filter, agent, collective, ttl)
-      else
-        raise "Cannot encode #{type} messages"
+          @requestid = request.payload[:requestid]
+          @payload = PluginManager["security_plugin"].encodereply(agent, payload, requestid, request.payload[:callerid])
+        when :request, :direct_request
+          @requestid = create_reqid
+          @payload = PluginManager["security_plugin"].encoderequest(Config.instance.identity, payload, requestid, filter, agent, collective, ttl)
+        else
+          raise "Cannot encode #{type} messages"
       end
     end
 
@@ -118,6 +119,10 @@ module MCollective
       raise "Cannot decode message type #{type}" unless [:request, :reply].include?(type)
 
       @payload = PluginManager["security_plugin"].decodemsg(self)
+
+      if type == :request
+        raise 'callerid in request is not valid, surpressing reply to potentially forged request' unless PluginManager["security_plugin"].valid_callerid?(payload[:callerid])
+      end
 
       [:collective, :agent, :filter, :requestid, :ttl, :msgtime].each do |prop|
         instance_variable_set("@#{prop}", payload[prop]) if payload.include?(prop)

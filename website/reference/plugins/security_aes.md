@@ -46,8 +46,6 @@ to every private key of every client to see all the reply data.
 Serialization uses Marshal or YAML, which means data types in and out of mcollective
 will be preserved from client to server and reverse.
 
-*This plugin will only function with MCollective 1.1.1 or newer*
-
 ## Compared to the SSL plugin
 
 The earlier [SSLSecurity] only provided message signing and identification of clients, this
@@ -272,15 +270,15 @@ Clients will still need their own keys made and distributed.
 
 |Setting|Example / Default|Description
 |-------|-----------------|-----------|
-|plugin.aes.client_private|/home/user/.mcollective.d/user-private.pem|The private key path for the user|
-|plugin.aes.client_public|/home/user/.mcollective.d/user.pem|The public key path for the user|
+|plugin.aes.client_private|/home/user/.mcollective.d/user-private.pem|The private key path for the user.  File must be /\w\.\-/|
+|plugin.aes.client_public|/home/user/.mcollective.d/user.pem|The public key path for the user.  File must be /\w\.\-/|
 
 ### Server Options
 
 |Setting|Example / Default|Description
 |-------|-----------------|-----------|
 |plugin.aes.client_cert_dir|/etc/mcollective/ssl/clients|Where to store and load client public keys|
-|plugin.aes.server_private|/etc/mcollective/ssl/server-private.pem|Server private key|
-|plugin.aes.server_public|/etc/mcollective/ssl/server-public.pem|Server public key|
+|plugin.aes.server_private|/etc/mcollective/ssl/server-private.pem|Server private key.  File must be /\w\.\-/|
+|plugin.aes.server_public|/etc/mcollective/ssl/server-public.pem|Server public key.  File must be /\w\.\-/|
 |plugin.aes.enforce_ttl|1|Enforce TTL and Message time security, warn only when disabled.  1.3.2 and newer only|
 

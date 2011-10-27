@@ -207,13 +207,17 @@ module MCollective
       # sets the caller id to the md5 of the public key
       def callerid
         if @initiated_by == :client
-          return "cert=#{File.basename(client_public_key).gsub(/\.pem$/, '')}"
+          id = "cert=#{File.basename(client_public_key).gsub(/\.pem$/, '')}"
+          raise "Invalid callerid generated from client public key" unless valid_callerid?(id)
         else
           # servers need to set callerid as well, not usually needed but
           # would be if you're doing registration or auditing or generating
           # requests for some or other reason
-          return "cert=#{File.basename(server_public_key).gsub(/\.pem$/, '')}"
+          id = "cert=#{File.basename(server_public_key).gsub(/\.pem$/, '')}"
+          raise "Invalid callerid generated from server public key" unless valid_callerid?(id)
         end
+
+        return id
       end
 
       def encrypt(string, certid)
@@ -308,9 +312,10 @@ module MCollective
 
       # Takes our cert=foo callerids and return the foo bit else nil
       def certname_from_callerid(id)
-        if id =~ /^cert=(.+)/
+        if id =~ /^cert=([\w\.\-]+)/
           return $1
         else
+          Log.warn("Received a callerid in an unexpected format: '#{id}', ignoring")
           return nil
         end
       end

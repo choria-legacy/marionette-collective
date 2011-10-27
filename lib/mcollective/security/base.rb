@@ -181,6 +181,15 @@ module MCollective
           :msgtime => Time.now.utc.to_i}
       end
 
+      # Validates a callerid.  We do not want to allow things like \ and / in
+      # callerids since other plugins make assumptions that these are safe strings.
+      #
+      # callerids are generally in the form uid=123 or cert=foo etc so we do that
+      # here but security plugins could override this for some complex uses
+      def valid_callerid?(id)
+        !!id.match(/^[\w]+=[\w\.\-]+$/)
+      end
+
       # Returns a unique id for the caller, by default we just use the unix
       # user id, security plugins can provide their own means of doing ids.
       def callerid
