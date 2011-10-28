@@ -137,7 +137,12 @@ module MCollective
         data = @ssl.base64_decode("FkH6qLvKTn7a+uNPe8ciHA==")
 
         # the default aes-256-cbc should fail here, the key above is 128 bit
-        expect { @ssl.aes_decrypt(key, data) }.to raise_error(/key length too short: no start line/)
+        # the exception classes changed mid-1.9.2 :(
+        if OpenSSL.constants.include?("CipherError")
+          expect { @ssl.aes_decrypt(key, data) }.to raise_error(OpenSSL::CipherError)
+        else
+          expect { @ssl.aes_decrypt(key, data) }.to raise_error(OpenSSL::Cipher::CipherError)
+        end
 
         # new ssl instance configured for aes-128-cbc, should work
         @ssl = SSL.new("#{@rootdir}/../fixtures/test-public.pem", "#{@rootdir}/../fixtures/test-private.pem", nil, "aes-128-cbc")

@@ -1,9 +1,9 @@
 #
 # any environment vars specified are merged into the child's environment
 #
-require 'systemu'
+  require 'systemu'
 
-env = %q( ruby -r yaml -e"  puts ENV[ 'answer' ] " )
+  env = %q( ruby -r yaml -e"  puts ENV[ 'answer' ] " )
 
-status = systemu env, 1=>stdout='', 'env'=>{ 'answer' => 0b101010 }
-puts stdout
+  status = systemu env, 1=>stdout='', 'env'=>{ 'answer' => 0b101010 }
+  puts stdout

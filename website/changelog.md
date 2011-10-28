@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/10/28|Support ruby-1.9.2-p290 and ruby-1.9.3-rc1|10352|
 |2011/10/27|callerid, certificate names, and identity names can now only have \w . and - in them|10327|
 |2011/10/25|When discovery information is provided always accept it without requiring reset first|10265|
 |2011/10/24|Add :number, :integer and :float to the DDL and rpc application|9902|
