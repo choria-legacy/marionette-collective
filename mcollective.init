@@ -18,9 +18,6 @@
 # Description:       Enable service provided by daemon.
 ### END INIT INFO
 
-RUBYLIB=/usr/local/lib/site_ruby/1.8:$RUBYLIB
-export RUBYLIB
-
 mcollectived="/usr/sbin/mcollectived"
 
 # Lockfile

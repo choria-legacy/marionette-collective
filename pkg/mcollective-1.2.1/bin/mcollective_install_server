@@ -2,4 +2,4 @@
 gem 'mcollective'
 require 'mcollective'
 
-MCollective::Installer.new(:full).install!
+MCollective::Installer.new.install!
