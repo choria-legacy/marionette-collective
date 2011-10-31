@@ -1,5 +1,0 @@
-#!/usr/bin/env ruby
-gem 'mcollective'
-require 'mcollective'
-
-MCollective::Installer.new.install!
