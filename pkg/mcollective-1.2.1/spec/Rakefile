@@ -1,0 +1,11 @@
+require File.join(File.dirname(__FILE__), "spec_helper.rb")
+require 'rake'
+require 'rspec/core/rake_task'
+
+desc "Run all specs"
+RSpec::Core::RakeTask.new(:all) do |t|
+    t.pattern = 'unit/**/*_spec.rb'
+    t.rspec_opts = File.read("spec.opts").chomp
+end
+
+task :default => [:all]

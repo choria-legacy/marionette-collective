@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+require 'mcollective'
+
+if $0 =~ /mc\-(.+)$/
+    app_name = $1
+
+    if MCollective::Applications.list.include?(app_name)
+        MCollective::Applications.run(app_name)
+    else
+        STDERR.puts "Cannot find the #{app_name} command in the applications plugin directory"
+    end
+else
+    STDERR.puts "Do not know which command to run, please run mc help for details"
+end
+

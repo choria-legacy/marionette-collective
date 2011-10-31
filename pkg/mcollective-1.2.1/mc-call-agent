@@ -1,0 +1,56 @@
+#!/usr/bin/env ruby
+
+require 'mcollective'
+require 'pp'
+
+oparser = MCollective::Optionparser.new({:verbose => true}, "filter")
+
+options = oparser.parse{|parser, options|
+    parser.define_head "Call an agent parsing an argument to it"
+    parser.banner = "Usage: mc-call-agent [options] --agent agent --argument arg"
+
+    parser.on('-a', '--agent AGENT', 'Agent to call') do |v|
+        options[:agent] = v
+    end
+
+    parser.on('--arg', '--argument ARGUMENT', 'Argument to pass to agent') do |v|
+        options[:argument] = v
+    end
+}
+
+if options[:agent] == nil || options[:argument] == nil
+    puts("Please use either --agent or --argument")
+    exit 1
+end
+
+begin
+    options[:filter]["agent"] << options[:agent]
+
+    client = MCollective::Client.new(options[:config])
+    client.options = options
+
+    c = 0
+
+    stats = client.discovered_req(options[:argument], options[:agent]) do |resp|
+        next if resp == nil
+
+        c += 1
+
+        if options[:verbose]
+            puts("#{resp[:senderid]}>")
+            pp resp[:body]
+        else
+            puts if c % 4 == 1
+            printf("%-30s", resp[:senderid])
+        end
+    end
+
+    client.disconnect
+rescue Exception => e
+    STDERR.puts "Could not call remote agent: #{e}"
+    exit 1
+end
+
+client.display_stats(stats)
+
+# vi:tabstop=4:expandtab:ai
