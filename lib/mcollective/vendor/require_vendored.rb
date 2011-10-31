@@ -1,2 +1,0 @@
-require 'systemu'
-require 'json'

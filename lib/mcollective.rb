@@ -31,34 +31,32 @@ module MCollective
     class SecurityValidationFailed<RuntimeError;end
     class DDLValidationError<RuntimeError;end
 
-    autoload :Config, "mcollective/config"
-    autoload :Log, "mcollective/log"
-    autoload :Logger, "mcollective/logger"
-    autoload :Runner, "mcollective/runner"
-    autoload :RunnerStats, "mcollective/runnerstats"
-    autoload :Agents, "mcollective/agents"
-    autoload :Client, "mcollective/client"
-    autoload :Util, "mcollective/util"
-    autoload :Optionparser, "mcollective/optionparser"
-    autoload :Connector, "mcollective/connector"
-    autoload :Security, "mcollective/security"
-    autoload :Facts, "mcollective/facts"
-    autoload :Registration, "mcollective/registration"
-    autoload :PluginManager, "mcollective/pluginmanager"
-    autoload :RPC, "mcollective/rpc"
-    autoload :Request, "mcollective/request"
-    autoload :SSL, "mcollective/ssl"
-    autoload :Application, "mcollective/application"
-    autoload :Applications, "mcollective/applications"
-    autoload :Vendor, "mcollective/vendor"
-    autoload :Shell, "mcollective/shell"
-
-    MCollective::Vendor.load_vendored
-
-    VERSION="@DEVELOPMENT_VERSION@"
-
+    ROOT = File.expand_path(File.dirname(__FILE__))    
+    autoload :Config,         "#{ROOT}/mcollective/config"
+    autoload :Log,            "#{ROOT}/mcollective/log"
+    autoload :Logger,         "#{ROOT}/mcollective/logger"
+    autoload :Runner,         "#{ROOT}/mcollective/runner"
+    autoload :RunnerStats,    "#{ROOT}/mcollective/runnerstats"
+    autoload :Agents,         "#{ROOT}/mcollective/agents"
+    autoload :Client,         "#{ROOT}/mcollective/client"
+    autoload :Util,           "#{ROOT}/mcollective/util"
+    autoload :Optionparser,   "#{ROOT}/mcollective/optionparser"
+    autoload :Connector,      "#{ROOT}/mcollective/connector"
+    autoload :Security,       "#{ROOT}/mcollective/security"
+    autoload :Facts,          "#{ROOT}/mcollective/facts"
+    autoload :Registration,   "#{ROOT}/mcollective/registration"
+    autoload :PluginManager,  "#{ROOT}/mcollective/pluginmanager"
+    autoload :RPC,            "#{ROOT}/mcollective/rpc"
+    autoload :Request,        "#{ROOT}/mcollective/request"
+    autoload :SSL,            "#{ROOT}/mcollective/ssl"
+    autoload :Application,    "#{ROOT}/mcollective/application"
+    autoload :Applications,   "#{ROOT}/mcollective/applications"
+    autoload :Shell,          "#{ROOT}/mcollective/shell"
+    autoload :Version,        "#{ROOT}/mcollective/version"
+    autoload :Installer,      "#{ROOT}/mcollective/installer"
+    
     def self.version
-        VERSION
+      Version::STRING
     end
 end
 
