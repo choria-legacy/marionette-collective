@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-gem 'mcollective'
+$:.unshift File.join(File.dirname(__FILE__), '..','lib')
 require 'mcollective'
 
 MCollective::Installer.new.install!

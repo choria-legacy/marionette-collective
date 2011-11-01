@@ -1,13 +1,11 @@
 # Rakefile to build a project using HUDSON
-PWD = File.dirname(__FILE__)
-$: << File.join(PWD, 'lib')
+$:.unshift File.join(File.dirname(__FILE__), 'lib')
 
-require 'rake/gempackagetask'
+require "mcollective"
 require 'rake/rdoctask'
 require 'rake/packagetask'
 require 'rake/clean'
 require 'find'
-require PWD + '/lib/mcollective'
 
 # Load tasks in tasks/
 Dir['tasks/**/*.rake'].each { |rake| load rake }
