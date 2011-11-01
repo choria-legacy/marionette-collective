@@ -15,7 +15,7 @@ New in Kontera's Version?
 -- MCollective Client
 -- MCollective Common Plugins
 
-`[root$] mcollective_install --help
+[root$] mcollective_install --help
 Usage: mcollective_install [options] client,server,common,full (default full)
 
 Options:
@@ -26,4 +26,3 @@ Options:
     -C, --custom_config_file PATH    e.g /etc/conf/my_server.cfg
     -F, --custom_facts_yaml PATH     e.g /etc/conf/my_facts.yaml
     -f, --force                      replace files, default is false
-`
