@@ -18,11 +18,10 @@
 # Description:       Enable service provided by daemon.
 ### END INIT INFO
 
-RUBYLIB=/usr/local/lib/site_ruby/1.8:$RUBYLIB
-export RUBYLIB
-
+rubycmd="ruby"
 mcollectived="/usr/sbin/mcollectived"
 pidfile="/var/run/mcollectived.pid"
+
 if [ -d /var/lock/subsys ]; then
     # RedHat/CentOS/etc who use subsys
     lockfile="/var/lock/subsys/mcollective"
@@ -49,7 +48,7 @@ fi
 
 start() {
 	echo -n "Starting mcollective: "
-    daemon ${daemonopts} ${mcollectived} \
+    daemon ${daemonopts} ${rubycmd} ${mcollectived} \
         --pid=${pidfile} --config="/etc/mcollective/server.cfg"
     RETVAL=$?
     echo

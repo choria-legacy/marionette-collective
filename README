@@ -4,3 +4,47 @@ The Marionette Collective
 The Marionette Collective aka. mcollective is a framework to build server orchestration or parallel job execution systems.
 
 For full information, wikis, ticketing and downloads please see http://marionette-collective.org/
+
+New in Kontera's Version?
+=========================
+- Removed all 3rd party vendors, using gems instead.
+- MCollective now can be packed into gem (rake gem).
+- Installation of MCollective trough rubygems (gem install mcollective).
+- New installer script available inside the gem, use it to install
+-- MCollective Server
+-- MCollective Client
+-- MCollective Common Plugins
+
+
+[root$] rake gem
+** Execute pkg/mcollective-1.2.1.gem
+  Successfully built RubyGem
+  Name: mcollective
+  Version: 1.2.1
+  File: mcollective-1.2.1.gem
+mv mcollective-1.2.1.gem pkg/mcollective-1.2.1.gem
+[root$]  
+[root$]# gem install pkg/mcollective-1.2.1.gem
+ Building native extensions.  This could take a while...
+ Successfully installed json-1.6.1
+ Successfully installed systemu-2.4.0
+ Successfully installed mcollective-1.2.1
+ 3 gems installed
+ Installing ri documentation for json-1.6.1...
+ Installing ri documentation for systemu-2.4.0...
+ Installing ri documentation for mcollective-1.2.1...
+ Installing RDoc documentation for json-1.6.1...
+ Installing RDoc documentation for systemu-2.4.0...
+ Installing RDoc documentation for mcollective-1.2.1...
+[root$] 
+[root$] mcollective_install --help
+ Usage: mcollective_install [options] client,server,common,full (default full)
+
+ Options:
+    -r, --ruby_path PATH             default is ruby
+    -c, --config_path PATH           default is /etc/mcollective
+    -p, --plugins_path PATH          default is /usr/libexec/mcollective
+    -b, --bin_path PATH              default is /usr/sbin
+    -C, --custom_config_file PATH    e.g /etc/conf/my_server.cfg
+    -F, --custom_facts_yaml PATH     e.g /etc/conf/my_facts.yaml
+    -f, --force                      replace files, default is false
