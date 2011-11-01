@@ -53,7 +53,7 @@ module MCollective
       
       if @options[:custom_facts_yaml]
         abort "Can't find the external facts file #{@options[:custom_facts_yaml]}" unless File.exists? @options[:custom_facts_yaml]
-        cp @options[:custom_facts_yaml], "#{@options[:config_path]}/facts.cfg"
+        cp @options[:custom_facts_yaml], "#{@options[:config_path]}/facts.yaml"
       else
         cp "etc/facts.yaml.dist", "#{@options[:config_path]}/facts.yaml"
       end
