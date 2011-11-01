@@ -1,21 +1,26 @@
 # Rakefile to build a project using HUDSON
+$:.unshift File.join(File.dirname(__FILE__), 'lib')
 
+require "mcollective"
 require 'rake/rdoctask'
 require 'rake/packagetask'
 require 'rake/clean'
 require 'find'
 
+# Load tasks in tasks/
+Dir['tasks/**/*.rake'].each { |rake| load rake }
+
 PROJ_DOC_TITLE = "The Marionette Collective"
-PROJ_VERSION = "1.2.1"
+
 PROJ_RELEASE = "1"
 PROJ_NAME = "mcollective"
 PROJ_RPM_NAMES = [PROJ_NAME]
 PROJ_FILES = ["#{PROJ_NAME}.spec", "#{PROJ_NAME}.init", "#{PROJ_NAME}.init-rh", "mcollectived.rb", "COPYING", "doc", "etc", "lib", "plugins", "ext", "mco"]
 PROJ_FILES.concat(Dir.glob("mc-*"))
 
-ENV["RPM_VERSION"] ? CURRENT_VERSION = ENV["RPM_VERSION"] : CURRENT_VERSION = PROJ_VERSION
-ENV["BUILD_NUMBER"] ? CURRENT_RELEASE = ENV["BUILD_NUMBER"] : CURRENT_RELEASE = PROJ_RELEASE
-ENV["DEB_DISTRIBUTION"] ? PKG_DEB_DISTRIBUTION = ENV["DEB_DISTRIBUTION"] : PKG_DEB_DISTRIBUTION = "unstable"
+CURRENT_VERSION      = ENV["RPM_VERSION"]      ? ENV["RPM_VERSION"]      : MCollective.version
+CURRENT_RELEASE      = ENV["BUILD_NUMBER"]     ? ENV["BUILD_NUMBER"]     : PROJ_RELEASE
+PKG_DEB_DISTRIBUTION = ENV["DEB_DISTRIBUTION"] ? ENV["DEB_DISTRIBUTION"] : "unstable"
 
 CLEAN.include(["build", "doc"])
 
@@ -41,7 +46,7 @@ rd = Rake::RDocTask.new(:doc) { |rdoc|
     rdoc.rdoc_dir = 'doc'
     rdoc.template = 'html'
     rdoc.title    = "#{PROJ_DOC_TITLE} version #{CURRENT_VERSION}"
-    rdoc.options << '--line-numbers' << '--inline-source' << '--main' << 'MCollective' << '--exclude' << 'mcollective/vendor/'
+    rdoc.options << '--line-numbers' << '--inline-source' << '--main' << 'MCollective'
 }
 
 desc "Run spec tests"
