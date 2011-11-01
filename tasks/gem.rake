@@ -4,8 +4,8 @@ MCollective::GemSpec = Gem::Specification.new do |s|
   s.name                  = MCollective::Version::NAME
   s.version               = MCollective::Version::STRING
   s.platform              = Gem::Platform::RUBY
-  s.summary               = "Kontera MCollective Version"
-  s.description           = "Kontera MCollective"
+  s.summary               = "Kontera MCollective"
+  s.description           = "Kontera MCollective Custom Ver."
   s.author                = "Eran Levi"
   s.email                 = 'eran@kontera.com'
   s.homepage              = 'http://www.kontera.com'
@@ -24,11 +24,4 @@ end
 
 Rake::GemPackageTask.new(MCollective::GemSpec) do |p|
   p.gem_spec = MCollective::GemSpec
-end
-
-namespace :gem do
-  desc 'Upload gems to Kontera repo'
-  task :push do
-    Dir["pkg/#{MCollective::GemSpec.full_name}*.gem"].each {sh "gem push #{f}"}
-  end
 end
