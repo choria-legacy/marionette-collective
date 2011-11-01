@@ -15,6 +15,17 @@ New in Kontera's Version?
 -- MCollective Client
 -- MCollective Common Plugins
 
+
+[root$] rake gem
+** Execute pkg/mcollective-1.2.1.gem
+  Successfully built RubyGem
+  Name: mcollective
+  Version: 1.2.1
+  File: mcollective-1.2.1.gem
+mv mcollective-1.2.1.gem pkg/mcollective-1.2.1.gem
+[root$]  
+[root$] gem install pkg/mcollective-1.2.1.gem
+[root$] 
 [root$] mcollective_install --help
 Usage: mcollective_install [options] client,server,common,full (default full)
 
