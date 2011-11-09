@@ -59,6 +59,38 @@ module MCollective
         #     plugin.stomp.priority = 4
         #
         class Stomp<Base
+            class EventLogger
+              def on_connecting(params=nil)
+                Log.info("Connection attempt %d to %s" % [params[:cur_conattempts], stomp_url(params)])
+              rescue
+              end
+
+              def on_connected(params=nil)
+                Log.info("Conncted to #{stomp_url(params)}")
+              rescue
+              end
+
+              def on_disconnect(params=nil)
+                Log.info("Disconnected from #{stomp_url(params)}")
+              rescue
+              end
+
+              def on_connectfail(params=nil)
+                Log.info("Connction to #{stomp_url(params)} failed on attempt #{params[:cur_conattempts]}")
+              rescue
+              end
+
+              def on_miscerr(params, errstr)
+                Log.info("Unexpected error on connection #{stomp_url(params)}: #{errstr}")
+              rescue
+              end
+
+              def stomp_url(params)
+                "stomp://%s@%s:%d" % [params[:cur_login], params[:cur_host], params[:cur_port]]
+              end
+            end
+
+
             attr_reader :connection
 
             def initialize
@@ -121,6 +153,8 @@ module MCollective
                         connection[:randomize] = get_bool_option("stomp.pool.randomize", false)
                         connection[:backup] = get_bool_option("stomp.pool.backup", false)
                         connection[:timeout] = get_option("stomp.pool.timeout", -1).to_i
+
+                        connection[:logger] = EventLogger.new
 
                         @connection = ::Stomp::Connection.new(connection)
                     end
