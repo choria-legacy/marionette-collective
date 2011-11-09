@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/11/09|Unsubscribe from topics when we are done with them to optimize use in very busy environments|10670|
 |*2011/06/30*|*Release 1.2.1*|8117|
 |2011/06/02|Correct parsing of MCOLLECTIVE_EXTRA_OPTS in cases where no config related settings were set|7755|
 |2011/05/23|Allow applications to use the exit method as would normally be expected|7626|
