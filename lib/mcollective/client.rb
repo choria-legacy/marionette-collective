@@ -112,10 +112,18 @@ module MCollective
                     end
                 end
             rescue Timeout::Error => e
-                hosts.sort
             rescue Exception => e
                 raise
             end
+
+            if @subscriptions.include?("discover")
+              topic = Util.make_target("discover", :reply, collective)
+              Log.debug("Unsubscribing from #{topic}")
+              Util.unsubscribe(topic)
+              @subscriptions.delete("discover")
+            end
+
+            return hosts.sort
         end
 
         # Send a request, performs the passed block for each response
@@ -151,6 +159,13 @@ module MCollective
                 end
             rescue Interrupt => e
             rescue Timeout::Error => e
+            end
+
+            if @subscriptions.include?(agent)
+              topic = Util.make_target(agent, :reply, collective)
+              Log.debug("Unsubscribing from #{topic}")
+              Util.unsubscribe(topic)
+              @subscriptions.delete(agent)
             end
 
             stat[:totaltime] = Time.now.to_f - stat[:starttime]
