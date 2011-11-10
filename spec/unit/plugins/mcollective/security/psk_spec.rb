@@ -40,7 +40,7 @@ module MCollective::Security
         @plugin.stubs("validrequest?").raises("fail").once
 
         msg = mock("message")
-        msg.stubs(:payload).returns(Marshal.dump("foo"))
+        msg.stubs(:payload).returns(Marshal.dump({:body => Marshal.dump("foo"), :requestid => "123"}))
         msg.stubs(:expected_msgid).returns(nil)
 
         expect { @plugin.decodemsg(msg) }.to raise_error("fail")
