@@ -31,6 +31,7 @@ module MCollective::Security
 
         msg = mock("message")
         msg.stubs(:payload).returns(Marshal.dump({:body => Marshal.dump("foo")}))
+        msg.stubs(:expected_msgid).returns(nil)
 
         @plugin.decodemsg(msg).should == {:body=>"foo"}
       end
@@ -40,8 +41,30 @@ module MCollective::Security
 
         msg = mock("message")
         msg.stubs(:payload).returns(Marshal.dump("foo"))
+        msg.stubs(:expected_msgid).returns(nil)
 
         expect { @plugin.decodemsg(msg) }.to raise_error("fail")
+      end
+
+      it "should not decode messages not addressed to us" do
+        msg = mock("message")
+        msg.stubs(:payload).returns(Marshal.dump({:body => Marshal.dump("foo"), :requestid => "456"}))
+        msg.stubs(:expected_msgid).returns("123")
+
+        expect {
+          @plugin.decodemsg(msg)
+        }.to raise_error("Got a message with id 456 but was expecting 123, ignoring message")
+
+      end
+
+      it "should only decode messages addressed to us" do
+        @plugin.stubs("validrequest?").returns(true).once
+
+        msg = mock("message")
+        msg.stubs(:payload).returns(Marshal.dump({:body => Marshal.dump("foo"), :requestid => "456"}))
+        msg.stubs(:expected_msgid).returns("456")
+
+        @plugin.decodemsg(msg).should == {:body=>"foo", :requestid=>"456"}
       end
     end
 

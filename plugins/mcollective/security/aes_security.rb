@@ -61,6 +61,8 @@ module MCollective
       def decodemsg(msg)
         body = deserialize(msg.payload)
 
+        should_process_msg?(msg, body[:requestid])
+
         # if we get a message that has a pubkey attached and we're set to learn
         # then add it to the client_cert_dir this should only happen on servers
         # since clients will get replies using their own pubkeys
@@ -107,6 +109,9 @@ module MCollective
         end
 
         return body
+      rescue MsgDoesNotMatchRequestID
+        raise
+
       rescue OpenSSL::PKey::RSAError
         raise MsgDoesNotMatchRequestID, "Could not decrypt message using our key, possibly directed at another client"
 

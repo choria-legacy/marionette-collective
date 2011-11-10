@@ -181,6 +181,23 @@ module MCollective
           :msgtime => Time.now.utc.to_i}
       end
 
+      # Give a MC::Message instance and a message id this will figure out if you the incoming
+      # message id matches the one the Message object is expecting and raise if its not
+      #
+      # Mostly used by security plugins to figure out if they should do the hard work of decrypting
+      # etc messages that would only later on be ignored
+      def should_process_msg?(msg, msgid)
+        if msg.expected_msgid
+          unless msg.expected_msgid == msgid
+            msgtext = "Got a message with id %s but was expecting %s, ignoring message" % [msgid, msg.expected_msgid]
+            Log.debug msgtext
+            raise MsgDoesNotMatchRequestID, msgtext
+          end
+        end
+
+        true
+      end
+
       # Validates a callerid.  We do not want to allow things like \ and / in
       # callerids since other plugins make assumptions that these are safe strings.
       #

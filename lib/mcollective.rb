@@ -31,6 +31,8 @@ module MCollective
   class SecurityValidationFailed<RuntimeError;end
   class DDLValidationError<RuntimeError;end
   class MsgTTLExpired<RuntimeError;end
+  class MsgDoesNotMatchRequestID < RuntimeError; end
+
 
   autoload :Config, "mcollective/config"
   autoload :Log, "mcollective/log"

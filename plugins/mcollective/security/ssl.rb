@@ -90,6 +90,8 @@ module MCollective
       def decodemsg(msg)
         body = deserialize(msg.payload)
 
+        should_process_msg?(msg, body[:requestid])
+
         if validrequest?(body)
           body[:body] = deserialize(body[:body])
 

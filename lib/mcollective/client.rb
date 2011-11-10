@@ -1,6 +1,4 @@
 module MCollective
-  class MsgDoesNotMatchRequestID < RuntimeError; end
-
   # Helpers for writing clients that can talk to agents, do discovery and so forth
   class Client
     attr_accessor :options, :stats
