@@ -75,6 +75,7 @@ module MCollective
       begin
         reply = @connection.receive
         reply.type = :reply
+        reply.expected_msgid = requestid
 
         reply.decode!
 

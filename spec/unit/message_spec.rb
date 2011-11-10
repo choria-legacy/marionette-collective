@@ -26,6 +26,7 @@ module MCollective
         m.ttl.should == 60
         m.validated.should == false
         m.msgtime.should == 0
+        m.expected_msgid == nil
       end
 
       it "should set all supplied options" do
@@ -61,6 +62,22 @@ module MCollective
         m.collective.should == "collective"
         m.type.should == :reply
         m.request.should == request
+      end
+    end
+
+    describe "#expected_msgid=" do
+      it "should correctly set the property" do
+        m = Message.new("payload", "message", :type => :reply)
+        m.expected_msgid = "rspec test"
+        m.expected_msgid.should == "rspec test"
+      end
+
+      it "should only be set for reply messages" do
+        m = Message.new("payload", "message", :type => :request)
+
+        expect {
+          m.expected_msgid = "rspec test"
+        }.to raise_error("Can only store the expected msgid for reply messages")
       end
     end
 

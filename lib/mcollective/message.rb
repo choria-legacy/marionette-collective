@@ -1,33 +1,35 @@
 module MCollective
   # container for a message, its headers, agent, collective and other meta data
   class Message
-    attr_reader :message, :request, :validated, :msgtime, :payload, :type
+    attr_reader :message, :request, :validated, :msgtime, :payload, :type, :expected_msgid
     attr_accessor :headers, :agent, :collective, :filter
     attr_accessor :requestid, :discovered_hosts, :options, :ttl
 
     VALIDTYPES = [:message, :request, :direct_request, :reply]
 
-    # payload              - the message body without headers etc, just the text
-    # message              - the original message received from the middleware
-    # options[:base64]     - if the body base64 encoded?
-    # options[:agent]      - the agent the message is for/from
-    # options[:collective] - the collective its for/from
-    # options[:headers]    - the message headers
-    # options[:type]       - an indicator about the type of message, :message, :request, :direct_request or :reply
-    # options[:request]    - if this is a reply this should old the message we are replying to
-    # options[:filter]     - for requests, the filter to encode into the message
-    # options[:options]    - the normal client options hash
-    # options[:ttl]        - the maximum amount of seconds this message can be valid for
+    # payload                  - the message body without headers etc, just the text
+    # message                  - the original message received from the middleware
+    # options[:base64]         - if the body base64 encoded?
+    # options[:agent]          - the agent the message is for/from
+    # options[:collective]     - the collective its for/from
+    # options[:headers]        - the message headers
+    # options[:type]           - an indicator about the type of message, :message, :request, :direct_request or :reply
+    # options[:request]        - if this is a reply this should old the message we are replying to
+    # options[:filter]         - for requests, the filter to encode into the message
+    # options[:options]        - the normal client options hash
+    # options[:ttl]            - the maximum amount of seconds this message can be valid for
+    # options[:expected_msgid] - in the case of replies this is the msgid it is expecting in the replies
     def initialize(payload, message, options = {})
       options = {:base64 => false,
-        :agent => nil,
-        :headers => {},
-        :type => :message,
-        :request => nil,
-        :filter => Util.empty_filter,
-        :options => {},
-        :ttl => 60,
-        :collective => nil}.merge(options)
+                 :agent => nil,
+                 :headers => {},
+                 :type => :message,
+                 :request => nil,
+                 :filter => Util.empty_filter,
+                 :options => {},
+                 :ttl => 60,
+                 :expected_msgid => nil,
+                 :collective => nil}.merge(options)
 
       @payload = payload
       @message = message
@@ -38,6 +40,7 @@ module MCollective
       @headers = options[:headers]
       @base64 = options[:base64]
       @filter = options[:filter]
+      @expected_msgid = options[:expected_msgid]
       @options = options[:options]
 
       @ttl = @options[:ttl] || Config.instance.ttl
@@ -79,6 +82,16 @@ module MCollective
       raise "Unknown message type #{type}" unless VALIDTYPES.include?(type)
 
       @type = type
+    end
+
+    # in the case of reply messages we are expecting replies to a previously
+    # created message.  This stores a hint to that previously sent message id
+    # and can be used by other classes like the security plugins as a means
+    # of optimizing their behavior like by ignoring messages not directed
+    # at us.
+    def expected_msgid=(msgid)
+      raise "Can only store the expected msgid for reply messages" unless @type == :reply
+      @expected_msgid = msgid
     end
 
     def base64_decode!
