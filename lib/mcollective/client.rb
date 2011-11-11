@@ -48,19 +48,32 @@ module MCollective
 
       Log.debug("Sending request #{request.requestid} to the #{request.agent} agent with ttl #{request.ttl} in collective #{request.collective}")
 
-      unless @subscriptions.include?(agent)
-        subscription = Util.make_subscriptions(agent, :reply, collective)
-        Log.debug("Subscribing to reply target for agent #{agent}")
-
-        Util.subscribe(subscription)
-        @subscriptions[agent] = 1
-      end
+      subscribe(agent, :reply)
 
       request.publish
 
       request.requestid
     end
 
+    def subscribe(agent, type)
+      unless @subscriptions.include?(agent)
+        subscription = Util.make_subscriptions(agent, type, collective)
+        Log.debug("Subscribing to #{type} target for agent #{agent}")
+
+        Util.subscribe(subscription)
+        @subscriptions[agent] = 1
+      end
+    end
+
+    def unsubscribe(agent, type)
+      if @subscriptions.include?(agent)
+        subscription = Util.make_subscriptions(agent, type, collective)
+        Log.debug("Unsubscribing #{type} target for #{agent}")
+
+        Util.unsubscribe(subscription)
+        @subscriptions.delete(agent)
+      end
+    end
     # Blocking call that waits for ever for a message to arrive.
     #
     # If you give it a requestid this means you've previously send a request
@@ -115,10 +128,13 @@ module MCollective
           end
         end
       rescue Timeout::Error => e
-        hosts.sort
       rescue Exception => e
         raise
+      ensure
+        unsubscribe("discovery", :reply)
       end
+
+      hosts.sort
     end
 
     # Send a request, performs the passed block for each response
@@ -160,6 +176,8 @@ module MCollective
         end
       rescue Interrupt => e
       rescue Timeout::Error => e
+      ensure
+        unsubscribe(agent, :reply)
       end
 
       stat[:totaltime] = Time.now.to_f - stat[:starttime]
