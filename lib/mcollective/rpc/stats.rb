@@ -2,8 +2,8 @@ module MCollective
   module RPC
     # Class to wrap all the stats and to keep track of some timings
     class Stats
-      attr_reader :noresponsefrom, :starttime, :discoverytime, :blocktime, :responses, :totaltime
-      attr_reader :discovered, :discovered_nodes, :okcount, :failcount, :noresponsefrom, :responsesfrom
+      attr_accessor :noresponsefrom, :starttime, :discoverytime, :blocktime, :responses, :totaltime
+      attr_accessor :discovered, :discovered_nodes, :okcount, :failcount, :noresponsefrom, :responsesfrom
 
       def initialize
         reset
@@ -28,16 +28,16 @@ module MCollective
       # returns a hash of our stats
       def to_hash
         {:noresponsefrom   => @noresponsefrom,
-          :starttime        => @starttime,
-          :discoverytime    => @discoverytime,
-          :blocktime        => @blocktime,
-          :responses        => @responses,
-          :totaltime        => @totaltime,
-          :discovered       => @discovered,
-          :discovered_nodes => @discovered_nodes,
-          :noresponsefrom   => @noresponsefrom,
-          :okcount          => @okcount,
-          :failcount        => @failcount}
+         :starttime        => @starttime,
+         :discoverytime    => @discoverytime,
+         :blocktime        => @blocktime,
+         :responses        => @responses,
+         :totaltime        => @totaltime,
+         :discovered       => @discovered,
+         :discovered_nodes => @discovered_nodes,
+         :noresponsefrom   => @noresponsefrom,
+         :okcount          => @okcount,
+         :failcount        => @failcount}
       end
 
       # Fake hash access to keep things backward compatible

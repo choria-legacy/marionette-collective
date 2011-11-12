@@ -303,6 +303,16 @@ module MCollective
           options[:mcollective_limit_targets] = 1
         end
 
+        parser.on('--batch [SIZE]', Integer, 'Do requests in batches') do |v|
+          raise "Size is required, see --help" unless v
+          options[:batch_size] = v
+        end
+
+        parser.on('--batch-sleep [SECONDS]', Float, 'Sleep time between batches') do |v|
+          raise "Seconds are required, see --help" unless v
+          options[:batch_sleep_time] = v
+        end
+
         parser.on('--limit-nodes [COUNT]', '--ln [COUNT]', 'Send request to only a subset of nodes, can be a percentage') do |v|
           raise "Invalid limit specified: #{v} valid limits are /^\d+%*$/" unless v =~ /^\d+%*$/
 

@@ -210,6 +210,35 @@ mc.reset_filter
 
 After this code snippet the filter will only have an agent filter of _helloworld_ set.
 
+## Processing Agents in Batches
+By default the client will communicate with all machines at the same time.
+This might not be desired as you might affect a DOS on related components.
+
+As of version 1.3.2 you can instruct the client to communicate with remote
+agents in batches and sleep between each batch.  This requires that your
+collective is running with the direct addressing mode introduced in 1.3.1.
+
+Any client application has this capability using the _--batch_ and _--batch-sleep-time_
+command line options.
+
+You can also enable this programatically either per client or per request:
+
+{% highlight ruby %}
+mc = rpcclient("helloworld")
+mc.batch_size = 10
+mc.batch_sleep_time = 5
+
+mc.echo(:msg => "hello world")
+{% endhighlight %}
+
+{% highlight ruby %}
+mc = rpcclient("helloworld")
+
+mc.echo(:msg => "hello world", :batch_size => 10, :batch_sleep_time => 5)
+{% endhighlight %}
+
+By default batching is disabled and sleep time is 1
+
 ## Forcing Rediscovery
 By default it will only do discovery once per script and then re-use the results, you can though force rediscovery if you had to adjust filters mid run for example.
 

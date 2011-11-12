@@ -4,7 +4,7 @@ module MCollective
     # and just brings in a lot of convention and standard approached.
     class Client
       attr_accessor :discovery_timeout, :timeout, :verbose, :filter, :config, :progress, :ttl
-      attr_reader :client, :stats, :ddl, :agent, :limit_targets, :output_format
+      attr_reader :client, :stats, :ddl, :agent, :limit_targets, :output_format, :batch_size, :batch_sleep_time
 
       @@initial_options = nil
 
@@ -24,14 +24,14 @@ module MCollective
           initial_options = Marshal.load(@@initial_options)
 
         else
-          oparser = MCollective::Optionparser.new({:verbose => false, :progress_bar => true, :mcollective_limit_targets => false}, "filter")
+          oparser = MCollective::Optionparser.new({:verbose => false, :progress_bar => true, :mcollective_limit_targets => false, :batch_size => nil, :batch_sleep_time => 1}, "filter")
 
           initial_options = oparser.parse do |parser, opts|
             if block_given?
               yield(parser, opts)
             end
 
-            Helpers.add_simplerpc_options(parser, initial_options)
+            Helpers.add_simplerpc_options(parser, opts)
           end
 
           @@initial_options = Marshal.dump(initial_options)
@@ -49,6 +49,8 @@ module MCollective
         @limit_targets = initial_options[:mcollective_limit_targets]
         @output_format = initial_options[:output_format] || :console
         @force_direct_request = false
+        @batch_size = initial_options[:batch_size]
+        @batch_sleep_time = Float(initial_options[:batch_sleep_time] || 1)
 
         agent_filter agent
 
@@ -89,8 +91,8 @@ module MCollective
           @stderr.sync = true
         end
 
-        if initial_options[:stderr]
-          @stdout = initial_options[:stderr]
+        if initial_options[:stdout]
+          @stdout = initial_options[:stdout]
         else
           @stdout = STDOUT
           @stdout.sync = true
@@ -136,9 +138,9 @@ module MCollective
         raise 'callerid received from security plugin is not valid' unless PluginManager["security_plugin"].valid_callerid?(callerid)
 
         {:agent  => @agent,
-          :action => action,
-          :caller => callerid,
-          :data   => data}
+         :action => action,
+         :caller => callerid,
+         :data   => data}
       end
 
       # Magic handler to invoke remote methods
@@ -193,6 +195,13 @@ module MCollective
       #   puts rpc.echo(:process_results => false)
       #
       # This will output just the request id.
+      #
+      # Batched processing is supported:
+      #
+      #   printrpc rpc.ping(:batch_size => 5)
+      #
+      # This will do everything exactly as normal but communicate to only 5
+      # agents at a time
       def method_missing(method_name, *args, &block)
         # set args to an empty hash if nothings given
         args = args[0]
@@ -204,6 +213,12 @@ module MCollective
 
         @ddl.validate_request(action, args) if @ddl
 
+        # if a global batch size is set just use that else set it
+        # in the case that it was passed as an argument
+        batch_mode = args.include?(:batch_size) || @batch_size
+        batch_size = args.delete(:batch_size) || @batch_size
+        batch_sleep_time = args.delete(:batch_sleep_time) || @batch_sleep_time
+
         # Handle single target requests by doing discovery and picking
         # a random node.  Then do a custom request specifying a filter
         # that will only match the one node.
@@ -212,6 +227,8 @@ module MCollective
           Log.debug("Picked #{target_nodes.join(',')} as limited target(s)")
 
           custom_request(action, args, target_nodes, {"identity" => /^(#{target_nodes.join('|')})$/}, &block)
+        elsif batch_mode
+          call_agent_batched(action, args, options, batch_size, batch_sleep_time, &block)
         else
           call_agent(action, args, options, :auto, &block)
         end
@@ -437,13 +454,13 @@ module MCollective
       # Optionparser
       def options
         {:disctimeout => @discovery_timeout,
-          :timeout => @timeout,
-          :verbose => @verbose,
-          :filter => @filter,
-          :collective => @collective,
-          :output_format => @output_format,
-          :ttl => @ttl,
-          :config => @config}
+         :timeout => @timeout,
+         :verbose => @verbose,
+         :filter => @filter,
+         :collective => @collective,
+         :output_format => @output_format,
+         :ttl => @ttl,
+         :config => @config}
       end
 
       # Sets the collective we are communicating with
@@ -466,6 +483,18 @@ module MCollective
         else
           raise "Don't know how to handle limit of type #{limit.class}"
         end
+      end
+
+      def batch_size=(limit)
+        raise "Can only set batch size if direct addressing is supported" unless Config.instance.direct_addressing
+
+        @batch_size = Integer(limit)
+      end
+
+      def batch_sleep_time=(time)
+        raise "Can only set batch sleep time if direct addressing is supported" unless Config.instance.direct_addressing
+
+        @batch_sleep_time = Float(time)
       end
 
       private
@@ -526,6 +555,77 @@ module MCollective
         return @client.sendreq(message, nil)
       end
 
+      # Calls an agent in a way very similar to call_agent but it supports batching
+      # the queries to the network.
+      #
+      # The result sets, stats, block handling etc is all exactly like you would expect
+      # from normal call_agent.
+      #
+      # This is used by method_missing and works only with direct addressing mode
+      def call_agent_batched(action, args, opts, batch_size, sleep_time, &block)
+        raise "Batched requests requires direct addressing" unless Config.instance.direct_addressing
+        raise "Cannot bypass result processing for batched requests" if args[:process_results] == false
+
+        batch_size = Integer(batch_size)
+        sleep_time = Float(sleep_time)
+
+        Log.debug("Calling #{agent}##{action} in batches of #{batch_size} with sleep time of #{sleep_time}")
+
+        @force_direct_request = true
+
+        discovered = discover
+        result = []
+        respcount = 0
+
+        if discovered.size > 0
+          req = new_request(action.to_s, args)
+
+          twirl = Progress.new
+
+          discovered.in_groups_of(batch_size) do |hosts, last_batch|
+            message = Message.new(req, nil, {:agent => @agent, :type => :direct_request, :collective => @collective, :filter => opts[:filter], :options => opts})
+            message.discovered_hosts = hosts.clone.compact
+
+            @client.req(message) do |resp|
+              respcount += 1
+
+              if block_given?
+                process_results_with_block(action, resp, block)
+              else
+                if @progress
+                  puts if respcount == 1
+                  @stdout.print twirl.twirl(respcount, discovered.size)
+                end
+
+                result << process_results_without_block(resp, action)
+              end
+            end
+
+            @stats.noresponsefrom.concat @client.stats[:noresponsefrom]
+            @stats.responses += @client.stats[:responses]
+            @stats.blocktime += @client.stats[:blocktime] + sleep_time
+            @stats.totaltime += @client.stats[:totaltime]
+            @stats.discoverytime += @client.stats[:discoverytime]
+
+            sleep sleep_time unless last_batch
+          end
+        else
+          @stderr.print("\nNo request sent, we did not discover any nodes.")
+        end
+
+        @stats.finish_request
+
+        RPC.stats(@stats)
+
+        @stdout.print("\n") if @progress
+
+        if block_given?
+          return stats
+        else
+          return [result].flatten
+        end
+      end
+
       # Handles traditional calls to the remote agents with full stats
       # blocks, non blocks and everything else supported.
       #
@@ -571,7 +671,7 @@ module MCollective
             else
               if @progress
                 puts if respcount == 1
-                print twirl.twirl(respcount, discovered.size)
+                @stdout.print twirl.twirl(respcount, discovered.size)
               end
 
               result << process_results_without_block(resp, action)
@@ -580,14 +680,14 @@ module MCollective
 
           @stats.client_stats = @client.stats
         else
-          print("\nNo request sent, we did not discover any nodes.")
+          @stderr.print("\nNo request sent, we did not discover any nodes.")
         end
 
         @stats.finish_request
 
         RPC.stats(@stats)
 
-        print("\n\n") if @progress
+        @stdout.print("\n") if @progress
 
         if block_given?
           return stats

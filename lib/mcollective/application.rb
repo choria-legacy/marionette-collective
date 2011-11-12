@@ -53,11 +53,11 @@ module MCollective
       # after this the value supplied will be in configuration[:foo]
       def option(name, arguments)
         opt = {:name => name,
-          :description => nil,
-          :arguments => [],
-          :type => String,
-          :required => false,
-          :validate => Proc.new { true }}
+               :description => nil,
+               :arguments => [],
+               :type => String,
+               :required => false,
+               :validate => Proc.new { true }}
 
         arguments.each_pair{|k,v| opt[k] = v}
 
@@ -67,8 +67,8 @@ module MCollective
       # Creates an empty set of options
       def intialize_application_options
         @application_options = {:description   => nil,
-          :usage         => [],
-          :cli_arguments => []}
+                                :usage         => [],
+                                :cli_arguments => []}
       end
     end
 

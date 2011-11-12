@@ -10,7 +10,7 @@ end
 # a method # that walks an array in groups, pass a block to
 # call the block on each sub array
 class Array
-  def in_groups_of(chunk_size, padded_with=nil)
+  def in_groups_of(chunk_size, padded_with=nil, &block)
     arr = self.clone
 
     # how many to add
@@ -27,7 +27,16 @@ class Array
     count.times {|s| result <<  arr[s * chunk_size, chunk_size]}
 
     if block_given?
-      result.each{|a| yield(a)}
+      result.each_with_index do |a, i|
+        case block.arity
+          when 1
+            yield(a)
+          when 2
+            yield(a, (i == result.size - 1))
+          else
+            raise "Expected 1 or 2 arguments, got #{block.arity}"
+        end
+      end
     else
       result
     end

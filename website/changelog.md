@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/11/11|SimpleRPC clients now support native batching with --batch|5939|
 |2011/11/11|The client now unsubscribes from topics when it's idle minimising the risk of receiving missdirected messages|10670|
 |2011/11/09|Security plugins now ignore miss directed messages early thus using fewer resources|10671|
 |2011/10/28|Support ruby-1.9.2-p290 and ruby-1.9.3-rc1|10352|
