@@ -9,6 +9,115 @@ This is a list of release notes for various releases, you should review these be
  * TOC Placeholder
   {:toc}
 
+<a name="1_3_2">&nbsp;</a>
+
+## 1.3.2 - 2011/11/xx
+
+This is a release in the development series of MCollective.  It feature major new features.
+
+This release is for early adopters, production users should consider the 1.2.x series.
+
+### Enhancements
+
+ * Handling of syntax errors in Application plugins have been improved
+ * The limit method can now be set per RPC Client instance
+ * Optionally show response distribution in the _ping_ application with the _--graph_ option
+ * Expose a statistic about expired messages via the _rpcutil_ agent and show them in the inventory application.
+ * Remove all the _mc-_ scripts that has been ported to applications
+ * AES and TTL security plugins prevent tampering with the TTL and Message Times
+ * The RPC client can now raise an exception rather than exit on failure - ideal for use in web apps
+ * Discovery during requests that has a specific limit count set have been sped up
+ * Specific types for :number, :float and :integer has been aded to the DDL and the RPC application has special handling for them
+ * Caller ID, Certificate Names and Identity Names can now only be word characters, full stop and dash
+ * Security plugins are now quicker to ignore miss directed messages
+ * The client now unsubscribes from topics it does not need anymore
+ * SimpleRPC now supports performing actions in batches with a sleep between each batch
+ * A direct request capable ActiveMQ specific plugin has been included
+ * Message TTLs can be set globally in the config or in the API
+
+### ActiveMQ specific connector
+
+A new connector plugin has been added that is specific to ActiveMQ and is compatible
+with the new direct addressing communication system.
+
+You will need to change your ActiveMQ configuration to support this plugin, see the
+documentation for this plugin and the examples in _ext/activemq_ have also been
+updated for the new plugin.
+
+Anyone who use ActiveMQ is strongly recommended to use this plugin as it uses a
+few ActiveMQ specific optimizations that can have a big performance enhancing effect
+on your collective.
+
+### Batching
+
+Often the speed of MCollective is a problem, you want to install a package on thousands
+of machines but your APT or YUM server isn't up to the task.
+
+You can now do batching of requests:
+
+{% highlight console %}
+$ mco package update myapp --batch 10 --batch-sleep 60
+{% endhighlight %}
+
+This performs the update as usual but only affecting machines in groups of 10 and
+sleeps for a minute between.
+
+You can also access this functionality via the API please see the docs for usage.
+Any existing script or application should support this functionality without any
+code changes.
+
+The results, error reporting, statistics reporting and so forth all stays consistant
+with non batched behavior.
+
+The batching requires a direct addressing capable collective.
+
+### Backwards Compatibility
+
+As this release does a few more tweaks to the security system it might not work with older
+versions of MCollective.
+
+Hopefully this will be the last release in this dev cycle to break backwards compatibility
+as we're nearing the next major release.
+
+#### Identities, Certificates and Caller ID names
+
+These items have been tightened up to only match _\w\.-_.  Plugins like the registration
+ones might assume it is safe to just write files based on names contained in these fields
+so rather than expect everyone to write secure code the framework now just enforce
+a safe approach to these.
+
+This means if you have cases that would violate this rule you would need to change that
+configuration prior to upgrading to 1.3.2
+
+#### AES and SSL plugins are more secure
+
+If you use the AES or SSL plugins you will need to plan your rollout carefully, these plugins
+are not capable of communicating with older versions of MCollective.
+
+#### Changes since 1.3.1
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2011/11/16|Imrpove error reporting for code errors in application plugins|10883|
+|2011/11/15|The limit method is now configurable on each RPC client as well as the config file|7772|
+|2011/11/15|Add a --graph option to the ping application that shows response distribution|10864|
+|2011/11/14|An ActiveMQ specific connector was added that supports direct connections|7899|
+|2011/11/11|SimpleRPC clients now support native batching with --batch|5939|
+|2011/11/11|The client now unsubscribes from topics when it's idle minimising the risk of receiving missdirected messages|10670|
+|2011/11/09|Security plugins now ignore miss directed messages early thus using fewer resources|10671|
+|2011/10/28|Support ruby-1.9.2-p290 and ruby-1.9.3-rc1|10352|
+|2011/10/27|callerid, certificate names, and identity names can now only have \w . and - in them|10327|
+|2011/10/25|When discovery information is provided always accept it without requiring reset first|10265|
+|2011/10/24|Add :number, :integer and :float to the DDL and rpc application|9902|
+|2011/10/22|Speed up discovery when limit targets are set|10133|
+|2011/10/22|Do not attempt to validate TTL and Message Times on replies in the SSL plugin|10226|
+|2011/10/03|Allow the RPC client to raise an exception rather than exit on failure|9360|
+|2011/10/03|Allow the TTL of requests to be set in the config file and the SimpleRPC API|9399|
+|2011/09/26|Cryptographically secure the TTL and Message Time of requests when using AES and SSL plugins|9400|
+|2011/09/20|Update default shipped configurations to provide a better out of the box experience|9452|
+|2011/09/20|Remove deprecated mc- scripts|9402|
+|2011/09/20|Keep track of messages that has expired and expose the stat in rpcutil and inventory application|9456|
+
 <a name="1_3_1">&nbsp;</a>
 
 ## 1.3.1 - 2011/09/16
@@ -110,16 +219,16 @@ at all, it uses the JSON output enabled by -j as discovery data and then restart
 
 These abilities are exposed in the SimpleRPC client API and you can write your own schemes, query your own databases etc
 
-### Backwards Compatability
+### Backwards Compatibility
 
 This is a big release and the entire messaging system has been redesigned, rewritten and has had features added.
 As such there might be problems running mixed 1.2.x and 1.3.1 networks, we'd ask users to test this in lab situations
 and provide us feedback to improve the eventual transition from 1.2.x to 1.4.x.  We did though aim to maintain backward
-compatability and the intention is to fix any bugs reported where a default configured 1.3.x cannot co-habit with a
+compatibility and the intention is to fix any bugs reported where a default configured 1.3.x cannot co-habit with a
 previous 1.2.x build.
 
 Enabling the new direct addressing mode is a big configuration change both in your collective and the middleware as such
-soon as you enable it there will be compatability issues until all your nodes are up to the same level.  Specifically old
+soon as you enable it there will be compatibility issues until all your nodes are up to the same level.  Specifically old
 nodes will just ignore your direct requests.
 
 The default location for _classes.txt_ has changed to _/var/lib/puppet/state/classes.txt_ you need to ensure
@@ -179,7 +288,7 @@ This release should be 100% backward compatable with version 1.2.0
 |2011/06/02|Correct parsing of MCOLLECTIVE_EXTRA_OPTS in cases where no config related settings were set|7755|
 |2011/05/23|Allow applications to use the exit method as would normally be expected|7626|
 |2011/05/16|Allow _._ in fact names|7532|
-|2011/05/16|Fix compatability issues with RH4 init system|7448|
+|2011/05/16|Fix compatibility issues with RH4 init system|7448|
 |2011/05/15|Handle failures from remote nodes better in the inventory app|7524|
 |2011/05/06|Revert unintended changes to the Debian rc script|7420|
 |2011/05/06|Remove the _test_ agent that was accidentally checked in|7425|
@@ -237,7 +346,7 @@ in place.
 |2011/05/21|Add the ability for agents to programatically declare if they should work on a node|7583|
 |2011/05/20|Improve error reporting in the single application framework|7574|
 |2011/05/16|Allow _._ in fact names|7532|
-|2011/05/16|Fix compatability issues with RH4 init system|7448|
+|2011/05/16|Fix compatibility issues with RH4 init system|7448|
 |2011/05/15|Handle failures from remote nodes better in the inventory app|7524|
 |2011/05/06|Revert unintended changes to the Debian rc script|7420|
 |2011/05/06|Remove the _test_ agent that was accidentally checked in|7425|

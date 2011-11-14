@@ -698,7 +698,7 @@ module MCollective
 
         RPC.stats(@stats)
 
-        @stdout.print("\n") if @progress
+        @stdout.print("\n\n") if @progress
 
         if block_given?
           return stats
