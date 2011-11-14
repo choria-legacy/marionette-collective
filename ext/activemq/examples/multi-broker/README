@@ -4,9 +4,9 @@
       broker2 <-----> broker1 <----> broker3
 
 
-Pay attention to the names in the config file as well 
+Pay attention to the names in the config file as well
 as the users.  This is identical to the simple single
-broker example except with the aded amq user for the 
+broker example except with the aded amq user for the
 clustering and the connection setups in broker1
 
-Tested to work with ActiveMQ 5.3.0
+Tested to work with ActiveMQ 5.5.0
