@@ -323,7 +323,7 @@ module MCollective
 
       describe "#make_target" do
         it "should create correct targets" do
-          @c.make_target("test", :reply, "mcollective").should == {:name => "/queue/mcollective.reply.test_rspec_#{$$}", :headers => {}}
+          @c.make_target("test", :reply, "mcollective").should == {:name => "/queue/mcollective.reply.rspec_#{$$}", :headers => {}}
           @c.make_target("test", :broadcast, "mcollective").should == {:name => "/topic/mcollective.test.agent", :headers => {}}
           @c.make_target("test", :request, "mcollective").should == {:name => "/topic/mcollective.test.agent", :headers => {}}
           @c.make_target("test", :direct_request, "mcollective").should == {:headers=>{}, :name=>"/queue/mcollective.nodes"}
