@@ -4,7 +4,7 @@ module MCollective
     # and just brings in a lot of convention and standard approached.
     class Client
       attr_accessor :discovery_timeout, :timeout, :verbose, :filter, :config, :progress, :ttl
-      attr_reader :client, :stats, :ddl, :agent, :limit_targets, :output_format, :batch_size, :batch_sleep_time
+      attr_reader :client, :stats, :ddl, :agent, :limit_targets, :limit_method, :output_format, :batch_size, :batch_sleep_time
 
       @@initial_options = nil
 
@@ -47,6 +47,7 @@ module MCollective
         @discovered_agents = nil
         @progress = initial_options[:progress_bar]
         @limit_targets = initial_options[:mcollective_limit_targets]
+        @limit_method = Config.instance.rpclimitmethod
         @output_format = initial_options[:output_format] || :console
         @force_direct_request = false
         @batch_size = initial_options[:batch_size]
@@ -432,7 +433,7 @@ module MCollective
           # and if we're configured to use the first found hosts as the
           # limit method then pass in the limit thus minimizing the amount
           # of work we do in the discover phase and speeding it up significantly
-          if Config.instance.rpclimitmethod == :first and @limit_targets.is_a?(Fixnum)
+          if @limit_method == :first and @limit_targets.is_a?(Fixnum)
             @discovered_agents = @client.discover(@filter, @discovery_timeout, @limit_targets)
           else
             @discovered_agents = @client.discover(@filter, @discovery_timeout)
@@ -475,14 +476,24 @@ module MCollective
         if limit.is_a?(String)
           raise "Invalid limit specified: #{limit} valid limits are /^\d+%*$/" unless limit =~ /^\d+%*$/
 
-          @limit_targets = limit
-        elsif limit.respond_to?(:to_i)
-          limit = limit.to_i
-          limit = 1 if limit == 0
-          @limit_targets = limit
+          begin
+            @limit_targets = Integer(limit)
+          rescue
+            @limit_targets = limit
+          end
         else
-          raise "Don't know how to handle limit of type #{limit.class}"
+          @limit_targets = Integer(limit)
         end
+      end
+
+      # Sets and sanity check the limit_method variable
+      # used to determine how to limit targets if limit_targets is set
+      def limit_method=(method)
+        method = method.to_sym unless method.is_a?(Symbol)
+
+        raise "Unknown limit method #{method} must be :random or :first" unless [:random, :first].include?(method)
+
+        @limit_method = method
       end
 
       def batch_size=(limit)
@@ -522,7 +533,7 @@ module MCollective
 
         result = []
 
-        if Config.instance.rpclimitmethod == :first
+        if @limit_method == :first
           return discover[0, count]
         else
           count.times do

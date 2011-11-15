@@ -5,6 +5,72 @@ require 'spec_helper'
 module MCollective
   module RPC
     describe Client do
+      describe "#limit_method" do
+        before do
+          client = stub
+
+          client.stubs("options=")
+          client.stubs(:collective).returns("mcollective")
+
+          Config.any_instance.stubs(:loadconfig).with("/nonexisting").returns(true)
+          MCollective::Client.expects(:new).returns(client)
+          Config.any_instance.stubs(:direct_addressing).returns(true)
+
+          @client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
+        end
+
+        it "should force strings to symbols" do
+          @client.limit_method = "first"
+          @client.limit_method.should == :first
+        end
+
+        it "should only allow valid methods" do
+          @client.limit_method = :first
+          @client.limit_method.should == :first
+          @client.limit_method = :random
+          @client.limit_method.should == :random
+
+          expect { @client.limit_method = :fail }.to raise_error(/Unknown/)
+          expect { @client.limit_method = "fail" }.to raise_error(/Unknown/)
+        end
+      end
+      describe "#limit_targets=" do
+        before do
+          client = stub
+
+          client.stubs("options=")
+          client.stubs(:collective).returns("mcollective")
+
+          Config.any_instance.stubs(:loadconfig).with("/nonexisting").returns(true)
+          MCollective::Client.expects(:new).returns(client)
+          Config.any_instance.stubs(:direct_addressing).returns(true)
+
+          @client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
+        end
+
+        it "should support percentages" do
+          @client.limit_targets = "10%"
+          @client.limit_targets.should == "10%"
+        end
+
+        it "should support integers" do
+          @client.limit_targets = 10
+          @client.limit_targets.should == 10
+          @client.limit_targets = "20"
+          @client.limit_targets.should == 20
+          @client.limit_targets = 1.1
+          @client.limit_targets.should == 1
+          @client.limit_targets = 1.7
+          @client.limit_targets.should == 1
+        end
+
+        it "should not invalid limits to be set" do
+          expect { @client.limit_targets = "a" }.to raise_error /Invalid/
+          expect { @client.limit_targets = "%1" }.to raise_error /Invalid/
+          expect { @client.limit_targets = "1.1" }.to raise_error /Invalid/
+        end
+      end
+
       describe "#call_agent_batched" do
         before do
           @client = stub

@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/11/15|The limit method is now configurable on each RPC client as well as the config file|7772|
 |2011/11/15|Add a --graph option to the ping application that shows response distribution|10864|
 |2011/11/14|An ActiveMQ specific connector was added that supports direct connections|7899|
 |2011/11/11|SimpleRPC clients now support native batching with --batch|5939|

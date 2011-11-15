@@ -305,7 +305,17 @@ printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
 
 This will pick 10% of the discovered hosts - or 1 if 10% is less than 1 - and only target those nodes with your request.  You can also set it to an integer.
 
-This functionality is only available from version _1.0.0_ and newer.
+There are two possible modes for choosing the targets.  You can configure a global default method but also set it on your client:
+
+{%highlight ruby %}
+mc = rpcclient("helloworld")
+
+mc.limit_targets = "10%"
+mc.limit_method = :random
+printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
+{% endhighlight %}
+
+The above code will force a _random_ selection, you can also set it to _:first_
 
 ## Gaining access to the full MCollective::Client
 If you wanted to work with the Client directly as in [WritingAgents] after perhaps setting up some queries or gathering data first you can gain access to the client, you might also need access to the options array that was parsed out from the command line and any subsequent filters that you added.
