@@ -5,25 +5,25 @@ class MCollective::Application::Rpc<MCollective::Application
   usage "mco rpc [options] [filters] <agent> <action> [<key=val> <key=val> ...]"
 
   option :no_results,
-  :description    => "Do not process results, just send request",
-  :arguments      => ["--no-results", "--nr"],
-  :default        => false,
-  :type           => :bool
+         :description    => "Do not process results, just send request",
+         :arguments      => ["--no-results", "--nr"],
+         :default        => false,
+         :type           => :bool
 
   option :agent,
-  :description    => "Agent to call",
-  :arguments      => ["-a", "--agent AGENT"]
+         :description    => "Agent to call",
+         :arguments      => ["-a", "--agent AGENT"]
 
   option :action,
-  :description    => "Action to call",
-  :arguments      => ["--action ACTION"]
+         :description    => "Action to call",
+         :arguments      => ["--action ACTION"]
 
   option :arguments,
-  :description    => "Arguments to pass to agent",
-  :arguments      => ["--arg", "--argument ARGUMENT"],
-  :type           => :array,
-  :default        => [],
-  :validate       => Proc.new {|val| val.match(/^(.+?)=(.+)$/) ? true : "Could not parse --arg #{val} should be of the form key=val" }
+         :description    => "Arguments to pass to agent",
+         :arguments      => ["--arg", "--argument ARGUMENT"],
+         :type           => :array,
+         :default        => [],
+         :validate       => Proc.new {|val| val.match(/^(.+?)=(.+)$/) ? true : "Could not parse --arg #{val} should be of the form key=val" }
 
   def post_option_parser(configuration)
     # handle the alternative format that optparse cant parse

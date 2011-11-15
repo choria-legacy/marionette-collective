@@ -4,19 +4,18 @@ class MCollective::Application::Inventory<MCollective::Application
   description "General reporting tool for nodes, collectives and subcollectives"
 
   option :script,
-  :description    => "Script to run",
-  :arguments      => ["--script SCRIPT"]
+         :description    => "Script to run",
+         :arguments      => ["--script SCRIPT"]
 
   option :collectives,
-  :description    => "List all known collectives",
-  :arguments      => ["--list-collectives", "--lc"],
-  :default        => false,
-  :type           => :bool
+         :description    => "List all known collectives",
+         :arguments      => ["--list-collectives", "--lc"],
+         :default        => false,
+         :type           => :bool
 
   option :collectivemap,
-  :description    => "Create a DOT graph of all collectives",
-  :arguments      => ["--collective-graph MAP", "--cg MAP", "--map MAP"]
-
+         :description    => "Create a DOT graph of all collectives",
+         :arguments      => ["--collective-graph MAP", "--cg MAP", "--map MAP"]
 
   def post_option_parser(configuration)
     configuration[:node] = ARGV.shift if ARGV.size > 0

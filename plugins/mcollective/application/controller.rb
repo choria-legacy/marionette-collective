@@ -15,9 +15,9 @@ The COMMAND can be one of the following:
         END_OF_USAGE
 
     option :argument,
-    :description => "Argument to pass to an agent",
-    :arguments   => [ '-a', '--arg', '--argument ARGUMENT' ],
-    :type        => String
+           :description => "Argument to pass to an agent",
+           :arguments   => [ '-a', '--arg', '--argument ARGUMENT' ],
+           :type        => String
 
     def print_statistics(sender, statistics)
       printf("%40s> total=%d, replies=%d, valid=%d, invalid=%d, " +
