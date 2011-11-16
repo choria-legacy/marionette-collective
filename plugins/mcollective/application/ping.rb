@@ -12,7 +12,7 @@ module MCollective
     # buckets of responses in 50 ms intervals.  Return a small
     # sparkline graph using UTF8 characters
     def spark(resp_times)
-      return "" unless configuration[:graph]
+      return "" unless configuration[:graph] || Config.instance.pluginconf["rpc.graph"]
 
       ticks=%w[▁ ▂ ▃ ▄ ▅ ▆ ▇]
 
