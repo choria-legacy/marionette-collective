@@ -90,6 +90,8 @@ module MCollective
 
         File.open(servercfg, "w") {|f| f.puts "plugin.foo.bar = foo"}
 
+        PluginManager.stubs(:loadclass)
+
         Config.instance.loadconfig(servercfg)
         Config.instance.pluginconf.should == {"foo.bar" => "foo"}
 

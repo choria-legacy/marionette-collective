@@ -95,8 +95,20 @@ module MCollective
 
     describe "#loadclass" do
       it "should load the correct filename given a ruby class name" do
-        PluginManager.stubs("load").with("mcollective/foo.rb").once
+        PluginManager.stubs(:load).with("mcollective/foo.rb").once
         PluginManager.loadclass("MCollective::Foo")
+      end
+
+      it "should raise errors for load errors" do
+        PluginManager.stubs(:load).raises("load failure")
+        Log.expects(:error)
+        expect { PluginManager.loadclass("foo") }.to raise_error(/load failure/)
+      end
+
+      it "should support squashing load errors" do
+        PluginManager.stubs(:load).raises("load failure")
+        Log.expects(:error)
+        PluginManager.loadclass("foo", true)
       end
     end
 

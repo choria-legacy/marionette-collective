@@ -8,7 +8,18 @@ module MCollective
     def self.run(appname)
       load_config
 
-      load_application(appname)
+      begin
+        load_application(appname)
+      rescue Exception => e
+        e.backtrace.first << RPC::Helpers.colorize(:red, "  <----")
+        STDERR.puts "Application '#{appname}' failed to load:"
+        STDERR.puts
+        STDERR.puts RPC::Helpers.colorize(:red, "   #{e} (#{e.class})")
+        STDERR.puts
+        STDERR.puts "       %s" % [e.backtrace.join("\n       ")]
+        exit 1
+      end
+
       PluginManager["#{appname}_application"].run
     end
 

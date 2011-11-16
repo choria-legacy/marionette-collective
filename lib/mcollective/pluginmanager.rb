@@ -101,7 +101,7 @@ module MCollective
 
     # Loads a class from file by doing some simple search/replace
     # on class names and then doing a require.
-    def self.loadclass(klass)
+    def self.loadclass(klass, squash_failures=false)
       fname = klass.gsub("::", "/").downcase + ".rb"
 
       Log.debug("Loading #{klass} from #{fname}")
@@ -109,6 +109,7 @@ module MCollective
       load fname
     rescue Exception => e
       Log.error("Failed to load #{klass}: #{e}")
+      raise unless squash_failures
     end
 
     # Grep's over the plugin list and returns the list found
