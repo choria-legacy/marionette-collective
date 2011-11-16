@@ -1,3 +1,4 @@
+# encoding: utf-8
 module MCollective
   class Application::Ping<Application
     description "Ping all nodes"
@@ -36,11 +37,13 @@ module MCollective
       histo = histo.keys.sort.map{|k| histo[k]}
 
       range = histo.max - histo.min
-      scale = ticks.length - 1
-      distance = histo.max.to_f / ticks.size
+      scale = ticks.size - 1
+      distance = histo.max.to_f / scale
 
       histo.map do |val|
-        tick = (val / distance).round - 1
+        tick = (val / distance).round
+        tick = 0 if tick < 0
+
         ticks[tick]
       end.join
     end
