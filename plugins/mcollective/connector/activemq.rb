@@ -226,7 +226,13 @@ module MCollective
 
         if [:request, :direct_request].include?(msg.type)
           target = make_target(msg.agent, :reply, msg.collective)
-          headers["reply-to"] = target[:name]
+
+          if msg.reply_to
+            headers["reply-to"] = msg.reply_to
+          else
+            headers["reply-to"] = target[:name]
+          end
+
           headers["mc_identity"] = identity if msg.type == :direct_request
         end
 

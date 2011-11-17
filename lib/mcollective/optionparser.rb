@@ -125,6 +125,10 @@ module MCollective
         @options[:ttl] = v.to_i
       end
 
+      @parser.on('--reply-to TARGET', 'Set a custom target for replies') do |v|
+        @options[:reply_to] = v
+      end
+
       @parser.on('-v', '--verbose', 'Be verbose') do |v|
         @options[:verbose] = v
       end

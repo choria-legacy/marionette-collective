@@ -65,6 +65,21 @@ module MCollective
       end
     end
 
+    describe "#reply_to=" do
+      it "should only set the reply-to header for requests" do
+        Config.instance.instance_variable_set("@direct_addressing", true)
+        m = Message.new("payload", "message", :type => :reply)
+        m.discovered_hosts = ["foo"]
+        expect { m.reply_to = "foo" }.to raise_error(/reply targets/)
+
+        [:request, :direct_request].each do |t|
+          m.type = t
+          m.reply_to = "foo"
+          m.reply_to.should == "foo"
+        end
+      end
+    end
+
     describe "#expected_msgid=" do
       it "should correctly set the property" do
         m = Message.new("payload", "message", :type => :reply)

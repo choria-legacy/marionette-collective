@@ -81,24 +81,24 @@ module MCollective
 
         it "should support new style config" do
           pluginconf = {"stomp.pool.size" => "2",
-            "stomp.pool.host1" => "host1",
-            "stomp.pool.port1" => "6163",
-            "stomp.pool.user1" => "user1",
-            "stomp.pool.password1" => "password1",
-            "stomp.pool.ssl1" => "false",
-            "stomp.pool.host2" => "host2",
-            "stomp.pool.port2" => "6164",
-            "stomp.pool.user2" => "user2",
-            "stomp.pool.password2" => "password2",
-            "stomp.pool.ssl2" => "true",
-            "stomp.pool.initial_reconnect_delay" => "0.02",
-            "stomp.pool.max_reconnect_delay" => "40",
-            "stomp.pool.use_exponential_back_off" => "false",
-            "stomp.pool.back_off_multiplier" => "3",
-            "stomp.pool.max_reconnect_attempts" => "5",
-            "stomp.pool.randomize" => "true",
-            "stomp.pool.backup" => "true",
-            "stomp.pool.timeout" => "1"}
+                        "stomp.pool.host1" => "host1",
+                        "stomp.pool.port1" => "6163",
+                        "stomp.pool.user1" => "user1",
+                        "stomp.pool.password1" => "password1",
+                        "stomp.pool.ssl1" => "false",
+                        "stomp.pool.host2" => "host2",
+                        "stomp.pool.port2" => "6164",
+                        "stomp.pool.user2" => "user2",
+                        "stomp.pool.password2" => "password2",
+                        "stomp.pool.ssl2" => "true",
+                        "stomp.pool.initial_reconnect_delay" => "0.02",
+                        "stomp.pool.max_reconnect_delay" => "40",
+                        "stomp.pool.use_exponential_back_off" => "false",
+                        "stomp.pool.back_off_multiplier" => "3",
+                        "stomp.pool.max_reconnect_attempts" => "5",
+                        "stomp.pool.randomize" => "true",
+                        "stomp.pool.backup" => "true",
+                        "stomp.pool.timeout" => "1"}
 
 
           ENV.delete("STOMP_USER")
@@ -119,15 +119,15 @@ module MCollective
                                        :randomize => true,
                                        :logger => "logger",
                                        :hosts => [{:passcode => 'password1',
-                                                    :host => 'host1',
-                                                    :port => 6163,
-                                                    :ssl => false,
-                                                    :login => 'user1'},
+                                                   :host => 'host1',
+                                                   :port => 6163,
+                                                   :ssl => false,
+                                                   :login => 'user1'},
                                                   {:passcode => 'password2',
-                                                    :host => 'host2',
-                                                    :port => 6164,
-                                                    :ssl => true,
-                                                    :login => 'user2'}
+                                                   :host => 'host2',
+                                                   :port => 6164,
+                                                   :ssl => true,
+                                                   :login => 'user2'}
                                                  ])
 
           @c.instance_variable_set("@connection", nil)
@@ -163,6 +163,8 @@ module MCollective
           @c.expects(:make_target).returns("test")
           @connection.expects(:publish).with("test", "msg", {})
 
+          @msg.stubs(:reply_to)
+
           @c.publish(@msg)
         end
 
@@ -172,6 +174,8 @@ module MCollective
           @c.expects(:make_target).returns("test")
 
           @connection.expects(:publish).with("test", "msg", {})
+
+          @msg.stubs(:reply_to)
 
           @c.publish(@msg)
         end
@@ -186,7 +190,17 @@ module MCollective
           @c.expects(:publish_msg).with("target_one", "msg")
           @c.expects(:publish_msg).with("target_two", "msg")
 
+          @msg.stubs(:reply_to)
+
           @c.publish(@msg)
+        end
+
+        it "should raise an error if specific reply targets are requested" do
+          @c.instance_variable_set("@base64", false)
+
+          @msg.expects(:reply_to).returns(:foo)
+
+          expect { @c.publish(@msg) }.to raise_error("Cannot set specific reply to targets with the STOMP plugin")
         end
       end
 

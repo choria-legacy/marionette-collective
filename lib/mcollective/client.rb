@@ -42,6 +42,7 @@ module MCollective
       else
         ttl = @options[:ttl] || @config.ttl
         request = Message.new(msg, nil, {:agent => agent, :type => :request, :collective => collective, :filter => filter, :ttl => ttl})
+        request.reply_to = @options[:reply_to] if @options[:reply_to]
       end
 
       request.encode!

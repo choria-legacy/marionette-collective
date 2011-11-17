@@ -303,6 +303,7 @@ module MCollective
           message.expects(:type).returns(:direct_request).twice
           message.expects(:agent).returns("rspecagent")
           message.expects(:collective).returns("mcollective")
+          message.expects(:reply_to).returns(nil)
 
           @c.instance_variable_set("@msgpriority", 0)
           @c.expects(:make_target).with("rspecagent", :reply, "mcollective").returns({:name => "test"})
@@ -314,10 +315,22 @@ module MCollective
           message.expects(:type).returns(:request).twice
           message.expects(:agent).returns("rspecagent")
           message.expects(:collective).returns("mcollective")
+          message.expects(:reply_to).returns(nil)
 
           @c.instance_variable_set("@msgpriority", 0)
           @c.expects(:make_target).with("rspecagent", :reply, "mcollective").returns({:name => "test"})
           @c.headers_for(message).should == {"reply-to" => "test"}
+        end
+
+        it "should set reply-to correctly if the message defines it" do
+          message = mock
+          message.expects(:type).returns(:request).twice
+          message.expects(:agent).returns("rspecagent")
+          message.expects(:collective).returns("mcollective")
+          message.expects(:reply_to).returns("rspec").twice
+
+          @c.headers_for(message).should == {"reply-to" => "rspec"}
+
         end
       end
 

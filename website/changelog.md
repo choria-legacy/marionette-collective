@@ -11,6 +11,8 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2011/11/17|Allow reply to destinations to be supplied on the command line or API|9847|
+|*2011/11/17*|*Release 1.3.2*|*10830*|
 |2011/11/16|Imrpove error reporting for code errors in application plugins|10883|
 |2011/11/15|The limit method is now configurable on each RPC client as well as the config file|7772|
 |2011/11/15|Add a --graph option to the ping application that shows response distribution|10864|

@@ -108,7 +108,11 @@ class MCollective::Application::Rpc<MCollective::Application
 
     string_to_ddl_type(configuration[:arguments], mc.ddl.action_interface(configuration[:action])) unless mc.ddl.nil?
 
-    if configuration[:no_results]
+    if mc.reply_to
+      configuration[:arguments][:process_results] = true
+
+      puts "Request sent with id: " + mc.send(configuration[:action], configuration[:arguments]) + " replies to #{mc.reply_to}"
+    elsif configuration[:no_results]
       configuration[:arguments][:process_results] = false
 
       puts "Request sent with id: " + mc.send(configuration[:action], configuration[:arguments])

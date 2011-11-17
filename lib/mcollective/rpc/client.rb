@@ -3,7 +3,7 @@ module MCollective
     # The main component of the Simple RPC client system, this wraps around MCollective::Client
     # and just brings in a lot of convention and standard approached.
     class Client
-      attr_accessor :discovery_timeout, :timeout, :verbose, :filter, :config, :progress, :ttl
+      attr_accessor :discovery_timeout, :timeout, :verbose, :filter, :config, :progress, :ttl, :reply_to
       attr_reader :client, :stats, :ddl, :agent, :limit_targets, :limit_method, :output_format, :batch_size, :batch_sleep_time
 
       @@initial_options = nil
@@ -52,6 +52,7 @@ module MCollective
         @force_direct_request = false
         @batch_size = initial_options[:batch_size]
         @batch_sleep_time = Float(initial_options[:batch_sleep_time] || 1)
+        @reply_to = initial_options[:reply_to]
 
         agent_filter agent
 
@@ -270,7 +271,6 @@ module MCollective
           raise "Attempted to do a filterless custom_request without direct_addressing enabled, preventing unexpected call to all nodes"
         end
 
-
         @stats.reset
 
         custom_filter = Util.empty_filter
@@ -293,7 +293,11 @@ module MCollective
         @stats.discovered_agents([expected_agents].flatten)
 
         # Handle fire and forget requests
-        if args.include?(:process_results) && args[:process_results] == false
+        #
+        # If a specific reply-to was set then from the client perspective this should
+        # be a fire and forget request too since no response will ever reach us - it
+        # will go to the reply-to destination
+        if args[:process_results] == false || @reply_to
           return fire_and_forget_request(action, args, custom_filter)
         end
 
@@ -562,6 +566,7 @@ module MCollective
         filter = options[:filter] unless filter
 
         message = Message.new(req, nil, {:agent => @agent, :type => :request, :collective => @collective, :filter => filter, :options => options})
+        message.reply_to = @reply_to if @reply_to
 
         return @client.sendreq(message, nil)
       end
@@ -645,7 +650,11 @@ module MCollective
       def call_agent(action, args, opts, disc=:auto, &block)
         # Handle fire and forget requests and make sure
         # the :process_results value is set appropriately
-        if args.include?(:process_results) && args[:process_results] == false
+        #
+        # specific reply-to requests should be treated like
+        # fire and forget since the client will never get
+        # the responses
+        if args[:process_results] == false || @reply_to
           return fire_and_forget_request(action, args)
         else
           args[:process_results] = true

@@ -1,7 +1,7 @@
 module MCollective
   # container for a message, its headers, agent, collective and other meta data
   class Message
-    attr_reader :message, :request, :validated, :msgtime, :payload, :type, :expected_msgid
+    attr_reader :message, :request, :validated, :msgtime, :payload, :type, :expected_msgid, :reply_to
     attr_accessor :headers, :agent, :collective, :filter
     attr_accessor :requestid, :discovered_hosts, :options, :ttl
 
@@ -35,6 +35,7 @@ module MCollective
       @message = message
       @requestid = nil
       @discovered_hosts = nil
+      @reply_to = nil
 
       @type = options[:type]
       @headers = options[:headers]
@@ -82,6 +83,15 @@ module MCollective
       raise "Unknown message type #{type}" unless VALIDTYPES.include?(type)
 
       @type = type
+    end
+
+    # Sets a custom reply-to target for requests.  The connector plugin should inspect this
+    # when constructing requests and set this header ensuring replies will go to the custom target
+    # otherwise the connector should just do what it usually does
+    def reply_to=(target)
+      raise "Custom reply targets can only be set on requests" unless [:request, :direct_request].include?(@type)
+
+      @reply_to = target
     end
 
     # in the case of reply messages we are expecting replies to a previously

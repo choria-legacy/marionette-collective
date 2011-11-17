@@ -176,6 +176,8 @@ module MCollective
       def publish(msg)
         msg.base64_encode! if @base64
 
+        raise "Cannot set specific reply to targets with the STOMP plugin" if msg.reply_to
+
         if msg.type == :direct_request
           msg.discovered_hosts.each do |node|
             target = make_target(msg.agent, msg.type, msg.collective, node)
@@ -280,22 +282,22 @@ module MCollective
         prefix = @config.topicprefix
 
         case type
-        when :reply
-          suffix = :reply
-        when :broadcast
-          suffix = :command
-        when :request
-          suffix = :command
-        when :direct_request
-          agent = nil
-          prefix = @config.queueprefix
-          suffix = Digest::MD5.hexdigest(target_node)
-        when :directed
-          agent = nil
-          prefix = @config.queueprefix
-          # use a md5 since hostnames might have illegal characters that
-          # the middleware dont understand
-          suffix = Digest::MD5.hexdigest(@config.identity)
+          when :reply
+            suffix = :reply
+          when :broadcast
+            suffix = :command
+          when :request
+            suffix = :command
+          when :direct_request
+            agent = nil
+            prefix = @config.queueprefix
+            suffix = Digest::MD5.hexdigest(target_node)
+          when :directed
+            agent = nil
+            prefix = @config.queueprefix
+            # use a md5 since hostnames might have illegal characters that
+            # the middleware dont understand
+            suffix = Digest::MD5.hexdigest(@config.identity)
         end
 
         ["#{prefix}#{collective}", agent, suffix].compact.join(@config.topicsep)
