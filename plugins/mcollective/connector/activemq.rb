@@ -169,14 +169,14 @@ module MCollective
           msg.discovered_hosts.each do |node|
             target[:headers] = headers_for(msg, node)
 
-            Log.debug("Sending a direct message to ActiveMQ target '#{target[:name]}' with headers '#{target[:headers].pretty_inspect}'")
+            Log.debug("Sending a direct message to ActiveMQ target '#{target[:name]}' with headers '#{target[:headers].inspect}'")
 
             @connection.publish(target[:name], msg.payload, target[:headers])
           end
         else
           target[:headers].merge!(headers_for(msg))
 
-          Log.debug("Sending a broadcast message to ActiveMQ target '#{target[:name]}' with headers '#{target[:headers].pretty_inspect}'")
+          Log.debug("Sending a broadcast message to ActiveMQ target '#{target[:name]}' with headers '#{target[:headers].inspect}'")
 
           @connection.publish(target[:name], msg.payload, target[:headers])
         end
@@ -187,7 +187,7 @@ module MCollective
         source = make_target(agent, type, collective)
 
         unless @subscriptions.include?(source)
-          Log.debug("Subscribing to #{source[:name]} with headers #{source[:headers].pretty_inspect}")
+          Log.debug("Subscribing to #{source[:name]} with headers #{source[:headers].inspect}")
           @connection.subscribe(source[:name], source[:headers])
           @subscriptions << source
         end
