@@ -67,6 +67,32 @@ task :package => [:clean, :doc] do
     safe_system("cd build && tar --exclude .svn -cvzf #{PROJ_NAME}-#{CURRENT_VERSION}.tgz #{PROJ_NAME}-#{CURRENT_VERSION}")
 end
 
+desc "Creates a dmg OS X Package using The Luggage"
+task :dmg => [:clean, :doc] do
+    announce "Creating #{PROJ_NAME}-#{CURRENT_VERSION}.dmg"
+
+    raise "\n\n================\nTo create DMGs, rake must be run as root.  Exiting.\n================" unless Process.uid == 0
+
+    if not File.directory?("/usr/local/share/luggage")
+      if not File.directory?("/usr/local/share")
+        FileUtils.mkdir_p("/usr/local/share")
+      else
+        safe_system("git clone git://github.com/unixorn/luggage.git /usr/local/share/luggage")
+        FileUtils.rm_r("/usr/local/share/luggage/examples")
+      end
+    end
+
+    if not File.exists?("/usr/local/share/luggage/examples/mcollective/Makefile")
+      safe_system("git clone git://github.com/unixorn/luggage-examples.git /usr/local/share/luggage/examples")
+    end
+
+    safe_system("cd /usr/local/share/luggage/examples/mcollective && make dmg PACKAGE_VERSION=#{PROJ_VERSION} TYPE=CLIENT")
+    safe_system("cd /usr/local/share/luggage/examples/mcollective && make dmg PACKAGE_VERSION=#{PROJ_VERSION} TYPE=COMMON")
+    safe_system("cd /usr/local/share/luggage/examples/mcollective && make dmg PACKAGE_VERSION=#{PROJ_VERSION} TYPE=BASE")
+    safe_system("mv /usr/local/share/luggage/examples/mcollective/MCollective_* .")
+
+end
+
 desc "Creates the website as a tarball"
 task :website => [:clean] do
     FileUtils.mkdir_p("build/marionette-collective.org/html")
