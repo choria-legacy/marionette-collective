@@ -64,7 +64,7 @@ module MCollective
         PluginManager << {:type => "foo", :class => MCollective::Foo.new}
         PluginManager << {:type => "bar", :class => MCollective::Foo.new}
 
-        PluginManager.pluginlist.should == ["foo", "bar"]
+        PluginManager.pluginlist.sort.should == ["bar", "foo"]
       end
     end
 
