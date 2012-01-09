@@ -129,6 +129,8 @@ class MCollective::Application::Rpc<MCollective::Application
       printrpc mc.send(configuration[:action], configuration[:arguments])
 
       printrpcstats :caption => "#{configuration[:agent]}##{configuration[:action]} call stats"
+
+      halt mc.stats
     end
   end
 end

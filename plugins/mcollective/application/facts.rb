@@ -47,5 +47,7 @@ class MCollective::Application::Facts<MCollective::Application
     show_single_fact_report(configuration[:fact], facts, options[:verbose])
 
     printrpcstats
+
+    halt rpcutil.stats
   end
 end

@@ -1,5 +1,3 @@
-require 'pp'
-
 class MCollective::Application::Inventory<MCollective::Application
   description "General reporting tool for nodes, collectives and subcollectives"
 
@@ -173,6 +171,8 @@ class MCollective::Application::Inventory<MCollective::Application
         end
       end
     end
+
+    halt nodestats
   end
 
   # Helpers to create a simple DSL for scriptlets

@@ -10,5 +10,7 @@ class MCollective::Application::Find<MCollective::Application
     end
 
     client.display_stats(stats) if options[:verbose]
+
+    halt stats
   end
 end

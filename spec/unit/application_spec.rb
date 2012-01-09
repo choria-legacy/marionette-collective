@@ -353,6 +353,84 @@ module MCollective
       end
     end
 
+    describe "#halt" do
+      before do
+        @stats = {:discoverytime => 0, :discovered => 0, :failcount => 0, :responses => 0}
+      end
+
+      it "should exit with code 0 if discovery was done and all responses passed" do
+        app = Application.new
+
+        @stats[:discoverytime] = 2
+        @stats[:discovered] = 2
+        @stats[:responses] = 2
+
+        app.expects(:exit).with(0)
+
+        app.halt(@stats)
+      end
+
+      it "should exit with code 0 if no discovery were done but responses were received" do
+        app = Application.new
+
+        @stats[:responses] = 1
+
+        app.expects(:exit).with(0)
+
+        app.halt(@stats)
+      end
+
+      it "should exit with code 0 if discovery info is missing" do
+        app = Application.new
+
+        app.expects(:exit).with(0)
+
+        app.halt({})
+      end
+
+      it "should exit with code 1 if no nodes were discovered and discovery was done" do
+        app = Application.new
+
+        @stats[:discoverytime] = 2
+
+        app.expects(:exit).with(1)
+
+        app.halt(@stats)
+      end
+
+      it "should exit with code 2 if a request failed for some nodes" do
+        app = Application.new
+
+        @stats[:discovered] = 1
+        @stats[:failcount] = 1
+        @stats[:discoverytime] = 2
+        @stats[:responses] = 1
+
+        app.expects(:exit).with(2)
+
+        app.halt(@stats)
+      end
+
+      it "should exit with code 3 if no responses were received after discovery" do
+        app = Application.new
+
+        @stats[:discovered] = 1
+        @stats[:discoverytime] = 2
+
+        app.expects(:exit).with(3)
+
+        app.halt(@stats)
+      end
+
+      it "should exit with code 4 if no discovery was done and no responses were received" do
+        app = Application.new
+
+        app.expects(:exit).with(4)
+
+        app.halt(@stats)
+      end
+    end
+
     describe "#disconnect" do
       it "should disconnect from the connector plugin" do
         connector = mock

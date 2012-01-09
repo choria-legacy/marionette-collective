@@ -85,8 +85,8 @@ The COMMAND can be one of the following:
       client.disconnect
 
       client.display_stats(statistics, false, "mcollectived controller summary")
+
+      halt statistics
     end
   end
 end
-
-# vim: set ts=4 sw=4 et :

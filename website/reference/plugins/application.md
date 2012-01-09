@@ -90,8 +90,6 @@ class MCollective::Application::Echo<MCollective::Application
       printrpc mc.echo(:msg => configuration[:message], :options => options)
 
       printrpcstats
-
-      mc.disconnect
    end
 end
 {% endhighlight %}
@@ -222,7 +220,7 @@ class MCollective::Application::Echo<MCollective::Application
          configuration[:message] = ARGV.shift
       else
          STDERR.puts "Please specify a message on the command line"
-         exit! 1
+         exit 1
       end
    end
 
@@ -255,4 +253,38 @@ class MCollective::Application::Echo<MCollective::Application
 end
 {% endhighlight %}
 
+### Exiting your application
+You can use the normal _exit_ Ruby method at any time to exit your application and you can supply any
+exit code as normal.
+
+As of version 1.3.3 the supplied applications have a standard exit code convention, if you want
+your applications to exhibit the same behavior use the _halt_ helper.  The exit codes are below:
+
+|Code|Description                                          |
+|----|-----------------------------------------------------|
+|0   |Nodes were discovered and all passed                 |
+|0   |No discovery was done but responses were received    |
+|1   |No nodes were discovered                             |
+|2   |Nodes were discovered but some responses failed      |
+|3   |Nodes were discovered but no responses were received |
+|4   |No discovery were done and no responses were received|
+
+{% highlight ruby %}
+class MCollective::Application::Echo<MCollective::Application
+   description "Reports on usage for a specific fact"
+
+   def main
+      mc = rpcclient("echo")
+
+      printrpc mc.echo(:msg => "Hello World", :options => options)
+
+      printrpcstats
+
+      halt_ mc.stats
+   end
+end
+{% endhighlight %}
+
+As you can see you pass the _halt_ helper an instance of the RPC Client statistics and it will then
+use that to do the right exit code.
 

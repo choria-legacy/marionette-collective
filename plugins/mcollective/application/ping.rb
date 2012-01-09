@@ -71,6 +71,8 @@ module MCollective
       else
         puts("No responses received")
       end
+
+      halt client.stats
     end
   end
 end
