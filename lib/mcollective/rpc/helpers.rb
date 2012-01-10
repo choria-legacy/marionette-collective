@@ -206,10 +206,16 @@ module MCollective
               result_text << "#{display_as}:"
 
               if [String, Numeric].include?(result[k].class)
-                result[k].to_s.split("\n").each_with_index do |line, i|
-                  i == 0 ? padtxt = " " : padtxt = " " * (padding + display_length + 2)
+                lines = result[k].to_s.split("\n")
 
-                  result_text << "#{padtxt}#{line}\n"
+                if lines.empty?
+                  result_text << "\n"
+                else
+                  lines.each_with_index do |line, i|
+                    i == 0 ? padtxt = " " : padtxt = " " * (padding + display_length + 2)
+
+                    result_text << "#{padtxt}#{line}\n"
+                  end
                 end
               else
                 padding = " " * (lengths.max + 5)

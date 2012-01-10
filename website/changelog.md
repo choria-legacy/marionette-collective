@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/01/09|The printrpc helper did not correctly display empty strings in received output|11012|
 |2012/01/09|Add a halt method to the Application framework and standardize exit codes|11280|
 |2011/11/21|Remove unintended dependency on _pp_ in the ActiveMQ plugin|10992|
 |2011/11/17|Allow reply to destinations to be supplied on the command line or API|9847|
