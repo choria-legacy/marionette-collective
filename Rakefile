@@ -40,7 +40,7 @@ task :default => [:clean, :doc, :package]
 # task for building docs
 rd = Rake::RDocTask.new(:doc) { |rdoc|
     rdoc.rdoc_dir = 'doc'
-    rdoc.template = 'html'
+    rdoc.template = 'darkfish'
     rdoc.title    = "#{PROJ_DOC_TITLE} version #{CURRENT_VERSION}"
     rdoc.options << '--line-numbers' << '--inline-source' << '--main' << 'MCollective'
 
