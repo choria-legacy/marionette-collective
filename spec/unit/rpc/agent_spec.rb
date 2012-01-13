@@ -54,14 +54,23 @@ module MCollective
           expect { @agent.send(:validate, :number, :boolean) }.to raise_error(InvalidRPCData)
         end
 
+        it "should correctly validate list data" do
+          @agent.request = {:str => "foo"}
+          expect { @agent.send(:validate, :str, ["bar", "baz"]) }.to raise_error(InvalidRPCData, /str should be one of bar, baz/)
+
+          @agent.request = {:str => "foo"}
+          expect { @agent.send(:validate, :str, ["bar", "baz", "foo"]) }
+          @agent.send(:validate, :str, ["bar", "baz", "foo"])
+        end
+
         it "should correctly identify characters that are not shell safe" do
           @agent.request = {:backtick => 'foo`bar',
-            :semicolon => 'foo;bar',
-            :dollar => 'foo$(bar)',
-            :pipe => 'foo|bar',
-            :redirto => 'foo>bar',
-            :inputfrom => 'foo<bar',
-            :good => 'foo bar baz'}
+                            :semicolon => 'foo;bar',
+                            :dollar => 'foo$(bar)',
+                            :pipe => 'foo|bar',
+                            :redirto => 'foo>bar',
+                            :inputfrom => 'foo<bar',
+                            :good => 'foo bar baz'}
 
           expect { @agent.send(:validate, :backtick, :shellsafe) }.to raise_error(InvalidRPCData, /backtick should not have ` in it/)
           expect { @agent.send(:validate, :semicolon, :shellsafe) }.to raise_error(InvalidRPCData, /semicolon should not have ; in it/)

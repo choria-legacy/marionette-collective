@@ -280,7 +280,7 @@ class MCollective::Application::Echo<MCollective::Application
 
       printrpcstats
 
-      halt_ mc.stats
+      halt mc.stats
    end
 end
 {% endhighlight %}

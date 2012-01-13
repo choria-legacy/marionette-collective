@@ -320,6 +320,8 @@ module MCollective
       # validate :command, :shellsafe
       # validate :command, :ipv6address
       # validate :command, :ipv4address
+      # validate :command, :boolean
+      # validate :command, ["start", "stop"]
       #
       # It will raise appropriate exceptions that the RPC system understand
       #
@@ -361,6 +363,9 @@ module MCollective
           when :boolean
             raise InvalidRPCData, "#{key} should be boolean" unless [TrueClass, FalseClass].include?(@request[key].class)
           end
+        elsif validation.is_a?(Array)
+          raise InvalidRPCData, "#{key} should be one of %s" % [ validation.join(", ") ] unless validation.include?(@request[key])
+
         else
           raise InvalidRPCData, "#{key} should be a #{validation}" unless  @request[key].is_a?(validation)
         end
