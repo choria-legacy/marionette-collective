@@ -129,15 +129,34 @@ We keep help information, not used right now but future version of the code will
 {% endhighlight %}
 
 ## More complex agents
-As you write more complex agents and clients you might find the need to have a few separate files make up your agent, you can drop these files into the util directory under plugins.
+As you write more complex agents and clients you might find the need to have a few separate files make up your agent, you can drop these files into a directory named _util_ under the plugins (that is, at the same level of the agent folder, so as _/usr/libexec/mcollective/mcollective/util_ at the time of writing).
 
-The classes should be _MCollective::Util::Youclass_ and you should use the following construct to require them from disk:
+Create the _util_ folder if needed.
+
+The classes should be _MCollective::Util::Yourclass_ and you should use the following construct to require them from disk:
 
 {% highlight ruby %}
-MCollective::Util.loadclass("MCollective::Util::Youclass")
+MCollective::Util.loadclass("MCollective::Util::Yourclass")
 {% endhighlight %}
 
+Create _util/yourclass.rb_ with this content :
+
+{% highlight ruby %}
+module MCollective
+ module Util
+   class Yourclass
+     # The class definition here
+   end
+ end
+end
+{% endhighlight %}
+
+_loadclass_ on _Yourclass_ will automatically search for a _yourclass.rb_ file (lowercase).
+
 At present simply requiring them will work and we'll hope to maintain that but to be 100% future safe use this method.
+
+
+It also loads modules in exactly the same way.
 
 ## The Client
 We provide a client library that abstracts away a lot of the work in writing simple attractive cli frontends to your agents that supports discovery, filtering, generates help etc.  The client lib is functional but we will improve/refactor the options parsing a bit in future.
