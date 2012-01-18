@@ -4,8 +4,6 @@ title: Single Executable Application Plugin
 disqus: true
 ---
 [Clients]: ../../simplerpc/clients.html
-[SimpleRPCAgents]: ../../simplerpc/agents.html
-
 
 # {{page.title}}
 
@@ -21,8 +19,8 @@ In the past we tended to write small standalone scripts to interact with
 MCollective, this had a number of issues:
 
  * Large number of executables in _/usr/sbin_
- * Applications behave inconsistently with regard to error handling and reporting
- * Discovering new applications is difficult since they are all over the filesystem
+ * Applications behave inconsistently wrt to error handling and reporting
+ * Doscovering new applications difficult since they are all over the filesystem
  * Installation and packaging of plugins is complex
 
 We've attempted to address these concerns by creating a single point of access
@@ -71,10 +69,10 @@ Determining the amount of hosts matching filter for 2 seconds .... 51
 	:ensure=>"4.2.6-3.el5"}
 {% endhighlight %}
 
-These applications are equivalent to the old mc-rpc and similar applications but without the problem of lots of files in _/usr/sbin_.
+These applications are equivelant to the old mc-rpc and similar applications but without the problem of lots of files in _/usr/sbin_.
 
 ## Basic Application
-Applications goes in _libdir/mcollective/application/echo.rb_, the one below is a simple application that speaks to a hypothetical _echo_ action of a _helloworld_ agent. This agent has been demonstrated in : writing [agents][SimpleRPCAgents].
+Applications goes in _libdir/mcollective/application/echo.rb_, the one below is a simple application that speaks to a hypothetical _echo_ agent.
 
 {% highlight ruby %}
 class MCollective::Application::Echo<MCollective::Application
@@ -87,7 +85,7 @@ class MCollective::Application::Echo<MCollective::Application
           :required       => true
 
    def main
-      mc = rpcclient("helloworld")
+      mc = rpcclient("echo")
 
       printrpc mc.echo(:msg => configuration[:message], :options => options)
 
@@ -135,11 +133,11 @@ class MCollective::Application::Echo<MCollective::Application
 end
 {% endhighlight %}
 
-You can add several of these messages by just adding multiple such lines.
+You can add several of these messages by just adding multiple such lines
 
 ### Application Options
 
-A standard options hash is available simply as options you can manipulate it and pass it into the RPC Client like normal. See the SimpleRPC [Clients] reference for more on this.
+A standard options hash is available simply as options you can manipulate it and pass it into the RPC Client like normal. See the SimpleRPC [Clients] reference for more on this
 
 ### CLI Argument Parsing
 
@@ -177,7 +175,7 @@ option :count,
   :type           => Fixnum
 {% endhighlight %}
 
-You can force an argument to be boolean:
+You can force a argument to be boolean:
 
 {% highlight ruby %}
 option :detail,
