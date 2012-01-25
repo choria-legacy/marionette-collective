@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/01/25|Allow the syslog facility to be configured|12109|
 |2012/01/13|Add a RPC agent validator to ensure input is one of list of known good values|11935|
 |2012/01/09|The printrpc helper did not correctly display empty strings in received output|11012|
 |2012/01/09|Add a halt method to the Application framework and standardize exit codes|11280|

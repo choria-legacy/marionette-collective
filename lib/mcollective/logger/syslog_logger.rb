@@ -2,26 +2,28 @@ require 'syslog'
 
 module MCollective
   module Logger
-    # Impliments a syslog based logger using the standard ruby syslog class
+    # Implements a syslog based logger using the standard ruby syslog class
     class Syslog_logger<Base
       include Syslog::Constants
 
       def start
         config = Config.instance
 
-        set_syslog_facility(config.logfacility.upcase)
+        facility = syslog_facility(config.logfacility)
+        level = config.loglevel.to_sym
 
         Syslog.close if Syslog.opened?
-        Syslog.open(File.basename($0),3,@logfacility)
+        Syslog.open(File.basename($0), 3, facility)
 
-        set_level(config.loglevel.to_sym)
+        set_level(level)
       end
 
-      def set_syslog_facility(facility)
+      def syslog_facility(facility)
         begin
-          @logfacility = Syslog.const_get("LOG_#{facility}")
+          Syslog.const_get("LOG_#{facility.upcase}")
         rescue NameError => e
-          STDERR.puts("Invalid syslog facility #{facility}")
+          STDERR.puts "Invalid syslog facility #{facility} supplied, reverting to USER"
+          Syslog::LOG_USER
         end
       end
 
@@ -31,10 +33,10 @@ module MCollective
 
       def valid_levels
         {:info  => :info,
-          :warn  => :warning,
-          :debug => :debug,
-          :fatal => :crit,
-          :error => :err}
+         :warn  => :warning,
+         :debug => :debug,
+         :fatal => :crit,
+         :error => :err}
       end
 
       def log(level, from, msg)

@@ -47,6 +47,7 @@ Configuration is a simple *key = val* style configuration file.
 |direct_addressing|n|Enable or disable directed requests|
 |direct_addressing_threshold|10|When direct requests are enabled, send direct messages for less than or equal to this many hosts|
 |ttl|60|Sets the default TTL for requests - 1.3.2 and newer only|
+|logfacility|When using the syslog logger sets the facility, defaults to user|
 
 ## Server Configuration
 The server configuration file should be root only readable
