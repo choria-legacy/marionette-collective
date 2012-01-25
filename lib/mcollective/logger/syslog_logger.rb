@@ -9,10 +9,20 @@ module MCollective
       def start
         config = Config.instance
 
+        set_syslog_facility(config.logfacility.upcase)
+
         Syslog.close if Syslog.opened?
-        Syslog.open(File.basename($0))
+        Syslog.open(File.basename($0),3,@logfacility)
 
         set_level(config.loglevel.to_sym)
+      end
+
+      def set_syslog_facility(facility)
+        begin
+          @logfacility = Syslog.const_get("LOG_#{facility}")
+        rescue NameError => e
+          STDERR.puts("Invalid syslog facility #{facility}")
+        end
       end
 
       def set_logging_level(level)

@@ -3,14 +3,14 @@ module MCollective
   class Config
     include Singleton
 
-    attr_reader :topicprefix, :daemonize, :pluginconf, :libdir, :configured, :logfile,
-    :keeplogs, :max_log_size, :loglevel, :identity, :daemonize, :connector,
-    :securityprovider, :factsource, :registration, :registerinterval, :topicsep,
-    :classesfile, :rpcauditprovider, :rpcaudit, :configdir, :rpcauthprovider,
-    :rpcauthorization, :color, :configfile, :rpchelptemplate, :rpclimitmethod,
-    :logger_type, :fact_cache_time, :collectives, :main_collective, :ssl_cipher,
-    :registration_collective, :direct_addressing, :direct_addressing_threshold,
-    :queueprefix, :ttl
+    attr_reader :topicprefix, :daemonize, :pluginconf, :libdir, :configured,
+    :logfile, :keeplogs, :max_log_size, :loglevel, :logfacility, :identity,
+    :daemonize, :connector, :securityprovider, :factsource, :registration,
+    :registerinterval, :topicsep, :classesfile, :rpcauditprovider, :rpcaudit,
+    :configdir, :rpcauthprovider, :rpcauthorization, :color, :configfile,
+    :rpchelptemplate, :rpclimitmethod, :logger_type, :fact_cache_time,
+    :collectives, :main_collective, :ssl_cipher, :registration_collective,
+    :direct_addressing, :direct_addressing_threshold, :queueprefix, :ttl
 
     def initialize
       @configured = false
@@ -55,6 +55,8 @@ module MCollective
                   @max_log_size = val.to_i
                 when "loglevel"
                   @loglevel = val
+                when "logfacility"
+                  @logfacility = val
                 when "libdir"
                   paths = val.split(/:/)
                   paths.each do |path|
@@ -159,6 +161,7 @@ module MCollective
       @libdir = Array.new
       @fact_cache_time = 300
       @loglevel = "info"
+      @logfacility = "user"
       @collectives = ["mcollective"]
       @main_collective = @collectives.first
       @ssl_cipher = "aes-256-cbc"
