@@ -119,12 +119,14 @@ class MCollective::Application::Rpc<MCollective::Application
     else
       # if there's stuff on STDIN assume its JSON that came from another
       # rpc or printrpc, we feed that in as discovery data
+      discover_args = {:verbose => true}
+
       unless STDIN.tty?
-        discovery_data = STDIN.read
-        mc.discover(:json => discovery_data)
-      else
-        mc.discover :verbose => true
+        discovery_data = STDIN.read.chomp
+        discover_args = {:json => discovery_data} unless discovery_data == ""
       end
+
+      mc.discover discover_args
 
       printrpc mc.send(configuration[:action], configuration[:arguments])
 
