@@ -44,7 +44,7 @@ module MCollective
 
         it "should set LOG_USER for unknown facilities" do
           logger = Syslog_logger.new
-          STDERR.expects(:puts).with("Invalid syslog facility rspec supplied, reverting to USER")
+          IO.any_instance.expects(:puts).with("Invalid syslog facility rspec supplied, reverting to USER")
           logger.syslog_facility("rspec").should == Syslog::LOG_USER
         end
       end
@@ -73,7 +73,7 @@ module MCollective
 
         it "should resort to STDERR output if all else fails" do
           logger = Syslog_logger.new
-          STDERR.expects(:puts).with("error: rspec").once
+          IO.any_instance.expects(:puts).with("error: rspec").once
 
           logger.log(:error, "rspec", "rspec")
         end
