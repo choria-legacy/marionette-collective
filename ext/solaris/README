@@ -1,6 +1,3 @@
-Make sure you have checked out from the puppetlabs marionette-collective collective.
-Building the Solaris package isn't possible from a source tar ball.
-
 Building
 --------
 
@@ -31,3 +28,6 @@ Configuration
 Put the plugins in:
 libdir = /opt/csw/share/mcollective/plugins
 
+Credits
+-------
+Rudy Gevaert <rudy.gevaert+mcollective@ugent.be>
