@@ -1,18 +1,33 @@
+Building
+--------
+
+Requirements, you can get them from opencsw:
+- coreuitls (CSWcoreutils)
+- gmake (CSWgmake)
+- ggrep (CSWggrep)
+
 Just run ./build on your solaris system.
 
-Build requirements, get them from opencsw:
-- gmake
-- coreutils
+Running
+-------
 
-Run requirements, get them from opencsw:
-- ruby
-- rubygems
+Requirements, get them from opencsw:
+- ruby (CSWruby)
+- rubygems (CSWrubygems)
 
 Run requirements
 - rubystomp library
   http://stomp.codehaus.org/Ruby+Client
   Up and till version 1.0.4 it is a single file. Put in /opt/csw/lib/ruby/site_ruby/1.8/
 
-Configuration:
-server.cfg:
+Configuration
+-------------
+
+/etc/mcollective/server.cfg
+
+Put the plugins in:
 libdir = /opt/csw/share/mcollective/plugins
+
+Credits
+-------
+Rudy Gevaert <rudy.gevaert+mcollective@ugent.be>
