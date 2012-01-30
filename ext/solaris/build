@@ -5,11 +5,14 @@ BUILDDIR = solaris/tmp
 PKG = solaris/pkg
 DESTDIR = ${CURDIR}/${BUILDDIR}
 PKGDIR = ${CURDIR}/${PKG}
-PKGNAME = CSW$(shell ggrep "PROJ_NAME = "  ../../Rakefile | cut -d' ' -f3 | sed -e 's/"//g')
-VERSION = $(shell ggrep "PROJ_VERSION = "  ../../Rakefile | cut -d' ' -f3 | sed -e 's/"//g')
-RELEASE = $(shell ggrep "PROJ_RELEASE = "  ../../Rakefile | cut -d' ' -f3 | sed -e 's/"//g')
+PKGNAME = CSWmcollective
+VERSION = $(shell cd ../.. ; RUBYLIB=./lib /opt/csw/bin/ruby18 -r mcollective -e 'puts MCollective::VERSION' )
+# If we checked out from git:
+ifeq ($(VERSION),@DEVELOPMENT_VERSION@)
+        VERSION = $(shell ggrep "PROJ_VERSION = "  ../../Rakefile | cut -d' ' -f3 | sed -e 's/"//g')
+endif
+RELEASE = 1
 PKGVERSION = ${VERSION}-${RELEASE}\,REV=$(shell date +%Y.%m.%d)
-
 RUBY_VERSION = 1.8
 RUBY_SITE = ${DESTDIR}/opt/csw/lib/ruby/site_ruby/${RUBY_VERSION}
 
@@ -27,6 +30,7 @@ install:
 
 	# install binaries
 	ginstall -g bin $(CURDIR)/../../mc-* $(DESTDIR)/opt/csw/sbin/
+	ginstall -g bin $(CURDIR)/../../mco $(DESTDIR)/opt/csw/sbin/
 	ginstall -g bin $(CURDIR)/../../mcollectived.rb $(DESTDIR)/opt/csw/sbin/mcollectived
 	# install libraries
 	gcp -a $(CURDIR)/../../lib/* $(RUBY_SITE)/
