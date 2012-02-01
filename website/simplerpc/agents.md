@@ -282,8 +282,6 @@ Accessing it via the first will give you full access to all the normal Hash meth
 
 ## Running Shell Commands
 
-NOTE: Only available since 1.1.3
-
 A helper function exist that makes it easier to run shell commands and gain
 access to their _STDOUT_ and _STDERR_.
 
@@ -342,6 +340,10 @@ Or if you wanted to include a shell Environment variable:
 {% highlight ruby %}
 reply[:status] = run("echo 'hello world'", :stdout => :out, :stderr => :err, :environment => {"FOO" => "BAR"})
 {% endhighlight %}
+
+The status returned will be the exit code from the program you ran, if the program
+completely failed to run in the case where the file doesn't exist, resources were
+not available etc the exit code will be -1
 
 You have to set the cwd and environment through these options, do not simply
 call _chdir_ or adjust the _ENV_ hash in an agent as that will not be safe in

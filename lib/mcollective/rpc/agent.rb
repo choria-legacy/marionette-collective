@@ -208,7 +208,10 @@ module MCollective
       #
       # Exceptions here will be handled by the usual agent exception handler or any
       # specific one you create, if you dont it will just fall through and be sent
-      # to the client
+      # to the client.
+      #
+      # If the shell handler fails to return a Process::Status instance for exit
+      # status this method will return -1 as the exit status
       def run(command, options={})
         shellopts = {}
 
@@ -247,7 +250,7 @@ module MCollective
           shellopts[:stderr].chomp! if shellopts[:stderr].is_a?(String)
         end
 
-        shell.status.exitstatus
+        shell.status.exitstatus rescue -1
       end
 
       # Registers meta data for the introspection hash

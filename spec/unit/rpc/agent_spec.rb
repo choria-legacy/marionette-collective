@@ -7,6 +7,74 @@ module MCollective
     describe Agent do
       before do
         @agent = Agent.new
+        @agent.reply = {}
+        @agent.request = {}
+      end
+
+      describe "#run" do
+        before do
+          @status = mock
+          @status.stubs(:exitstatus).returns(0)
+          @shell = mock
+          @shell.stubs(:runcommand)
+          @shell.stubs(:status).returns(@status)
+        end
+
+        it "should accept stderr and stdout and force them to be strings" do
+          Shell.expects(:new).with("rspec", {:stderr => "", :stdout => ""}).returns(@shell)
+          @agent.send(:run, "rspec", {:stderr => :err, :stdout => :out})
+          @agent.reply[:err].should == ""
+          @agent.reply[:out].should == ""
+        end
+
+        it "should accept existing variables for stdout and stderr and fail if they dont support <<" do
+          @agent.reply[:err] = "err"
+          @agent.reply[:out] = "out"
+
+          Shell.expects(:new).with("rspec", {:stderr => "err", :stdout => "out"}).returns(@shell)
+          @agent.send(:run, "rspec", {:stderr => @agent.reply[:err], :stdout => @agent.reply[:out]})
+          @agent.reply[:err].should == "err"
+          @agent.reply[:out].should == "out"
+
+          @agent.reply.expects("fail!").with("stderr should support << while calling run(rspec)").raises("stderr fail")
+          expect { @agent.send(:run, "rspec", {:stderr => nil, :stdout => ""}) }.to raise_error("stderr fail")
+
+          @agent.reply.expects("fail!").with("stdout should support << while calling run(rspec)").raises("stdout fail")
+          expect { @agent.send(:run, "rspec", {:stderr => "", :stdout => nil}) }.to raise_error("stdout fail")
+        end
+
+        it "should set stdin, cwd and environment if supplied" do
+          Shell.expects(:new).with("rspec", {:stdin => "stdin", :cwd => "cwd", :environment => "env"}).returns(@shell)
+          @agent.send(:run, "rspec", {:stdin => "stdin", :cwd => "cwd", :environment => "env"})
+        end
+
+        it "should ignore unknown options" do
+          Shell.expects(:new).with("rspec", {}).returns(@shell)
+          @agent.send(:run, "rspec", {:rspec => "rspec"})
+        end
+
+        it "should chomp strings if configured to do so" do
+          Shell.expects(:new).with("rspec", {:stderr => 'err', :stdout => 'out'}).returns(@shell)
+
+          @agent.reply[:err] = "err"
+          @agent.reply[:out] = "out"
+
+          @agent.reply[:err].expects("chomp!")
+          @agent.reply[:out].expects("chomp!")
+
+          @agent.send(:run, "rspec", {:chomp => true, :stdout => @agent.reply[:out], :stderr => @agent.reply[:err]})
+        end
+
+        it "should return the exitstatus" do
+          Shell.expects(:new).with("rspec", {}).returns(@shell)
+          @agent.send(:run, "rspec", {}).should == 0
+        end
+
+        it "should handle nil from the shell handler" do
+          @shell.expects(:status).returns(nil)
+          Shell.expects(:new).with("rspec", {}).returns(@shell)
+          @agent.send(:run, "rspec", {}).should == -1
+        end
       end
 
       describe "#validate" do
@@ -31,7 +99,7 @@ module MCollective
 
         it "should correctly validate ipv4 addresses" do
           @agent.request = {:goodip4 => "1.1.1.1",
-            :badip4  => "300.300.300.300"}
+                            :badip4  => "300.300.300.300"}
 
           expect { @agent.send(:validate, :badip4, :ipv4address) }.to raise_error(InvalidRPCData, /badip4 should be an ipv4 address/)
           @agent.send(:validate, :goodip4, :ipv4address)
@@ -39,7 +107,7 @@ module MCollective
 
         it "should correctly validate ipv6 addresses" do
           @agent.request = {:goodip6 => "2a00:1450:8006::93",
-            :badip6  => "300.300.300.300"}
+                            :badip6  => "300.300.300.300"}
 
           expect { @agent.send(:validate, :badip6, :ipv6address) }.to raise_error(InvalidRPCData, /badip6 should be an ipv6 address/)
           @agent.send(:validate, :goodip6, :ipv6address)

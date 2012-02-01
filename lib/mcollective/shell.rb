@@ -32,28 +32,28 @@ module MCollective
 
       options.each do |opt, val|
         case opt.to_s
-        when "stdout"
-          raise "stdout should support <<" unless val.respond_to?("<<")
-          @stdout = val
+          when "stdout"
+            raise "stdout should support <<" unless val.respond_to?("<<")
+            @stdout = val
 
-        when "stderr"
-          raise "stderr should support <<" unless val.respond_to?("<<")
-          @stderr = val
+          when "stderr"
+            raise "stderr should support <<" unless val.respond_to?("<<")
+            @stderr = val
 
-        when "stdin"
-          raise "stdin should be a String" unless val.is_a?(String)
-          @stdin = val
+          when "stdin"
+            raise "stdin should be a String" unless val.is_a?(String)
+            @stdin = val
 
-        when "cwd"
-          raise "Directory #{val} does not exist" unless File.directory?(val)
-          @cwd = val
+          when "cwd"
+            raise "Directory #{val} does not exist" unless File.directory?(val)
+            @cwd = val
 
-        when "environment"
-          if val.nil?
-            @environment = {}
-          else
-            @environment.merge!(val.dup)
-          end
+          when "environment"
+            if val.nil?
+              @environment = {}
+            else
+              @environment.merge!(val.dup)
+            end
         end
       end
     end
@@ -61,9 +61,9 @@ module MCollective
     # Actually does the systemu call passing in the correct environment, stdout and stderr
     def runcommand
       opts = {"env"    => @environment,
-        "stdout" => @stdout,
-        "stderr" => @stderr,
-        "cwd"    => @cwd}
+              "stdout" => @stdout,
+              "stderr" => @stderr,
+              "cwd"    => @cwd}
 
       opts["stdin"] = @stdin if @stdin
 
