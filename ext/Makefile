@@ -11,9 +11,9 @@ install: install-bin install-lib install-conf install-plugins install-doc
 install-bin:
 	install -d $(DESTDIR)/usr/sbin
 	install -d $(DESTDIR)/usr/bin
-	cp mc-* $(DESTDIR)/usr/sbin
-	cp mco $(DESTDIR)/usr/bin
-	cp mcollectived.rb $(DESTDIR)/usr/sbin/mcollectived
+	cp bin/mc-* $(DESTDIR)/usr/sbin
+	cp bin/mco $(DESTDIR)/usr/bin
+	cp bin/mcollectived $(DESTDIR)/usr/sbin/mcollectived
 
 install-lib:
 	install -d $(DESTDIR)/usr/lib/ruby/1.8/

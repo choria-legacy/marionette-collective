@@ -63,7 +63,7 @@ rm -rf %{buildroot}
 %{__install} -d -m0755  %{buildroot}/etc/mcollective/plugin.d
 %{__install} -d -m0755  %{buildroot}/etc/mcollective/ssl
 %{__install} -d -m0755  %{buildroot}/etc/mcollective/ssl/clients
-%{__install} -m0755 mcollectived.rb %{buildroot}/usr/sbin/mcollectived
+%{__install} -m0755 bin/mcollectived %{buildroot}/usr/sbin/mcollectived
 %{__install} -m0640 etc/server.cfg.dist %{buildroot}/etc/mcollective/server.cfg
 %{__install} -m0644 etc/client.cfg.dist %{buildroot}/etc/mcollective/client.cfg
 %{__install} -m0444 etc/facts.yaml.dist %{buildroot}/etc/mcollective/facts.yaml
@@ -71,14 +71,14 @@ rm -rf %{buildroot}
 %if 0%{?suse_version}
 %{__install} -m0755 mcollective.init %{buildroot}/etc/init.d/mcollective
 %else
-%{__install} -m0755 mcollective.init-rh %{buildroot}/etc/init.d/mcollective
+%{__install} -m0755 ext/redhat/mcollective.init %{buildroot}/etc/init.d/mcollective
 %endif
 
 
 cp -R lib/* %{buildroot}/%{ruby_sitelib}/
 cp -R plugins/* %{buildroot}/usr/libexec/mcollective/
-cp mc-* %{buildroot}/usr/sbin/
-cp mco %{buildroot}/usr/bin/
+cp bin/mc-* %{buildroot}/usr/sbin/
+cp bin/mco %{buildroot}/usr/bin/
 chmod 0755 %{buildroot}/usr/sbin/*
 
 %clean
