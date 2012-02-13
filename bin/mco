@@ -6,7 +6,7 @@ Version = MCollective.version
 known_applications = MCollective::Applications.list
 
 # links from mc-ping to mc will result in ping being run
-if $0 =~ /mc\-(.+)$/
+if $0 =~ /mc\-([a-zA-Z\-_\.]+)$/
     app_name = $1
 else
     app_name = ARGV.first
