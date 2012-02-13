@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/02/13|On Red Hat like systems read /etc/sysconfig/mcollective in the init script to allow modification of the environment|7441|
 |2012/02/13|Make the handling of symlinks to the mco script more robust to handle directories with mc- in their name|6275|
 |2012/02/01|systemu and therefore MC::Shell can sometimes return nil exit code, the run() method now handles this better by returning -1 exit status|12082|
 |2012/01/27|Improve handling of discovery data on STDIN to avoid failures when run without a TTY and without supplying discovery data|12084|

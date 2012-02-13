@@ -37,6 +37,10 @@ fi
 # Source function library.
 . /etc/init.d/functions
 
+if [ -f /etc/sysconfig/mcollective ]; then
+    . /etc/sysconfig/mcollective
+fi
+
 # Determine if we can use the -p option to daemon, killproc, and status.
 # RHEL < 5 can't.
 if status | grep -q -- '-p' 2>/dev/null; then
@@ -45,9 +49,8 @@ if status | grep -q -- '-p' 2>/dev/null; then
 fi
 
 start() {
-	echo -n "Starting mcollective: "
-    daemon ${daemonopts} ${mcollectived} \
-        --pid=${pidfile} --config="/etc/mcollective/server.cfg"
+    echo -n "Starting mcollective: "
+    daemon ${daemonopts} ${mcollectived} --pid=${pidfile} --config="/etc/mcollective/server.cfg"
     RETVAL=$?
     echo
     [ $RETVAL -eq 0 ] && touch ${lockfile}
