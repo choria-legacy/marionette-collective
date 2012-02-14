@@ -4,6 +4,7 @@ require 'rake/rdoctask'
 require 'rake/packagetask'
 require 'rake/clean'
 require 'find'
+require 'rake/gempackagetask'
 
 PROJ_DOC_TITLE = "The Marionette Collective"
 PROJ_VERSION = "1.3.2"
