@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/02/14|Comply to Red Hat guideline by not setting mcollective to start by default after RPM install|9453|
 |2012/02/14|Allow building the client libraries as a gem|9383|
 |2012/02/13|On Red Hat like systems read /etc/sysconfig/mcollective in the init script to allow modification of the environment|7441|
 |2012/02/13|Make the handling of symlinks to the mco script more robust to handle directories with mc- in their name|6275|
