@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/02/15|Improve error handling in the inventory application for non responsive nodes|12638|
 |2012/02/14|Comply to Red Hat guideline by not setting mcollective to start by default after RPM install|9453|
 |2012/02/14|Allow building the client libraries as a gem|9383|
 |2012/02/13|On Red Hat like systems read /etc/sysconfig/mcollective in the init script to allow modification of the environment|7441|

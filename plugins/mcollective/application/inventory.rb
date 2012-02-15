@@ -100,6 +100,11 @@ class MCollective::Application::Inventory<MCollective::Application
 
     nodestats = util.custom_request("daemon_stats", {}, node, {"identity" => node}).first
 
+    unless nodestats
+      STDERR.puts "Did not receive any results from node #{node}"
+      exit 1
+    end
+
     unless nodestats[:statuscode] == 0
       STDERR.puts "Failed to retrieve daemon_stats from #{node}: #{nodestats[:statusmsg]}"
     else
