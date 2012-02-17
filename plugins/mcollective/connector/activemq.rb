@@ -86,7 +86,7 @@ module MCollective
         end
 
         def on_miscerr(params, errstr)
-          Log.debug("Unexpected error on connection #{stomp_url(params)}: #{errstr}")
+          Log.error("Unexpected error on connection #{stomp_url(params)}: #{errstr}")
         rescue
         end
 

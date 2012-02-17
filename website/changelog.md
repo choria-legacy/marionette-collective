@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/02/17|Log miscellaneous Stomp errors at error level rather than debug|12705|
 |2012/02/17|Improve subscription tracking by using the subID feature of the Stomp gem and handle duplicate exceptions|12703|
 |2012/02/15|Improve error handling in the inventory application for non responsive nodes|12638|
 |2012/02/14|Comply to Red Hat guideline by not setting mcollective to start by default after RPM install|9453|
