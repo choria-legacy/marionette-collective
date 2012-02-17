@@ -177,7 +177,7 @@ class MCollective::Application::Inventory<MCollective::Application
       end
     end
 
-    halt nodestats
+    halt util.stats
   end
 
   # Helpers to create a simple DSL for scriptlets
