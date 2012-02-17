@@ -204,6 +204,8 @@ module MCollective
           @connection.subscribe(source)
           @subscriptions << source
         end
+      rescue ::Stomp::Error::DuplicateSubscription
+        Log.debug("Received subscription for #{source[:name]} but already had a subscription, ignoring")
       end
 
       # Actually sends the message to the middleware

@@ -6,6 +6,15 @@ MCollective::PluginManager.clear
 
 require File.dirname(__FILE__) + '/../../../../../plugins/mcollective/connector/activemq.rb'
 
+# create the stomp error class here as it does not always exist
+# all versions of the stomp gem and we do not want to tie tests
+# to the stomp gem
+module Stomp
+  module Error
+    class DuplicateSubscription < RuntimeError; end
+  end
+end
+
 module MCollective
   module Connector
     describe Activemq do
@@ -184,28 +193,34 @@ module MCollective
       end
 
       describe "#subscribe" do
+        it "should handle duplicate subscription errors" do
+          @connection.expects(:subscribe).raises(::Stomp::Error::DuplicateSubscription)
+          Log.expects(:error).with(regexp_matches(/already had a matching subscription, ignoring/))
+          @c.subscribe("test", :broadcast, "mcollective")
+        end
+
         it "should use the make_target correctly" do
           @c.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}})
           @c.subscribe("test", :broadcast, "mcollective")
         end
 
         it "should check for existing subscriptions" do
-          @c.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}})
-          @subscription.expects("include?").with({:name => "test", :headers => {}}).returns(false)
+          @c.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          @subscription.expects("include?").with("rspec").returns(false)
           @connection.expects(:subscribe).never
 
           @c.subscribe("test", :broadcast, "mcollective")
         end
 
         it "should subscribe to the middleware" do
-          @c.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}})
-          @connection.expects(:subscribe).with("test", {})
+          @c.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          @connection.expects(:subscribe).with("test", {}, "rspec")
           @c.subscribe("test", :broadcast, "mcollective")
         end
 
         it "should add to the list of subscriptions" do
-          @c.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}})
-          @subscription.expects("<<").with({:name => "test", :headers => {}})
+          @c.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          @subscription.expects("<<").with("rspec")
           @c.subscribe("test", :broadcast, "mcollective")
         end
       end
@@ -217,15 +232,15 @@ module MCollective
         end
 
         it "should unsubscribe from the target" do
-          @c.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}})
-          @connection.expects(:unsubscribe).with("test", {}).once
+          @c.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          @connection.expects(:unsubscribe).with("test", {}, "rspec").once
 
           @c.unsubscribe("test", :broadcast, "mcollective")
         end
 
         it "should delete the source from subscriptions" do
-          @c.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}})
-          @subscription.expects(:delete).with({:name => "test", :headers => {}}).once
+          @c.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          @subscription.expects(:delete).with("rspec").once
 
           @c.unsubscribe("test", :broadcast, "mcollective")
         end
@@ -336,11 +351,11 @@ module MCollective
 
       describe "#make_target" do
         it "should create correct targets" do
-          @c.make_target("test", :reply, "mcollective").should == {:name => "/queue/mcollective.reply.rspec_#{$$}", :headers => {}}
-          @c.make_target("test", :broadcast, "mcollective").should == {:name => "/topic/mcollective.test.agent", :headers => {}}
-          @c.make_target("test", :request, "mcollective").should == {:name => "/topic/mcollective.test.agent", :headers => {}}
-          @c.make_target("test", :direct_request, "mcollective").should == {:headers=>{}, :name=>"/queue/mcollective.nodes"}
-          @c.make_target("test", :directed, "mcollective").should == {:name => "/queue/mcollective.nodes", :headers=>{"selector"=>"mc_identity = 'rspec'"}}
+          @c.make_target("test", :reply, "mcollective").should == {:name => "/queue/mcollective.reply.rspec_#{$$}", :headers => {}, :id => "/queue/mcollective.reply.rspec_#{$$}"}
+          @c.make_target("test", :broadcast, "mcollective").should == {:name => "/topic/mcollective.test.agent", :headers => {}, :id => "/topic/mcollective.test.agent"}
+          @c.make_target("test", :request, "mcollective").should == {:name => "/topic/mcollective.test.agent", :headers => {}, :id => "/topic/mcollective.test.agent"}
+          @c.make_target("test", :direct_request, "mcollective").should == {:headers=>{}, :name=>"/queue/mcollective.nodes", :id => "/queue/mcollective.nodes"}
+          @c.make_target("test", :directed, "mcollective").should == {:name => "/queue/mcollective.nodes", :headers=>{"selector"=>"mc_identity = 'rspec'"}, :id => "directed_to_identity"}
         end
 
         it "should raise an error for unknown collectives" do

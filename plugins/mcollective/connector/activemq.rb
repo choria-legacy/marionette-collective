@@ -186,11 +186,13 @@ module MCollective
       def subscribe(agent, type, collective)
         source = make_target(agent, type, collective)
 
-        unless @subscriptions.include?(source)
-          Log.debug("Subscribing to #{source[:name]} with headers #{source[:headers].inspect}")
-          @connection.subscribe(source[:name], source[:headers])
-          @subscriptions << source
+        unless @subscriptions.include?(source[:id])
+          Log.debug("Subscribing to #{source[:name]} with headers #{source[:headers].inspect.chomp}")
+          @connection.subscribe(source[:name], source[:headers], source[:id])
+          @subscriptions << source[:id]
         end
+      rescue ::Stomp::Error::DuplicateSubscription
+        Log.error("Received subscription request for #{source.inspect.chomp} but already had a matching subscription, ignoring")
       end
 
       # Subscribe to a topic or queue
@@ -198,8 +200,8 @@ module MCollective
         source = make_target(agent, type, collective)
 
         Log.debug("Unsubscribing from #{source[:name]}")
-        @connection.unsubscribe(source[:name], source[:headers])
-        @subscriptions.delete(source)
+        @connection.unsubscribe(source[:name], source[:headers], source[:id])
+        @subscriptions.delete(source[:id])
       end
 
       def target_for(msg)
@@ -261,7 +263,10 @@ module MCollective
           when :directed
             target[:name] = ["/queue/" + collective, :nodes].join(".")
             target[:headers]["selector"] = "mc_identity = '#{@config.identity}'"
+            target[:id] = "directed_to_identity"
         end
+
+        target[:id] = target[:name] unless target[:id]
 
         target
       end
