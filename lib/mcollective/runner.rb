@@ -17,28 +17,18 @@ module MCollective
 
       @agents = Agents.new
 
-      Signal.trap("USR1") do
-        Log.info("Reloading all agents after receiving USR1 signal")
-        @agents.loadagents
-      end
+      unless Util.windows?
+        Signal.trap("USR1") do
+          Log.info("Reloading all agents after receiving USR1 signal")
+          @agents.loadagents
+        end
 
-      Signal.trap("USR2") do
-        Log.info("Cycling logging level due to USR2 signal")
-        Log.cycle_level
-      end
-    end
-
-    # Daemonize the current process
-    def self.daemonize
-      fork do
-        Process.setsid
-        exit if fork
-        Dir.chdir('/tmp')
-        STDIN.reopen('/dev/null')
-        STDOUT.reopen('/dev/null', 'a')
-        STDERR.reopen('/dev/null', 'a')
-
-        yield
+        Signal.trap("USR2") do
+          Log.info("Cycling logging level due to USR2 signal")
+          Log.cycle_level
+        end
+      else
+        Util.setup_windows_sleeper
       end
     end
 

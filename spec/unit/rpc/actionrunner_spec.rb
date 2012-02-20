@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env rspec
 
 require 'spec_helper'
 
@@ -48,7 +48,7 @@ module MCollective
           s = @runner.shell("test", "infile", "outfile")
 
           s.command.should == "test infile outfile"
-          s.cwd.should == "/tmp"
+          s.cwd.should == Dir.tmpdir
           s.stdout.should == ""
           s.stderr.should == ""
           s.environment["MCOLLECTIVE_REQUEST_FILE"].should == "infile"
@@ -69,7 +69,7 @@ module MCollective
 
         it "should set all keys to Symbol" do
           data = {"foo" => "bar", "bar" => "baz"}
-          Tempfile.open("mcollective_test", "/tmp") do |f|
+          Tempfile.open("mcollective_test", Dir.tmpdir) do |f|
             f.puts data.to_json
             f.close
 
@@ -81,7 +81,7 @@ module MCollective
 
       describe "#load_json_results" do
         it "should load data from a file" do
-          Tempfile.open("mcollective_test", "/tmp") do |f|
+          Tempfile.open("mcollective_test", Dir.tmpdir) do |f|
             f.puts '{"foo":"bar","bar":"baz"}'
             f.close
 
@@ -100,7 +100,7 @@ module MCollective
 
         it "should load complex data correctly" do
           data = {"foo" => "bar", "bar" => {"one" => "two"}}
-          Tempfile.open("mcollective_test", "/tmp") do |f|
+          Tempfile.open("mcollective_test", Dir.tmpdir) do |f|
             f.puts data.to_json
             f.close
 
@@ -128,7 +128,7 @@ module MCollective
           fname = @runner.saverequest(@req).path
 
           JSON.load(File.read(fname)).should == {"foo" => "bar"}
-          File.dirname(fname).should == "/tmp"
+          File.dirname(fname).should == Dir.tmpdir
         end
       end
 
@@ -141,7 +141,11 @@ module MCollective
 
       describe "#canrun?" do
         it "should correctly report executables" do
-          @runner.canrun?("/bin/true").should == true
+          if Util.windows?
+            @runner.canrun?(File.join(ENV['SystemRoot'], "explorer.exe")).should == true
+          else
+            @runner.canrun?("/bin/true").should == true
+          end
         end
 
         it "should detect missing files" do

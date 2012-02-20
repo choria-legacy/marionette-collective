@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env rspec
 
 require 'spec_helper'
 
@@ -18,6 +18,7 @@ module MCollective
         ].each do |input|
           File.expects(:open).with("/nonexisting", "r").returns(StringIO.new("identity = #{input}"))
           File.expects(:exists?).with("/nonexisting").returns(true)
+          File.expects(:exists?).with(File.join(File.dirname("/nonexisting"), "rpc-help.erb")).returns(true)
 
           expect {
             Config.instance.loadconfig("/nonexisting")
@@ -29,11 +30,50 @@ module MCollective
         ["foo", "foo_bar", "foo-bar", "foo-bar-123", "foo.bar", "foo_bar_123"].each do |input|
           File.expects(:open).with("/nonexisting", "r").returns(StringIO.new("identity = #{input}"))
           File.expects(:exists?).with("/nonexisting").returns(true)
+          File.expects(:exists?).with(File.join(File.dirname("/nonexisting"), "rpc-help.erb")).returns(true)
           PluginManager.stubs(:loadclass)
           PluginManager.stubs("<<")
 
           Config.instance.loadconfig("/nonexisting")
         end
+      end
+
+      it "should not allow the syslog logger type on windows" do
+        Util.expects("windows?").returns(true).twice
+        File.expects(:open).with("/nonexisting", "r").returns(StringIO.new("logger_type = syslog"))
+        File.expects(:exists?).with("/nonexisting").returns(true)
+        File.expects(:exists?).with(File.join(File.dirname("/nonexisting"), "rpc-help.erb")).returns(true)
+        PluginManager.stubs(:loadclass)
+        PluginManager.stubs("<<")
+
+        expect { Config.instance.loadconfig("/nonexisting") }.to raise_error("The sylog logger is not usable on the Windows platform")
+      end
+
+      it "should default to finding the help template in the same dir as the config file" do
+        path = File.join(File.dirname("/nonexisting"), "rpc-help.erb")
+
+        File.expects(:open).with("/nonexisting", "r").returns(StringIO.new(""))
+        File.expects(:exists?).with("/nonexisting").returns(true)
+        PluginManager.stubs(:loadclass)
+        PluginManager.stubs("<<")
+
+        File.expects(:exists?).with(path).returns(true)
+
+        Config.instance.loadconfig("/nonexisting")
+        Config.instance.rpchelptemplate.should == path
+      end
+
+      it "should fall back to old behavior if the help template file does not exist in the config dir" do
+        path = File.join(File.dirname("/nonexisting"), "rpc-help.erb")
+
+        File.expects(:open).with("/nonexisting", "r").returns(StringIO.new(""))
+        File.expects(:exists?).with("/nonexisting").returns(true)
+        File.expects(:exists?).with(path).returns(false)
+        PluginManager.stubs(:loadclass)
+        PluginManager.stubs("<<")
+
+        Config.instance.loadconfig("/nonexisting")
+        Config.instance.rpchelptemplate.should == "/etc/mcollective/rpc-help.erb"
       end
     end
 

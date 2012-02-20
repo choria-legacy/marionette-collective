@@ -17,7 +17,7 @@ module MCollective
       def load_facts_from_source
         config = Config.instance
 
-        fact_files = config.pluginconf["yaml"].split(":")
+        fact_files = config.pluginconf["yaml"].split(File::PATH_SEPARATOR)
         facts = {}
 
         fact_files.each do |file|
@@ -39,7 +39,7 @@ module MCollective
       def force_reload?
         config = Config.instance
 
-        fact_files = config.pluginconf["yaml"].split(":")
+        fact_files = config.pluginconf["yaml"].split(File::PATH_SEPARATOR)
 
         fact_files.each do |file|
           @yaml_file_mtimes[file] ||= File.stat(file).mtime

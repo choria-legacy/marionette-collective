@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env rspec
 
 require 'spec_helper'
 
@@ -9,6 +9,32 @@ module MCollective
 
       PluginManager.clear
       PluginManager << {:type => "connector_plugin", :class => MCollective::Connector::Stomp.new}
+    end
+
+    describe "#windows?" do
+      it "should correctly detect windows on unix platforms" do
+        RbConfig::CONFIG.expects("[]").returns("linux")
+        Util.windows?.should == false
+      end
+
+      it "should correctly detect windows on windows platforms" do
+        RbConfig::CONFIG.expects("[]").returns("win32")
+        Util.windows?.should == true
+      end
+    end
+
+    describe "#setup_windows_sleeper" do
+      it "should set up a thread on the windows platform" do
+        Thread.expects(:new)
+        Util.expects("windows?").returns(true).once
+        Util.setup_windows_sleeper
+      end
+
+      it "should not set up a thread on other platforms" do
+        Thread.expects(:new).never
+        Util.expects("windows?").returns(false).once
+        Util.setup_windows_sleeper
+      end
     end
 
     describe "#has_cf_class?" do

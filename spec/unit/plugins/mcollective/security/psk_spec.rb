@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env rspec
 
 require 'spec_helper'
 require File.dirname(__FILE__) + '/../../../../../plugins/mcollective/security/psk.rb'
@@ -112,9 +112,15 @@ module MCollective::Security
         @plugin.callerid.should == "gid=#{Process.gid}"
       end
 
-      it "should support group based callerids" do
+      it "should support group based callerids", :unless => MCollective::Util.windows? do
         @config.stubs(:pluginconf).returns({"psk.callertype" => "group"})
         @plugin.callerid.should == "group=#{Etc.getgrgid(Process.gid).name}"
+      end
+
+      it "should raise an error if the group callerid type is used on windows" do
+        MCollective::Util.expects("windows?").returns(true)
+        @config.stubs(:pluginconf).returns({"psk.callertype" => "group"})
+        expect { @plugin.callerid }.to raise_error("Cannot use the 'group' callertype for the PSK security plugin on the Windows platform")
       end
 
       it "should support user based callerids" do

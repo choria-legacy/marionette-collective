@@ -49,6 +49,8 @@ module MCollective
       def self.terminal_dimensions
         return [0, 0] unless STDOUT.tty?
 
+        return [80, 40] if Util.windows?
+
         if ENV["COLUMNS"] && ENV["LINES"]
           return [ENV["COLUMNS"].to_i, ENV["LINES"].to_i]
 

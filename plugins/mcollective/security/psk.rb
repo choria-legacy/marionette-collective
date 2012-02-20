@@ -81,6 +81,8 @@ module MCollective
             id  = "gid=#{Process.gid}"
 
           when :group
+            raise "Cannot use the 'group' callertype for the PSK security plugin on the Windows platform" if Util.windows?
+
             id = "group=#{Etc.getgrgid(Process.gid).name}"
 
           when :user

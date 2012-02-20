@@ -5,7 +5,12 @@ require 'rspec/core/rake_task'
 desc "Run all specs"
 RSpec::Core::RakeTask.new(:all) do |t|
     t.pattern = 'unit/**/*_spec.rb'
-    t.rspec_opts = File.read("spec.opts").chomp
+
+    if MCollective::Util.windows?
+      t.rspec_opts = File.read("windows_spec.opts").chomp
+    else
+      t.rspec_opts = File.read("spec.opts").chomp
+    end
 end
 
 task :default => [:all]

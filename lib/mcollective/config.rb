@@ -58,7 +58,7 @@ module MCollective
                 when "logfacility"
                   @logfacility = val
                 when "libdir"
-                  paths = val.split(/:/)
+                  paths = val.split(File::PATH_SEPARATOR)
                   paths.each do |path|
                     @libdir << path
                     unless $LOAD_PATH.include?(path)
@@ -120,6 +120,10 @@ module MCollective
 
         @libdir.each {|dir| Log.warn("Cannot find libdir: #{dir}") unless File.directory?(dir)}
 
+        if @logger_type == "syslog"
+          raise "The sylog logger is not usable on the Windows platform" if Util.windows?
+        end
+
         PluginManager.loadclass("Mcollective::Facts::#{@factsource}_facts")
         PluginManager.loadclass("Mcollective::Connector::#{@connector}")
         PluginManager.loadclass("Mcollective::Security::#{@securityprovider}")
@@ -151,9 +155,8 @@ module MCollective
       @rpcauthorization = false
       @rpcauthprovider = ""
       @configdir = File.dirname(configfile)
-      @color = true
+      @color = !Util.windows?
       @configfile = configfile
-      @rpchelptemplate = "/etc/mcollective/rpc-help.erb"
       @logger_type = "file"
       @keeplogs = 5
       @max_log_size = 2097152
@@ -168,6 +171,12 @@ module MCollective
       @direct_addressing = false
       @direct_addressing_threshold = 10
       @ttl = 60
+
+      # look in the config dir for the template so users can provide their own and windows
+      # with odd paths will just work more often, but fall back to old behavior if it does
+      # not exist
+      @rpchelptemplate = File.join(File.dirname(configfile), "rpc-help.erb")
+      @rpchelptemplate = "/etc/mcollective/rpc-help.erb" unless File.exists?(@rpchelptemplate)
     end
 
     def read_plugin_config_dir(dir)

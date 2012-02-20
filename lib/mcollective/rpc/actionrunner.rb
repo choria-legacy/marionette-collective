@@ -67,7 +67,7 @@ module MCollective
         env = {"MCOLLECTIVE_REQUEST_FILE" => infile,
           "MCOLLECTIVE_REPLY_FILE"   => outfile}
 
-        Shell.new("#{command} #{infile} #{outfile}", :cwd => "/tmp", :stdout => stdout, :stderr => stderr, :environment => env)
+        Shell.new("#{command} #{infile} #{outfile}", :cwd => Dir.tmpdir, :stdout => stdout, :stderr => stderr, :environment => env)
       end
 
       def load_results(file)
@@ -123,7 +123,7 @@ module MCollective
       end
 
       def tempfile(prefix)
-        Tempfile.new("mcollective_#{prefix}", "/tmp")
+        Tempfile.new("mcollective_#{prefix}", Dir.tmpdir)
       end
     end
   end

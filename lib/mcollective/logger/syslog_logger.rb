@@ -1,9 +1,9 @@
-require 'syslog'
-
 module MCollective
   module Logger
     # Implements a syslog based logger using the standard ruby syslog class
     class Syslog_logger<Base
+      require 'syslog'
+
       include Syslog::Constants
 
       def start

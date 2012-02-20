@@ -42,16 +42,14 @@ end
 if config.daemonize
   MCollective::Log.debug("Starting in the background (#{config.daemonize})")
 
-  MCollective::Runner.daemonize do
-    if pid
-      begin
-        File.open(pid, 'w') {|f| f.write(Process.pid) }
-      rescue Exception => e
-      end
-    end
+  if MCollective::Util.windows?
+    require 'mcollective/windows_daemon'
 
-    runner = MCollective::Runner.new(configfile)
-    runner.run
+    MCollective::WindowsDaemon.daemonize_runner
+  else
+    require 'mcollective/unix_daemon'
+
+    MCollective::UnixDaemon.daemonize_runner(pid)
   end
 else
   MCollective::Log.debug("Starting in the foreground")

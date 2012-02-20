@@ -28,7 +28,7 @@ module MCollective
       @stdout = ""
       @stderr = ""
       @stdin = nil
-      @cwd = "/tmp"
+      @cwd = Dir.tmpdir
 
       options.each do |opt, val|
         case opt.to_s

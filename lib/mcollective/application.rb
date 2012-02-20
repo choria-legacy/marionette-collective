@@ -266,6 +266,8 @@ module MCollective
 
       validate_configuration(configuration) if respond_to?(:validate_configuration)
 
+      Util.setup_windows_sleeper if Util.windows?
+
       main
 
       disconnect

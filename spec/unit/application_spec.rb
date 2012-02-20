@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env rspec
 
 require 'spec_helper'
 
@@ -539,6 +539,62 @@ module MCollective
         out.expects(:puts).with("\tfrom rspec")
 
         @app.application_failure(e, out)
+      end
+    end
+
+    describe "#run" do
+      before do
+        @app = Application.new
+      end
+
+      it "should parse the application options, run main and disconnect" do
+        @app.expects(:application_parse_options)
+        @app.expects(:main)
+        @app.expects(:disconnect)
+
+        @app.run
+      end
+
+      it "should allow the application plugin to validate configuration variables" do
+        @app.expects("respond_to?").with(:validate_configuration).returns(true)
+        @app.expects(:validate_configuration).once
+
+        @app.stubs(:application_parse_options)
+        @app.stubs(:main)
+        @app.stubs(:disconnect)
+
+        @app.run
+      end
+
+      it "should start the sleeper thread on windows" do
+        Util.expects("windows?").returns(true)
+        Util.expects(:setup_windows_sleeper).once
+
+        @app.stubs(:application_parse_options)
+        @app.stubs(:main)
+        @app.stubs(:disconnect)
+
+        @app.run
+      end
+
+      it "should catch handle exit() correctly" do
+        Application.send(:define_method, :main) do
+          exit 1
+        end
+
+        @app.expects(:disconnect).once
+
+        expect { @app.run }.to raise_error(SystemExit)
+      end
+
+      it "should catch all exceptions and process them correctly" do
+        @app.expects(:application_failure).once
+
+        Application.send(:define_method, :main) do
+          raise "rspec"
+        end
+
+        @app.run
       end
     end
   end

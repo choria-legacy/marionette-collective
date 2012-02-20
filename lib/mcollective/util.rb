@@ -21,6 +21,14 @@ module MCollective
       false
     end
 
+    # On windows ^c can't interrupt the VM if its blocking on
+    # IO, so this sets up a dummy thread that sleeps and this
+    # will have the end result of being interruptable at least
+    # once a second.  This is a common pattern found in Rails etc
+    def self.setup_windows_sleeper
+      Thread.new { loop { sleep 1 } } if Util.windows?
+    end
+
     # Checks if this node has a configuration management class by parsing the
     # a text file with just a list of classes, recipes, roles etc.  This is
     # ala the classes.txt from puppet.
@@ -233,6 +241,10 @@ module MCollective
       str.gsub!(/\n/, "'\n'")
 
       return str
+    end
+
+    def self.windows?
+      !!(RbConfig::CONFIG['host_os'] =~ /mswin|win32|dos|mingw|cygwin/i)
     end
 
     def self.eval_compound_statement(expression)

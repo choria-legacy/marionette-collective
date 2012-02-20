@@ -9,6 +9,8 @@ require 'erb'
 require 'shellwords'
 require 'mcollective/monkey_patches'
 require 'tempfile'
+require 'rbconfig'
+require 'tmpdir'
 
 # == The Marionette Collective
 #

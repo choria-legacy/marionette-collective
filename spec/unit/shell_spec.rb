@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env rspec
 
 require 'spec_helper'
 
@@ -72,7 +72,7 @@ module MCollective
 
     describe "#runcommand" do
       it "should run the command" do
-        Shell.any_instance.stubs("systemu").returns(true).once.with("date", "stdout" => '', "stderr" => '', "env" => {"LC_ALL" => "C"}, 'cwd' => '/tmp')
+        Shell.any_instance.stubs("systemu").returns(true).once.with("date", "stdout" => '', "stderr" => '', "env" => {"LC_ALL" => "C"}, 'cwd' => Dir.tmpdir)
         s = Shell.new("date")
         s.runcommand
       end
@@ -93,7 +93,7 @@ module MCollective
       end
 
       it "shold have correct environment" do
-        s = Shell.new('echo $LC_ALL;echo $foo', :environment => {"foo" => "bar"})
+        s = Shell.new('ruby -e "puts ENV[\'LC_ALL\'];puts ENV[\'foo\'];"', :environment => {"foo" => "bar"})
         s.runcommand
         s.stdout.should == "C\nbar\n"
       end
@@ -119,10 +119,11 @@ module MCollective
       end
 
       it "should run in the correct cwd" do
-        s = Shell.new('pwd', :cwd => "/var/tmp")
+        s = Shell.new('ruby -e "puts Dir.pwd"', :cwd => Dir.tmpdir)
+
         s.runcommand
 
-        s.stdout.should == "/var/tmp\n"
+        s.stdout.should == "#{Dir.tmpdir}\n"
       end
 
       it "should send the stdin" do
