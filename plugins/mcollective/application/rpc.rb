@@ -83,6 +83,8 @@ class MCollective::Application::Rpc<MCollective::Application
   end
 
   def string_to_ddl_type(arguments, ddl)
+    return if ddl.empty?
+
     arguments.keys.each do |key|
       if ddl[:input].keys.include?(key)
         begin
