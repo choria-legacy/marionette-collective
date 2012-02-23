@@ -99,6 +99,65 @@ module MCollective
       end
     end
 
+    # Finds plugins in all configured libdirs
+    #
+    #   find("agent")
+    #
+    # will return an array of just agent names, for example:
+    #
+    #   ["puppetd", "package"]
+    #
+    # Can also be used to find files of other extensions:
+    #
+    #   find("agent", "ddl")
+    #
+    # Will return the same list but only of files with extension .ddl
+    # in the agent subdirectory
+    def self.find(type, extension="rb")
+      extension = ".#{extension}" unless extension.match(/^\./)
+
+      plugins = []
+
+      Config.instance.libdir.each do |libdir|
+        plugdir = File.join([libdir, "mcollective", type])
+
+        Dir.new(plugdir).grep(/#{extension}$/).map do |plugin|
+          plugins << File.basename(plugin, extension)
+        end
+      end
+
+      plugins.sort.uniq
+    end
+
+    # Finds and loads from disk all plugins from all libdirs that match
+    # certain criteria.
+    #
+    #    find_and_load("pluginpackager")
+    #
+    # Will find all .rb files in the libdir/mcollective/pluginpackager/
+    # directory in all libdirs and load them from disk.
+    #
+    # You can influence what plugins get loaded using a block notation:
+    #
+    #    find_and_load("pluginpackager") do |plugin|
+    #       plugin.match(/puppet/)
+    #    end
+    #
+    # This will load only plugins matching /puppet/
+    def self.find_and_load(type, extension="rb")
+      extension = ".#{extension}" unless extension.match(/^\./)
+
+      klasses = find(type, extension).map do |plugin|
+        if block_given?
+          next unless yield(plugin)
+        end
+
+        "%s::%s::%s" % [ "MCollective", type.capitalize, plugin.capitalize ]
+      end.compact
+
+      klasses.sort.uniq.each {|klass| loadclass(klass, true)}
+    end
+
     # Loads a class from file by doing some simple search/replace
     # on class names and then doing a require.
     def self.loadclass(klass, squash_failures=false)

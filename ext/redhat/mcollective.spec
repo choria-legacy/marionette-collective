@@ -118,6 +118,7 @@ fi
 %config(noreplace)/etc/mcollective/client.cfg
 %config/etc/mcollective/rpc-help.erb
 /usr/libexec/mcollective/mcollective/application
+/usr/libexec/mcollective/mcollective/pluginpackager
 
 %files
 %doc COPYING

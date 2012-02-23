@@ -93,6 +93,43 @@ module MCollective
       end
     end
 
+    describe "#find" do
+      before do
+        @config.stubs(:libdir).returns(["/libdir/"])
+        Config.stubs(:instance).returns(@config)
+      end
+
+      it "should find all plugins in configured libdirs" do
+        File.expects(:join).with(["/libdir/", "mcollective", "test"]).returns("/plugindir/")
+        Dir.expects(:new).with("/plugindir/").returns(["plugin.rb"])
+        PluginManager.find("test").should == ["plugin"]
+      end
+
+      it "should find all plugins with a given file extension" do
+        File.expects(:join).with(["/libdir/", "mcollective", "test"]).returns("/plugindir/")
+        Dir.expects(:new).with("/plugindir/").returns(["plugin.ddl"])
+        PluginManager.find("test", "ddl").should == ["plugin"]
+      end
+    end
+
+    describe "#find_and_load" do
+      before do
+        @config.stubs(:libdir).returns(["/libdir/"])
+        Config.stubs(:instance).returns(@config)
+        PluginManager.expects(:loadclass).with("MCollective::Test::Testplugin", true)
+      end
+
+      it "should find and load all plugins from all libdirs that match the type" do
+        PluginManager.expects(:find).with("test", ".rb").returns(["testplugin"])
+        PluginManager.find_and_load("test")
+      end
+
+      it "should exclude plugins who do not match criteria if block is given" do
+        PluginManager.expects(:find).with("test", ".rb").returns(["testplugin", "failplugin"])
+        PluginManager.find_and_load("test") {|plugin| plugin.match(/^test/)}
+      end
+    end
+
     describe "#loadclass" do
       it "should load the correct filename given a ruby class name" do
         PluginManager.stubs(:load).with("mcollective/foo.rb").once
