@@ -170,6 +170,8 @@ module MCollective
 
           stats = {:noresponsefrom => [], :responses => 0, :blocktime => 0, :totaltime => 0, :discoverytime => 0}
 
+          Progress.expects(:new).never
+
           Message.expects(:new).with('req', nil, {:type => :direct_request, :agent => 'foo', :filter => nil, :options => {}, :collective => 'mcollective'}).returns(msg).times(10)
           client.expects(:new_request).returns("req")
           client.expects(:sleep).with(1.0).times(9)

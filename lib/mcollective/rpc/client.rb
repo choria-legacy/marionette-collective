@@ -596,7 +596,11 @@ module MCollective
         if discovered.size > 0
           req = new_request(action.to_s, args)
 
-          twirl = Progress.new
+          if @progress && !block_given?
+            twirl = Progress.new
+            @stdout.puts
+            @stdout.print twirl.twirl(respcount, discovered.size)
+          end
 
           discovered.in_groups_of(batch_size) do |hosts, last_batch|
             message = Message.new(req, nil, {:agent => @agent, :type => :direct_request, :collective => @collective, :filter => opts[:filter], :options => opts})
@@ -608,10 +612,7 @@ module MCollective
               if block_given?
                 process_results_with_block(action, resp, block)
               else
-                if @progress
-                  puts if respcount == 1
-                  @stdout.print twirl.twirl(respcount, discovered.size)
-                end
+                @stdout.print twirl.twirl(respcount, discovered.size) if @progress
 
                 result << process_results_without_block(resp, action)
               end
@@ -673,14 +674,18 @@ module MCollective
 
         req = new_request(action.to_s, args)
 
-        twirl = Progress.new
-
         message = Message.new(req, nil, {:agent => @agent, :type => :request, :collective => @collective, :filter => opts[:filter], :options => opts})
         message.discovered_hosts = discovered.clone
         message.type = :direct_request if @force_direct_request
 
         result = []
         respcount = 0
+
+        if @progress && !block_given?
+          twirl = Progress.new
+          @stdout.puts
+          @stdout.print twirl.twirl(respcount, discovered.size)
+        end
 
         if discovered.size > 0
           @client.req(message) do |resp|
@@ -689,10 +694,7 @@ module MCollective
             if block_given?
               process_results_with_block(action, resp, block)
             else
-              if @progress
-                puts if respcount == 1
-                @stdout.print twirl.twirl(respcount, discovered.size)
-              end
+              @stdout.print twirl.twirl(respcount, discovered.size) if @progress
 
               result << process_results_without_block(resp, action)
             end
