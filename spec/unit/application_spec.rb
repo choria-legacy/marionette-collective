@@ -440,5 +440,46 @@ module MCollective
         Application.new.disconnect
       end
     end
+
+    describe "#application_failure" do
+      before do
+        @app = Application.new
+      end
+
+      it "on SystemExit it should disconnect and exit without backtraces or error messages" do
+        @app.expects(:disconnect)
+        expect { @app.application_failure(SystemExit.new) }.to raise_error(SystemExit)
+      end
+
+      it "should print a single line error message" do
+        out = StringIO.new
+        @app.stubs(:disconnect)
+        @app.stubs(:exit).with(1)
+
+        e = mock
+        e.stubs(:backtrace).returns([])
+        e.stubs(:to_s).returns("rspec")
+
+        out.expects(:puts).with("#{$0} failed to run: rspec (Mocha::Mock)")
+
+        @app.application_failure(e, out)
+      end
+
+      it "should print a backtrace if options are unset or verbose is enabled" do
+        out = StringIO.new
+        @app.stubs(:disconnect)
+        @app.stubs(:exit).with(1)
+
+        e = mock
+        e.stubs(:backtrace).returns(["rspec"])
+        e.stubs(:to_s).returns("rspec")
+
+        @app.expects(:options).returns({:verbose => true}).twice
+        out.expects(:puts).with("#{$0} failed to run: rspec (Mocha::Mock)")
+        out.expects(:puts).with("\tfrom rspec")
+
+        @app.application_failure(e, out)
+      end
+    end
   end
 end

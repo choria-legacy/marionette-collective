@@ -207,13 +207,17 @@ module MCollective
 
     # Handles failure, if we're far enough in the initialization
     # phase it will log backtraces if its in verbose mode only
-    def application_failure(e)
-      STDERR.puts "#{$0} failed to run: #{e} (#{e.class})"
+    def application_failure(e, err_dest=STDERR)
+      # peole can use exit() anywhere and not get nasty backtraces as a result
+      if e.is_a?(SystemExit)
+        disconnect
+        raise(e)
+      end
 
-      if options
-        e.backtrace.each{|l| STDERR.puts "\tfrom #{l}"} if options[:verbose]
-      else
-        e.backtrace.each{|l| STDERR.puts "\tfrom #{l}"}
+      err_dest.puts "#{$0} failed to run: #{e} (#{e.class})"
+
+      if options.nil? || options[:verbose]
+        e.backtrace.each{|l| err_dest.puts "\tfrom #{l}"}
       end
 
       disconnect
@@ -233,9 +237,6 @@ module MCollective
 
       disconnect
 
-    rescue SystemExit
-      disconnect
-      raise
     rescue Exception => e
       application_failure(e)
     end
