@@ -4,7 +4,7 @@ module MCollective
     # and just brings in a lot of convention and standard approached.
     class Client
       attr_accessor :discovery_timeout, :timeout, :verbose, :filter, :config, :progress, :ttl, :reply_to
-      attr_reader :client, :stats, :ddl, :agent, :limit_targets, :limit_method, :output_format, :batch_size, :batch_sleep_time
+      attr_reader :client, :stats, :ddl, :agent, :limit_targets, :limit_method, :output_format, :batch_size, :batch_sleep_time, :batch_mode
 
       @@initial_options = nil
 
@@ -50,9 +50,11 @@ module MCollective
         @limit_method = Config.instance.rpclimitmethod
         @output_format = initial_options[:output_format] || :console
         @force_direct_request = false
-        @batch_size = initial_options[:batch_size]
-        @batch_sleep_time = Float(initial_options[:batch_sleep_time] || 1)
         @reply_to = initial_options[:reply_to]
+
+        @batch_size = Integer(initial_options[:batch_size] || 0)
+        @batch_sleep_time = Float(initial_options[:batch_sleep_time] || 1)
+        @batch_mode = @batch_size > 0
 
         agent_filter agent
 
@@ -217,9 +219,14 @@ module MCollective
 
         # if a global batch size is set just use that else set it
         # in the case that it was passed as an argument
-        batch_mode = args.include?(:batch_size) || @batch_size
+        batch_mode = args.include?(:batch_size) || @batch_mode
         batch_size = args.delete(:batch_size) || @batch_size
         batch_sleep_time = args.delete(:batch_sleep_time) || @batch_sleep_time
+
+        # if we were given a batch_size argument thats 0 and batch_mode was
+        # determined to be on via global options etc this will allow a batch_size
+        # of 0 to disable or batch_mode for this call only
+        batch_mode = (batch_mode && Integer(batch_size) > 0)
 
         # Handle single target requests by doing discovery and picking
         # a random node.  Then do a custom request specifying a filter
@@ -500,10 +507,12 @@ module MCollective
         @limit_method = method
       end
 
+      # Sets the batch size, if the size is set to 0 that will disable batch mode
       def batch_size=(limit)
         raise "Can only set batch size if direct addressing is supported" unless Config.instance.direct_addressing
 
         @batch_size = Integer(limit)
+        @batch_mode = @batch_size > 0
       end
 
       def batch_sleep_time=(time)

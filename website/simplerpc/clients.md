@@ -239,6 +239,9 @@ mc.echo(:msg => "hello world", :batch_size => 10, :batch_sleep_time => 5)
 
 By default batching is disabled and sleep time is 1
 
+Setting the batch_size to 0 will disable batch mode in both examples above,
+effectively overriding what was supplied on the command line.
+
 ## Forcing Rediscovery
 By default it will only do discovery once per script and then re-use the results, you can though force rediscovery if you had to adjust filters mid run for example.
 

@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/03/02|Allow batch mode to be enabled and disabled on demand during the life of a client|12854|
 |2012/02/29|Show the progress bar before sending any requests to give users feedback as soon as possible rather than after first result only|12865|
 |2012/02/23|Do not log exceptions in the RPC application when a non existing action is called with request paramters|12719|
 |2012/02/17|Log miscellaneous Stomp errors at error level rather than debug|12705|

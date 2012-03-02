@@ -34,6 +34,100 @@ module MCollective
           expect { @client.limit_method = "fail" }.to raise_error(/Unknown/)
         end
       end
+
+      describe "#method_missing" do
+        before do
+          client = stub
+          client.stubs("options=")
+          client.stubs(:collective).returns("mcollective")
+          MCollective::Client.stubs(:new).returns(client)
+
+          Config.any_instance.stubs(:loadconfig).with("/nonexisting").returns(true)
+        end
+
+        it "should reset the stats" do
+          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
+          client.stubs(:call_agent)
+
+          Stats.any_instance.expects(:reset).once
+          client.foo
+        end
+
+        it "should validate the request against the ddl" do
+          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
+
+          client.stubs(:call_agent)
+
+          ddl = mock
+          ddl.expects(:validate_request).with("rspec", {:arg => :val}).raises("validation failed")
+          client.instance_variable_set("@ddl", ddl)
+
+          expect { client.rspec(:arg => :val) }.to raise_error("validation failed")
+        end
+
+        it "should support limited targets" do
+          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
+          client.limit_targets = 10
+
+          client.expects(:pick_nodes_from_discovered).with(10).returns(["one", "two"])
+          client.expects(:custom_request).with("foo", {}, ["one", "two"], {"identity" => /^(one|two)$/}).once
+
+          client.foo
+        end
+
+        describe "batch mode" do
+          before do
+            Config.any_instance.stubs(:direct_addressing).returns(true)
+            @client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
+          end
+
+          it "should support global batch_size" do
+            @client.batch_size = 10
+            @client.expects(:call_agent_batched).with("rspec", {}, @client.options, 10, 1)
+            @client.rspec
+          end
+
+          it "should support custom batch_size" do
+            @client.expects(:call_agent_batched).with("rspec", {}, @client.options, 10, 1)
+            @client.rspec :batch_size => 10
+          end
+
+          it "should allow supplied batch_size override global one" do
+            @client.batch_size = 10
+            @client.expects(:call_agent_batched).with("rspec", {}, @client.options, 20, 1)
+            @client.rspec :batch_size => 20
+          end
+
+          it "should support global batch_sleep_time" do
+            @client.batch_size = 10
+            @client.batch_sleep_time = 20
+            @client.expects(:call_agent_batched).with("rspec", {}, @client.options, 10, 20)
+            @client.rspec
+          end
+
+          it "should support custom batch_sleep_time" do
+            @client.batch_size = 10
+            @client.expects(:call_agent_batched).with("rspec", {}, @client.options, 10, 20)
+            @client.rspec :batch_sleep_time => 20
+          end
+
+          it "should allow supplied batch_sleep_time override global one" do
+            @client.batch_size = 10
+            @client.batch_sleep_time = 10
+            @client.expects(:call_agent_batched).with("rspec", {}, @client.options, 10, 20)
+            @client.rspec :batch_sleep_time => 20
+          end
+        end
+
+        it "should support normal calls" do
+          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
+
+          client.expects(:call_agent).with("foo", {}, client.options, :auto).once
+
+          client.foo
+        end
+      end
+
       describe "#limit_targets=" do
         before do
           client = stub
@@ -228,8 +322,10 @@ module MCollective
           Config.any_instance.stubs(:direct_addressing).returns(true)
 
           client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
+          client.batch_mode.should == false
           client.batch_size = 5
           client.batch_size.should == 5
+          client.batch_mode.should == true
         end
 
         it "should only allow batch size to be set for direct addressing capable clients" do
@@ -237,6 +333,16 @@ module MCollective
           client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
 
           expect { client.batch_size = 5 }.to raise_error("Can only set batch size if direct addressing is supported")
+        end
+
+        it "should support disabling batch mode when supplied a batch size of 0" do
+          Config.any_instance.stubs(:direct_addressing).returns(true)
+
+          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
+          client.batch_size = 5
+          client.batch_mode.should == true
+          client.batch_size = 0
+          client.batch_mode.should == false
         end
       end
 
