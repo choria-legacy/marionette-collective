@@ -382,32 +382,40 @@ module MCollective
       # regular expressions then just use the provided data as discovered
       # data, avoiding discovery
       #
-      # Discovery can be forece if direct_addressing is enabled by passing
-      # in an array of hosts with :hosts or JSON data like those produced
-      # by mcollective rpc JSON output
+      # Discovery can be forced if direct_addressing is enabled by passing
+      # in an array of nodes with :nodes or JSON data like those produced
+      # by mcollective RPC JSON output using :json
       #
       # Will show a message indicating its doing discovery if running
       # verbose or if the :verbose flag is passed in.
       #
       # Use reset to force a new discovery
       def discover(flags={})
+        flags.keys.each do |key|
+          raise "Unknown option #{key} passed to discover" unless [:verbose, :hosts, :nodes, :json].include?(key)
+        end
+
         flags.include?(:verbose) ? verbose = flags[:verbose] : verbose = @verbose
 
         verbose = false unless @output_format == :console
 
-        reset if flags[:hosts] || flags[:json]
+        # flags[:nodes] and flags[:hosts] are the same thing, we should never have
+        # allowed :hosts as that was inconsistent with the established terminology
+        flags[:nodes] = flags.delete(:hosts) if flags.include?(:hosts)
+
+        reset if flags[:nodes] || flags[:json]
 
         unless @discovered_agents
-          # if either hosts or json is supplied try to figure out discovery data from there
+          # if either hosts or JSON is supplied try to figure out discovery data from there
           # if direct_addressing is not enabled this is a critical error as the user might
           # not have supplied filters so raise an exception
-          if flags[:hosts] || flags[:json]
+          if flags[:nodes] || flags[:json]
             raise "Can only supply discovery data if direct_addressing is enabled" unless Config.instance.direct_addressing
 
             hosts = []
 
-            if flags[:hosts]
-              hosts = Helpers.extract_hosts_from_array(flags[:hosts])
+            if flags[:nodes]
+              hosts = Helpers.extract_hosts_from_array(flags[:nodes])
             elsif flags[:json]
               hosts = Helpers.extract_hosts_from_json(flags[:json])
             end
@@ -420,7 +428,7 @@ module MCollective
           # if an identity filter is supplied and it is all strings no regex we can use that
           # as discovery data, technically the identity filter is then redundant if we are
           # in direct addressing mode and we could empty it out but this use case should
-          # only really be for a few -I's on the cli
+          # only really be for a few -I's on the CLI
           #
           # For safety we leave the filter in place for now, that way we can support this
           # enhancement also in broadcast mode

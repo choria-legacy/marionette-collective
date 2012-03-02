@@ -11,10 +11,11 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
-|2012/03/02|Allow exit() to be used everywere in application plugins, not just in the main method|12927|
+|2012/03/02|Treat :hosts and :nodes as equivalents when supplying discovery data, be more strict about flags discover will accept|12852|
+|2012/03/02|Allow exit() to be used everywhere in application plugins, not just in the main method|12927|
 |2012/03/02|Allow batch mode to be enabled and disabled on demand during the life of a client|12854|
 |2012/02/29|Show the progress bar before sending any requests to give users feedback as soon as possible rather than after first result only|12865|
-|2012/02/23|Do not log exceptions in the RPC application when a non existing action is called with request paramters|12719|
+|2012/02/23|Do not log exceptions in the RPC application when a non existing action is called with request parameters|12719|
 |2012/02/17|Log miscellaneous Stomp errors at error level rather than debug|12705|
 |2012/02/17|Improve subscription tracking by using the subID feature of the Stomp gem and handle duplicate exceptions|12703|
 |2012/02/15|Improve error handling in the inventory application for non responsive nodes|12638|
@@ -31,12 +32,12 @@ title: Changelog
 |2011/11/21|Remove unintended dependency on _pp_ in the ActiveMQ plugin|10992|
 |2011/11/17|Allow reply to destinations to be supplied on the command line or API|9847|
 |*2011/11/17*|*Release 1.3.2*|*10830*|
-|2011/11/16|Imrpove error reporting for code errors in application plugins|10883|
+|2011/11/16|Improve error reporting for code errors in application plugins|10883|
 |2011/11/15|The limit method is now configurable on each RPC client as well as the config file|7772|
 |2011/11/15|Add a --graph option to the ping application that shows response distribution|10864|
 |2011/11/14|An ActiveMQ specific connector was added that supports direct connections|7899|
 |2011/11/11|SimpleRPC clients now support native batching with --batch|5939|
-|2011/11/11|The client now unsubscribes from topics when it's idle minimising the risk of receiving missdirected messages|10670|
+|2011/11/11|The client now unsubscribes from topics when it's idle minimising the risk of receiving misdirected messages|10670|
 |2011/11/09|Security plugins now ignore miss directed messages early thus using fewer resources|10671|
 |2011/10/28|Support ruby-1.9.2-p290 and ruby-1.9.3-rc1|10352|
 |2011/10/27|callerid, certificate names, and identity names can now only have \w . and - in them|10327|

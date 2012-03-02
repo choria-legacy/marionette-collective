@@ -267,7 +267,7 @@ mode but only if the collective is configured to support direct messaging.
 {%highlight ruby %}
 mc = rpcclient("helloworld")
 
-mc.discover(:hosts => ["host1", "host2", "host3"]
+mc.discover(:nodes => ["host1", "host2", "host3"]
 
 printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
 {% endhighlight %}
@@ -286,7 +286,7 @@ file but you can also set it on the client:
 mc = rpcclient("helloworld")
 mc.ttl = 3600
 
-mc.discover(:hosts => ["host1", "host2", "host3"]
+mc.discover(:nodes => ["host1", "host2", "host3"]
 
 printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
 {% endhighlight %}

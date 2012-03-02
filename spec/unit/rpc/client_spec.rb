@@ -360,11 +360,20 @@ module MCollective
           MCollective::Client.expects(:new).returns(@client)
         end
 
-        it "should reset when :json or :hosts is provided" do
+        it "should not accept invalid flags" do
           Config.any_instance.stubs(:direct_addressing).returns(true)
           client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
-          client.expects(:reset).once
+
+          expect { client.discover(:rspec => :rspec) }.to raise_error("Unknown option rspec passed to discover")
+        end
+
+        it "should reset when :json, :hosts or :nodes are provided" do
+          Config.any_instance.stubs(:direct_addressing).returns(true)
+          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
+          client.expects(:reset).times(3)
           client.discover(:hosts => ["one"])
+          client.discover(:nodes => ["one"])
+          client.discover(:json => ["one"])
         end
 
         it "should only allow discovery data in direct addressing mode" do
@@ -373,15 +382,16 @@ module MCollective
           client.expects(:reset).once
 
           expect {
-            client.discover(:hosts => ["one"])
+            client.discover(:nodes => ["one"])
           }.to raise_error("Can only supply discovery data if direct_addressing is enabled")
         end
 
-        it "should parse :hosts and force direct requests" do
+        it "should parse :nodes and :hosts and force direct requests" do
           Config.any_instance.stubs(:direct_addressing).returns(true)
-          Helpers.expects(:extract_hosts_from_array).with(["one"]).returns(["one"]).once
+          Helpers.expects(:extract_hosts_from_array).with(["one"]).returns(["one"]).twice
 
           client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
+          client.discover(:nodes => ["one"]).should == ["one"]
           client.discover(:hosts => ["one"]).should == ["one"]
           client.instance_variable_get("@force_direct_request").should == true
           client.instance_variable_get("@discovered_agents").should == ["one"]
