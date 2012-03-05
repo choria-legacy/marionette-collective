@@ -210,6 +210,19 @@ option :count,
 
 Should the supplied value be 10 or more a error message will be displayed.
 
+#### Disabling standard sections of arguments
+By default every Application get all the RPC options enabling filtering, discovery etc.  In some cases this is undesirable so we let users disable those.
+
+{% highlight ruby %}
+class MCollective::Application::Echo<MCollective::Application
+   exclude_argument_sections "common", "filter", "rpc"
+end
+{% endhighlight %}
+
+This application will only have --help, --verbose and --config as options, all the other options will be removed.
+
+This option is only available in version 1.3.3 and newer
+
 #### Post argument parsing hook
 Right after all arguments are parsed you can have a hook in your program called, this hook could perhaps parse the remaining data on _ARGV_ after option parsing is complete.
 

@@ -11,9 +11,10 @@ module MCollective
 
     describe "#application_options" do
       it "should return the application options" do
-        Application.application_options.should == {:description  => nil,
-          :usage        => [],
-          :cli_arguments => []}
+        Application.application_options.should == {:description          => nil,
+                                                   :usage                => [],
+                                                   :cli_arguments        => [],
+                                                   :exclude_arg_sections => []}
       end
     end
 
@@ -32,9 +33,10 @@ module MCollective
 
     describe "#intialize_application_options" do
       it "should initialize application options correctly" do
-        Application.intialize_application_options.should == {:description  => nil,
-          :usage        => [],
-          :cli_arguments => []}
+        Application.intialize_application_options.should == {:description          => nil,
+                                                             :usage                => [],
+                                                             :cli_arguments        => [],
+                                                             :exclude_arg_sections => []}
       end
     end
 
@@ -54,22 +56,35 @@ module MCollective
       end
     end
 
+    describe "#exclude_argument_sections" do
+      it "should set the excluded sections correctly" do
+        Application.exclude_argument_sections "common", "rpc", "filter"
+        Application[:exclude_arg_sections].should == ["common", "rpc", "filter"]
+        Application.exclude_argument_sections ["common", "rpc", "filter"]
+        Application[:exclude_arg_sections].should == ["common", "rpc", "filter"]
+      end
+
+      it "should detect unknown sections" do
+        expect { Application.exclude_argument_sections "rspec" }.to raise_error("Unknown CLI argument section rspec")
+      end
+    end
+
     describe "#option" do
       it "should add an option correctly" do
         Application.option :test,
-        :description => "description",
-        :arguments => "--config CONFIG",
-        :type => Integer,
-        :required => true
+                           :description => "description",
+                           :arguments => "--config CONFIG",
+                           :type => Integer,
+                           :required => true
 
         args = Application[:cli_arguments].first
         args.delete(:validate)
 
         args.should == {:name=>:test,
-          :arguments=>"--config CONFIG",
-          :required=>true,
-          :type=>Integer,
-          :description=>"description"}
+                        :arguments=>"--config CONFIG",
+                        :required=>true,
+                        :type=>Integer,
+                        :description=>"description"}
       end
 
       it "should set correct defaults" do
@@ -79,10 +94,10 @@ module MCollective
         args.delete(:validate)
 
         args.should == {:name=>:test,
-          :arguments=>[],
-          :required=>false,
-          :type=>String,
-          :description=>nil}
+                        :arguments=>[],
+                        :required=>false,
+                        :type=>String,
+                        :description=>nil}
       end
     end
 
@@ -114,9 +129,9 @@ module MCollective
         Application.any_instance.stubs("main").returns(true)
 
         Application.option :foo,
-        :description => "meh",
-        :arguments => "--foo [FOO]",
-        :type => :array
+                           :description => "meh",
+                           :arguments => "--foo [FOO]",
+                           :type => :array
 
         ARGV.clear
         ARGV << "--foo=bar" << "--foo=baz"
@@ -133,9 +148,9 @@ module MCollective
         Application.any_instance.stubs("main").returns(true)
 
         Application.option :foo,
-        :description => "meh",
-        :arguments => "--foo",
-        :type => :boolean
+                           :description => "meh",
+                           :arguments => "--foo",
+                           :type => :boolean
 
         ARGV.clear
         ARGV << "--foo"
@@ -178,11 +193,11 @@ module MCollective
         Application.any_instance.stubs("main").returns(true)
 
         Application.option :foo,
-        :description => "meh",
-        :required => true,
-        :default => "meh",
-        :arguments => "--foo [FOO]",
-        :validate => Proc.new {|v| "failed"}
+                           :description => "meh",
+                           :required => true,
+                           :default => "meh",
+                           :arguments => "--foo [FOO]",
+                           :validate => Proc.new {|v| "failed"}
 
         ARGV.clear
         ARGV << "--foo=bar"
@@ -198,10 +213,10 @@ module MCollective
         Application.any_instance.stubs("main").returns(true)
 
         Application.option :foo,
-        :description => "meh",
-        :required => true,
-        :default => "meh",
-        :arguments => "--foo [FOO]"
+                           :description => "meh",
+                           :required => true,
+                           :default => "meh",
+                           :arguments => "--foo [FOO]"
 
         a = Application.new
         a.run
@@ -219,9 +234,9 @@ module MCollective
         ARGV << "--foo=bar"
 
         Application.option :foo,
-        :description => "meh",
-        :required => true,
-        :arguments => "--foo [FOO]"
+                           :description => "meh",
+                           :required => true,
+                           :arguments => "--foo [FOO]"
 
         Application.new.run
 
@@ -238,8 +253,8 @@ module MCollective
         ARGV << "--foo=bar"
 
         Application.option :foo,
-        :description => "meh",
-        :arguments => "--foo [FOO]"
+                           :description => "meh",
+                           :arguments => "--foo [FOO]"
 
         Application.new.run
 
@@ -257,8 +272,8 @@ module MCollective
         ARGV << "--foo=bar"
 
         Application.option :foo,
-        :description => "meh",
-        :arguments => "--foo [FOO]"
+                           :description => "meh",
+                           :arguments => "--foo [FOO]"
 
         Application.new.run
 
@@ -273,6 +288,12 @@ module MCollective
         Application.any_instance.stubs("main").returns(true)
 
         Application.new.run
+      end
+    end
+
+    describe "#application_options" do
+      it "sshould return the application options" do
+        Application.new.application_options.should == Application.application_options
       end
     end
 
@@ -293,8 +314,8 @@ module MCollective
     describe "#application_cli_arguments" do
       it "should provide the right usage" do
         Application.option :foo,
-        :description => "meh",
-        :arguments => "--foo [FOO]"
+                           :description => "meh",
+                           :arguments => "--foo [FOO]"
 
         args = Application.new.application_cli_arguments.first
 
@@ -302,10 +323,10 @@ module MCollective
         args.delete(:validate)
 
         args.should == {:description=>"meh",
-          :name=>:foo,
-          :arguments=>"--foo [FOO]",
-          :type=>String,
-          :required=>false}
+                        :name=>:foo,
+                        :arguments=>"--foo [FOO]",
+                        :type=>String,
+                        :required=>false}
       end
     end
 
@@ -340,8 +361,8 @@ module MCollective
         ARGV << "--foo=bar"
 
         Application.option :foo,
-        :description => "meh",
-        :arguments => "--foo [FOO]"
+                           :description => "meh",
+                           :arguments => "--foo [FOO]"
 
         a = Application.new
         a.run
@@ -438,6 +459,45 @@ module MCollective
         PluginManager.expects("[]").with("connector_plugin").returns(connector)
 
         Application.new.disconnect
+      end
+    end
+
+    describe "#clioptions" do
+      it "should pass the excluded argument section" do
+        oparser = mock
+        oparser.stubs(:parse)
+
+        Application.exclude_argument_sections "rpc"
+
+        Optionparser.expects(:new).with({:verbose => false, :progress_bar => true}, "filter", ["rpc"]).returns(oparser)
+
+        Application.new.application_parse_options
+      end
+
+      it "should add the RPC options" do
+        oparser = mock
+        oparser.stubs(:parse).yields(oparser, {})
+        oparser.stubs(:banner=)
+        oparser.stubs(:define_tail)
+
+        Optionparser.stubs(:new).with({:verbose => false, :progress_bar => true}, "filter", []).returns(oparser)
+        RPC::Helpers.expects(:add_simplerpc_options).with(oparser, {})
+
+        Application.new.application_parse_options
+      end
+
+      it "should support bypassing the RPC options" do
+        oparser = mock
+        oparser.stubs(:parse).yields(oparser, {})
+        oparser.stubs(:banner=)
+        oparser.stubs(:define_tail)
+
+        Application.exclude_argument_sections "rpc"
+
+        Optionparser.stubs(:new).with({:verbose => false, :progress_bar => true}, "filter", ["rpc"]).returns(oparser)
+        RPC::Helpers.expects(:add_simplerpc_options).never
+
+        Application.new.application_parse_options
       end
     end
 

@@ -9,11 +9,17 @@ module MCollective
     #  oparser = MCollective::Optionparser.new({:verbose => true}, "filter")
     #
     # Stats a parser in non verbose mode that does support discovery
+    #
     #  oparser = MCollective::Optionparser.new()
     #
-    def initialize(defaults = {}, include = nil)
-      @parser = OptionParser.new
-      @include = include
+    # Starts a parser in verbose mode that does not show the common options:
+    #
+    #  oparser = MCollective::Optionparser.new({:verbose => true}, "filter", "common")
+    def initialize(defaults = {}, include_sections = nil, exclude_sections = nil)
+      @parser = ::OptionParser.new
+
+      @include = [include_sections].flatten
+      @exclude = [exclude_sections].flatten
 
       @options = Util.default_options
 
@@ -40,9 +46,13 @@ module MCollective
     def parse(&block)
       yield(@parser, @options) if block_given?
 
-      add_common_options
+      add_required_options
 
-      [@include].flatten.compact.each do |i|
+      add_common_options unless @exclude.include?("common")
+
+      @include.each do |i|
+        next if @exclude.include?(i)
+
         options_name = "add_#{i}_options"
         send(options_name)  if respond_to?(options_name)
       end
@@ -51,7 +61,7 @@ module MCollective
 
       @parser.parse!
 
-      @options[:collective] = Config.instance.main_collective unless @options.include?(:collective)
+      @options[:collective] = Config.instance.main_collective unless @options[:collective]
 
       @options
     end
@@ -96,17 +106,29 @@ module MCollective
       end
     end
 
-    # These options will be added to all cli tools
+    # These options should always be present
+    def add_required_options
+      @parser.on('-c', '--config FILE', 'Load configuratuion from file rather than default') do |f|
+        @options[:config] = f
+      end
+
+      @parser.on('-v', '--verbose', 'Be verbose') do |v|
+        @options[:verbose] = v
+      end
+
+      @parser.on('-h', '--help', 'Display this screen') do
+        puts @parser
+        exit! 1
+      end
+    end
+
+    # These options will be added to most cli tools
     def add_common_options
       @parser.separator ""
       @parser.separator "Common Options"
 
       @parser.on('-T', '--target COLLECTIVE', 'Target messages to a specific sub collective') do |f|
         @options[:collective] = f
-      end
-
-      @parser.on('-c', '--config FILE', 'Load configuratuion from file rather than default') do |f|
-        @options[:config] = f
       end
 
       @parser.on('--dt', '--discovery-timeout SECONDS', Integer, 'Timeout for doing discovery') do |t|
@@ -127,15 +149,6 @@ module MCollective
 
       @parser.on('--reply-to TARGET', 'Set a custom target for replies') do |v|
         @options[:reply_to] = v
-      end
-
-      @parser.on('-v', '--verbose', 'Be verbose') do |v|
-        @options[:verbose] = v
-      end
-
-      @parser.on('-h', '--help', 'Display this screen') do
-        puts @parser
-        exit! 1
       end
     end
 

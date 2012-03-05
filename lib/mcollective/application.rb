@@ -35,6 +35,17 @@ module MCollective
         self[:usage] << usage
       end
 
+      def exclude_argument_sections(*sections)
+        sections = [sections].flatten
+
+        sections.each do |s|
+          raise "Unknown CLI argument section #{s}" unless ["rpc", "common", "filter"].include?(s)
+        end
+
+        intialize_application_options unless @application_options
+        self[:exclude_arg_sections] = sections
+      end
+
       # Wrapper to create command line options
       #
       #  - name: varaible name that will be used to access the option value
@@ -47,8 +58,8 @@ module MCollective
       #    the supplied value
       #
       #   option :foo,
-      #      :description => "The foo option"
-      #      :arguments   => ["--foo ARG"]
+      #          :description => "The foo option"
+      #          :arguments   => ["--foo ARG"]
       #
       # after this the value supplied will be in configuration[:foo]
       def option(name, arguments)
@@ -66,9 +77,10 @@ module MCollective
 
       # Creates an empty set of options
       def intialize_application_options
-        @application_options = {:description   => nil,
-                                :usage         => [],
-                                :cli_arguments => []}
+        @application_options = {:description          => nil,
+                                :usage                => [],
+                                :cli_arguments        => [],
+                                :exclude_arg_sections => []}
       end
     end
 
@@ -94,12 +106,28 @@ module MCollective
       end
     end
 
+    # Creates a standard options hash, pass in a block to add extra headings etc
+    # see Optionparser
+    def clioptions
+      oparser = Optionparser.new({:verbose => false, :progress_bar => true}, "filter", application_options[:exclude_arg_sections])
+
+      options = oparser.parse do |parser, options|
+        if block_given?
+          yield(parser, options)
+        end
+
+        RPC::Helpers.add_simplerpc_options(parser, options) unless application_options[:exclude_arg_sections].include?("rpc")
+      end
+
+      return options
+    end
+
     # Builds an ObjectParser config, parse the CLI options and validates based
     # on the option config
     def application_parse_options
       @options ||= {:verbose => false}
 
-      @options = rpcoptions do |parser, options|
+      @options = clioptions do |parser, options|
         parser.define_head application_description if application_description
         parser.banner = ""
 
@@ -187,14 +215,19 @@ module MCollective
       application_failure(e)
     end
 
+    # Retrieves the full hash of application options
+    def application_options
+      self.class.application_options
+    end
+
     # Retrieve the current application description
     def application_description
-      self.class.application_options[:description]
+      application_options[:description]
     end
 
     # Return the current usage text false if nothing is set
     def application_usage
-      usage = self.class.application_options[:usage]
+      usage = application_options[:usage]
 
       usage.empty? ? false : usage
     end
@@ -202,7 +235,7 @@ module MCollective
     # Returns an array of all the arguments built using
     # calls to optin
     def application_cli_arguments
-      self.class.application_options[:cli_arguments]
+      application_options[:cli_arguments]
     end
 
     # Handles failure, if we're far enough in the initialization
