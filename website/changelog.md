@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/03/05|Fix base 64 encoding and decoding of message payloads that would previous raise unexpected exceptions|12950|
 |2012/03/02|Treat :hosts and :nodes as equivalents when supplying discovery data, be more strict about flags discover will accept|12852|
 |2012/03/02|Allow exit() to be used everywhere in application plugins, not just in the main method|12927|
 |2012/03/02|Allow batch mode to be enabled and disabled on demand during the life of a client|12854|

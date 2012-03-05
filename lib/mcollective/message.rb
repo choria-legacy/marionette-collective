@@ -107,14 +107,14 @@ module MCollective
     def base64_decode!
       return unless @base64
 
-      @body = SSL.base64_decode(@body)
+      @payload = SSL.base64_decode(@payload)
       @base64 = false
     end
 
     def base64_encode!
       return if @base64
 
-      @body = SSL.base64_encode(@body)
+      @payload = SSL.base64_encode(@payload)
       @base64 = true
     end
 

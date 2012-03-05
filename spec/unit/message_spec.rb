@@ -108,7 +108,7 @@ module MCollective
       end
 
       it "should set base64 to false after decoding" do
-        SSL.expects(:base64_decode)
+        SSL.expects(:base64_decode).with("payload")
         m = Message.new("payload", "message", :base64 => true)
         m.base64?.should == false
       end
@@ -123,7 +123,7 @@ module MCollective
       end
 
       it "should encode plain messages" do
-        SSL.expects(:base64_encode)
+        SSL.expects(:base64_encode).with("payload")
         m = Message.new("payload", "message")
         m.base64_encode!
       end
