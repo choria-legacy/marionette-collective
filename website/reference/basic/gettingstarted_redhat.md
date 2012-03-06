@@ -185,6 +185,7 @@ We're assuming you called the machine running ActiveMQ *stomp.example.net* pleas
   libdir = /usr/libexec/mcollective
   logfile = /dev/null
   loglevel = error
+  topicprefix = /topic/
 
   # connector plugin config
   connector = stomp
@@ -206,6 +207,7 @@ You should also create _/etc/mcollective/server.cfg_ here's a sample, , a full r
   logfile = /var/log/mcollective.log
   daemonize = 1
   loglevel = info
+  topicprefix = /topic/
 
   # connector plugin config
   connector = stomp
