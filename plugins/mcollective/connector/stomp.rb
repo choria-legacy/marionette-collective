@@ -77,7 +77,7 @@ module MCollective
         end
 
         def on_connectfail(params=nil)
-          Log.info("Connction to #{stomp_url(params)} failed on attempt #{params[:cur_conattempts]}")
+          Log.info("Connection to #{stomp_url(params)} failed on attempt #{params[:cur_conattempts]}")
         rescue
         end
 
@@ -167,7 +167,17 @@ module MCollective
       # Receives a message from the Stomp connection
       def receive
         Log.debug("Waiting for a message from Stomp")
-        msg = @connection.receive
+
+        # When the Stomp library > 1.2.0 is mid reconnecting due to its reliable connection
+        # handling it sets the connection to closed.  If we happen to be receiving at just
+        # that time we will get an exception warning about the closed connection so handling
+        # that here with a sleep and a retry.
+        begin
+          msg = @connection.receive
+        rescue ::Stomp::Error::NoCurrentConnection
+          sleep 1
+          retry
+        end
 
         Message.new(msg.body, msg, :base64 => @base64, :headers => msg.headers)
       end

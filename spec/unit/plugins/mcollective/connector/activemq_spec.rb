@@ -141,6 +141,18 @@ module MCollective
           received = @c.receive
           received.should == "message"
         end
+
+        it "should sleep and retry if recieving while disconnected" do
+          payload = mock
+          payload.stubs(:body).returns("msg")
+          payload.stubs(:headers).returns("headers")
+
+          Message.stubs(:new).returns("rspec")
+          @connection.expects(:receive).raises(::Stomp::Error::NoCurrentConnection).returns(payload).twice
+          @c.expects(:sleep).with(1)
+
+          @c.receive.should == "rspec"
+        end
       end
 
       describe "#publish" do

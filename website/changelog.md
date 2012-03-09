@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/03/09|Handle exceptions added to the Stomp 1.1 compliant versions of the Stomp gem|13020|
 |2012/03/09|Specifically enable reliable communications while using the pool style syntax|13040|
 |2012/03/06|Initial support for the Windows Platform|12555|
 |2012/03/05|Application plugins can now disable any of 3 sections of the standard CLI argument parsers|12859|
