@@ -108,6 +108,7 @@ module MCollective
                                        :max_reconnect_attempts => 5,
                                        :initial_reconnect_delay => 0.02,
                                        :randomize => true,
+                                       :reliable => true,
                                        :logger => "logger",
                                        :hosts => [{:passcode => 'password1',
                                                    :host => 'host1',
