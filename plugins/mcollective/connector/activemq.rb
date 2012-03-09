@@ -143,6 +143,8 @@ module MCollective
           connection[:randomize] = get_bool_option("activemq.randomize", false)
           connection[:backup] = get_bool_option("activemq.backup", false)
           connection[:timeout] = get_option("activemq.timeout", -1).to_i
+          connection[:reliable] = true
+
           connection[:logger] = EventLogger.new
 
           @connection = connector.new(connection)

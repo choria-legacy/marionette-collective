@@ -153,9 +153,9 @@ module MCollective
             connection[:randomize] = get_bool_option("stomp.pool.randomize", false)
             connection[:backup] = get_bool_option("stomp.pool.backup", false)
             connection[:timeout] = get_option("stomp.pool.timeout", -1).to_i
+            connection[:reliable] = true
 
-            stomp_logger = EventLogger.new
-            connection[:logger] = stomp_logger
+            connection[:logger] = EventLogger.new
 
             @connection = connector.new(connection)
           end
