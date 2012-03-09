@@ -19,6 +19,10 @@ module MCollective
   module Connector
     describe Activemq do
       before do
+        unless ::Stomp::Error.constants.map{|c| c.to_s}.include?("NoCurrentConnection")
+          class ::Stomp::Error::NoCurrentConnection < RuntimeError ; end
+        end
+
         @config = mock
         @config.stubs(:configured).returns(true)
         @config.stubs(:identity).returns("rspec")
