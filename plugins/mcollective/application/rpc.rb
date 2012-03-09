@@ -132,7 +132,7 @@ class MCollective::Application::Rpc<MCollective::Application
 
       printrpc mc.send(configuration[:action], configuration[:arguments])
 
-      printrpcstats :caption => "#{configuration[:agent]}##{configuration[:action]} call stats"
+      printrpcstats :caption => "#{configuration[:agent]}##{configuration[:action]} call stats" if mc.discover.size > 0
 
       halt mc.stats
     end

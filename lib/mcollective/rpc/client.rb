@@ -698,13 +698,13 @@ module MCollective
         result = []
         respcount = 0
 
-        if @progress && !block_given?
-          twirl = Progress.new
-          @stdout.puts
-          @stdout.print twirl.twirl(respcount, discovered.size)
-        end
-
         if discovered.size > 0
+          if @progress && !block_given?
+            twirl = Progress.new
+            @stdout.puts
+            @stdout.print twirl.twirl(respcount, discovered.size)
+          end
+
           @client.req(message) do |resp|
             respcount += 1
 
