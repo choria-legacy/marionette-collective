@@ -24,11 +24,11 @@ module MCollective
       attr_reader :command, :agent, :action, :format, :stdout, :stderr, :request
 
       def initialize(command, request, format=:json)
-        @command = command
         @agent = request.agent
         @action = request.action
         @format = format
         @request = request
+        @command = path_to_command(command)
         @stdout = ""
         @stderr = ""
       end
@@ -55,9 +55,9 @@ module MCollective
         stdout.each_line {|l| Log.info("#{to_s}: #{l.chomp}")} unless stdout.empty?
 
         {:exitstatus => runner.status.exitstatus,
-          :stdout     => runner.stdout,
-          :stderr     => runner.stderr,
-          :data       => load_results(reply_file.path)}
+         :stdout     => runner.stdout,
+         :stderr     => runner.stderr,
+         :data       => load_results(reply_file.path)}
       ensure
         request_file.close! if request_file.respond_to?("close!")
         reply_file.close! if reply_file.respond_to?("close")
@@ -65,7 +65,7 @@ module MCollective
 
       def shell(command, infile, outfile)
         env = {"MCOLLECTIVE_REQUEST_FILE" => infile,
-          "MCOLLECTIVE_REPLY_FILE"   => outfile}
+               "MCOLLECTIVE_REPLY_FILE"   => outfile}
 
         Shell.new("#{command} #{infile} #{outfile}", :cwd => Dir.tmpdir, :stdout => stdout, :stderr => stderr, :environment => env)
       end
@@ -119,11 +119,23 @@ module MCollective
       end
 
       def to_s
-        "#{agent}##{action} command: #{command}"
+        "%s#%s command: %s" % [ agent, action, command ]
       end
 
       def tempfile(prefix)
         Tempfile.new("mcollective_#{prefix}", Dir.tmpdir)
+      end
+
+      def path_to_command(command)
+        unless command[0,1] == File::SEPARATOR
+          Config.instance.libdir.each do |libdir|
+            command_file = File.join(libdir, "agent", agent, command)
+
+            return command_file if File.exist?(command_file)
+          end
+        end
+
+        return command
       end
     end
   end

@@ -423,6 +423,16 @@ logged on the server at *error* level and used in the text for the fail text.
 
 Any text to STDOUT will be logged on the server at level *info*.
 
+As of version 1.3.3 there's a standard location for action scripts:
+
+{% highlight ruby %}
+action "test" do
+    implemented_by "script.py"
+end
+{% endhighlight %}
+
+This will search each configured libdir for _libdir/agent/agent_name/script.py_. If you specified a full path it will not try to find the file in libdirs.
+
 ## Authorization
 You can write a fine grained Authorization system to control access to actions and agents, please see [SimpleRPCAuthorization] for full details.
 

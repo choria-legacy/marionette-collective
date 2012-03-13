@@ -7,10 +7,12 @@ module MCollective
     describe ActionRunner do
       before(:each) do
         @req = mock
-        @req.expects(:agent).returns("spectester")
-        @req.expects(:action).returns("tester")
+        @req.stubs(:agent).returns("spectester")
+        @req.stubs(:action).returns("tester")
 
-        @runner = ActionRunner.new("/bin/echo 1", @req, :json)
+        command = "/bin/echo 1"
+
+        @runner = ActionRunner.new(command, @req, :json)
       end
 
       describe "#initialize" do
@@ -40,6 +42,11 @@ module MCollective
 
         it "should set stderr" do
           @runner.stderr.should == ""
+        end
+
+        it "should set the command via path_to_command" do
+          ActionRunner.any_instance.expects(:path_to_command).with("rspec").once
+          ActionRunner.new("rspec", @req, :json)
         end
       end
 
@@ -166,6 +173,39 @@ module MCollective
 
         it "should contain the prefix in its name" do
           @runner.tempfile("foo").path.should match(/foo/)
+        end
+      end
+
+      describe "#path_to_command" do
+        it "should return the command if it starts with separator" do
+          command = "#{File::SEPARATOR}rspec"
+
+          runner = ActionRunner.new(command , @req, :json)
+          runner.path_to_command(command).should == command
+        end
+
+        it "should find the first match in the libdir" do
+          Config.any_instance.expects(:libdir).returns(["#{File::SEPARATOR}libdir1", "#{File::SEPARATOR}libdir2"])
+
+          action_in_first_dir = File.join(File::SEPARATOR, "libdir1", "agent", "spectester", "action.sh")
+          action_in_last_dir = File.join(File::SEPARATOR, "libdir2", "agent", "spectester", "action.sh")
+
+          File.expects("exist?").with(action_in_first_dir).returns(true)
+          File.expects("exist?").with(action_in_last_dir).never
+
+          ActionRunner.new("action.sh", @req, :json).command.should == action_in_first_dir
+        end
+
+        it "should find the match even in the last libdir" do
+          Config.any_instance.expects(:libdir).returns(["#{File::SEPARATOR}libdir1", "#{File::SEPARATOR}libdir2"])
+
+          action_in_first_dir = File.join(File::SEPARATOR, "libdir1", "agent", "spectester", "action.sh")
+          action_in_last_dir = File.join(File::SEPARATOR, "libdir2", "agent", "spectester", "action.sh")
+
+          File.expects("exist?").with(action_in_first_dir).returns(false)
+          File.expects("exist?").with(action_in_last_dir).returns(true)
+
+          ActionRunner.new("action.sh", @req, :json).command.should == action_in_last_dir
         end
       end
     end
