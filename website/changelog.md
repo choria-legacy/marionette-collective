@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/03/14|Simplify handling of signals like TERM and INT and remove pid file on exit|13105|
 |2012/03/13|Create a conventional place to store implemented_by scripts|13064|
 |2012/03/09|Handle exceptions added to the Stomp 1.1 compliant versions of the Stomp gem|13020|
 |2012/03/09|Specifically enable reliable communications while using the pool style syntax|13040|

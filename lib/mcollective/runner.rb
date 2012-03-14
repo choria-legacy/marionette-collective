@@ -53,10 +53,10 @@ module MCollective
           else
             agentmsg(request)
           end
-        rescue Interrupt
-          Log.warn("Exiting after interrupt signal")
+        rescue SignalException => e
+          Log.warn("Exiting after signal: #{e}")
           @connection.disconnect
-          exit!
+          raise
 
         rescue MsgTTLExpired => e
           Log.warn(e)

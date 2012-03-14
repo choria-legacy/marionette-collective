@@ -25,8 +25,12 @@ module MCollective
           end
         end
 
-        runner = Runner.new(nil)
-        runner.run
+        begin
+          runner = Runner.new(nil)
+          runner.run
+        ensure
+          File.unlink(pid) if pid && File.exist?(pid)
+        end
       end
     end
   end
