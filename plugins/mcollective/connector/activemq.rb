@@ -90,8 +90,18 @@ module MCollective
         rescue
         end
 
+        def on_ssl_connecting(params)
+          Log.info("Performing SSL connection to #{stomp_url(params)}")
+        rescue
+        end
+
+        def on_ssl_connected(params)
+          Log.info("Connected SSL socket #{stomp_url(params)}")
+        rescue
+        end
+
         def stomp_url(params)
-          "stomp://%s@%s:%d" % [params[:cur_login], params[:cur_host], params[:cur_port]]
+          "%s://%s@%s:%d" % [ params[:cur_ssl] ? "stomp+ssl" : "stomp", params[:cur_login], params[:cur_host], params[:cur_port]]
         end
       end
 
