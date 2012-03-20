@@ -264,5 +264,11 @@ module MCollective
         return Util.has_cf_class?(expression.values.first)
       end
     end
+
+    # Returns the current ruby version as per RUBY_VERSION, mostly
+    # doing this here to aid testing
+    def self.ruby_version
+      RUBY_VERSION
+    end
   end
 end

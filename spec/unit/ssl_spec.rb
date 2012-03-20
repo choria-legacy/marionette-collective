@@ -99,6 +99,20 @@ module MCollective
       it "should return nil if nil key was given" do
         @ssl.read_key(:public, nil).should == nil
       end
+
+      it "should clear the OpenSSL error queue on ruby 1.8" do
+        Util.expects(:ruby_version).returns("1.8.7")
+        OpenSSL.expects(:errors)
+        @ssl.read_key(:public, "#{@rootdir}/../fixtures/test-public.pem")
+        @ssl.read_key(:private, "#{@rootdir}/../fixtures/test-private.pem")
+      end
+
+      it "should not clear the OpenSSL error queue on ruby > 1.8" do
+        Util.expects(:ruby_version).returns("1.9.3")
+        OpenSSL.expects(:errors).never
+        @ssl.read_key(:public, "#{@rootdir}/../fixtures/test-public.pem")
+        @ssl.read_key(:private, "#{@rootdir}/../fixtures/test-private.pem")
+      end
     end
 
     describe "#base64_encode" do
