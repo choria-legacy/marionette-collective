@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/03/20|Work around SSL_read errors when using SSL or AES plugins and Stomp+SSL in Ruby < 1.9.3|13207|
 |2012/03/16|Improve logging for SSL connections when using Stomp Gem newer than 1.2.0|13165|
 |2012/03/14|Simplify handling of signals like TERM and INT and remove pid file on exit|13105|
 |2012/03/13|Create a conventional place to store implemented_by scripts|13064|
