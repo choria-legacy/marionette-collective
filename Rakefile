@@ -92,7 +92,7 @@ task :package => [:clean, :doc] do
   safe_system("cp -R #{PROJ_FILES.join(' ')} build/#{PROJ_NAME}-#{CURRENT_VERSION}")
 
   announce "Setting MCollective.version to #{CURRENT_VERSION}"
-  safe_system("cd build/#{PROJ_NAME}-#{CURRENT_VERSION}/lib && sed --in-place -e s/@DEVELOPMENT_VERSION@/#{CURRENT_VERSION}/ mcollective.rb")
+  safe_system("cd build/#{PROJ_NAME}-#{CURRENT_VERSION}/lib && sed -i -e s/@DEVELOPMENT_VERSION@/#{CURRENT_VERSION}/ mcollective.rb")
 
   safe_system("cd build && tar --exclude .svn -cvzf #{PROJ_NAME}-#{CURRENT_VERSION}.tgz #{PROJ_NAME}-#{CURRENT_VERSION}")
 end
