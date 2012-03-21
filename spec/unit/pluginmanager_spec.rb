@@ -101,12 +101,24 @@ module MCollective
 
       it "should find all plugins in configured libdirs" do
         File.expects(:join).with(["/libdir/", "mcollective", "test"]).returns("/plugindir/")
+        File.expects(:directory?).with("/plugindir/").returns(true)
         Dir.expects(:new).with("/plugindir/").returns(["plugin.rb"])
         PluginManager.find("test").should == ["plugin"]
       end
 
       it "should find all plugins with a given file extension" do
         File.expects(:join).with(["/libdir/", "mcollective", "test"]).returns("/plugindir/")
+        File.expects(:directory?).with("/plugindir/").returns(true)
+        Dir.expects(:new).with("/plugindir/").returns(["plugin.ddl"])
+        PluginManager.find("test", "ddl").should == ["plugin"]
+      end
+
+      it "should skip libdirs that do not have the plugin type directories" do
+        @config.stubs(:libdir).returns(["/plugindir/", "/tmp/"])
+        File.expects(:join).with(["/plugindir/", "mcollective", "test"]).returns("/plugindir/")
+        File.expects(:join).with(["/tmp/", "mcollective", "test"]).returns("/tmpdir/")
+        File.expects(:directory?).with("/plugindir/").returns(true)
+        File.expects(:directory?).with("/tmpdir/").returns(false)
         Dir.expects(:new).with("/plugindir/").returns(["plugin.ddl"])
         PluginManager.find("test", "ddl").should == ["plugin"]
       end

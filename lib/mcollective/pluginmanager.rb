@@ -120,6 +120,7 @@ module MCollective
 
       Config.instance.libdir.each do |libdir|
         plugdir = File.join([libdir, "mcollective", type])
+        next unless File.directory?(plugdir)
 
         Dir.new(plugdir).grep(/#{extension}$/).map do |plugin|
           plugins << File.basename(plugin, extension)
