@@ -11,10 +11,10 @@ diff -urNad mcollective-0.4.1~/etc/client.cfg mcollective-0.4.1/etc/client.cfg
 @@ -0,0 +1,19 @@
 +topicprefix = /topic/mcollective
 +libdir = /usr/share/mcollective/plugins
-+logfile = /dev/null
-+loglevel = info
++logger_type = console
++loglevel = warn
 +
-+# Plugins 
++# Plugins
 +securityprovider = psk
 +plugin.psk = unset
 +
@@ -34,10 +34,10 @@ diff -urNad mcollective-0.4.1~/etc/client.cfg.dist mcollective-0.4.1/etc/client.
 @@ -1,19 +0,0 @@
 -topicprefix = /topic/mcollective
 -libdir = /usr/libexec/mcollective
--logfile = /dev/null
--loglevel = info
+-logger_type = console
+-loglevel = warn
 -
--# Plugins 
+-# Plugins
 -securityprovider = psk
 -plugin.psk = unset
 -
@@ -73,7 +73,7 @@ diff -urNad mcollective-0.4.1~/etc/server.cfg mcollective-0.4.1/etc/server.cfg
 +loglevel = info
 +daemonize = 1
 +
-+# Plugins 
++# Plugins
 +securityprovider = psk
 +plugin.psk = unset
 +
@@ -97,7 +97,7 @@ diff -urNad mcollective-0.4.1~/etc/server.cfg.dist mcollective-0.4.1/etc/server.
 -loglevel = info
 -daemonize = 1
 -
--# Plugins 
+-# Plugins
 -securityprovider = psk
 -plugin.psk = unset
 -

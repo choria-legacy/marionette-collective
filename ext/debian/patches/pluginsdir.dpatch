@@ -14,8 +14,8 @@ diff -urNad mcollective-1.1.4~/etc/client.cfg.dist mcollective-1.1.4/etc/client.
  collectives = mcollective
 -libdir = /usr/libexec/mcollective
 +libdir = /usr/share/mcollective/plugins
- logfile = /dev/null
- loglevel = info
+ logger_type = console
+ loglevel = warn
  
 diff -urNad mcollective-1.1.4~/etc/server.cfg.dist mcollective-1.1.4/etc/server.cfg.dist
 --- mcollective-1.1.4~/etc/server.cfg.dist  2011-04-06 14:12:30.889527230 -0700
