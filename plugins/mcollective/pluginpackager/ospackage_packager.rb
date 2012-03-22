@@ -115,7 +115,7 @@ module MCollective
 
         if @package.packagedata.size > 0
           @package.packagedata.each_with_index do |values, i|
-            next if values[1][:files].empty?
+            next unless values[1]
             if i == 0
               puts "%30s%s" % ["Identified Packages : ", values[0]]
             else
