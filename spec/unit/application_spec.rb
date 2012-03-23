@@ -125,6 +125,17 @@ module MCollective
     end
 
     describe "#application_parse_options" do
+      it "should pass the requested help value to the clioptions method" do
+        ARGV.clear
+
+        app = Application.new
+        app.expects(:clioptions).with(true)
+        app.application_parse_options(true)
+
+        ARGV.clear
+        @argv_backup.each{|a| ARGV << a}
+      end
+
       it "should support creating arrays of values" do
         Application.any_instance.stubs("main").returns(true)
 
@@ -330,6 +341,14 @@ module MCollective
       end
     end
 
+    describe "#help" do
+      it "should generate help using the full user supplied options" do
+        app = Application.new
+        app.expects(:clioptions).with(true).once
+        app.help
+      end
+    end
+
     describe "#main" do
       it "should detect applications without a #main" do
         IO.any_instance.expects(:puts).with("Applications need to supply a 'main' method")
@@ -471,7 +490,7 @@ module MCollective
 
         Optionparser.expects(:new).with({:verbose => false, :progress_bar => true}, "filter", ["rpc"]).returns(oparser)
 
-        Application.new.application_parse_options
+        Application.new.clioptions(false)
       end
 
       it "should add the RPC options" do
@@ -483,7 +502,7 @@ module MCollective
         Optionparser.stubs(:new).with({:verbose => false, :progress_bar => true}, "filter", []).returns(oparser)
         RPC::Helpers.expects(:add_simplerpc_options).with(oparser, {})
 
-        Application.new.application_parse_options
+        Application.new.clioptions(false)
       end
 
       it "should support bypassing the RPC options" do
@@ -497,7 +516,23 @@ module MCollective
         Optionparser.stubs(:new).with({:verbose => false, :progress_bar => true}, "filter", ["rpc"]).returns(oparser)
         RPC::Helpers.expects(:add_simplerpc_options).never
 
-        Application.new.application_parse_options
+        Application.new.clioptions(false)
+      end
+
+      it "should return the help text if requested" do
+        parser = mock
+        parser.expects(:help)
+
+        oparser = mock
+        oparser.stubs(:parse).yields(oparser, {})
+        oparser.stubs(:banner=)
+        oparser.stubs(:define_tail)
+        oparser.expects(:parser).returns(parser)
+
+        Optionparser.stubs(:new).with({:verbose => false, :progress_bar => true}, "filter", []).returns(oparser)
+        RPC::Helpers.expects(:add_simplerpc_options).with(oparser, {})
+
+        Application.new.clioptions(true)
       end
     end
 

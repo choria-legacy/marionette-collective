@@ -1,16 +1,15 @@
 module MCollective
   class Application::Help<Application
-    description "Application list and RPC agent help"
-    usage "rpc help [agent name]"
+    description "Application list and help"
+    usage "rpc help [application name]"
 
     def post_option_parser(configuration)
-      configuration[:agent] = ARGV.shift if ARGV.size > 0
+      configuration[:application] = ARGV.shift if ARGV.size > 0
     end
 
     def main
-      if configuration.include?(:agent)
-        ddl = MCollective::RPC::DDL.new(configuration[:agent])
-        puts ddl.help(Config.instance.rpchelptemplate)
+      if configuration.include?(:application)
+        puts Applications[configuration[:application]].help
       else
         puts "The Marionette Collective version #{MCollective.version}"
         puts

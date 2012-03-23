@@ -2,6 +2,8 @@ module MCollective
   # A simple helper to build cli tools that supports a uniform command line
   # layout.
   class Optionparser
+    attr_reader :parser
+
     # Creates a new instance of the parser, you can supply defaults and include named groups of options.
     #
     # Starts a parser that defaults to verbose and that includs the filter options:

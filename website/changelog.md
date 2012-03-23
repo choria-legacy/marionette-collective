@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/03/27|_mco help rpc_ now shows the help for the rpc application|13350|
 |2012/03/22|Add a mco command that creates native OS packaging for plugins|12597|
 |2012/03/21|Default to console based logging at warning level for clients|13285|
 |2012/03/20|Work around SSL_read errors when using SSL or AES plugins and Stomp+SSL in Ruby < 1.9.3|13207|

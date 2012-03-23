@@ -108,7 +108,7 @@ module MCollective
 
     # Creates a standard options hash, pass in a block to add extra headings etc
     # see Optionparser
-    def clioptions
+    def clioptions(help)
       oparser = Optionparser.new({:verbose => false, :progress_bar => true}, "filter", application_options[:exclude_arg_sections])
 
       options = oparser.parse do |parser, options|
@@ -119,15 +119,23 @@ module MCollective
         RPC::Helpers.add_simplerpc_options(parser, options) unless application_options[:exclude_arg_sections].include?("rpc")
       end
 
+      return oparser.parser.help if help
+
+      validate_cli_options
+
+      post_option_parser(configuration) if respond_to?(:post_option_parser)
+
       return options
+    rescue Exception => e
+      application_failure(e)
     end
 
     # Builds an ObjectParser config, parse the CLI options and validates based
     # on the option config
-    def application_parse_options
+    def application_parse_options(help=false)
       @options ||= {:verbose => false}
 
-      @options = clioptions do |parser, options|
+      @options = clioptions(help) do |parser, options|
         parser.define_head application_description if application_description
         parser.banner = ""
 
@@ -192,7 +200,9 @@ module MCollective
           end
         end
       end
+    end
 
+    def validate_cli_options
       # Check all required parameters were set
       validation_passed = true
       application_cli_arguments.each do |carg|
@@ -210,9 +220,7 @@ module MCollective
         exit 1
       end
 
-      post_option_parser(configuration) if respond_to?(:post_option_parser)
-    rescue Exception => e
-      application_failure(e)
+
     end
 
     # Retrieves the full hash of application options
@@ -256,6 +264,10 @@ module MCollective
       disconnect
 
       exit 1
+    end
+
+    def help
+      application_parse_options(true)
     end
 
     # The main logic loop, builds up the options, validate configuration and calls
