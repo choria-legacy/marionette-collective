@@ -3,17 +3,18 @@ module MCollective
     # MCollective Agent Plugin package
     class AgentDefinition
       attr_accessor :path, :packagedata, :metadata, :target_path, :vendor, :iteration, :postinstall
+      attr_accessor :plugintype
 
-      def initialize(path, name, vendor, postinstall, iteration)
+      def initialize(path, name, vendor, postinstall, iteration, plugintype)
+        @plugintype = plugintype
         @path = path
         @packagedata = {}
         @iteration = iteration || 1
         @postinstall = postinstall
         @vendor = vendor || "Puppet Labs"
         @target_path = File.expand_path(@path)
-        @metadata = get_metadata
-        @metadata[:name] = name if name
-        @metadata[:name] = @metadata[:name].downcase.gsub(" ", "_")
+        @metadata = PluginPackager.get_metadata(@path, "agent")
+        @metadata[:name] = name.downcase.gsub(" ", "_")  if name
         identify_packages
       end
 
@@ -32,10 +33,10 @@ module MCollective
 
         agentdir = File.join(@path, "agent")
 
-        if check_dir agentdir
-          ddls = Dir.glob "#{agentdir}/*.ddl"
-          agent[:files] = (Dir.glob("#{agentdir}/*") - ddls)
-          implementations = Dir.glob("#{@metadata[:name]}/**")
+        if PluginPackager.check_dir_present agentdir
+          ddls = Dir.glob(File.join(agentdir, "*.ddl"))
+          agent[:files] = (Dir.glob(File.join(agentdir, "*")) - ddls)
+          implementations = Dir.glob(File.join(@metadata[:name], "**"))
           agent[:files] += implementations unless implementations.empty?
         else
           return nil
@@ -55,9 +56,9 @@ module MCollective
         bindir = File.join(@path, "bin")
         ddldir = File.join(@path, "agent")
 
-        client[:files] += Dir.glob("#{clientdir}/*") if check_dir clientdir
-        client[:files] += Dir.glob("#{bindir}/*") if check_dir bindir
-        client[:files] += Dir.glob("#{ddldir}/*.ddl") if check_dir ddldir
+        client[:files] += Dir.glob(File.join(clientdir, "*")) if PluginPackager.check_dir_present clientdir
+        client[:files] += Dir.glob(File.join(bindir,"*")) if PluginPackager.check_dir_present bindir
+        client[:files] += Dir.glob(File.join(ddldir, "*.ddl")) if PluginPackager.check_dir_present ddldir
         client[:dependencies] << "mcollective-#{@metadata[:name]}-common" if @packagedata[:common]
         client[:files].empty? ? nil : client
       end
@@ -69,23 +70,10 @@ module MCollective
                   :description => "Common libraries for #{@metadata[:name]}"}
 
         commondir = File.join(@path, "util")
-        common[:files] += Dir.glob("#{commondir}/*") if check_dir commondir
+        common[:files] += Dir.glob(File.join(commondir,"*")) if PluginPackager.check_dir_present commondir
         common[:files].empty? ? nil : common
       end
 
-      # Load plugin meta data from ddl file.
-      def get_metadata
-        ddl = MCollective::RPC::DDL.new("package", false)
-        ddl.instance_eval File.read(Dir.glob("#{@path}/agent/*.ddl").first)
-        ddl.meta
-      rescue
-        raise "error: could not read agent DDL File"
-      end
-
-      # Check if directory is present and not empty.
-      def check_dir(path)
-        (File.directory?(path) && !Dir.glob(path).empty?) ? true : false
-      end
     end
   end
 end

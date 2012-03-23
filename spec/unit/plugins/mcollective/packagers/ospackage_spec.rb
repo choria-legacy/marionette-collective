@@ -122,37 +122,55 @@ module MCollective
       end
 
       describe "#create_package" do
-        before do
-          module FPM
-            module Package
-              class Dir;end
-              class RPM;end
+        before :all do
+          module ::FPM
+            class Package
+              class Dir
+              end
+              class RPM
+              end
             end
           end
+
+          @fpm_dir = mock
+          @fpm_type = mock
+          @package = mock
+          @fpm_dir.stubs(:convert).returns(@fpm_type)
+          @fpm_dir.stubs(:attributes).returns({:chdir => nil})
+          @fpm_dir.stubs(:input)
+          @package.stubs(:metadata).returns({:name => "testpackage"})
+          OspackagePackager.any_instance.stubs(:package).returns(@package)
         end
 
         it "should run fpm with the correct parameters" do
+          File.stubs(:exists?).returns(true)
+          OspackagePackager.any_instance.expects(:build_tool?).returns(true)
+          ospackage = OspackagePackager.new(@testpackage)
+          ::FPM::Package::Dir.stubs(:new).returns(@fpm_dir)
+          ospackage.expects(:params)
+          ospackage.expects(:do_quietly?)
+          @fpm_dir.expects(:cleanup)
+          @fpm_type.expects(:cleanup)
+          ospackage.expects(:puts).with("Successfully built RPM 'mcollective-testpackage-testpackage.rpm'")
+          ospackage.create_package(:testpackage, {:files => ["/tmp/test.rb"], :description => "testpackage", :dependencies =>"dependencies"})
+        end
+      end
+
+      describe "#do_quietly?" do
+        it "should run a block quietly" do
+          require 'stringio'
+
           File.expects(:exists?).with("/etc/redhat-release").returns(true)
           OspackagePackager.any_instance.expects(:build_tool?).with("rpmbuild").returns(true)
-
           ospackage = OspackagePackager.new(@testplugin)
-          ospackage.expects(:params)
 
-          attributes = {:chdir => nil}
-          fpm_dir = mock
-          fpm_rpm = mock
-
-          FPM::Package::Dir.expects(:new).returns(fpm_dir).once
-          fpm_dir.expects(:attributes).returns(attributes)
-          fpm_dir.expects(:input).with("usr/libexec/mcollective/mcollective/")
-          FPM::Package.expects(:const_get).with("RPM").returns("FPM::Package::RPM")
-          fpm_dir.expects(:convert).with("FPM::Package::RPM").returns(fpm_rpm)
-          fpm_rpm.expects(:output).with("mcollective-testplugin-testpackage.rpm")
-
-          fpm_rpm.expects(:cleanup)
-          fpm_dir.expects(:cleanup)
-
-          ospackage.create_package(:testpackage, @testplugin.packagedata[:testpackage])
+          old_stdout = $stdout
+          new_stdout = File.open("/tmp/output.txt", "w+")
+          $stdout = new_stdout
+          ospackage.do_quietly?{puts "teststring"}
+          $stdout = old_stdout
+          File.read("/tmp/output.txt").should == ""
+          FileUtils.rm("/tmp/output.txt")
         end
       end
 
@@ -183,7 +201,8 @@ module MCollective
         it "should create temp directories and copy package files" do
           File.expects(:exists?).with("/etc/redhat-release").returns(true)
           OspackagePackager.any_instance.expects(:build_tool?).with("rpmbuild").returns(true)
-          FileUtils.expects(:mkdir).with("/tmp/mcollective_packager/")
+          File.expects(:directory?).with("/tmp/mcollective_packager/").returns(false)
+          FileUtils.expects(:mkdir_p).with("/tmp/mcollective_packager/")
           FileUtils.expects(:cp_r).with("/tmp/test.rb", "/tmp/mcollective_packager/")
 
           ospackage = OspackagePackager.new(@testplugin)

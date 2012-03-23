@@ -69,7 +69,7 @@ mco plugin package [options] <directory>
     def package_command
       plugin = prepare_plugin
       packager = PluginPackager["#{configuration[:format].capitalize}Packager"]
-      packager.new(plugin).create_packages
+      packager.new(plugin, options[:verbose]).create_packages
     end
 
     # Show application list and RPC agent help
@@ -90,11 +90,13 @@ mco plugin package [options] <directory>
 
     # Creates the correct package plugin object.
     def prepare_plugin
-        set_plugin_type unless configuration[:plugintype]
+        plugintype = set_plugin_type unless configuration[:plugintype]
         configuration[:format] = "ospackage" unless configuration[:format]
         PluginPackager.load_packagers
         plugin_class = PluginPackager[configuration[:plugintype]]
-        plugin_class.new(configuration[:target], configuration[:pluginname], configuration[:vendor], configuration[:postinstall], configuration[:iteration])
+        plugin_class.new(configuration[:target], configuration[:pluginname],
+                         configuration[:vendor], configuration[:postinstall],
+                         configuration[:iteration], plugintype)
     end
 
     def directory_for_type(type)
@@ -105,9 +107,26 @@ mco plugin package [options] <directory>
     def set_plugin_type
       if directory_for_type("agent") || directory_for_type("application")
         configuration[:plugintype] = "AgentDefinition"
+        return "Agent"
+      elsif directory_for_type(plugintype = identify_plugin)
+        configuration[:plugintype] = "StandardDefinition"
+        return plugintype
       else
         raise "error. target directory is not a valid mcollective plugin"
       end
+    end
+
+    # If plugintype is StandardDefinition, identify which of the special
+    # plugin types we are dealing with based on directory structure.
+    # To keep it simple we limit it to one type per target directory.
+    def identify_plugin
+      plugintype = Dir.glob(File.join(configuration[:target], "*")).select do |file|
+        File.directory?(file) && file.match(/(connector|facts|registration|security|audit|pluginpackager)/)
+      end
+      raise "error. more than one plugin type detected in directory" if plugintype.size > 1
+      raise "error. no plugins detected in directory" if plugintype.size < 1
+      stripdir = configuration[:target] == "." ? "" : configuration[:target]
+      plugintype.first.gsub(/\.|\/|#{stripdir}/, "")
     end
 
     # Returns a list of available actions in a pretty format
