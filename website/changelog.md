@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/03/30|Support Stomp 1.2.2 CA verified connection to ActiveMQ|10596|
 |2012/03/27|_mco help rpc_ now shows the help for the rpc application|13350|
 |2012/03/22|Add a mco command that creates native OS packaging for plugins|12597|
 |2012/03/21|Default to console based logging at warning level for clients|13285|

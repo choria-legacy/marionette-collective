@@ -26,7 +26,7 @@ module MCollective
     # message, they only get their own replies and this is ap private channel that
     # casual observers cannot just snoop into.
     #
-    # This plugin supports 1.1.6 and newer of the Stomp rubygem
+    # This plugin supports 1.1.6 and newer of the Stomp rubygem.
     #
     #    connector = activemq
     #    plugin.activemq.pool.size = 2
@@ -36,6 +36,10 @@ module MCollective
     #    plugin.activemq.pool.1.user = you
     #    plugin.activemq.pool.1.password = secret
     #    plugin.activemq.pool.1.ssl = true
+    #    plugin.activemq.pool.1.ssl.cert = /path/to/your.cert
+    #    plugin.activemq.pool.1.ssl.key = /path/to/your.key
+    #    plugin.activemq.pool.1.ssl.ca = /path/to/your.ca
+    #    plugin.activemq.pool.1.ssl.fallback = true
     #
     #    plugin.activemq.pool.2.host = stomp2.your.net
     #    plugin.activemq.pool.2.port = 6163
@@ -45,6 +49,12 @@ module MCollective
     #
     # Using this method you can supply just STOMP_USER and STOMP_PASSWORD.  The port will
     # default to 61613 if not specified.
+    #
+    # The ssl options are only usable in version of the Stomp gem newer than 1.2.2 where these
+    # will imply full SSL validation will be done and you'll only be able to connect to a
+    # ActiveMQ server that has a cert signed by the same CA.  If you only set ssl = true
+    # and do not supply the cert, key and ca properties or if you have an older gem it
+    # will fall back to unverified mode only if ssl.fallback is true
     #
     # In addition you can set the following options for the rubygem:
     #
@@ -56,6 +66,11 @@ module MCollective
     #     plugin.activemq.randomize = false
     #     plugin.activemq.timeout = -1
     #
+    # You can set the initial connetion timeout - this is when your stomp server is simply
+    # unreachable - after which it would failover to the next in the pool:
+    #
+    #     plugin.activemq.connect_timeout = 5
+    #
     # ActiveMQ JMS message priorities can be set:
     #
     #     plugin.activemq.priority = 4
@@ -66,7 +81,7 @@ module MCollective
       # Class for Stomp 1.9.2 callback based logging
       class EventLogger
         def on_connecting(params=nil)
-          Log.info("Connection attempt %d to %s" % [params[:cur_conattempts], stomp_url(params)])
+          Log.info("TCP Connection attempt %d to %s" % [params[:cur_conattempts], stomp_url(params)])
         rescue
         end
 
@@ -81,7 +96,7 @@ module MCollective
         end
 
         def on_connectfail(params=nil)
-          Log.info("Connection to #{stomp_url(params)} failed on attempt #{params[:cur_conattempts]}")
+          Log.info("TCP Connection to #{stomp_url(params)} failed on attempt #{params[:cur_conattempts]}")
         rescue
         end
 
@@ -91,13 +106,17 @@ module MCollective
         end
 
         def on_ssl_connecting(params)
-          Log.info("Performing SSL connection to #{stomp_url(params)}")
+          Log.info("Estblishing SSL session with #{stomp_url(params)}")
         rescue
         end
 
         def on_ssl_connected(params)
-          Log.info("Connected SSL socket #{stomp_url(params)}")
+          Log.info("SSL session established with #{stomp_url(params)}")
         rescue
+        end
+
+        def on_ssl_connectfail(params)
+          Log.error("SSL session creation with #{stomp_url(params)} failed: #{params[:ssl_exception]}")
         end
 
         def stomp_url(params)
@@ -135,6 +154,8 @@ module MCollective
             host[:passcode] = get_env_or_option("STOMP_PASSWORD", "activemq.pool.#{poolnum}.password")
             host[:ssl] = get_bool_option("activemq.pool.#{poolnum}.ssl", false)
 
+            host[:ssl] = ssl_parameters(poolnum, get_bool_option("activemq.pool.#{poolnum}.ssl.fallback", false)) if host[:ssl]
+
             Log.debug("Adding #{host[:host]}:#{host[:port]} to the connection pool")
             hosts << host
           end
@@ -145,14 +166,15 @@ module MCollective
 
           # Various STOMP gem options, defaults here matches defaults for 1.1.6 the meaning of
           # these can be guessed, the documentation isn't clear
-          connection[:initial_reconnect_delay] = get_option("activemq.initial_reconnect_delay", 0.01).to_f
-          connection[:max_reconnect_delay] = get_option("activemq.max_reconnect_delay", 30.0).to_f
+          connection[:initial_reconnect_delay] = Float(get_option("activemq.initial_reconnect_delay", 0.01))
+          connection[:max_reconnect_delay] = Float(get_option("activemq.max_reconnect_delay", 30.0))
           connection[:use_exponential_back_off] = get_bool_option("activemq.use_exponential_back_off", true)
-          connection[:back_off_multiplier] = get_bool_option("activemq.back_off_multiplier", 2).to_i
-          connection[:max_reconnect_attempts] = get_option("activemq.max_reconnect_attempts", 0).to_i
+          connection[:back_off_multiplier] = Integer(get_option("activemq.back_off_multiplier", 2))
+          connection[:max_reconnect_attempts] = Integer(get_option("activemq.max_reconnect_attempts", 0))
           connection[:randomize] = get_bool_option("activemq.randomize", false)
           connection[:backup] = get_bool_option("activemq.backup", false)
-          connection[:timeout] = get_option("activemq.timeout", -1).to_i
+          connection[:timeout] = Integer(get_option("activemq.timeout", -1))
+          connection[:connect_timeout] = Integer(get_option("activemq.connect_timeout", 5))
           connection[:reliable] = true
 
           connection[:logger] = EventLogger.new
@@ -160,6 +182,37 @@ module MCollective
           @connection = connector.new(connection)
         rescue Exception => e
           raise("Could not connect to ActiveMQ Server: #{e}")
+        end
+      end
+
+      # Sets the SSL paramaters for a specific connection
+      def ssl_parameters(poolnum, fallback)
+        params = {:cert_file => get_option("activemq.pool.#{poolnum}.ssl.cert", false),
+                  :key_file  => get_option("activemq.pool.#{poolnum}.ssl.key", false),
+                  :ts_files  => get_option("activemq.pool.#{poolnum}.ssl.ca", false)}
+
+        raise "cert, key and ca has to be supplied for verified SSL mode" unless params[:cert_file] && params[:key_file] && params[:ts_files]
+
+        raise "Cannot find certificate file #{params[:cert_file]}" unless File.exist?(params[:cert_file])
+        raise "Cannot find key file #{params[:key_file]}" unless File.exist?(params[:key_file])
+
+        params[:ts_files].split(",").each do |ca|
+          raise "Cannot find CA file #{ca}" unless File.exist?(ca)
+        end
+
+        begin
+          Stomp::SSLParams.new(params)
+        rescue NameError
+          raise "Stomp gem >= 1.2.2 is needed"
+        end
+
+      rescue Exception => e
+        if fallback
+          Log.warn("Failed to set full SSL verified mode, falling back to unverified: #{e.class}: #{e}")
+          return true
+        else
+          Log.error("Failed to set full SSL verified mode: #{e.class}: #{e}")
+          raise(e)
         end
       end
 
@@ -310,7 +363,7 @@ module MCollective
       # raises an exception when it cant find a value anywhere
       def get_option(opt, default=nil)
         return @config.pluginconf[opt] if @config.pluginconf.include?(opt)
-        return default if default
+        return default unless default.nil?
 
         raise("No plugin.#{opt} configuration option given")
       end

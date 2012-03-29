@@ -86,6 +86,7 @@ module MCollective
                         "activemq.pool.2.user" => "user2",
                         "activemq.pool.2.password" => "password2",
                         "activemq.pool.2.ssl" => "true",
+                        "activemq.pool.2.ssl.fallback" => "true",
                         "activemq.initial_reconnect_delay" => "0.02",
                         "activemq.max_reconnect_delay" => "40",
                         "activemq.use_exponential_back_off" => "false",
@@ -93,7 +94,8 @@ module MCollective
                         "activemq.max_reconnect_attempts" => "5",
                         "activemq.randomize" => "true",
                         "activemq.backup" => "true",
-                        "activemq.timeout" => "1"}
+                        "activemq.timeout" => "1",
+                        "activemq.connect_timeout" => "5"}
 
 
           ENV.delete("STOMP_USER")
@@ -105,9 +107,10 @@ module MCollective
 
           connector = mock
           connector.expects(:new).with(:backup => true,
-                                       :back_off_multiplier => 2,
+                                       :back_off_multiplier => 3,
                                        :max_reconnect_delay => 40.0,
                                        :timeout => 1,
+                                       :connect_timeout => 5,
                                        :use_exponential_back_off => false,
                                        :max_reconnect_attempts => 5,
                                        :initial_reconnect_delay => 0.02,
@@ -126,8 +129,71 @@ module MCollective
                                                    :login => 'user2'}
           ])
 
+          @c.expects(:ssl_parameters).with(2, true).returns(true)
+
           @c.instance_variable_set("@connection", nil)
           @c.connect(connector)
+        end
+      end
+
+      describe "#ssl_paramaters" do
+        it "should ensure all settings are provided" do
+          pluginconf = {"activemq.pool.1.host" => "host1",
+                        "activemq.pool.1.port" => "6164",
+                        "activemq.pool.1.user" => "user1",
+                        "activemq.pool.1.password" => "password1",
+                        "activemq.pool.1.ssl" => "true",
+                        "activemq.pool.1.ssl.cert" => "rspec"}
+
+          @config.expects(:pluginconf).returns(pluginconf).at_least_once
+
+          expect { @c.ssl_parameters(1, false) }.to raise_error("cert, key and ca has to be supplied for verified SSL mode")
+        end
+
+        it "should verify the ssl files exist" do
+          pluginconf = {"activemq.pool.1.host" => "host1",
+                        "activemq.pool.1.port" => "6164",
+                        "activemq.pool.1.user" => "user1",
+                        "activemq.pool.1.password" => "password1",
+                        "activemq.pool.1.ssl" => "true",
+                        "activemq.pool.1.ssl.cert" => "rspec.cert",
+                        "activemq.pool.1.ssl.key" => "rspec.key",
+                        "activemq.pool.1.ssl.ca" => "rspec1.ca,rspec2.ca"}
+
+          @config.expects(:pluginconf).returns(pluginconf).at_least_once
+
+          File.expects(:exist?).with("rspec.cert").twice.returns(true)
+          File.expects(:exist?).with("rspec.key").twice.returns(true)
+          File.expects(:exist?).with("rspec1.ca").twice.returns(true)
+          File.expects(:exist?).with("rspec2.ca").twice.returns(false)
+
+          expect { @c.ssl_parameters(1, false) }.to raise_error("Cannot find CA file rspec2.ca")
+
+          @c.ssl_parameters(1, true).should == true
+        end
+
+        it "should support fallback mode when there are errors" do
+          pluginconf = {"activemq.pool.1.host" => "host1",
+                        "activemq.pool.1.port" => "6164",
+                        "activemq.pool.1.user" => "user1",
+                        "activemq.pool.1.password" => "password1",
+                        "activemq.pool.1.ssl" => "true"}
+
+          @config.expects(:pluginconf).returns(pluginconf).at_least_once
+
+          @c.ssl_parameters(1, true).should == true
+        end
+
+        it "should fail if fallback isnt enabled" do
+          pluginconf = {"activemq.pool.1.host" => "host1",
+                        "activemq.pool.1.port" => "6164",
+                        "activemq.pool.1.user" => "user1",
+                        "activemq.pool.1.password" => "password1",
+                        "activemq.pool.1.ssl" => "true"}
+
+          @config.expects(:pluginconf).returns(pluginconf).at_least_once
+
+          expect { @c.ssl_parameters(1, false) }.to raise_error
         end
       end
 
