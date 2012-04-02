@@ -189,7 +189,11 @@ module MCollective
       raise "Could not find key #{key}" unless File.exist?(key)
 
       if type == :public
-        key = OpenSSL::PKey::RSA.new(File.read(key))
+        begin
+          key = OpenSSL::PKey::RSA.new(File.read(key))
+        rescue OpenSSL::PKey::RSAError
+          key = OpenSSL::X509::Certificate.new(File.read(key)).public_key
+        end
 
         # Ruby < 1.9.3 had a bug where it does not correctly clear the
         # queue of errors while reading a key.  It tries various ways
