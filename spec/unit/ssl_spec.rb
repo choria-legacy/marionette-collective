@@ -93,7 +93,7 @@ module MCollective
       end
 
       it "should read the public key from a certificate" do
-        @ssl.read_key(:public, "#{@rootdir}/../fixtures/test-cert.pem").to_s.should match /.+BEGIN RSA PUBLIC KEY.+END RSA PUBLIC KEY.+/m
+        @ssl.read_key(:public, "#{@rootdir}/../fixtures/test-cert.pem").to_s.should match /.+BEGIN.+PUBLIC KEY.+END.+PUBLIC KEY.+/m
       end
 
       it "should return nil if no key was given" do
