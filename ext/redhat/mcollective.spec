@@ -110,13 +110,13 @@ fi
 /usr/libexec/mcollective/mcollective/security
 %dir /etc/mcollective
 %dir /etc/mcollective/ssl
+%config/etc/mcollective/rpc-help.erb
 
 %files client
 %attr(0755, root, root)/usr/sbin/mc-call-agent
 %attr(0755, root, root)/usr/bin/mco
 %doc COPYING
 %config(noreplace)/etc/mcollective/client.cfg
-%config/etc/mcollective/rpc-help.erb
 /usr/libexec/mcollective/mcollective/application
 /usr/libexec/mcollective/mcollective/pluginpackager
 
