@@ -9,6 +9,133 @@ This is a list of release notes for various releases, you should review these be
  * TOC Placeholder
   {:toc}
 
+<a name="1_3_3">&nbsp;</a>
+
+## 1.3.3 - 2012/04/05
+
+This is a release in the development series of MCollective.  It feature major new features and bug fixes.
+
+This release is for early adopters, production users should consider the 1.2.x series.
+
+### Major Enhancements
+
+ * The MS Windows platform is now supported, packaging is still outstanding
+ * Agents can now be packaged to native OS packages using the new _mco plugin_ command
+ * _mco help rpc_ now show the help for the rpc application, _mco plugin doc puppetd_ shows the help for the puppetd agent
+ * Full CA verified Stomp is supported and documented between ActiveMQ and MCollective using Stomp > 1.2.2
+ * Application exit codes have been standardized using a new _halt_ helper function
+ * A new validator that allows users to check if a supplied value is one of a fixed list
+ * The syslog facility can now be set in the configuration file
+ * The client libraries are now available as a Ruby Gem
+ * Batch mode can now be enabled and disabled at will in an application
+ * The client config files now default to console based logging at warn level
+
+### Bug Fixes
+
+ * nil or empty results are correctly displayed by printrpc
+ * Some exceptions under Ruby 1.9.3 when using run() related to nil exit code has been fixed
+ * Various exceptions have been silence in inventory application, stomp plugin, rpc application and others
+ * Previous SSL_read errors when using the Stomp+TLS configuration is now avoided on Ruby 1.8
+
+### Packaging Agent plugins
+
+Distributing agents has been a problem as they are just files that have limited meta data and attached.
+
+We now support packaging agents into rpm or deb packages, your agent must have a DDL file
+for this to work:
+
+{% highlight console %}
+$ mco plugin package . --vendor "My Company"
+Successfully built RPM 'mcollective-exim_ng-client-0.1-1.noarch.rpm'
+Successfully built RPM 'mcollective-exim_ng-common-0.1-1.noarch.rpm'
+Successfully built RPM 'mcollective-exim_ng-agent-0.1-1.noarch.rpm'
+{% endhighlight %}
+
+The packages will have meta data like Author, Version and so forth as per your DDL file.
+
+We support building all the main plugin types in this manner but need to restructure the plugins
+repository to support this layout.
+
+To use this you need to install the fpm gem, you must install 0.4.3 and not a newer version, we are
+currently working on removing the fpm dependency as it's proven to be too unreliable to use.
+
+Users can provide their own packaging implementations for other package managers or custom layouts
+using the MCollective plugin system.
+
+### Full verified CA
+
+When using the new ActiveMQ specific connector combined with Stomp version 1.2.2 or newer you can
+get full CA verified connection handling ensuring that only clients using signed certificates
+can connect to ActiveMQ.
+
+The documentation for the ActiveMQ SSL setup now includes instructions on setting up ActiveMQ and your
+clients using the built in Puppet CA but any CA could be used to manage these certificates.
+
+This feature will work best when ActiveMQ 5.6.0 is released in a few weeks since there will then be a NIO+SSL
+Stomp connector. The current SNAPSHOT release of ActiveMQ has this feature as well as the most recent Service
+Pack release of the Fuse Message Broker.
+
+### MS Windows Support
+
+The MS Windows platform is now supported as both a client and a server.  The _ext/windows_ directory
+has some helpers and read me documentation that has been confirmed to work but we have not yet
+completed packaging ourselves so this is still a manual process.
+
+Combined with Puppet 2.7.12 or newer the Package and Service agents can be used to manage Windows
+resources using the same commands as those on Linux via mcollective.
+
+### Backwards compatibility
+
+This release is backwards compatible with version 1.3.2, if you are coming from an older version please
+review earlier release notes.
+
+If you have been using the ActiveMQ specific plugin and its SSL settings you will now need to enable
+fallback mode as it will now only connect to ActiveMQ machines that present the correct CA certificate
+and will refuse to use anonymous certificates
+
+{% highlight ini %}
+plugin.activemq.pool.1.ssl.fallback = 1
+{% endhighlight %}
+
+### Changes since 1.3.1
+|2012/04/04|Use the MCollective::SSL utility class for crypto functions in the SSL security plugin|13615|
+|2012/04/02|Support reading public keys from SSL Certificates as well as keys|13534|
+|2012/04/02|Move the help template to the common package for both Debian and RedHat|13434|
+|2012/03/30|Support Stomp 1.2.2 CA verified connection to ActiveMQ|10596|
+|2012/03/27|_mco help rpc_ now shows the help for the rpc application|13350|
+|2012/03/22|Add a mco command that creates native OS packaging for plugins|12597|
+|2012/03/21|Default to console based logging at warning level for clients|13285|
+|2012/03/20|Work around SSL_read errors when using SSL or AES plugins and Stomp+SSL in Ruby < 1.9.3|13207|
+|2012/03/16|Improve logging for SSL connections when using Stomp Gem newer than 1.2.0|13165|
+|2012/03/14|Simplify handling of signals like TERM and INT and remove pid file on exit|13105|
+|2012/03/13|Create a conventional place to store implemented_by scripts|13064|
+|2012/03/09|Handle exceptions added to the Stomp 1.1 compliant versions of the Stomp gem|13020|
+|2012/03/09|Specifically enable reliable communications while using the pool style syntax|13040|
+|2012/03/06|Initial support for the Windows Platform|12555|
+|2012/03/05|Application plugins can now disable any of 3 sections of the standard CLI argument parsers|12859|
+|2012/03/05|Fix base 64 encoding and decoding of message payloads that would previous raise unexpected exceptions|12950|
+|2012/03/02|Treat :hosts and :nodes as equivalents when supplying discovery data, be more strict about flags discover will accept|12852|
+|2012/03/02|Allow exit() to be used everywhere in application plugins, not just in the main method|12927|
+|2012/03/02|Allow batch mode to be enabled and disabled on demand during the life of a client|12854|
+|2012/02/29|Show the progress bar before sending any requests to give users feedback as soon as possible rather than after first result only|12865|
+|2012/02/23|Do not log exceptions in the RPC application when a non existing action is called with request parameters|12719|
+|2012/02/17|Log miscellaneous Stomp errors at error level rather than debug|12705|
+|2012/02/17|Improve subscription tracking by using the subID feature of the Stomp gem and handle duplicate exceptions|12703|
+|2012/02/15|Improve error handling in the inventory application for non responsive nodes|12638|
+|2012/02/14|Comply to Red Hat guideline by not setting mcollective to start by default after RPM install|9453|
+|2012/02/14|Allow building the client libraries as a gem|9383|
+|2012/02/13|On Red Hat like systems read /etc/sysconfig/mcollective in the init script to allow modification of the environment|7441|
+|2012/02/13|Make the handling of symlinks to the mco script more robust to handle directories with mc- in their name|6275|
+|2012/02/01|systemu and therefore MC::Shell can sometimes return nil exit code, the run() method now handles this better by returning -1 exit status|12082|
+|2012/01/27|Improve handling of discovery data on STDIN to avoid failures when run without a TTY and without supplying discovery data|12084|
+|2012/01/25|Allow the syslog facility to be configured|12109|
+|2012/01/13|Add a RPC agent validator to ensure input is one of list of known good values|11935|
+|2012/01/09|The printrpc helper did not correctly display empty strings in received output|11012|
+|2012/01/09|Add a halt method to the Application framework and standardize exit codes|11280|
+|2011/11/21|Remove unintended dependency on _pp_ in the ActiveMQ plugin|10992|
+|2011/11/17|Allow reply to destinations to be supplied on the command line or API|9847|
+
+
 <a name="1_3_2">&nbsp;</a>
 
 ## 1.3.2 - 2011/11/17

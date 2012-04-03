@@ -7,7 +7,7 @@ require 'find'
 require 'rake/gempackagetask'
 
 PROJ_DOC_TITLE = "The Marionette Collective"
-PROJ_VERSION = "1.3.2"
+PROJ_VERSION = "1.3.3"
 PROJ_RELEASE = "1"
 PROJ_NAME = "mcollective"
 PROJ_RPM_NAMES = [PROJ_NAME]
