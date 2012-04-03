@@ -103,7 +103,7 @@ module MCollective
 
       describe "#create_packages" do
         it "should prepare temp directories, create a package and clean up when done" do
-          OspackagePackager.any_instance.stubs(:gem).with("fpm", ">= 0.4.1")
+          OspackagePackager.any_instance.stubs(:gem).with("fpm", "= 0.4.3")
           OspackagePackager.any_instance.stubs(:require).with("fpm")
           OspackagePackager.any_instance.stubs(:require).with("tmpdir")
 
