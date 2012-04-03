@@ -42,7 +42,7 @@ module MCollective
       # Iterate package list creating tmp dirs, building the packages
       # and cleaning up after itself.
       def create_packages
-        gem 'fpm', '>= 0.4.1'
+        gem 'fpm', '= 0.4.3'
         require 'fpm'
 
         @package.packagedata.each do |type, data|
