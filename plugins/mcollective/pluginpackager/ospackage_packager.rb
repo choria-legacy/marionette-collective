@@ -4,7 +4,7 @@ module MCollective
     class OspackagePackager
 
       attr_accessor :package, :libdir, :package_type, :common_dependency, :tmpdir
-      attr_accessor :verbose, :workingdir
+      attr_accessor :verbose, :workingdir, :arch
 
       # Create packager object with package parameter containing list of files,
       # dependencies and package metadata. We also identify if we're creating
@@ -14,10 +14,12 @@ module MCollective
         if File.exists?("/etc/redhat-release")
           @libdir = "usr/libexec/mcollective/mcollective/"
           @package_type = "RPM"
+          @arch = ".noarch"
           raise "error: package 'rpm-build' is not installed." unless build_tool?("rpmbuild")
         elsif File.exists?("/etc/debian_version")
           @libdir = "usr/share/mcollective/plugins/mcollective"
           @package_type = "Deb"
+          @arch = "_all"
           raise "error: package 'ar' is not installed." unless build_tool?("ar")
         else
           raise "error: cannot identify operating system."
@@ -64,12 +66,13 @@ module MCollective
           dirpackage.input @libdir
           ospackage = dirpackage.convert(FPM::Package.const_get(@package_type))
           params(ospackage, type, data)
+          filename = "mcollective-#{package.metadata[:name].downcase}-#{type}-#{package.metadata[:version]}-#{package.iteration}#{@arch}.#{@package_type.downcase}"
 
           do_quietly? do
-            ospackage.output("mcollective-#{package.metadata[:name].downcase}-#{type}.#{@package_type.downcase}")
+            ospackage.output(filename)
           end
 
-          puts "Successfully built #{@package_type} 'mcollective-#{package.metadata[:name].downcase}-#{type}.#{@package_type.downcase}'"
+          puts "Successfully built #{@package_type} '#{filename}'"
         rescue Exception => e
           puts "Failed to build package mcollective-#{package.metadata[:name].downcase}-#{type}. - #{e}"
         ensure
@@ -108,6 +111,7 @@ module MCollective
         package.description = @package.metadata[:description] + "\n\n#{data[:description]}"
         package.dependencies = data[:dependencies]
         package.scripts["post-install"] = @package.postinstall if @package.postinstall
+        package.architecture = "all"
       end
 
       # Creates temporary directories and sets working directory from which

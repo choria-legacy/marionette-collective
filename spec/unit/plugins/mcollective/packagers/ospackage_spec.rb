@@ -138,7 +138,8 @@ module MCollective
           @fpm_dir.stubs(:convert).returns(@fpm_type)
           @fpm_dir.stubs(:attributes).returns({:chdir => nil})
           @fpm_dir.stubs(:input)
-          @package.stubs(:metadata).returns({:name => "testpackage"})
+          @package.stubs(:metadata).returns({:name => "testpackage", :version => "1"})
+          @package.stubs(:iteration).returns("1")
           OspackagePackager.any_instance.stubs(:package).returns(@package)
         end
 
@@ -151,7 +152,7 @@ module MCollective
           ospackage.expects(:do_quietly?)
           @fpm_dir.expects(:cleanup)
           @fpm_type.expects(:cleanup)
-          ospackage.expects(:puts).with("Successfully built RPM 'mcollective-testpackage-testpackage.rpm'")
+          ospackage.expects(:puts).with("Successfully built RPM 'mcollective-testpackage-testpackage-1-1.noarch.rpm'")
           ospackage.create_package(:testpackage, {:files => ["/tmp/test.rb"], :description => "testpackage", :dependencies =>"dependencies"})
         end
       end
@@ -188,6 +189,7 @@ module MCollective
           fpm_type.expects(:license=).with("Apache 2")
           fpm_type.expects(:iteration=).with(1)
           fpm_type.expects(:vendor=).with("Puppet Labs")
+          fpm_type.expects(:architecture=).with("all")
           fpm_type.expects(:description=).with("A Test Plugin\n\ntestpackage")
           fpm_type.expects(:dependencies=).with(["mcollective"])
           fpm_type.expects(:scripts).returns({"post-install" => nil})
