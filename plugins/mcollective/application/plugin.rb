@@ -11,7 +11,7 @@ mco plugin package [options] <directory>
 
           info : Display plugin information including package details.
        package : Create all available plugin packages.
-           doc : Application list and RPC agent help
+           doc : Display documentation for a specific agent.
     END_OF_USAGE
 
     option  :pluginname,
@@ -78,13 +78,14 @@ mco plugin package [options] <directory>
         ddl = MCollective::RPC::DDL.new(configuration[:target])
         puts ddl.help(configuration[:rpctemplate] || Config.instance.rpchelptemplate)
       else
-        puts "The Marionette Collective version #{MCollective.version}"
+        puts "Please specify an agent. Available agents are:"
         puts
 
         PluginManager.find("agent", "ddl").each do |ddl|
           help = MCollective::RPC::DDL.new(ddl)
           puts "  %-15s %s" % [ddl, help.meta[:description]]
         end
+        puts
       end
     end
 
