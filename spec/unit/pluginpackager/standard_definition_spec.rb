@@ -9,6 +9,11 @@ module MCollective
         PluginPackager.expects(:get_metadata).once.returns({:name => "foo"})
       end
 
+      it "should replace spaces in the package name with underscores" do
+        plugin = StandardDefinition.new(".", "test plugin", nil, nil, nil, :fooplugin)
+        plugin.metadata[:name].should == "test_plugin"
+      end
+
       describe "#identify_packages" do
         it "should attempt to identify all packages" do
           StandardDefinition.any_instance.expects(:common).once.returns(:check)

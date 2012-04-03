@@ -8,6 +8,12 @@ module MCollective
       before :each do
         PluginPackager.expects(:get_metadata).once.returns({:name => "foo"})
       end
+
+      it "should replace spaces in the package name with underscores" do
+        agent = AgentDefinition.new(".", "test package", nil, nil, nil, "agent")
+        agent.metadata[:name].should == "test_package"
+      end
+
       describe "#identify_packages" do
         it "should attempt to identify all agent packages" do
           AgentDefinition.any_instance.expects(:common).once.returns(:check)

@@ -14,7 +14,7 @@ module MCollective
         @vendor = vendor || "Puppet Labs"
         @target_path = File.expand_path(@path)
         @metadata = PluginPackager.get_metadata(@path, "agent")
-        @metadata[:name] = name.downcase.gsub(" ", "_")  if name
+        @metadata[:name] = (name || @metadata[:name]).downcase.gsub(" ", "_")
         identify_packages
       end
 
