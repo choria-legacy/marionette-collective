@@ -174,9 +174,7 @@ module MCollective
 
         Log.debug("Validating request from #{req[:callerid]}")
 
-        public_key = File.read(public_key_file(req[:callerid]))
-
-        if verify(public_key, signature, message.to_s)
+        if verify(public_key_file(req[:callerid]), signature, message.to_s)
           @stats.validated
           return true
         else
@@ -308,31 +306,23 @@ module MCollective
       def makehash(body)
         Log.debug("Creating message hash using #{private_key_file}")
 
-        private_key = File.read(private_key_file)
-
-        sign(private_key, body.to_s)
+        sign(private_key_file, body.to_s)
       end
 
       # Code adapted from http://github.com/adamcooke/basicssl
       # signs a message
       def sign(key, string)
-        Base64.encode64(rsakey(key).sign(OpenSSL::Digest::SHA1.new, string))
+        SSL.new(nil, key).sign(string, true)
       end
 
       # verifies a signature
       def verify(key, signature, string)
-        rsakey(key).verify(OpenSSL::Digest::SHA1.new, Base64.decode64(signature), string)
-      end
-
-      # loads a ssl key from file
-      def rsakey(key)
-        OpenSSL::PKey::RSA.new(key)
+        SSL.new(key).verify_signature(signature, string, true)
       end
 
       def request_description(msg)
         "%s from %s@%s" % [msg[:requestid], msg[:callerid], msg[:senderid]]
       end
-
     end
   end
 end

@@ -168,6 +168,33 @@ module MCollective
       end
     end
 
+    describe "#md5" do
+      it "should produce correct md5 sums" do
+        # echo -n 'hello world'|md5sum
+        @ssl.md5("hello world").should == "5eb63bbbe01eeed093cb22bb8f5acdc3"
+      end
+    end
+    describe "#sign" do
+      it "should sign the message without base64 by default" do
+        SSL.md5(@ssl.sign("hello world")).should == "8269b23f55945aaa82efbff857c845a6"
+      end
+
+      it "should support base64 encoding messages" do
+        SSL.md5(@ssl.sign("hello world", true)).should == "8a4eb3c3d44d22c46dc36a7e441d8db0"
+      end
+    end
+
+    describe "#verify_signature" do
+      it "should correctly verify a message signed using the same keypair" do
+        @ssl.verify_signature(@ssl.sign("hello world"), "hello world").should == true
+        @ssl.verify_signature(@ssl.sign("hello world", true), "hello world", true).should == true
+      end
+
+      it "should fail to verify messages not signed by the key" do
+        @ssl.verify_signature("evil fake signature", "hello world").should == false
+      end
+    end
+
     describe "#decrypt_with_public" do
       it "should decrypt correctly given key and data in base64 format" do
         crypted = {:key=> "YaRcSDdcKgnRZ4Eu2eirl/+lzDgVkPZ41kXAQQNOi+6AfjdbbOW7Zblibx9r\n3TzZAi0ulA94gqNAXPvPC8LaO8W9TtJwlto/RHwDM7ZdfqEImSYoVACFNq28\n+0MLr3K3hIBsB1pyxgFTQul+MrCq+3Fik7Nj7ZKkJUT2veyqbg8=",

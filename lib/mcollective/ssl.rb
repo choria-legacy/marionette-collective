@@ -1,5 +1,6 @@
 require 'openssl'
 require 'base64'
+require 'digest/sha1'
 
 module MCollective
   # A class that assists in encrypting and decrypting data using a
@@ -163,6 +164,20 @@ module MCollective
       decrypted_data = cipher.update(crypt_string) + cipher.final
     end
 
+    # Signs a string using the private key
+    def sign(string, base64=false)
+      sig = @private_key.sign(OpenSSL::Digest::SHA1.new, string)
+
+      base64 ? base64_encode(sig) : sig
+    end
+
+    # Using the public key verifies that a string was signed using the private key
+    def verify_signature(signature, string, base64=false)
+      signature = base64_decode(signature) if base64
+
+      @public_key.verify(OpenSSL::Digest::SHA1.new, signature, string)
+    end
+
     # base 64 encode a string
     def base64_encode(string)
       SSL.base64_encode(string)
@@ -179,6 +194,14 @@ module MCollective
 
     def self.base64_decode(string)
       Base64.decode64(string)
+    end
+
+    def md5(string)
+      SSL.md5(string)
+    end
+
+    def self.md5(string)
+      Digest::MD5.hexdigest(string)
     end
 
     # Reads either a :public or :private key from disk, uses an
