@@ -1,7 +1,7 @@
 Installing RabbitMQ
 ===================
 
-Pre-requisies
+Prerequisites
 -------------
 
 Debian
