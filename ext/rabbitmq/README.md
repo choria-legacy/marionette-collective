@@ -5,6 +5,7 @@ Pre-requisies
 -------------
 
 Debian
+
     sudo apt-get install -y erlang-base erlang-nox
 
 Software
