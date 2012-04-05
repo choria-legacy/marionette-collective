@@ -97,7 +97,10 @@ and will refuse to use anonymous certificates
 plugin.activemq.pool.1.ssl.fallback = 1
 {% endhighlight %}
 
-### Changes since 1.3.1
+### Changes since 1.3.2
+
+|Date|Description|Ticket|
+|----|-----------|------|
 |2012/04/04|Use the MCollective::SSL utility class for crypto functions in the SSL security plugin|13615|
 |2012/04/02|Support reading public keys from SSL Certificates as well as keys|13534|
 |2012/04/02|Move the help template to the common package for both Debian and RedHat|13434|
