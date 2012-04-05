@@ -10,6 +10,7 @@ License: Apache License, Version 2
 URL: http://marionette-collective.org/
 Source0: %{name}-%{version}.tgz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildRequires: ruby
 Requires: ruby
 Requires: rubygems
 Requires: rubygem-stomp
