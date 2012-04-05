@@ -13,14 +13,49 @@ module MCollective
       const_get("#{klass}")
     end
 
+    # Fetch and return metadata from plugin DDL
     def self.get_metadata(path, type)
       ddl = MCollective::RPC::DDL.new("package", false)
       ddl.instance_eval File.read(Dir.glob(File.join(path, type, "*.ddl")).first)
       ddl.meta
     end
 
+    # Checks if a directory is present and not empty
     def self.check_dir_present(path)
       (File.directory?(path) && !Dir.glob(File.join(path, "*")).empty?)
+    end
+
+    # Quietly calls a block if verbose parameter is false
+    def self.do_quietly?(verbose, &block)
+      unless verbose
+        old_stdout = $stdout.clone
+        $stdout.reopen(File.new("/dev/null", "w"))
+        begin
+          block.call
+        rescue Exception => e
+          $stdout.reopen old_stdout
+          raise e
+        ensure
+          $stdout.reopen old_stdout
+        end
+      else
+        block.call
+      end
+    end
+
+    # Checks if a build tool is present on the system
+    def self.build_tool?(build_tool)
+      ENV["PATH"].split(File::PATH_SEPARATOR).each do |path|
+        builder = File.join(path, build_tool)
+        if File.exists?(builder)
+          return true
+        end
+      end
+      false
+    end
+
+    def self.safe_system(*args)
+      raise RuntimeError, "Failed: #{args.join(' ')}" unless system *args
     end
   end
 end

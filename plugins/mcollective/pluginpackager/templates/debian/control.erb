@@ -1,0 +1,11 @@
+Source: <%= @current_package_shortname %>
+Homepage: <%= @plugin.metadata[:url]%>
+Section: utils
+Priority: extra
+Maintainer: <%= @plugin.metadata[:author] %>
+Standards-Version: 3.8.0
+
+Package: <%= @current_package_shortname %>
+Architecture: all
+Depends: <%= @current_package_data[:dependencies].join(", ")%>
+Description: <%= @plugin.metadata[:description] %>

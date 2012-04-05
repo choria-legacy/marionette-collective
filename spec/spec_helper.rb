@@ -13,6 +13,7 @@ require 'mocha'
 require 'ostruct'
 require 'tmpdir'
 require 'tempfile'
+require 'fileutils'
 
 require 'monkey_patches/instance_variable_defined'
 

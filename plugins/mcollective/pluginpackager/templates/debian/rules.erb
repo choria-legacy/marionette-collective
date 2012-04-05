@@ -1,0 +1,6 @@
+#!/usr/bin/make -f
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/rules/dpatch.mk
+include /usr/share/cdbs/1/class/makefile.mk
+DEB_MAKE_INVOKE = $(DEB_MAKE_ENVVARS) make -f debian/Makefile -C $(DEB_BUILDDIR)

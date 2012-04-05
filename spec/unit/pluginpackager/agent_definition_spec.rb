@@ -9,9 +9,23 @@ module MCollective
         PluginPackager.expects(:get_metadata).once.returns({:name => "foo"})
       end
 
-      it "should replace spaces in the package name with underscores" do
-        agent = AgentDefinition.new(".", "test package", nil, nil, nil, "agent")
-        agent.metadata[:name].should == "test_package"
+      describe "#initialize" do
+        it "should replace spaces in the package name with dashes" do
+          agent = AgentDefinition.new(".", "test package", nil, nil, nil, nil, [], {}, "agent")
+          agent.metadata[:name].should == "test-package"
+        end
+
+        it "should set dependencies if present" do
+          agent = AgentDefinition.new(".", "test-package", nil, nil, nil, nil, ["foo"], {}, "agent")
+          agent.dependencies.should == ["foo"]
+        end
+
+        it "should set mc server, client and common dependencies" do
+          agent = AgentDefinition.new(".", "test-package", nil, nil, nil, nil, [], {:server => "pe-mcollective"}, "agent")
+          agent.mcserver.should == "pe-mcollective"
+          agent.mcclient.should == "mcollective-client"
+          agent.mccommon.should == "mcollective-common"
+        end
       end
 
       describe "#identify_packages" do
@@ -20,7 +34,7 @@ module MCollective
           AgentDefinition.any_instance.expects(:agent).once.returns(:check)
           AgentDefinition.any_instance.expects(:client).once.returns(:check)
 
-          agent = AgentDefinition.new(".", nil, nil, nil, nil, "agent")
+          agent = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
           agent.packagedata[:common].should == :check
           agent.packagedata[:agent].should == :check
           agent.packagedata[:client].should == :check
@@ -35,7 +49,7 @@ module MCollective
         it "should not populate the agent files if the agent directory is empty" do
           AgentDefinition.any_instance.expects(:common).returns(nil)
           PluginPackager.expects(:check_dir_present).returns(false)
-          agent = AgentDefinition.new(".", nil, nil, nil, nil, "agent")
+          agent = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
           agent.packagedata[:agent].should == nil
         end
 
@@ -45,17 +59,17 @@ module MCollective
           File.stubs(:join).returns("tmpdir")
           Dir.stubs(:glob).returns(["file.rb", "implementation.rb"])
 
-          agent = AgentDefinition.new(".", nil, nil, nil, nil, "agent")
+          agent = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
           agent.packagedata[:agent][:files].should == ["file.rb", "implementation.rb"]
         end
 
         it "should add common package as dependency if present" do
-          AgentDefinition.any_instance.expects(:common).returns(true)
+          AgentDefinition.any_instance.expects(:common).returns({:files=> ["test.rb"]})
           PluginPackager.expects(:check_dir_present).returns(true)
           File.stubs(:join).returns("tmpdir")
           Dir.stubs(:glob).returns([])
 
-          agent = AgentDefinition.new(".", nil, nil, nil, nil, "agent")
+          agent = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
           agent.packagedata[:agent][:dependencies].should == ["mcollective", "mcollective-foo-common"]
         end
       end
@@ -68,7 +82,7 @@ module MCollective
 
         it "should not populate the commong files if the util directory is empty" do
           PluginPackager.expects(:check_dir_present).returns(false)
-          common = AgentDefinition.new(".", nil, nil, nil, nil, "agent")
+          common = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
           common.packagedata[:common].should == nil
         end
 
@@ -76,7 +90,7 @@ module MCollective
           PluginPackager.expects(:check_dir_present).returns(true)
           File.stubs(:join).returns("tmpdir")
           Dir.stubs(:glob).returns(["file.rb"])
-          common = AgentDefinition.new(".", nil, nil, nil, nil, "agent")
+          common = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
           common.packagedata[:common][:files].should == ["file.rb"]
         end
       end
@@ -99,7 +113,7 @@ module MCollective
           Dir.expects(:glob).with("bindir/*").returns(["bin.rb"])
           Dir.expects(:glob).with("agentdir/*.ddl").returns(["agent.ddl"])
 
-          client = AgentDefinition.new(".", nil, nil, nil, nil, "agent")
+          client = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
           client.packagedata[:client][:files].should == ["client.rb", "bin.rb", "agent.ddl"]
         end
 
@@ -107,7 +121,7 @@ module MCollective
           AgentDefinition.any_instance.expects(:common).returns(nil)
           PluginPackager.expects(:check_dir_present).times(3).returns(false)
 
-          client = AgentDefinition.new(".", nil, nil, nil, nil, "agent")
+          client = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
           client.packagedata[:client].should == nil
         end
 
@@ -121,7 +135,7 @@ module MCollective
           Dir.expects(:glob).with("bindir/*").returns(["bin.rb"])
           Dir.expects(:glob).with("agentdir/*.ddl").returns(["agent.ddl"])
 
-          client = AgentDefinition.new(".", nil, nil, nil, nil, "agent")
+          client = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
           client.packagedata[:client][:dependencies].should == ["mcollective-client", "mcollective-foo-common"]
         end
       end

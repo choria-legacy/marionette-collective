@@ -1,0 +1,43 @@
+Summary: <%= @plugin.metadata[:description] %>
+Name: <%= @current_package_name%>
+Version: <%= @plugin.metadata[:version] %>
+Release: <%= @plugin.iteration %>
+License: <%= @plugin.metadata[:license] %>
+URL: <%= @plugin.metadata[:url] %>
+Vendor: <%= @plugin.vendor %>
+Packager: <%= @plugin.metadata[:author] %>
+BuildRoot: %buildroot
+BuildArch: noarch
+Group: System Tools
+
+<% @current_package_data[:dependencies].each do |dep|%>
+Requires: <%= dep%>
+<% end %>
+
+%description
+<%= @plugin.metadata[:description] -%>
+
+%prep
+
+%build
+
+%install
+
+%files
+%defattr(-,root,root,-)
+<% @current_package_data[:files].each do |file| -%>
+<%= file.gsub("./", @libdir) %>
+<% end -%>
+
+<% if @plugin.preinstall -%>
+%pre
+<%= @plugin.preinstall %>
+<% end -%>
+<% if @plugin.postinstall -%>
+%post
+<%= @plugin.postinstall%>
+<% end -%>
+
+%changelog
+* <%= Time.now.strftime("%a %b %d %Y") -%> - <%= @plugin.vendor%>
+- Built Package <%= @current_package_name-%>

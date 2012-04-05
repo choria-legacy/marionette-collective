@@ -9,9 +9,22 @@ module MCollective
         PluginPackager.expects(:get_metadata).once.returns({:name => "foo"})
       end
 
-      it "should replace spaces in the package name with underscores" do
-        plugin = StandardDefinition.new(".", "test plugin", nil, nil, nil, :fooplugin)
-        plugin.metadata[:name].should == "test_plugin"
+      describe "#initialize" do
+        it "should replace spaces in the package name with dashes" do
+          plugin = StandardDefinition.new(".", "test plugin", nil, nil, nil, nil, [], {}, "testplugin")
+          plugin.metadata[:name].should == "test-plugin"
+        end
+
+        it "should set dependencies if present" do
+          plugin = StandardDefinition.new(".", "test plugin", nil, nil, nil, nil, ["foo"], {}, "testplugin")
+          plugin.dependencies.should == ["foo"]
+        end
+
+        it "should set mc server, client and common dependencies" do
+          plugin = StandardDefinition.new(".", "test plugin", nil, nil, nil, nil, [], {:server => "pe-mcollective"}, "testplugin")
+          plugin.mcserver.should == "pe-mcollective"
+          plugin.mccommon.should == "mcollective-common"
+        end
       end
 
       describe "#identify_packages" do
@@ -19,9 +32,9 @@ module MCollective
           StandardDefinition.any_instance.expects(:common).once.returns(:check)
           StandardDefinition.any_instance.expects(:plugin).once.returns(:check)
 
-          plugin = StandardDefinition.new(".", nil, nil, nil, nil, :fooplugin)
+          plugin = StandardDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "testplugin")
           plugin.packagedata[:common].should == :check
-          plugin.packagedata[:fooplugin].should == :check
+          plugin.packagedata["testplugin"].should == :check
         end
       end
 
@@ -30,25 +43,25 @@ module MCollective
         it "should return nil if the plugin doesn't contain any files" do
           StandardDefinition.any_instance.expects(:common).returns(nil)
           PluginPackager.expects(:check_dir_present).returns(false)
-          plugin = StandardDefinition.new(".", nil, nil, nil, nil, :fooplugin)
-          plugin.packagedata[:fooplugin].should == nil
+          plugin = StandardDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "testplugin")
+          plugin.packagedata["testplugin"].should == nil
         end
 
         it "should add plugin files to the file list" do
           StandardDefinition.any_instance.expects(:common).returns(nil)
           PluginPackager.expects(:check_dir_present).returns(true)
-          Dir.expects(:glob).with("./fooplugin/*").returns(["file.rb"])
-          plugin = StandardDefinition.new(".", nil, nil, nil, nil, :fooplugin)
-          plugin.packagedata[:fooplugin][:files].should == ["file.rb"]
+          Dir.expects(:glob).with("./testplugin/*").returns(["file.rb"])
+          plugin = StandardDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "testplugin")
+          plugin.packagedata["testplugin"][:files].should == ["file.rb"]
         end
 
         it "should add common package as dependency if present" do
           StandardDefinition.any_instance.expects(:common).returns(true)
           PluginPackager.expects(:check_dir_present).returns(true)
-          Dir.expects(:glob).with("./fooplugin/*").returns(["file.rb"])
-          plugin = StandardDefinition.new(".", nil, nil, nil, nil, :fooplugin)
-          plugin.packagedata[:fooplugin][:files].should == ["file.rb"]
-          plugin.packagedata[:fooplugin][:dependencies].should == ["mcollective", "mcollective-foo-common"]
+          Dir.expects(:glob).with("./testplugin/*").returns(["file.rb"])
+          plugin = StandardDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "testplugin")
+          plugin.packagedata["testplugin"][:files].should == ["file.rb"]
+          plugin.packagedata["testplugin"][:dependencies].should == ["mcollective", "mcollective-foo-common"]
         end
       end
 
@@ -59,14 +72,14 @@ module MCollective
 
         it "should return nil if common doesn't contain any files" do
           PluginPackager.expects(:check_dir_present).returns(false)
-          plugin = StandardDefinition.new(".", nil, nil, nil, nil, :fooplugin)
+          plugin = StandardDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "testplugin")
           plugin.packagedata[:common].should == nil
         end
 
         it "should add common files to the file list" do
           PluginPackager.expects(:check_dir_present).returns(true)
           Dir.expects(:glob).with("./util/*").returns(["common.rb"])
-          plugin = StandardDefinition.new(".", nil, nil, nil, nil, :fooplugin)
+          plugin = StandardDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "testplugin")
           plugin.packagedata[:common][:files].should == ["common.rb"]
         end
       end

@@ -2,33 +2,41 @@ module MCollective
   module PluginPackager
     # MCollective Agent Plugin package
     class AgentDefinition
-      attr_accessor :path, :packagedata, :metadata, :target_path, :vendor, :iteration, :postinstall
-      attr_accessor :plugintype
+      attr_accessor :path, :packagedata, :metadata, :target_path, :vendor, :iteration, :preinstall
+      attr_accessor :plugintype, :dependencies, :postinstall, :mcserver, :mcclient, :mccommon
 
-      def initialize(path, name, vendor, postinstall, iteration, plugintype)
+      def initialize(path, name, vendor, preinstall, postinstall, iteration, dependencies, mcodependency, plugintype)
         @plugintype = plugintype
         @path = path
         @packagedata = {}
         @iteration = iteration || 1
+        @preinstall = preinstall
         @postinstall = postinstall
         @vendor = vendor || "Puppet Labs"
+        @mcserver = mcodependency[:server] || "mcollective"
+        @mcclient = mcodependency[:client] || "mcollective-client"
+        @mccommon = mcodependency[:common] || "mcollective-common"
+        @dependencies = dependencies || []
         @target_path = File.expand_path(@path)
         @metadata = PluginPackager.get_metadata(@path, "agent")
-        @metadata[:name] = (name || @metadata[:name]).downcase.gsub(" ", "_")
+        @metadata[:name] = (name || @metadata[:name]).downcase.gsub(" ", "-")
         identify_packages
       end
 
       # Identify present packages and populate packagedata hash.
       def identify_packages
-        @packagedata[:common] = common
-        @packagedata[:agent] = agent
-        @packagedata[:client] = client
+        common_package = common
+        @packagedata[:common] = common_package if common_package
+        agent_package = agent
+        @packagedata[:agent] = agent_package if agent_package
+        client_package = client
+        @packagedata[:client] = client_package if client_package
       end
 
       # Obtain Agent package files and dependencies.
       def agent
         agent = {:files => [],
-                 :dependencies => ["mcollective"],
+                 :dependencies => @dependencies.clone << @mcserver,
                  :description => "Agent plugin for #{@metadata[:name]}"}
 
         agentdir = File.join(@path, "agent")
@@ -41,7 +49,6 @@ module MCollective
         else
           return nil
         end
-
         agent[:dependencies] << "mcollective-#{@metadata[:name]}-common" if @packagedata[:common]
         agent
       end
@@ -49,7 +56,7 @@ module MCollective
       # Obtain client package files and dependencies.
       def client
         client = {:files => [],
-                  :dependencies => ["mcollective-client"],
+                  :dependencies => @dependencies.clone << @mcclient,
                   :description => "Client plugin for #{@metadata[:name]}"}
 
         clientdir = File.join(@path, "application")
@@ -66,7 +73,7 @@ module MCollective
       # Obtain common package files and dependencies.
       def common
         common = {:files =>[],
-                  :dependencies => ["mcollective-common"],
+                  :dependencies => @dependencies.clone << @mccommon,
                   :description => "Common libraries for #{@metadata[:name]}"}
 
         commondir = File.join(@path, "util")

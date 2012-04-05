@@ -24,6 +24,11 @@ mco plugin package [options] <directory>
            :arguments => ["--postinstall POSTINSTALL"],
            :type => String
 
+    option :preinstall,
+           :description => "Pre install script",
+           :arguments => ["--preinstall PREINSTALL"],
+           :type => String
+
     option :iteration,
            :description => "Iteration number",
            :arguments => ["--iteration ITERATION"],
@@ -34,14 +39,34 @@ mco plugin package [options] <directory>
            :arguments => ["--vendor VENDOR"],
            :type => String
 
-    option :format,
-           :description => "Package output format. Defaults to rpm or deb",
-           :arguments => ["--format OUTPUTFORMAT"],
+    option :pluginpath,
+           :description => "MCollective plugin path",
+           :arguments => ["--pluginpath PATH"],
            :type => String
 
-    option :plugintype,
-           :description => "Plugin type.",
-           :arguments => ["--plugintype PLUGINTYPE"],
+    option :mccommon,
+           :description => "Set the mcollective common package that the plugin depends on",
+           :arguments => ["--mc-common-pkg PACKAGE"],
+           :type => String
+
+    option :mcserver,
+           :description => "Set the mcollective server package that the plugin depends on",
+           :arguments => ["--mc-server-pkg PACKAGE"],
+           :type => String
+
+    option :mcclient,
+           :description => "Set the mcollective client package that the plugin depends on",
+           :arguments => ["--mc-client-pkg PACKAGE"],
+           :type =>String
+
+    option :dependency,
+           :description => "Adds a dependency to the plugin",
+           :arguments => ["--dependency DEPENDENCIES"],
+           :type => :array
+
+    option :format,
+           :description => "Package output format. Defaults to rpmpackage or debpackage",
+           :arguments => ["--format OUTPUTFORMAT"],
            :type => String
 
     option :rpctemplate,
@@ -68,8 +93,9 @@ mco plugin package [options] <directory>
     # Package plugin
     def package_command
       plugin = prepare_plugin
+      (configuration[:pluginpath] = configuration[:pluginpath] + "/") if (configuration[:pluginpath] && !configuration[:pluginpath].match(/^.*\/$/))
       packager = PluginPackager["#{configuration[:format].capitalize}Packager"]
-      packager.new(plugin, options[:verbose]).create_packages
+      packager.new(plugin, configuration[:pluginpath], options[:verbose]).create_packages
     end
 
     # Show application list and RPC agent help
@@ -95,9 +121,15 @@ mco plugin package [options] <directory>
         configuration[:format] = "ospackage" unless configuration[:format]
         PluginPackager.load_packagers
         plugin_class = PluginPackager[configuration[:plugintype]]
+        configuration[:dependency] = configuration[:dependency][0].split(" ") if configuration[:dependency] && configuration[:dependency].size == 1
+        mcodependency = {:server => configuration[:mcserver],
+                         :client => configuration[:mcclient],
+                         :common => configuration[:mccommon]}
+
         plugin_class.new(configuration[:target], configuration[:pluginname],
-                         configuration[:vendor], configuration[:postinstall],
-                         configuration[:iteration], plugintype)
+                         configuration[:vendor], configuration[:preinstall],
+                         configuration[:postinstall], configuration[:iteration],
+                         configuration[:dependency], mcodependency , plugintype)
     end
 
     def directory_for_type(type)
@@ -113,7 +145,7 @@ mco plugin package [options] <directory>
         configuration[:plugintype] = "StandardDefinition"
         return plugintype
       else
-        raise "error. target directory is not a valid mcollective plugin"
+        raise RuntimeError, "target directory is not a valid mcollective plugin"
       end
     end
 
@@ -124,8 +156,8 @@ mco plugin package [options] <directory>
       plugintype = Dir.glob(File.join(configuration[:target], "*")).select do |file|
         File.directory?(file) && file.match(/(connector|facts|registration|security|audit|pluginpackager)/)
       end
-      raise "error. more than one plugin type detected in directory" if plugintype.size > 1
-      raise "error. no plugins detected in directory" if plugintype.size < 1
+      raise RuntimeError, "more than one plugin type detected in directory" if plugintype.size > 1
+      raise RuntimeError, "no plugins detected in directory" if plugintype.size < 1
       stripdir = configuration[:target] == "." ? "" : configuration[:target]
       plugintype.first.gsub(/\.|\/|#{stripdir}/, "")
     end
