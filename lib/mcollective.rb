@@ -7,10 +7,10 @@ require 'singleton'
 require 'socket'
 require 'erb'
 require 'shellwords'
-require 'mcollective/monkey_patches'
-require 'tempfile'
 require 'rbconfig'
+require 'tempfile'
 require 'tmpdir'
+require 'mcollective/monkey_patches'
 
 # == The Marionette Collective
 #
