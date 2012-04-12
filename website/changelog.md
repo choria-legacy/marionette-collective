@@ -11,7 +11,8 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
-|2012/04/11|Fix compatability with Ruby 1.9.1 by specifically loading rbconfig early on|13872|
+|2012/04/12|Use sed -i in the Rakefile to improve compatibility with OS X|13324|
+|2012/04/11|Fix compatibility with Ruby 1.9.1 by specifically loading rbconfig early on|13872|
 |*2012/04/05*|*Release 1.3.3*|13599|
 |2012/04/04|Use the MCollective::SSL utility class for crypto functions in the SSL security plugin|13615|
 |2012/04/02|Support reading public keys from SSL Certificates as well as keys|13534|
