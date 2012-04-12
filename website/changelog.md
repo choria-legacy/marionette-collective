@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/04/12|New init script for Debian that uses LSB functions to start and stop the daemon|13043|
 |2012/04/12|Use sed -i in the Rakefile to improve compatibility with OS X|13324|
 |2012/04/11|Fix compatibility with Ruby 1.9.1 by specifically loading rbconfig early on|13872|
 |*2012/04/05*|*Release 1.3.3*|13599|
