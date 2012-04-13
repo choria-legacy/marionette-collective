@@ -159,9 +159,9 @@ module MCollective
         end
 
         it "should not invalid limits to be set" do
-          expect { @client.limit_targets = "a" }.to raise_error /Invalid/
-          expect { @client.limit_targets = "%1" }.to raise_error /Invalid/
-          expect { @client.limit_targets = "1.1" }.to raise_error /Invalid/
+          expect { @client.limit_targets = "a" }.to raise_error(/Invalid/)
+          expect { @client.limit_targets = "%1" }.to raise_error(/Invalid/)
+          expect { @client.limit_targets = "1.1" }.to raise_error(/Invalid/)
         end
       end
 

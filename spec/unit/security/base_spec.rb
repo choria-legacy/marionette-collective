@@ -35,7 +35,7 @@ module MCollective
 
           expect {
             @plugin.should_process_msg?(m, "fail").should == true
-          }.to raise_error MsgDoesNotMatchRequestID
+          }.to raise_error(MsgDoesNotMatchRequestID)
         end
 
         it "should not test messages without expected_msgid" do

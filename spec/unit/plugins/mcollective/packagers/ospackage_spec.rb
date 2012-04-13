@@ -66,7 +66,7 @@ module MCollective
 
           expect{
             ospackage = OspackagePackager.new(@testplugin)
-          }.to raise_exception "error: cannot identify operating system."
+          }.to raise_exception("error: cannot identify operating system.")
         end
 
         it "should identify if rpmbuild is present for RedHat systems" do
@@ -80,7 +80,7 @@ module MCollective
           File.expects(:exists?).with("./rpmbuild").returns(false)
           expect{
             ospackage = OspackagePackager.new(@testplugin)
-          }.to raise_error "error: package 'rpm-build' is not installed."
+          }.to raise_error("error: package 'rpm-build' is not installed.")
         end
 
         it "should identify if ar is present for Debian systems" do
@@ -97,7 +97,7 @@ module MCollective
           File.expects(:exists?).with("./ar").returns(false)
           expect{
             ospackage = OspackagePackager.new(@testplugin)
-          }.to raise_error "error: package 'ar' is not installed."
+          }.to raise_error("error: package 'ar' is not installed.")
         end
       end
 

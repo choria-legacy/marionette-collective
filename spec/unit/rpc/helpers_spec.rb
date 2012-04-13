@@ -9,7 +9,7 @@ module MCollective
         it "should fail for non array data" do
           expect {
             Helpers.extract_hosts_from_json("{}")
-          }.to raise_error "JSON hosts list is not an array"
+          }.to raise_error("JSON hosts list is not an array")
         end
 
         it "should fail for non hash array members" do
@@ -17,7 +17,7 @@ module MCollective
 
           expect {
             Helpers.extract_hosts_from_json(senders)
-          }.to raise_error "JSON host list is not an array of Hashes"
+          }.to raise_error("JSON host list is not an array of Hashes")
         end
 
         it "should fail for hashes without senders" do
@@ -25,7 +25,7 @@ module MCollective
 
           expect {
             Helpers.extract_hosts_from_json(senders)
-          }.to raise_error "JSON host list does not have senders in it"
+          }.to raise_error("JSON host list does not have senders in it")
         end
 
         it "should return all found unique senders" do
