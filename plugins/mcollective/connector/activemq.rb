@@ -78,7 +78,19 @@ module MCollective
     class Activemq<Base
       attr_reader :connection
 
-      # Class for Stomp 1.9.2 callback based logging
+      # Older stomp gems do not have these error classes, in order to be able to
+      # handle these exceptions if they are present and still support older gems
+      # we're assigning the constants to a dummy exception that will never be thrown
+      # by us.  End result is that the code catching these exceptions become noops on
+      # older gems but on newer ones they become usable and handle those new errors
+      # intelligently
+      class DummyError<RuntimeError; end
+
+      ::Stomp::Error = DummyError unless defined?(::Stomp::Error)
+      ::Stomp::Error::NoCurrentConnection = DummyError unless defined?(::Stomp::Error::NoCurrentConnection)
+      ::Stomp::Error::DuplicateSubscription = DummyError unless defined?(::Stomp::Error::DuplicateSubscription)
+
+      # Class for Stomp 1.1.9 callback based logging
       class EventLogger
         def on_connecting(params=nil)
           Log.info("TCP Connection attempt %d to %s" % [params[:cur_conattempts], stomp_url(params)])
