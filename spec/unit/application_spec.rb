@@ -613,22 +613,15 @@ module MCollective
       end
 
       it "should catch handle exit() correctly" do
-        Application.send(:define_method, :main) do
-          exit 1
-        end
-
+        @app.expects(:main).raises(SystemExit)
         @app.expects(:disconnect).once
 
         expect { @app.run }.to raise_error(SystemExit)
       end
 
       it "should catch all exceptions and process them correctly" do
+        @app.expects(:main).raises("rspec")
         @app.expects(:application_failure).once
-
-        Application.send(:define_method, :main) do
-          raise "rspec"
-        end
-
         @app.run
       end
     end
