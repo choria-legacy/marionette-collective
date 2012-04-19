@@ -43,7 +43,7 @@ exim.setsender("msgid" => "1NOTVx-00028U-7G", "senderid" => "foo@bar.com")
 
 Your data types should be preserved if your Security plugin supports that - the default one does - so you can pass in Arrays, Hashes, OpenStructs, Hashes of Hashes but you should always pass something in and it should be key/value pairs like a Hash expects.
 
-From version *0.4.5* onward you cannot use the a data item called _:process_results_ as this has special meaning to the agent and client.  This will indicate to the agent that the client is'nt going to be waiting to process results.  You might choose not to send back a reply based on this.
+You cannot use the a data item called _:process_results_ as this has special meaning to the agent and client.  This will indicate to the agent that the client is'nt going to be waiting to process results.  You might choose not to send back a reply based on this.
 
 ## Sample Agent
 Here's our sample *Helloworld* agent:
@@ -65,7 +65,7 @@ end
 
 Strictly speaking this Agent will work but isn't considered complete - there's no meta data and no help.
 
-A helper agent called [_rpcutil_][RPCUtil] is included from version _0.4.9_ onward that helps you gather stats, inventory etc about the running daemon.  It's a full SimpleRPC agent including DDL, you can look at it too for an example.
+A helper agent called [_rpcutil_][RPCUtil] is included that helps you gather stats, inventory etc about the running daemon.  It's a full SimpleRPC agent including DDL, you can look at it too for an example.
 
 ### Agent Name
 The agent name is derived from the class name, the example code creates *MCollective::Agent::Helloworld* and the agent name would be *helloworld*.
@@ -166,8 +166,6 @@ this machine and it will not be discovered.
 
 When the agent gets loaded it will test if _/usr/bin/puppet_ exist and only if it does
 will this agent be enabled.
-
-This feature is available since version 1.3.0
 
 ## Help and the Data Description Language
 We have a separate file that goes together with an agent and is used to describe the agent in detail, a DDL file for the above echo agent can be seen below:
@@ -398,7 +396,7 @@ Technically this will just set *statuscode* and *statusmsg* fields in the reply 
 
 It won't actually raise exceptions or exit your action though you should do that yourself as in the example here.
 
-From version 0.4.3 onward there is also a *fail!* instead of just *fail* it does the same basic function but also raises exceptions.  This lets you abort processing of the agent immediately without performing your own checks on *statuscode* as above later on.
+There is also a *fail!* instead of just *fail* it does the same basic function but also raises exceptions.  This lets you abort processing of the agent immediately without performing your own checks on *statuscode* as above later on.
 
 ## Actions in external scripts
 Actions can be implemented using other programming languages as long as they support JSON.
@@ -423,7 +421,7 @@ logged on the server at *error* level and used in the text for the fail text.
 
 Any text to STDOUT will be logged on the server at level *info*.
 
-As of version 1.3.3 there's a standard location for action scripts:
+These scripts can be placed in a standard location:
 
 {% highlight ruby %}
 action "test" do

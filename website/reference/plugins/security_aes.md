@@ -28,7 +28,7 @@ The design goals of this plugin are:
    given access to a public key of the requester.
  * Request TTLs and Message Times are cryptographically secured and tampered
    messages are not accepted by default. This is a first line defence in message
-   replaying and tampering. Introduced in version 1.3.2
+   replaying and tampering.
  * Replies are encrypted using the calling clients public key.  Thus no-one but
    the caller can view the contents of replies.
  * Servers can all have their own SSL keys, or share one, or reuse keys created

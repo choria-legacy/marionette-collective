@@ -23,7 +23,7 @@ The default message targets looks like this:
     /topic/mcollective.agentname.reply
 {% endhighlight %}
 
-If you are using versions newer than _1.1.3_ and you are using Subcollectives each subcollective will have topics like:
+If you are using Subcollectives each subcollective will have topics like:
 
 {% highlight console %}
     /topic/subcollective.agentname.command

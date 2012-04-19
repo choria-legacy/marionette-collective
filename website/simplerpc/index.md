@@ -41,23 +41,23 @@ A bit of code probably says more than lots of English, so here's a simple hello 
 
 {% highlight ruby linenos %}
 module MCollective
-    module Agent
-        class Helloworld<RPC::Agent
-            # Basic echo server
-            def echo_action
-                validate :msg, String
+  module Agent
+    class Helloworld<RPC::Agent
+      # Basic echo server
+      def echo_action
+        validate :msg, String
 
-                reply.data = request[:msg]
-            end
-        end
+        reply.data = request[:msg]
+      end
     end
+  end
 end
 {% endhighlight %}
 
 The nice thing about using a standard abstraction for clients is that you often won't even need to write a client for it, we ship a standard client that you can use to call the agent above:
 
 {% highlight console %}
- % mco rpc --agent helloworld --action echo --arg msg="Welcome to MCollective Simple RPC"
+ % mco rpc helloworld echo msg="Welcome to MCollective Simple RPC"
  Determining the amount of hosts matching filter for 2 seconds .... 1
 
  devel.your.com                          : OK
@@ -101,4 +101,4 @@ printrpcstats
 
 With a standard interface come a lot of possibilities, just like the standard one-size-fits-all CLI client above you can make web interfaces, there's a [simple MCollective <-> REST bridge in the ext directory][RestGateway].
 
-A helper agent called [_rpcutil_][RPCUtil] is included from version _0.4.9_ onward that helps you gather stats, inventory etc about the running daemon.
+A helper agent called [_rpcutil_][RPCUtil] is included that helps you gather stats, inventory etc about the running daemon.

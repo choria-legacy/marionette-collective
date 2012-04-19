@@ -34,11 +34,10 @@ end
 You can see it's very simple, you just need to subclass *MCollective::Registration::Base* to ensure they get
 loaded into the plugin system and provide a _body_ method whose return value will be sent to the registration agent(s).
 
-As of version 1.1.2 the registration plugin can decide if a message should be sent or not.  If your plugin
-responds with a _nil_ value the message will not be sent.  This can be useful if you wish to only send
-registration data when some condition has changed. On large collectives, registration messages can be
-quite high-volume. It's worthwhile to sample the size of your registration messages and multiply by the number
-of nodes to determine an appropriate frequency to send them.
+The registration plugin can decide if a message should be sent or not.  If your plugin responds with a _nil_ value the
+message will not be sent.  This can be useful if you wish to only send registration data when some condition has changed.
+On large collectives, registration messages can be quite high-volume. It's worthwhile to sample the size of your
+registration messages and multiply by the number of nodes to determine an appropriate frequency to send them.
 
 To configure it to be used you just need the following in your config:
 
@@ -51,8 +50,7 @@ registration_collective = development
 {% endhighlight %}
 
 This will cause the plugin to be called every 300 seconds to the development collective, if you do not configure
-a target collective explicitely it will target the main collective for the given node.  Prior to version 1.3.0
-all registration messages are targeted at the main collective and is not configurable.
+a target collective explicitely it will target the main collective for the given node.
 
 We do not provide the receiving end of this in the core mcollective. You will need to write an agent called
 *registration* and do something useful with the data you receive from all the nodes. You can find

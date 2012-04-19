@@ -4,23 +4,23 @@ require 'mcollective'
 require 'getoptlong'
 
 opts = GetoptLong.new(
-                      [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
-                      [ '--config', '-c', GetoptLong::REQUIRED_ARGUMENT],
-                      [ '--pidfile', '-p', GetoptLong::REQUIRED_ARGUMENT]
-                      )
+  [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
+  [ '--config', '-c', GetoptLong::REQUIRED_ARGUMENT],
+  [ '--pidfile', '-p', GetoptLong::REQUIRED_ARGUMENT]
+)
 
 configfile = "/etc/mcollective/server.cfg"
 pid = ""
 
 opts.each do |opt, arg|
   case opt
-  when '--help'
-    puts "Usage: mcollectived.rb [--config /path/to/config] [--pidfile /path/to/pid]"
-    exit
-  when '--config'
-    configfile = arg
-  when '--pidfile'
-    pid = arg
+    when '--help'
+      puts "Usage: mcollectived.rb [--config /path/to/config] [--pidfile /path/to/pid]"
+      exit
+    when '--config'
+      configfile = arg
+    when '--pidfile'
+      pid = arg
   end
 end
 

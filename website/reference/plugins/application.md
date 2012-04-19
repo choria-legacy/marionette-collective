@@ -32,17 +32,28 @@ option parsing.
 Below you can see the single executable system in use:
 
 {% highlight console %}
-$ mco
-The Marionette Collective version 1.1.1
+The Marionette Collective version 2.0.0
 
-/usr/bin/mco: command (options)
+usage: /usr/bin/mco: command <options>
 
-Known commands: rpc filemgr inventory facts ping find help
+Known commands:
+
+   cap                  controller           exim
+   facts                filemgr              find
+   help                 inventory            iptables
+   nettest              nrpe                 package
+   pgrep                ping                 plugin
+   puppetd              rpc                  service
+   virt
+
+Type 'mco help' for a detailed list of commands and 'mco help command'
+to get detailed help for a command
+
 {% endhighlight %}
 
 {% highlight console %}
 $ mco help
-The Marionette Collection version 1.1.1
+The Marionette Collection version 2.0.0
 
   facts           Reports on usage for a specific fact
   filemgr         Generic File Manager Client
@@ -221,8 +232,6 @@ end
 
 This application will only have --help, --verbose and --config as options, all the other options will be removed.
 
-This option is only available in version 1.3.3 and newer
-
 #### Post argument parsing hook
 Right after all arguments are parsed you can have a hook in your program called, this hook could perhaps parse the remaining data on _ARGV_ after option parsing is complete.
 
@@ -272,8 +281,8 @@ end
 You can use the normal _exit_ Ruby method at any time to exit your application and you can supply any
 exit code as normal.
 
-As of version 1.3.3 the supplied applications have a standard exit code convention, if you want
-your applications to exhibit the same behavior use the _halt_ helper.  The exit codes are below:
+The supplied applications have a standard exit code convention, if you want your applications to exhibit
+the same behavior use the _halt_ helper.  The exit codes are below:
 
 |Code|Description                                          |
 |----|-----------------------------------------------------|

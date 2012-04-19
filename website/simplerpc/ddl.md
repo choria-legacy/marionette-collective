@@ -30,14 +30,12 @@ The DDL is used in various scenarios:
  * Before sending a call over the network inputs get validated so we do not send unexpected data to remote nodes.
  * Module repositories can use the meta data to display a standard view of available modules to assist a user in picking the right ones.
 
-**Note:** This feature was introduced as part of version *0.4.6*.
-
 We've created [a screencast showing the capabilities of the DDL][DDLScreenCast] that might help give you a better overview.
 
 ## Examples
 We'll start with a few examples as I think it's pretty simple what they do, and later on show what other permutations are allowed for defining inputs and outputs.
 
-A helper agent called [_rpcutil_][RPCUtil] is included from version _0.4.9_ onward that helps you gather stats, inventory etc about the running daemon.  This helper has a full DDL included, see the plugins dir for this agent.
+A helper agent called [_rpcutil_][RPCUtil] is included that helps you gather stats, inventory etc about the running daemon.  This helper has a full DDL included, see the plugins dir for this agent.
 
 The typical service agent is a good example, it has various actions that all more or less take the same input.  All but status would have almost identical language.
 
@@ -79,7 +77,7 @@ end
 
 As you see we can define all the major components of input and output parameters.  *:type* can be one of various values and each will have different parameters, more on that later.
 
-By default mcollective only show data from actions that failed, the *display* line above tells it to always show the results.  Possible values are *:ok*, *:failed* (the default behavior) and *:always*.  This is available in version *0.4.7* and newer.
+By default mcollective only show data from actions that failed, the *display* line above tells it to always show the results.  Possible values are *:ok*, *:failed* (the default behavior) and *:always*.
 
 Finally the service agent has 3 almost identical actions - *start*, *stop* and *restart* - below we use a simple loop to define them all in one go.
 
@@ -105,10 +103,10 @@ All of this code just goes into a file, no special class or module bits needed, 
 
 Importantly you do not need to have the *service.rb* on a machine to use the DDL, this means on machines that are just used for running client programs you can just drop the *.ddl* files into the agents directory.
 
-You can view a human readable version of this using *mco help &lt;agent&gt;* command:
+You can view a human readable version of this using *mco plugin doc &lt;agent&gt;* command:
 
 {% highlight console %}
-% mco help service
+% mco plugin doc service
 SimpleRPC Service Agent
 =======================
 

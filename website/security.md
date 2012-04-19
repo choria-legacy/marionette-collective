@@ -56,12 +56,12 @@ scope here, you should use their documentation or the recently released book
 for details of that.
 
 ### MCollective Protocol Security
-As of version 1.3.1 the main protocol used by MCollective keeps track of message
-creation time and a per message TTL.  Messages that are older than the TTL are not
-accepted in future we will also do full replay protection.
+The main protocol used by MCollective keeps track of message creation time and
+a per message TTL.  Messages that are older than the TTL are not accepted in
+future we will also do full replay protection.
 
-As of version 1.3.2 both the AES+RSA and the SSL plugin secures these 2 properties
-cryptographically to make sure they are not tampered with.
+Both the AES+RSA and the SSL plugin secures these 2 properties cryptographically
+to make sure they are not tampered with.
 
 ### The AES+RSA securith plugin
 When using the [AES security plugin] each user also gets a private and public
@@ -110,20 +110,14 @@ someone cannot intercept, tamper and replay these messages.
 
 By default the connections between Middleware and Nodes are not encrypted, just
 signed using the SSL keys above.  [ActiveMQ supports TLS][ActiveMQ TLS] and the
-[stomp connector][ActiveMQ STOMP] supports this.
+[stomp connector][ActiveMQ STOMP] supports this including full CA based
+certificate verification.
 
 The [MCollective STOMP Connector] also supports TLS, to configure MCollective
 to speak TLS to your nodes please follow our notes about [ActiveMQ SSL].
 
 Enabling TLS throughout will secure your connections from any kind of sniffing
-and Man in The Middle attacks.  Unfortunately the Rubygem we use do not provide
-options for enforcing a specific CA etc.  The authors are willing to extend it
-to support these based on requests, file support tickets if you need our help
-in working with them as we already have a good working relationship.
-
-At present there is a bug in the TLS setup with ActiveMQ and RabbitMQ does not
-support it at all.  If you need security of the payloads in your messages use
-the AES security plugin.
+and Man in The Middle attacks.
 
 ## Middleware Authorization and Authentication
 

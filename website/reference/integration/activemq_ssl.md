@@ -16,7 +16,7 @@ To set this up you need to Java Keystore, the instructions here work for Java
 1.6 either Sun or OpenJDK based.
 
 ## Full CA verified TLS between Stomp >= 1.2.2 and ActiveMQ
-As of MCollective 1.3.3 and Stomp 1.2.2 it's possible to setup a TLS setup
+As of MCollective 2.0.0 and Stomp 1.2.2 it's possible to setup a TLS setup
 that will only accept clients with certificates signed by a CA shared with
 your clients and your ActiveMQ server like the one provided by Puppet.
 

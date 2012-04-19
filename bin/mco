@@ -7,31 +7,31 @@ known_applications = MCollective::Applications.list
 
 # links from mc-ping to mc will result in ping being run
 if $0 =~ /mc\-([a-zA-Z\-_\.]+)$/
-    app_name = $1
+  app_name = $1
 else
-    app_name = ARGV.first
-    ARGV.delete_at(0)
+  app_name = ARGV.first
+  ARGV.delete_at(0)
 end
 
 if known_applications.include?(app_name)
-    # make sure the various options classes shows the right help etc
-    $0 = app_name
+  # make sure the various options classes shows the right help etc
+  $0 = app_name
 
-    MCollective::Applications.run(app_name)
+  MCollective::Applications.run(app_name)
 else
-    puts "The Marionette Collective version #{MCollective.version}"
-    puts
-    puts "usage: #{$0} command <options>"
-    puts
-    puts "Known commands:"
-    puts
+  puts "The Marionette Collective version #{MCollective.version}"
+  puts
+  puts "usage: #{$0} command <options>"
+  puts
+  puts "Known commands:"
+  puts
 
-    known_applications.sort.uniq.in_groups_of(3) do |apps|
-      puts "   %-20s %-20s %-20s" % [apps[0], apps[1], apps[2]]
-    end
+  known_applications.sort.uniq.in_groups_of(3) do |apps|
+    puts "   %-20s %-20s %-20s" % [apps[0], apps[1], apps[2]]
+  end
 
-    puts
-    puts "Type '#{$0} help' for a detailed list of commands and '#{$0} help command'"
-    puts "to get detailed help for a command"
-    puts
+  puts
+  puts "Type '#{$0} help' for a detailed list of commands and '#{$0} help command'"
+  puts "to get detailed help for a command"
+  puts
 end

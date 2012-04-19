@@ -22,6 +22,7 @@ disqus: true
 [MessageFlowCast]: /mcollective/screencasts.html#message_flow
 [Plugins]: http://code.google.com/p/mcollective-plugins/
 [RedHatGuide]: gettingstarted_redhat.html
+[DebianGuide]: gettingstarted_debian.html
 
 # {{page.title}}
 
@@ -29,7 +30,7 @@ disqus: true
  {:toc}
 
 
-*NOTE:* We are currently improving the Getting Started documentation.  Red Hat and CentOS users can refer to [our new guide][RedHatGuide], others will be added in time.
+*NOTE:* We are currently improving the Getting Started documentation.  Red Hat and CentOS users can refer to [our Redhat guide][RedHatGuide]. Debian users can refer to [our Debian guide][DebianGuide].
 
 Below find a rough guide to get you going, this assumes the client and server is on the same node, but servers don't need the client code installed.
 
@@ -46,9 +47,6 @@ We try to keep the requirements on external Gems to a minimum, you only need:
  * [Ruby Stomp Client][Stomp]
 
 RPMs for these are available [here][DepRPMs].
-
-**NOTE: You need version Stomp Gem 1.1 for mcollective up to 0.4.5.  mcollective 0.4.6 onward supports 1.1 and 1.1.6 and newer**
-
 
 ## ActiveMQ
 I've developed this against ActiveMQ.  It should work against other Stomp servers but I suspect if you choose

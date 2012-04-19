@@ -25,12 +25,12 @@ but it makes a lot of things much easier if you stick to the Simple RPC
 conventions.
 
 This guide shows how to write standalone scripts to interact with your
-collective.  Since version 1.1.1 there is a single executable system.  You can
-apply most of the techniques documented here to writing plugins for that
-application system.  See the full reference for the plugin system
-[here][AppPlugin].  You should try to write your general agent CLIs using
-this plugin system rather than the stand alone scripts detailed below as that
-promote a unified interface that behave in a consistant manner.
+collective.  There is a single executable system.  You can apply most of
+the techniques documented here to writing plugins for that application system.
+See the full reference for the plugin system [here][AppPlugin].  You should try
+to write your general agent CLIs using this plugin system rather than the stand
+alone scripts detailed below as that promote a unified interface that behave in a
+consistant manner.
 
 We've recorded a [tutorial that will give you a quick look at what is involved
 in writing agents and a very simple client][WritingAgentsScreenCast].
@@ -157,7 +157,7 @@ mc.progress = false
 Now whenever you call an action you will not see the progress indicator.
 
 ### Saving the reports in variables without printing
-As of version *0.4.5* you can retrieve the stats from the clients and also get text of reports without printing them:
+You can retrieve the stats from the clients and also get text of reports without printing them:
 
 {% highlight ruby %}
 stats = mc.echo(:msg => "Welcome to MCollective Simple RPC").stats
@@ -188,7 +188,7 @@ printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
 
 You can set other filters like _agent`_`filter_, _identity`_`filter_ and _compound`_`filter_.
 
-As of version 1.1.0 the fact_filter method supports a few other forms in adition to above:
+The fact_filter method supports a few other forms in adition to above:
 
 {% highlight ruby %}
 mc.fact_filter "country=uk"
@@ -214,9 +214,8 @@ After this code snippet the filter will only have an agent filter of _helloworld
 By default the client will communicate with all machines at the same time.
 This might not be desired as you might affect a DOS on related components.
 
-As of version 1.3.2 you can instruct the client to communicate with remote
-agents in batches and sleep between each batch.  This requires that your
-collective is running with the direct addressing mode introduced in 1.3.1.
+You can instruct the client to communicate with remote agents in batches
+and sleep between each batch.
 
 Any client application has this capability using the _--batch_ and _--batch-sleep-time_
 command line options.
@@ -261,7 +260,7 @@ Here we make one _echo_ call - which would do a discovery - we then reset the cl
 
 ## Supplying your own discovery information
 
-As of version _1.3.1_ a new core messaging mode has been introduced that enables direct non filtered communicatin to specific nodes.  This has enabled us to provide an discovery-optional
+A new core messaging mode has been introduced that enables direct non filtered communicatin to specific nodes.  This has enabled us to provide an discovery-optional
 mode but only if the collective is configured to support direct messaging.
 
 {%highlight ruby %}
@@ -418,7 +417,7 @@ In this mode the results you get will be like this:
 
 Note how here we need to catch the exceptions, just handing _:statuscode_ will not be enough as the RPC client will raise exceptions - all descendant from _RPCError_ so you can easily catch just those.
 
-As of version 1.1.1 you can additionally gain access to a SimpleRPC style result in addition to the more complex native client results:
+You can additionally gain access to a SimpleRPC style result in addition to the more complex native client results:
 
 {% highlight ruby %}
 mc.echo(:msg => "hello world") do |resp, simpleresp|
@@ -582,4 +581,4 @@ But instead of doing any discovery it will use the host list and filter you supp
 
 ## The _rpcutil_ Helper Agent
 
-A helper agent called [_rpcutil_][RPCUtil] is included from version _0.4.9_ onward that helps you gather stats, inventory etc about the running daemon.
+A helper agent called [_rpcutil_][RPCUtil] is included that helps you gather stats, inventory etc about the running daemon.

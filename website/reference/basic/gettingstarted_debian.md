@@ -5,6 +5,7 @@ disqus: true
 ---
 [Screencasts]: /mcollective/screencasts.html
 [ActiveMQ]: http://activemq.apache.org/
+[ActiveMQ Getting Started]: http://activemq.apache.org/getting-started.html
 [EC2Demo]: /mcollective/ec2demo.html
 [Stomp]: http://stomp.codehaus.org/Ruby+Client
 [DepRPMs]: http://www.marionette-collective.org/activemq/
@@ -23,14 +24,14 @@ disqus: true
 [MessageFlowCast]: /mcollective/screencasts.html#message_flow
 [Plugins]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki
 [MCDownloads]: http://www.puppetlabs.com/downloads/mcollective/
-[EPEL]: http://fedoraproject.org/wiki/EPEL
+[RubyGems]: http://packages.debian.org/search?suite=default&section=all&arch=any&searchon=names&keywords=rubygems
 
 # {{page.title}}
 
  * TOC Placeholder
  {:toc}
 
-Getting started using Red Hat based distribution like Red Hat Enterprise Linux and CentOS is easy as RPMs are available for all the required components.  This guide walks you through the process.
+Getting started using Debian based distribution like Debian squeeze and Ubuntu is easy as DEBs are available for most the required components.  This guide walks you through the process.
 
 If you just want to experiment with the system please try our [EC2 based demo][EC2Demo].  You should be familiar with the architecture and terminology of Marionette Collective, please review the [basic architecture, terminology and message flow][MessageFlowCast] screencast first.
 
@@ -39,21 +40,21 @@ We try to keep the requirements on external Gems to a minimum, you only need:
 
  * A Stomp server, tested against [ActiveMQ]
  * Ruby
- * Rubygems
+ * RubyGems
  * [Ruby Stomp Client][Stomp]
 
 ## Packages
 
-We strongly recommend you set up a local Yum repository that will host all the packages on your LAN, you can get the prerequisite packages here:
+We strongly recommend you set up a local Apt repository that will host all the packages on your LAN, you can get the prerequisite packages here:
 
- * [ActiveMQ][MCDownloads] - activemq-5.4.0-2.el5.noarch.rpm, activemq-info-provider-5.4.0-2.el5.noarch.rpm, tanukiwrapper-3.2.3-1jpp.`*`.rpm
+ * [ActiveMQ]
  * Java - OpenJDK that is included with your distribution
  * Ruby - included with your distribution
- * RubyGems - [EPEL]
- * Stomp Ruby Gem - [EPEL]
- * [MCollective][MCDownloads] - mcollective-1.x.x-1.el5.noarch.rpm, mcollective-common-1.x.x-1.el5.noarch.rpm, mcollective-client-1.x.x-1.el5.noarch.rpm
+ * [RubyGems]
+ * Stomp Ruby Gem
+ * [MCollective][MCDownloads] - mcollective-1.x.x-1_all.deb, mcollective-common-1.x.x-1_all.deb, mcollective-client-1.x.x-1_all.deb
 
-The rest of this guide will assume you set up a Yum repository.  Puppet Labs hosts a Yum repository with all these dependencies at _yum.puppetlabs.com_.
+The rest of this guide will assume you set up a Apt repository.  Puppet Labs hosts a Apt repository with all these dependencies at _apt.puppetlabs.com_.
 
 ## ActiveMQ
 ActiveMQ is currently the most used and tested middleware for use with MCollective.
@@ -66,15 +67,17 @@ Later on your can [cluster the ActiveMQ servers for availability and scale][Acti
 On the server that you chose to configure as the ActiveMQ server:
 
 {% highlight console %}
-% yum install java-1.6.0-openjdk activemq
+% apt-get install openjdk-6-jre
 {% endhighlight %}
+
+ActiveMQ installation instructions can be found [here][ActiveMQ Getting Started].
 
 ### Configuring
 
 Initially you'll just keep it simple with a single ActiveMQ broker and a basic user setup, further security information for ActiveMQ
 can be found [here][SecurityWithActiveMQ]
 
-Place the following in _/etc/activemq/activemq.xml_ you can download this file from [GitHub][ActiveMQSingleBrokerSample]
+Place the following in your ActiveMQ configuration path as *activemq.xml*. You can download this file from [GitHub][ActiveMQSingleBrokerSample]
 
 Other examples are also available from [GitHub][ActiveMQSamples]
 
@@ -179,7 +182,8 @@ A machine can be both at once, in which case you need to install all 3 packages.
 ### Installation
 
 {% highlight console %}
- # yum install mcollective mcollective-client mcollective-common rubygem-stomp
+  # apt-get install mcollective mcollective-client mcollective-common
+  # gem install stomp
 {% endhighlight %}
 
 

@@ -7,7 +7,7 @@ require 'find'
 require 'rake/gempackagetask'
 
 PROJ_DOC_TITLE = "The Marionette Collective"
-PROJ_VERSION = "1.3.3"
+PROJ_VERSION = "2.0.0"
 PROJ_RELEASE = "1"
 PROJ_NAME = "mcollective"
 PROJ_RPM_NAMES = [PROJ_NAME]
@@ -41,8 +41,8 @@ spec = Gem::Specification.new do |s|
   s.author = "R.I.Pienaar"
   s.email = "rip@puppetlabs.com"
   s.homepage = "https://docs.puppetlabs.com/mcollective/"
-  s.summary = "Client for The Marionette Collective"
-  s.description = "Client tools for the mcollective Application Server"
+  s.summary = "Client libraries for The Marionette Collective"
+  s.description = "Client libraries for the mcollective Application Server"
   s.files = FileList["{bin,lib}/**/*"].to_a
   s.require_path = "lib"
   s.test_files = FileList["spec/**/*"].to_a

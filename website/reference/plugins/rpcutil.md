@@ -5,8 +5,7 @@ disqus: true
 ---
 # {{page.title}}
 
-As of version _0.4.9_ we include an agent with a few utilities and helpers there to assist
-in retrieving information about the running mcollectived.
+We include an agent with a few utilities and helpers there to assist in retrieving information about the running mcollectived.
 
 We aim to add the ability to initiate reloads and so forth in this agent too in future, this
 will require further internal refactoring though.
@@ -97,8 +96,7 @@ A simple lightweight ping action that just returns each nodes local time
 
 ## _collective`_`info_ Action
 
-Retrieves the main and sub collectives configured on a version 1.1.3 or newer
-server
+Retrieves the main and sub collectives configured
 
 For a server configured with:
 

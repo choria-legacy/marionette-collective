@@ -12,10 +12,10 @@ The main daemon that runs on nodes keeps internal stats and supports reloading o
 a tool - *mco controller* - to interact with any running daemon from a client.
 
 If all you want is to reload all the agents without restarting the daemon you can just send it signal
-*USR1* and it will reload its agents.  This is available from version *0.4.5* onward.
+*USR1* and it will reload its agents.
 
-From version *0.4.8* onward you can send *USR2* to cycle the log level through DEBUG to FATAL and back
-again, just keep sending the signal and look at the logs.
+You can send *USR2* to cycle the log level through DEBUG to FATAL and back again, just keep sending
+the signal and look at the logs.
 
 ## Details
 

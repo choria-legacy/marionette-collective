@@ -57,8 +57,8 @@ This gives you a good idea of all the details available for a node.
 
 ## Collective List
 
-As of version _1.1.3_ we have a concept of [Subcollectives] and you can use
-the inventory application to get a quick report on all known collectives:
+We have a concept of [Subcollectives] and you can use the inventory application to get a quick
+report on all known collectives:
 
 {% highlight console %}
 $ mc inventory --list-collectives
@@ -93,8 +93,6 @@ The graph will be a simple dot graph that can be viewed with Graphviz, Gephi or
 other compatible software.
 
 ## Custom Reports
-
-**NOTE: This feature will only be in version 0.4.8**
 
 You can create little scriptlets and pass them into *mco inventory* with the *--script* option.
 

@@ -58,7 +58,7 @@ server.cfg:
   plugin.ssl_client_cert_dir = /etc/mcollective/ssl/clients/
 {% endhighlight %}
 
-TTL and Message Times are protected by default since 1.3.2, this means older clients will not be able to
+TTL and Message Times are protected by default 2.0.0, this means older clients will not be able to
 communicate with servers running this version of the security plugin.  You can make it warn but not
 deny older clients:
 
@@ -120,8 +120,6 @@ with the public/private keys you can set the following environment variables:
 {% endhighlight %}
 
 ### Serialization Method
-
-**Note: This option is available from version 0.4.8 onward**
 
 You can choose either YAML or Marshal, the default is Marshal.  The view with optional Marshal encoding is to have a serializer supported by other languages other than Ruby to enable future integration with those.
 

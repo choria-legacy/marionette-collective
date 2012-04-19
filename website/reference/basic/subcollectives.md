@@ -33,9 +33,8 @@ following scenarios:
    framework that is aware of users and network topology but the core network
    doesnt.
 
-In version _1.1.3_ we've introduced the concept of sub collectives that lets you
-define broadcast domains and configure a mcollective server to belong to one or
-many of these domains.
+We've introduced the concept of sub collectives that lets you define broadcast
+domains and configure a mcollective server to belong to one or many of these domains.
 
 # Partitionion Approaches
 

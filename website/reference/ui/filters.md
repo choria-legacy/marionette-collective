@@ -45,9 +45,6 @@ your nodes.
 Filtering on facts require that you've correctly set up a [FactPlugin].  The examples below
 show common fact filters.
 
-Prior to version 1.2.0 the only fact filters that were supported were equality and regular
-expressions.
-
 Install the ZSH package on machines with the fact _country=de_:
 
 {% highlight console %}
