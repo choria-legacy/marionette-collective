@@ -75,8 +75,6 @@ You could give just the specific node that runs the registration agent access to
 Finally the nodes need to be configured, the server.cfg should have the following at least:
 
 {% highlight ini %}
-    topicprefix = /topic/mcollective
-    topicsep = .
     plugin.stomp.user = mcollective
     plugin.stomp.password = pI1SkjRi
     plugin.psk = aBieveenshedeineeceezaeheer

@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/04/19|Fix reference to _topicnamesep_ and remove _topicprefix_ from examples|13873|
 |2012/04/19|Remove dependency on FPM for building RPM and Deb packages|13573|
 |2012/04/18|Improve default output format from the mco script|14056|
 |2012/04/17|Remove unintended requirement that only newest stomp gems be used|13978|

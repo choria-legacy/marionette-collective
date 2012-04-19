@@ -103,7 +103,6 @@ Configuring the partitioned collective above is fairly simple.  We'll look at
 one of the DE nodes for reference:
 
 {% highlight ini %}
-topicprefix = /topic/
 collectives = mcollective,de_collective,eu_collective
 main_collective = mcollective
 {% endhighlight %}
@@ -130,7 +129,6 @@ Testing that it works is pretty simple, first we need a _client.cfg_ that
 configures your client to talk to all the sub collectives:
 
 {% highlight ini %}
-topicprefix = /topic/
 collectives = mcollective,uk_collective,us_collective,de_collective,eu_collective,us_collective,za_collective
 main_collective = mcollective
 {% endhighlight %}

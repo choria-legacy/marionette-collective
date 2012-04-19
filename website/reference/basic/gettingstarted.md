@@ -178,7 +178,6 @@ Mostly what you'll need to change is the *identity*, *plugin.stomp.`*`* and the 
   logfile = /dev/null
   loglevel = debug
   identity = fqdn
-  topicprefix = /topic/
 
   # connector plugin config
   connector = stomp
@@ -204,7 +203,6 @@ You should also create _/etc/mcollective/server.cfg_ here's a sample, , a full r
   loglevel = debug
   identity = fqdn
   registerinterval = 300
-  topicprefix = /topic/
 
   # connector plugin config
   connector = stomp
