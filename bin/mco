@@ -21,7 +21,7 @@ if known_applications.include?(app_name)
 else
     puts "The Marionette Collective version #{MCollective.version}"
     puts
-    puts "usage: #{$0}: command <options>"
+    puts "usage: #{$0} command <options>"
     puts
     puts "Known commands:"
     puts

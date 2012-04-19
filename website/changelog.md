@@ -11,6 +11,8 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/04/19|Remove dependency on FPM for building RPM and Deb packages|13573|
+|2012/04/18|Improve default output format from the mco script|14056|
 |2012/04/17|Remove unintended requirement that only newest stomp gems be used|13978|
 |2012/04/12|New init script for Debian that uses LSB functions to start and stop the daemon|13043|
 |2012/04/12|Use sed -i in the Rakefile to improve compatibility with OS X|13324|
