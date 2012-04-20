@@ -7,13 +7,13 @@ module MCollective
 
       # Create packager object with package parameter containing list of files,
       # dependencies and package metadata.
-      def initialize(package, pluginpath = nil, verbose = false)
+      def initialize(package, pluginpath = nil, signature = nil, verbose = false)
 
         if File.exists?("/etc/redhat-release")
-          @packager = PluginPackager["RpmpackagePackager"].new(package, pluginpath, verbose)
+          @packager = PluginPackager["RpmpackagePackager"].new(package, pluginpath, signature, verbose)
           @package_type = "RPM"
         elsif File.exists?("/etc/debian_version")
-          @packager = PluginPackager["DebpackagePackager"].new(package, pluginpath, verbose)
+          @packager = PluginPackager["DebpackagePackager"].new(package, pluginpath, signature, verbose)
           @package_type = "Deb"
         else
           raise "cannot identify operating system."

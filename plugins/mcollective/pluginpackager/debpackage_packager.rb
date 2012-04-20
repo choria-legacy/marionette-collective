@@ -6,13 +6,14 @@ module MCollective
       attr_accessor :plugin, :current_package, :tmpdir, :verbose, :libdir
       attr_accessor :workingdir, :preinstall, :postinstall, :current_package_type
       attr_accessor :current_package_data, :current_package_shortname
-      attr_accessor :current_package_fullname, :build_dir
+      attr_accessor :current_package_fullname, :build_dir, :signature
 
-      def initialize(plugin, pluginpath=nil, verbose=false)
+      def initialize(plugin, pluginpath = nil, signature = nil, verbose = false)
         raise RuntimeError, "package 'debuild' is not installed" unless PluginPackager.build_tool?("debuild")
         @plugin = plugin
         @verbose = verbose
         @libdir = pluginpath || "/usr/share/mcollective/plugins/mcollective/"
+        @signature = signature
         @tmpdir = ""
         @builddir = ""
         @targetdir = ""
@@ -52,7 +53,15 @@ module MCollective
 
           FileUtils.cd @build_dir do |f|
             PluginPackager.do_quietly?(@verbose) do
-              PluginPackager.safe_system "debuild -i -us -uc"
+              if @signature
+                if @signature.is_a? String
+                  PluginPackager.safe_system "debuild -i -k#{@signature}"
+                else
+                  PluginPackager.safe_system "debuild -i"
+                end
+              else
+                PluginPackager.safe_system "debuild -i -us -uc"
+              end
             end
           end
 
@@ -62,10 +71,6 @@ module MCollective
         rescue Exception => e
           raise RuntimeError, "Could not build package - #{e}"
         end
-      end
-
-      def get_binding
-        binding
       end
 
       def create_preandpost_install
@@ -107,7 +112,7 @@ module MCollective
         begin
           file = ERB.new(File.read(File.join(File.dirname(__FILE__), "templates", "debian", "#{filename}.erb")), nil, "-")
           File.open(File.join(@build_dir, "debian", filename), "w") do |f|
-            f.puts file.result(get_binding)
+            f.puts file.result(binding)
           end
         rescue Exception => e
           raise RuntimeError, "could not create #{filename} file - #{e}"

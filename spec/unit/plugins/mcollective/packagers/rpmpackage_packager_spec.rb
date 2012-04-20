@@ -81,8 +81,20 @@ module MCollective
         end
 
         it "should create the package" do
-          PluginPackager.expects(:safe_system)
+          PluginPackager.expects(:safe_system).with("rpmbuild -bb   /tmp/SPECS/test.spec --buildroot /tmp/BUILD")
           FileUtils.expects(:cp)
+          @packager.tmpdir = "/tmp"
+          @packager.verbose = "true"
+          @packager.expects(:make_spec_file)
+          @packager.current_package_name = "mcollective-testplugin-test"
+          @packager.expects(:puts).with("Created package mcollective-testplugin-test")
+          @packager.create_package(:test, {:files => ["foo.rb"]})
+        end
+
+        it "should sign the package if a signature is given" do
+          PluginPackager.expects(:safe_system).with("rpmbuild -bb  --sign /tmp/SPECS/test.spec --buildroot /tmp/BUILD")
+          FileUtils.expects(:cp)
+          @packager.signature = true
           @packager.tmpdir = "/tmp"
           @packager.verbose = "true"
           @packager.expects(:make_spec_file)

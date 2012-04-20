@@ -5,13 +5,14 @@ module MCollective
       require 'erb'
       attr_accessor :plugin, :tmpdir, :verbose, :libdir, :workingdir
       attr_accessor :current_package_type, :current_package_data
-      attr_accessor :current_package_name
+      attr_accessor :current_package_name, :signature
 
-      def initialize(plugin, pluginpath=nil, verbose=false)
+      def initialize(plugin, pluginpath = nil, signature = nil, verbose = false)
         raise RuntimeError, "package 'rpm-build' is not installed" unless PluginPackager.build_tool?("rpmbuild")
         @plugin = plugin
         @verbose = verbose
         @libdir = pluginpath || "/usr/libexec/mcollective/mcollective/"
+        @signature = signature
       end
 
       def create_packages
@@ -36,7 +37,7 @@ module MCollective
           make_spec_file
 
           PluginPackager.do_quietly?(@verbose) do
-            PluginPackager.safe_system("rpmbuild -bb #{"--quiet" unless verbose} #{File.join(@tmpdir, "SPECS", "#{type}.spec")} --buildroot #{File.join(@tmpdir, "BUILD")}")
+            PluginPackager.safe_system("rpmbuild -bb #{"--quiet" unless verbose} #{"--sign" if @signature} #{File.join(@tmpdir, "SPECS", "#{type}.spec")} --buildroot #{File.join(@tmpdir, "BUILD")}")
           end
 
           FileUtils.cp(File.join(`rpm --eval '%_rpmdir'`.chomp, "noarch", "#{@current_package_name}-#{@plugin.metadata[:version]}-#{@plugin.iteration}.noarch.rpm"), ".")

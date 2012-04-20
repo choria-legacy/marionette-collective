@@ -69,6 +69,11 @@ mco plugin package [options] <directory>
            :arguments => ["--format OUTPUTFORMAT"],
            :type => String
 
+    option :sign,
+           :description => "Embed a signature in the package",
+           :arguments => ["--sign"],
+           :type => :boolean
+
     option :rpctemplate,
            :description => "RPC Template to use.",
            :arguments => ["--template RPCHELPTEMPLATE"],
@@ -92,10 +97,15 @@ mco plugin package [options] <directory>
 
     # Package plugin
     def package_command
+      if configuration[:sign] && Config.instance.pluginconf.include?("debian_packager.keyname")
+        configuration[:sign] = Config.instance.pluginconf["debian_packager.keyname"]
+        configuration[:sign] = "\"#{configuration[:sign]}\"" unless configuration[:sign].match(/\".*\"/)
+      end
+
       plugin = prepare_plugin
       (configuration[:pluginpath] = configuration[:pluginpath] + "/") if (configuration[:pluginpath] && !configuration[:pluginpath].match(/^.*\/$/))
       packager = PluginPackager["#{configuration[:format].capitalize}Packager"]
-      packager.new(plugin, configuration[:pluginpath], options[:verbose]).create_packages
+      packager.new(plugin, configuration[:pluginpath], configuration[:sign], configuration[:verbose]).create_packages
     end
 
     # Show application list and RPC agent help

@@ -35,7 +35,7 @@ module MCollective
 
         it "should set the correct libdir and verbose value" do
           PluginPackager.expects(:build_tool?).with("debuild").returns(true)
-          packager = DebpackagePackager.new("plugin", nil, true)
+          packager = DebpackagePackager.new("plugin", nil, nil, true)
           packager.libdir.should == "/usr/share/mcollective/plugins/mcollective/"
           packager.verbose.should == true
         end
@@ -83,7 +83,7 @@ module MCollective
         end
 
         it "should correctly create a package" do
-          packager = DebpackagePackager.new(@plugin, nil, true)
+          packager = DebpackagePackager.new(@plugin, nil, nil, true)
 
           packager.expects(:create_file).with("control")
           packager.expects(:create_file).with("Makefile")
@@ -99,6 +99,29 @@ module MCollective
           packager.tmpdir = "/tmp"
           packager.current_package_fullname = "test"
           PluginPackager.expects(:safe_system).with("debuild -i -us -uc")
+          FileUtils.expects(:cp).with(File.join("/tmp", "test_all.deb"), ".")
+          packager.expects(:puts).with("Created package test")
+
+          packager.create_package
+        end
+
+        it "should add a signature if one is given" do
+          packager = DebpackagePackager.new(@plugin, nil, "test", true)
+
+          packager.expects(:create_file).with("control")
+          packager.expects(:create_file).with("Makefile")
+          packager.expects(:create_file).with("compat")
+          packager.expects(:create_file).with("rules")
+          packager.expects(:create_file).with("copyright")
+          packager.expects(:create_file).with("changelog")
+          packager.expects(:create_tar)
+          packager.expects(:create_install)
+          packager.expects(:create_preandpost_install)
+
+          packager.build_dir = "/tmp"
+          packager.tmpdir = "/tmp"
+          packager.current_package_fullname = "test"
+          PluginPackager.expects(:safe_system).with("debuild -i -ktest")
           FileUtils.expects(:cp).with(File.join("/tmp", "test_all.deb"), ".")
           packager.expects(:puts).with("Created package test")
 
