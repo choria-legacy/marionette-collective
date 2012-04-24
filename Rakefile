@@ -125,9 +125,14 @@ task :rpm => [:clean, :doc, :package] do
   lsbdistrel = `lsb_release -r -s | cut -d . -f1`.chomp
   lsbdistro = `lsb_release -i -s`.chomp
 
+  `which rpmbuild-md5`
+  rpmcmd = $?.success? ? 'rpmbuild-md5' : 'rpmbuild'
+
   case lsbdistro
   when 'CentOS'
     rpmdist = ".el#{lsbdistrel}"
+  when 'Fedora'
+    rpmdist = ".fc#{lsbdistrel}"
   else
     rpmdist = ""
   end
@@ -136,9 +141,9 @@ task :rpm => [:clean, :doc, :package] do
   safe_system %{cat ext/redhat/#{PROJ_NAME}.spec|sed -e s/%{rpm_release}/#{CURRENT_RELEASE}/g | sed -e s/%{version}/#{CURRENT_VERSION}/g > #{specsdir}/#{PROJ_NAME}.spec}
 
   if ENV['SIGNED'] == '1'
-    safe_system %{rpmbuild --sign -D 'version #{CURRENT_VERSION}' -D 'rpm_release #{CURRENT_RELEASE}' -D 'dist #{rpmdist}' -D 'use_lsb 0' -ba #{specsdir}/#{PROJ_NAME}.spec}
+    safe_system %{#{rpmcmd} --sign -D 'version #{CURRENT_VERSION}' -D 'rpm_release #{CURRENT_RELEASE}' -D 'dist #{rpmdist}' -D 'use_lsb 0' -ba #{specsdir}/#{PROJ_NAME}.spec}
   else
-    safe_system %{rpmbuild -D 'version #{CURRENT_VERSION}' -D 'rpm_release #{CURRENT_RELEASE}' -D 'dist #{rpmdist}' -D 'use_lsb 0' -ba #{specsdir}/#{PROJ_NAME}.spec}
+    safe_system %{#{rpmcmd} -D 'version #{CURRENT_VERSION}' -D 'rpm_release #{CURRENT_RELEASE}' -D 'dist #{rpmdist}' -D 'use_lsb 0' -ba #{specsdir}/#{PROJ_NAME}.spec}
   end
 
   safe_system %{cp #{srpmsdir}/#{PROJ_NAME}-#{CURRENT_VERSION}-#{CURRENT_RELEASE}#{rpmdist}.src.rpm build/}
