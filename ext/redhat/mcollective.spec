@@ -52,31 +52,31 @@ Server for the mcollective Application Server
 %install
 rm -rf %{buildroot}
 %{__install} -d -m0755  %{buildroot}/%{ruby_sitelib}/mcollective
-%{__install} -d -m0755  %{buildroot}/usr/bin
-%{__install} -d -m0755  %{buildroot}/usr/sbin
-%{__install} -d -m0755  %{buildroot}/etc/init.d
-%{__install} -d -m0755  %{buildroot}/usr/libexec/mcollective/
-%{__install} -d -m0755  %{buildroot}/etc/mcollective
-%{__install} -d -m0755  %{buildroot}/etc/mcollective/plugin.d
-%{__install} -d -m0755  %{buildroot}/etc/mcollective/ssl
-%{__install} -d -m0755  %{buildroot}/etc/mcollective/ssl/clients
-%{__install} -m0755 bin/mcollectived %{buildroot}/usr/sbin/mcollectived
-%{__install} -m0640 etc/server.cfg.dist %{buildroot}/etc/mcollective/server.cfg
-%{__install} -m0644 etc/client.cfg.dist %{buildroot}/etc/mcollective/client.cfg
-%{__install} -m0444 etc/facts.yaml.dist %{buildroot}/etc/mcollective/facts.yaml
-%{__install} -m0444 etc/rpc-help.erb %{buildroot}/etc/mcollective/rpc-help.erb
+%{__install} -d -m0755  %{buildroot}%{_bindir}
+%{__install} -d -m0755  %{buildroot}%{_sbindir}
+%{__install} -d -m0755  %{buildroot}%{_sysconfdir}/init.d
+%{__install} -d -m0755  %{buildroot}%{_libexecdir}/mcollective/
+%{__install} -d -m0755  %{buildroot}%{_sysconfdir}/mcollective
+%{__install} -d -m0755  %{buildroot}%{_sysconfdir}/mcollective/plugin.d
+%{__install} -d -m0755  %{buildroot}%{_sysconfdir}/mcollective/ssl
+%{__install} -d -m0755  %{buildroot}%{_sysconfdir}/mcollective/ssl/clients
+%{__install} -m0755 bin/mcollectived %{buildroot}%{_sbindir}/mcollectived
+%{__install} -m0640 etc/server.cfg.dist %{buildroot}%{_sysconfdir}/mcollective/server.cfg
+%{__install} -m0644 etc/client.cfg.dist %{buildroot}%{_sysconfdir}/mcollective/client.cfg
+%{__install} -m0444 etc/facts.yaml.dist %{buildroot}%{_sysconfdir}/mcollective/facts.yaml
+%{__install} -m0444 etc/rpc-help.erb %{buildroot}%{_sysconfdir}/mcollective/rpc-help.erb
 %if 0%{?suse_version}
-%{__install} -m0755 mcollective.init %{buildroot}/etc/init.d/mcollective
+%{__install} -m0755 mcollective.init %{buildroot}%{_sysconfdir}/init.d/mcollective
 %else
-%{__install} -m0755 ext/redhat/mcollective.init %{buildroot}/etc/init.d/mcollective
+%{__install} -m0755 ext/redhat/mcollective.init %{buildroot}%{_sysconfdir}/init.d/mcollective
 %endif
 
 
 cp -R lib/* %{buildroot}/%{ruby_sitelib}/
-cp -R plugins/* %{buildroot}/usr/libexec/mcollective/
-cp bin/mc-* %{buildroot}/usr/sbin/
-cp bin/mco %{buildroot}/usr/bin/
-chmod 0755 %{buildroot}/usr/sbin/*
+cp -R plugins/* %{buildroot}%{_libexecdir}/mcollective/
+cp bin/mc-* %{buildroot}%{_sbindir}/
+cp bin/mco %{buildroot}%{_bindir}/
+chmod 0755 %{buildroot}%{_sbindir}/*
 
 %clean
 rm -rf %{buildroot}
@@ -86,7 +86,7 @@ rm -rf %{buildroot}
 
 %postun
 if [ "$1" -ge 1 ]; then
-	/sbin/service mcollective condrestart &>/dev/null || :
+  /sbin/service mcollective condrestart &>/dev/null || :
 fi
 
 %preun
@@ -99,32 +99,32 @@ fi
 %doc COPYING
 %{ruby_sitelib}/mcollective.rb
 %{ruby_sitelib}/mcollective
-/usr/libexec/mcollective/mcollective/agent
-/usr/libexec/mcollective/mcollective/audit
-/usr/libexec/mcollective/mcollective/connector
-/usr/libexec/mcollective/mcollective/facts
-/usr/libexec/mcollective/mcollective/registration
-/usr/libexec/mcollective/mcollective/security
-%dir /etc/mcollective
-%dir /etc/mcollective/ssl
-%config/etc/mcollective/rpc-help.erb
+%{_libexecdir}/mcollective/mcollective/agent
+%{_libexecdir}/mcollective/mcollective/audit
+%{_libexecdir}/mcollective/mcollective/connector
+%{_libexecdir}/mcollective/mcollective/facts
+%{_libexecdir}/mcollective/mcollective/registration
+%{_libexecdir}/mcollective/mcollective/security
+%dir %{_sysconfdir}/mcollective
+%dir %{_sysconfdir}/mcollective/ssl
+%config%{_sysconfdir}/mcollective/rpc-help.erb
 
 %files client
-%attr(0755, root, root)/usr/sbin/mc-call-agent
-%attr(0755, root, root)/usr/bin/mco
+%attr(0755, root, root)%{_sbindir}/mc-call-agent
+%attr(0755, root, root)%{_bindir}/mco
 %doc COPYING
-%config(noreplace)/etc/mcollective/client.cfg
-/usr/libexec/mcollective/mcollective/application
-/usr/libexec/mcollective/mcollective/pluginpackager
+%config(noreplace)%{_sysconfdir}/mcollective/client.cfg
+%{_libexecdir}/mcollective/mcollective/application
+%{_libexecdir}/mcollective/mcollective/pluginpackager
 
 %files
 %doc COPYING
-/usr/sbin/mcollectived
-/etc/init.d/mcollective
-%config(noreplace)/etc/mcollective/server.cfg
-%config(noreplace)/etc/mcollective/facts.yaml
-%dir /etc/mcollective/ssl/clients
-%config(noreplace)/etc/mcollective/plugin.d
+%{_sbindir}/mcollectived
+%{_sysconfdir}/init.d/mcollective
+%config(noreplace)%{_sysconfdir}/mcollective/server.cfg
+%config(noreplace)%{_sysconfdir}/mcollective/facts.yaml
+%dir %{_sysconfdir}/mcollective/ssl/clients
+%config(noreplace)%{_sysconfdir}/mcollective/plugin.d
 
 %changelog
 * Tue Nov 03 2009 R.I.Pienaar <rip@devco.net>
