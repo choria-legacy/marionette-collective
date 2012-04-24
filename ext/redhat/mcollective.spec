@@ -1,29 +1,28 @@
-%define ruby_sitelib %(ruby -rrbconfig -e "puts Config::CONFIG['sitelibdir']")
+%{!?ruby_sitelib: %global ruby_sitelib %(ruby -rrbconfig -e "puts Config::CONFIG['sitelibdir']")}
 %define release %{rpm_release}%{?dist}
 
 Summary: Application Server for hosting Ruby code on any capable middleware
 Name: mcollective
 Version: %{version}
 Release: %{release}
-Group: System Tools
-License: Apache License, Version 2
-URL: http://marionette-collective.org/
-Source0: %{name}-%{version}.tgz
+Group: System Environment/Daemons
+License: ASL 2.0
+URL: http://puppetlabs.com/mcollective/introduction/
+Source0: http://downloads.puppetlabs.com/mcollective/%{name}-%{version}.tgz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: ruby
-Requires: ruby
-Requires: rubygems
-Requires: rubygem-stomp
+BuildRequires: ruby(abi) = 1.8
 Requires: mcollective-common = %{version}-%{release}
 Packager: R.I.Pienaar <rip@devco.net>
 BuildArch: noarch
 
 %package common
 Summary: Common libraries for the mcollective clients and servers
-Group: System Tools
+Group: System Environment/Libraries
 Requires: ruby
+Requires: ruby(abi) = 1.8
 Requires: rubygems
-Requires: rubygem-stomp
+Requires: rubygem(stomp)
 
 %description common
 The Marionette Collective:
@@ -33,10 +32,7 @@ Common libraries for the mcollective clients and servers
 %package client
 Summary: Client tools for the mcollective Application Server
 Requires: mcollective-common = %{version}-%{release}
-Requires: ruby
-Requires: rubygems
-Requires: rubygem-stomp
-Group: System Tools
+Group: Applications/System
 
 %description client
 The Marionette Collective:
