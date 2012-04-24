@@ -29,7 +29,7 @@ fi
 # Check that binary exists
 if ! [ -f $mcollectived ]; then
     echo "mcollectived binary not found"
-    exit 0
+    exit 5
 fi
 
 # Source function library.
@@ -48,7 +48,11 @@ fi
 
 start() {
     echo -n "Starting mcollective: "
-    daemon ${daemonopts} ${mcollectived} --pid=${pidfile} --config="/etc/mcollective/server.cfg"
+    # Only try to start if not already started
+    if ! rh_status_q; then
+      daemon ${daemonopts} ${mcollectived} --pid=${pidfile} --config="/etc/mcollective/server.cfg"
+    fi
+    # This will be 0 if mcollective is already running
     RETVAL=$?
     echo
     [ $RETVAL -eq 0 ] && touch ${lockfile}
@@ -57,7 +61,15 @@ start() {
 
 stop() {
     echo -n "Shutting down mcollective: "
-    killproc ${pidopts} -d 10 ${mcollectived}
+    # If running, try to stop it
+    if rh_status_q; then
+      killproc ${pidopts} -d 10 ${mcollectived}
+    else
+      # Non-zero status either means lockfile and pidfile need cleanup (1 and 2)
+      # or the process is already stopped (3), so we can just call true to
+      # trigger the cleanup that happens below.
+      true
+    fi
     RETVAL=$?
     echo
     [ $RETVAL = 0 ] && rm -f ${lockfile} ${pidfile}
