@@ -9,8 +9,8 @@
 #
 ### BEGIN INIT INFO
 # Provides:          mcollective
-# Required-Start:    $remote_fs 
-# Required-Stop:     $remote_fs 
+# Required-Start:    $remote_fs
+# Required-Stop:     $remote_fs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: Start daemon at boot time
@@ -49,14 +49,14 @@ case "$1" in
     start)
         echo "Starting daemon: " $name
         # start the program
-        start-stop-daemon -S -p ${pidfile} -q -a ${mcollectived} -- ${daemonopts}
-        [ $? = 0 ] && { exit 0 ; } || { exit 1 ; } 
+        start-stop-daemon -S -p ${pidfile} --oknodo -q -a ${mcollectived} -- ${daemonopts}
+        [ $? = 0 ] && { exit 0 ; } || { exit 1 ; }
         log_success_msg "mcollective started"
         touch $lock
         ;;
-    stop) 
+    stop)
         echo "Stopping daemon: " $name
-        start-stop-daemon -K -R 5 -s "TERM" -q -p ${pidfile}
+        start-stop-daemon -K -R 5 -s "TERM" --oknodo -q -p ${pidfile}
         [ $? = 0 ] && { exit 0 ; } || { exit 1 ; }
         log_success_msg "mcollective stopped"
         ;;
@@ -80,6 +80,6 @@ case "$1" in
         ;;
     *)
         echo "Usage: mcollectived {start|stop|restart|condrestart|status}"
-        exit 1
+        exit 2
         ;;
 esac
