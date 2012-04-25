@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/04/25|Support using rpmbuild-md5 to create RPMs and support Fedora|14159|
 |2012/04/25|Improve LSB compliance in the Red Hat and Debian RC scripts|14151|
 |2012/04/19|Fix reference to _topicnamesep_ and remove _topicprefix_ from examples|13873|
 |2012/04/19|Remove dependency on FPM for building RPM and Deb packages|13573|
