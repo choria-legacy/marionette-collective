@@ -26,6 +26,9 @@ uid=`id -u`
 # PID directory
 pidfile="/var/run/mcollectived.pid"
 
+# Lockfile location
+lock="/var/lock/mcollective.lock"
+
 name="mcollective"
 mcollectived=/usr/sbin/mcollectived
 daemonopts="--pid=${pidfile}  --config=/etc/mcollective/server.cfg"
@@ -50,29 +53,24 @@ case "$1" in
         echo "Starting daemon: " $name
         # start the program
         start-stop-daemon -S -p ${pidfile} --oknodo -q -a ${mcollectived} -- ${daemonopts}
-        [ $? = 0 ] && { exit 0 ; } || { exit 1 ; }
-        log_success_msg "mcollective started"
-        touch $lock
+        [ $? = 0 ] && { log_success_msg "mcollective started"; touch $lock; exit 0 ; } || { log_failure_msg "mcollective could not be started"; exit 1 ; }
         ;;
     stop)
         echo "Stopping daemon: " $name
         start-stop-daemon -K -R 5 -s "TERM" --oknodo -q -p ${pidfile}
-        [ $? = 0 ] && { exit 0 ; } || { exit 1 ; }
-        log_success_msg "mcollective stopped"
+        [ $? = 0 ] && { log_success_msg "mcollective stopped"; exit 0 ; } || { log_failure_msg "mcollective could not be stopped"; exit 1 ; }
         ;;
     restart)
         echo "Restarting daemon: " $name
         $0 stop
         sleep 2
         $0 start
-        [ $? = 0 ] && { echo "mcollective restarted" ; exit 0 ; }
+        [ $? = 0 ] && { log_success_msg "mcollective restarted" ; exit 0 ; }
         ;;
     force-reload)
         echo "Reloading configuration: " $name
-        start-stop-daemon --stop --pidfile ${pidfile} --signal USR1 -a ${mcollectived} -- ${daemonopts}
-        [ $? = 0 ] && { exit 0 ; } || { exit 1 ; }
-        log_success_msg "mcollective configuration reloaded"
-        touch $lock
+        start-stop-daemon --stop -q --pidfile ${pidfile} --signal USR1 -a ${mcollectived} -- ${daemonopts}
+        [ $? = 0 ] && { log_success_msg "mcollective configuration reloaded"; touch $lock; exit 0 ; } || { $0 restart; }
         ;;
     condrestart)
         if [ -f $lock ]; then
