@@ -67,6 +67,13 @@ case "$1" in
         $0 start
         [ $? = 0 ] && { echo "mcollective restarted" ; exit 0 ; }
         ;;
+    force-reload)
+        echo "Reloading configuration: " $name
+        start-stop-daemon --stop --pidfile ${pidfile} --signal USR1 -a ${mcollectived} -- ${daemonopts}
+        [ $? = 0 ] && { exit 0 ; } || { exit 1 ; }
+        log_success_msg "mcollective configuration reloaded"
+        touch $lock
+        ;;
     condrestart)
         if [ -f $lock ]; then
             $0 stop
