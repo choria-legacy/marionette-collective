@@ -1,19 +1,52 @@
-_mco()
-{
-        local cur cmd agents options
+_mco() {
+  local agents options
 
-        COMPREPLY=()
-        cur=${COMP_WORDS[COMP_CWORD]}
-        prev=${COMP_WORDS[COMP_CWORD-1]}
-        cmd=${COMP_WORDS[0]}
+  COMPREPLY=()
+  local cur=${COMP_WORDS[COMP_CWORD]}
+  local prev=${COMP_WORDS[COMP_CWORD-1]}
 
-        if [ $COMP_CWORD -eq 1 ]; then
-           agents=$($cmd | sed -n "s@Known commands: @@p")
-           COMPREPLY=($(compgen -W "$agents" -- "$cur"))
-        elif [ $COMP_CWORD -eq 2 ]; then
-           options=$($cmd $prev --help | grep -o -- '-[^, ]\+') 
-           COMPREPLY=($(compgen -W "$options" -- "$cur"))
-        fi
+  # Where are the plugins?
+  local libdir=$(sed -n 's@libdir = @@p' /etc/mcollective/client.cfg)
+
+  # All arguments by options
+  noopt=($(tr ' ' '\n' <<<${COMP_WORDS[@]} | \
+    grep -v "^$cur$" | grep -v -- '^-'))
+
+  local count_noopt=${#noopt[@]}
+  local cmd=${noopt[0]}
+  local agent=${noopt[1]}
+
+  if [ $COMP_CWORD -eq 1 ]; then
+    agents=$($cmd | sed -n 's@Known commands: @@p')
+    COMPREPLY=($(compgen -W "$agents" -- "$cur"))
+  elif [ $COMP_CWORD -gt 1 ]; then
+    options=$($cmd $agent --help | grep -o -- '-[^, ]\+') 
+
+    if [ "x${agent}" = "xrpc" ]; then
+      if [[ $count_noopt -eq 2 || "x${prev}" = "x--agent" ]]; then
+        # Complete with agents
+        agents=$(ls $libdir/mcollective/agent | sed -n 's@\.ddl@@p')
+        options="$options $agents"
+      elif [[ $count_noopt -eq 3 || "x${prev}" = "x--action" ]]; then
+        # Complete with agent actions
+        rpcagent=${noopt[2]}
+        actions=$(sed -n 's@^action ["'\'']\([^"'\'']\+\).*@\1@p' \
+          "$libdir/mcollective/agent/$rpcagent.ddl" 2>/dev/null)
+        options="$options $actions"
+      elif [ $count_noopt -gt 3 ]; then
+        # Complete with key=value
+        rpcagent=${noopt[2]}
+        rpcaction=${noopt[3]}
+        inputs=$(sed -n "/^action [\"']${rpcaction}.*/,/^end$/p" \
+          "$libdir/mcollective/agent/$rpcagent.ddl" 2>/dev/null | \
+          sed -n 's@[\t ]*input[\t ]\+:\([^,]\+\),.*@\1@p')
+        COMPREPLY=($(compgen -W "$inputs" -S '=' -- "$cur"))
+        return
+      fi
+    fi
+
+    COMPREPLY=($(compgen -W "$options" -S ' ' -- "$cur"))
+  fi
 }
-[ -n "${have:-}" ] && complete -F _mco mco
+[ -n "${have:-}" ] && complete -o nospace -F _mco mco
 
