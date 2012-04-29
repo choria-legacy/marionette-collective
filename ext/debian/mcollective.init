@@ -60,17 +60,12 @@ case "$1" in
         start-stop-daemon -K -R 5 -s "TERM" --oknodo -q -p ${pidfile}
         [ $? = 0 ] && { log_success_msg "mcollective stopped"; exit 0 ; } || { log_failure_msg "mcollective could not be stopped"; exit 1 ; }
         ;;
-    restart)
+    restart|force-reload)
         echo "Restarting daemon: " $name
         $0 stop
         sleep 2
         $0 start
         [ $? = 0 ] && { log_success_msg "mcollective restarted" ; exit 0 ; }
-        ;;
-    force-reload)
-        echo "Reloading configuration: " $name
-        start-stop-daemon --stop -q --pidfile ${pidfile} --signal USR1 -a ${mcollectived} -- ${daemonopts}
-        [ $? = 0 ] && { log_success_msg "mcollective configuration reloaded"; touch $lock; exit 0 ; } || { $0 restart; }
         ;;
     condrestart)
         if [ -f $lock ]; then
