@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/04/30|Compound filters when set from the RPC client were not working|14239|
 |2012/04/25|Various improvements to the RPM spec file wrt licencing, dependencies etc|9451|
 |2012/04/25|Support using rpmbuild-md5 to create RPMs and support Fedora|14159|
 |2012/04/25|Improve LSB compliance in the Red Hat and Debian RC scripts|14151|
