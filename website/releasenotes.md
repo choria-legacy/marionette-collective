@@ -7,6 +7,7 @@ title: Release Notes
 This is a list of release notes for various releases, you should review these before upgrading as any potential problems and backward incompatible changes will be highlighted here.
 
 <a name="2_0_0">&nbsp;</a>
+
 ## 2.0.0 - 2012/04/30
 
 This is the next production release of MCollective.  It brings to an
