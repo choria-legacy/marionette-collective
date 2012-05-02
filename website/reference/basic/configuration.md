@@ -42,6 +42,7 @@ Configuration is a simple *key = val* style configuration file.
 |connector|Stomp|Which _connector_ plugin to use for communication|
 |securityprovider|Psk|Which security model to use, see [SSL Security Plugin][SSLSecurity] and [AES Security Plugin][AESSecurity] for details on others|
 |rpchelptemplate|/etc/mcollective/rpc-help.erb|The path to the erb template used for generating help|
+|helptemplatedir|/etc/mcollective|The path that contains all the erb templates for generating help|
 |logger_type|file|Valid logger types, currently file, syslog or console|
 |ssl_cipher|aes-256-cbc|This sets the cipher in use by the SSL code, see _man enc_ for a list supported by OpenSSL|
 |direct_addressing|n|Enable or disable directed requests|

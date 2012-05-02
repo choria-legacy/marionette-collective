@@ -316,6 +316,18 @@ module MCollective
       end
     end
 
+    describe "#colorize" do
+      it "should not add color codes when color is disabled" do
+        Config.any_instance.stubs(:color).returns(false)
+        Util.colorize(:red, "hello world").should == "hello world"
+      end
+
+      it "should add color when color is enabled" do
+        Config.any_instance.stubs(:color).returns(true)
+        Util.colorize(:red, "hello world").should == "[31mhello world[0m"
+      end
+    end
+
     describe "#eval_compound_statement" do
       it "should return correctly on a regex class statement" do
         Util.expects(:has_cf_class?).with("/foo/").returns(true)

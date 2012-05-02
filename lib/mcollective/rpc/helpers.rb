@@ -66,30 +66,6 @@ module MCollective
         [0, 0]
       end
 
-      # Return color codes, if the config color= option is false
-      # just return a empty string
-      def self.color(code)
-        colorize = Config.instance.color
-
-        colors = {:red => "[31m",
-          :green => "[32m",
-          :yellow => "[33m",
-          :cyan => "[36m",
-          :bold => "[1m",
-          :reset => "[0m"}
-
-        if colorize
-          return colors[code] || ""
-        else
-          return ""
-        end
-      end
-
-      # Helper to return a string in specific color
-      def self.colorize(code, msg)
-        "#{self.color(code)}#{msg}#{self.color(:reset)}"
-      end
-
       # Returns a blob of text representing the results in a standard way
       #
       # It tries hard to do sane things so you often

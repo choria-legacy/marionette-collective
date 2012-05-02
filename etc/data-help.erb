@@ -1,0 +1,31 @@
+<%= meta[:name] %>
+<% meta[:name].size.times do %>=<% end %>
+
+<%= meta[:description] %>
+
+      Author: <%= meta[:author] %>
+     Version: <%= meta[:version] %>
+     License: <%= meta[:license] %>
+     Timeout: <%= meta[:timeout] %>
+   Home Page: <%= meta[:url] %>
+
+QUERY FUNCTION INPUT:
+
+              Description: <%= entities[:data][:input][:query][:description] %>
+                   Prompt: <%= entities[:data][:input][:query][:prompt] %>
+                     Type: <%= entities[:data][:input][:query][:type] %>
+%        if entities[:data][:input][:query][:type] == :string
+               Validation: <%= entities[:data][:input][:query][:validation] %>
+                   Length: <%= entities[:data][:input][:query][:maxlength] %>
+%        elsif entities[:data][:input][:query][:type] == :list
+             Valid Values: <%= entities[:data][:input][:query][:list].join(", ") %>
+%        end
+
+QUERY FUNCTION OUTPUT:
+
+%    entities[:data][:output].keys.sort.each do |output|
+           <%= output %>:
+              Description: <%= entities[:data][:output][output][:description] %>
+               Display As: <%= entities[:data][:output][output][:display_as] %>
+
+%    end

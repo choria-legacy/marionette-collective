@@ -11,10 +11,10 @@ module MCollective
       begin
         load_application(appname)
       rescue Exception => e
-        e.backtrace.first << RPC::Helpers.colorize(:red, "  <----")
+        e.backtrace.first << Util.colorize(:red, "  <----")
         STDERR.puts "Application '#{appname}' failed to load:"
         STDERR.puts
-        STDERR.puts RPC::Helpers.colorize(:red, "   #{e} (#{e.class})")
+        STDERR.puts Util.colorize(:red, "   #{e} (#{e.class})")
         STDERR.puts
         STDERR.puts "       %s" % [e.backtrace.join("\n       ")]
         exit 1

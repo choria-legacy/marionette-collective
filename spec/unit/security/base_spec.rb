@@ -248,29 +248,29 @@ module MCollective
       end
 
       describe "#validrequest?" do
-        it "should log an error when not implimented" do
-          MCollective::Log.expects(:error).with("validrequest? is not implimented in MCollective::Security::Base")
+        it "should log an error when not implemented" do
+          MCollective::Log.expects(:error).with("validrequest? is not implemented in MCollective::Security::Base")
           @plugin.validrequest?(nil)
         end
       end
 
       describe "#encoderequest" do
-        it "should log an error when not implimented" do
-          MCollective::Log.expects(:error).with("encoderequest is not implimented in MCollective::Security::Base")
+        it "should log an error when not implemented" do
+          MCollective::Log.expects(:error).with("encoderequest is not implemented in MCollective::Security::Base")
           @plugin.encoderequest(nil, nil, nil)
         end
       end
 
       describe "#encodereply" do
-        it "should log an error when not implimented" do
-          MCollective::Log.expects(:error).with("encodereply is not implimented in MCollective::Security::Base")
+        it "should log an error when not implemented" do
+          MCollective::Log.expects(:error).with("encodereply is not implemented in MCollective::Security::Base")
           @plugin.encodereply(nil, nil, nil)
         end
       end
 
       describe "#decodemsg" do
-        it "should log an error when not implimented" do
-          MCollective::Log.expects(:error).with("decodemsg is not implimented in MCollective::Security::Base")
+        it "should log an error when not implemented" do
+          MCollective::Log.expects(:error).with("decodemsg is not implemented in MCollective::Security::Base")
           @plugin.decodemsg(nil)
         end
       end

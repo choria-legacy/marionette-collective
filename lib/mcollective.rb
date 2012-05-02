@@ -42,6 +42,7 @@ module MCollective
   autoload :Client, "mcollective/client"
   autoload :Config, "mcollective/config"
   autoload :Connector, "mcollective/connector"
+  autoload :Data, "mcollective/data"
   autoload :DDL, "mcollective/ddl"
   autoload :Facts, "mcollective/facts"
   autoload :Logger, "mcollective/logger"

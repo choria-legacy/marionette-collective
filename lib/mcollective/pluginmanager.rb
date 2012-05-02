@@ -60,7 +60,7 @@ module MCollective
 
     # Provides a list of plugins we know about
     def self.pluginlist
-      @plugins.keys
+      @plugins.keys.sort
     end
 
     # deletes all registered plugins
@@ -119,7 +119,7 @@ module MCollective
       plugins = []
 
       Config.instance.libdir.each do |libdir|
-        plugdir = File.join([libdir, "mcollective", type])
+        plugdir = File.join([libdir, "mcollective", type.to_s])
         next unless File.directory?(plugdir)
 
         Dir.new(plugdir).grep(/#{extension}$/).map do |plugin|
@@ -174,7 +174,7 @@ module MCollective
 
     # Grep's over the plugin list and returns the list found
     def self.grep(regex)
-      @plugins.keys.grep regex
+      @plugins.keys.grep(regex)
     end
   end
 end

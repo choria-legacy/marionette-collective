@@ -215,22 +215,22 @@ module MCollective
 
       # Security providers should provide this, see MCollective::Security::Psk
       def validrequest?(req)
-        Log.error("validrequest? is not implimented in #{self.class}")
+        Log.error("validrequest? is not implemented in #{self.class}")
       end
 
       # Security providers should provide this, see MCollective::Security::Psk
       def encoderequest(sender, msg, filter={})
-        Log.error("encoderequest is not implimented in #{self.class}")
+        Log.error("encoderequest is not implemented in #{self.class}")
       end
 
       # Security providers should provide this, see MCollective::Security::Psk
       def encodereply(sender, msg, requestcallerid=nil)
-        Log.error("encodereply is not implimented in #{self.class}")
+        Log.error("encodereply is not implemented in #{self.class}")
       end
 
       # Security providers should provide this, see MCollective::Security::Psk
       def decodemsg(msg)
-        Log.error("decodemsg is not implimented in #{self.class}")
+        Log.error("decodemsg is not implemented in #{self.class}")
       end
     end
   end

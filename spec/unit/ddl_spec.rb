@@ -37,19 +37,19 @@ module MCollective
       it "should ensure minimum parameters are given" do
         [:name, :description, :author, :license, :version, :url, :timeout].each do |tst|
           metadata = {:name => "name", :description => "description", :author => "author",
-            :license => "license", :version => "version", :url => "url", :timeout => "timeout"}
+                      :license => "license", :version => "version", :url => "url", :timeout => "timeout"}
 
           metadata.delete(tst)
 
           expect {
             @ddl.metadata(metadata)
-          }.to raise_error("Metadata needs a :#{tst}")
+          }.to raise_error("Metadata needs a :#{tst} property")
         end
       end
 
       it "should should allow arbitrary metadata" do
         metadata = {:name => "name", :description => "description", :author => "author", :license => "license",
-          :version => "version", :url => "url", :timeout => "timeout", :foo => "bar"}
+                    :version => "version", :url => "url", :timeout => "timeout", :foo => "bar"}
 
         @ddl.metadata(metadata)
         @ddl.meta.should == metadata
@@ -60,7 +60,7 @@ module MCollective
       it "should ensure a description is set" do
         expect {
           @ddl.action("act", {})
-        }.to raise_error("Action needs a :description")
+        }.to raise_error("Action needs a :description property")
       end
 
       it "should create a default action structure" do
@@ -77,14 +77,65 @@ module MCollective
       end
 
       it "should call a block if one is given and set the correct action name" do
-        @ddl.action("act", :description => "rspec") { @ddl.instance_variable_get("@current_action").should == "act" }
+        @ddl.action("act", :description => "rspec") { @ddl.instance_variable_get("@current_entity").should == "act" }
+      end
+    end
+
+    describe "#dataquery" do
+      it "should ensure a description is set" do
+        expect { @ddl.dataquery({}) }.to raise_error("Data queries need a :description")
+      end
+
+      it "should ensure only one definition" do
+        @ddl.dataquery(:description => "rspec")
+
+        expect { @ddl.dataquery(:description => "rspec") }.to raise_error("Data queries can only have one definition")
+      end
+
+      it "should create the default structure" do
+        @ddl.dataquery(:description => "rspec")
+        @ddl.instance_variable_set("@plugintype", :data)
+        @ddl.dataquery_interface.should == {:description => "rspec", :input => {}, :output => {}}
+      end
+
+      it "should call the block if given" do
+        @ddl.dataquery(:description => "rspec") { @ddl.instance_variable_get("@current_entity").should == :data }
+      end
+    end
+
+    describe "#dataquery_interface" do
+      it "should fail for non data plugins" do
+        expect { @ddl.dataquery_interface }.to raise_error("Only data DDLs have data queries")
+      end
+
+      it "should return the correct data" do
+        input = {:prompt => "Matcher", :description => "Augeas Matcher", :type => :string, :validation => /.+/, :maxlength => 0}
+        output = {:description=>"rspec", :display_as=>"rspec"}
+
+        @ddl.instance_variable_set("@plugintype", :data)
+        @ddl.dataquery(:description => "rspec") do
+          @ddl.output :rspec, output
+          @ddl.input :query, input
+        end
+
+        @ddl.dataquery_interface.should == {:description => "rspec",
+                                            :input => {:query => input.merge(:optional => nil)},
+                                            :output => {:rspec => output}}
       end
     end
 
     describe "#input" do
+      it "should only allow 'query' as input for data plugins" do
+        @ddl.dataquery(:description => "rspec")
+        @ddl.instance_variable_set("@current_entity", :query)
+        @ddl.instance_variable_set("@plugintype", :data)
+
+        expect { @ddl.input(:rspec, {}) }.to raise_error("The only valid input name for a data query is 'query'")
+      end
+
       it "should ensure required properties are set" do
         @ddl.action(:test, :description => "rspec")
-        @ddl.instance_variable_set("@current_action", :test)
+        @ddl.instance_variable_set("@current_entity", :test)
 
         [:prompt, :description, :type, :optional].each do |arg|
           args = {:prompt => "prompt", :description => "descr", :type => "type", :optional => true}
@@ -92,7 +143,7 @@ module MCollective
 
           expect {
             @ddl.input(:test, args)
-          }.to raise_error("Input needs a :#{arg}")
+          }.to raise_error("Input needs a :#{arg} property")
         end
 
         @ddl.input(:test, {:prompt => "prompt", :description => "descr", :type => "type", :optional => true})
@@ -100,7 +151,7 @@ module MCollective
 
       it "should ensure strings have a validation and maxlength" do
         @ddl.action(:test, :description => "rspec")
-        @ddl.instance_variable_set("@current_action", :test)
+        @ddl.instance_variable_set("@current_entity", :test)
 
         expect {
           @ddl.input(:test, :prompt => "prompt", :description => "descr",
@@ -118,7 +169,7 @@ module MCollective
 
       it "should ensure lists have a list argument" do
         @ddl.action(:test, :description => "rspec")
-        @ddl.instance_variable_set("@current_action", :test)
+        @ddl.instance_variable_set("@current_entity", :test)
 
         expect {
           @ddl.input(:test, :prompt => "prompt", :description => "descr",
@@ -131,7 +182,7 @@ module MCollective
 
       it "should save correct data for a list input" do
         @ddl.action(:test, :description => "rspec")
-        @ddl.instance_variable_set("@current_action", :test)
+        @ddl.instance_variable_set("@current_entity", :test)
         @ddl.input(:test, :prompt => "prompt", :description => "descr",
                    :type => :list, :optional => true, :list => [])
 
@@ -146,7 +197,7 @@ module MCollective
 
       it "should save correct data for a string input" do
         @ddl.action(:test, :description => "rspec")
-        @ddl.instance_variable_set("@current_action", :test)
+        @ddl.instance_variable_set("@current_entity", :test)
         @ddl.input(:test, :prompt => "prompt", :description => "descr",
                    :type => :string, :optional => true, :validation => "",
                    :maxlength => 1)
@@ -165,7 +216,7 @@ module MCollective
     describe "#output" do
       it "should ensure a :description is set" do
         @ddl.action(:test, :description => "rspec")
-        @ddl.instance_variable_set("@current_action", :test)
+        @ddl.instance_variable_set("@current_entity", :test)
 
         expect {
           @ddl.output(:test, {})
@@ -174,7 +225,7 @@ module MCollective
 
       it "should ensure a :display_as is set" do
         @ddl.action(:test, :description => "rspec")
-        @ddl.instance_variable_set("@current_action", :test)
+        @ddl.instance_variable_set("@current_entity", :test)
 
         expect {
           @ddl.output(:test, {:description => "rspec"})
@@ -183,7 +234,7 @@ module MCollective
 
       it "should save correct data for an output" do
         @ddl.action(:test, :description => "rspec")
-        @ddl.instance_variable_set("@current_action", :test)
+        @ddl.instance_variable_set("@current_entity", :test)
 
         @ddl.output(:test, {:description => "rspec", :display_as => "RSpec"})
 
@@ -197,7 +248,7 @@ module MCollective
     describe "#display" do
       it "should ensure a valid display property is set" do
         @ddl.action(:test, :description => "rspec")
-        @ddl.instance_variable_set("@current_action", :test)
+        @ddl.instance_variable_set("@current_entity", :test)
 
         [:ok, :failed, :flatten, :always].each do |display|
           @ddl.display(display)
@@ -212,11 +263,38 @@ module MCollective
       end
     end
 
+    describe "#template_for_plugintype" do
+      it "should return the backward compat path for agent ddls" do
+        @ddl.template_for_plugintype.should == "rpc-help.erb"
+      end
+
+      it "should return correct new path for other ddls" do
+        @ddl.instance_variable_set("@plugintype", :data)
+        @ddl.template_for_plugintype.should == "data-help.erb"
+      end
+    end
+
     describe "#help" do
+      it "should use conventional template paths when none is provided" do
+        Config.instance.set_config_defaults("")
+        File.expects(:read).with("/etc/mcollective/rpc-help.erb").returns("rspec")
+        @ddl.help.should == "rspec"
+      end
+
+      it "should use template from help template path when provided template name is not an absolute file path" do
+        File.expects(:read).with("/etc/mcollective/foo").returns("rspec")
+        @ddl.help("foo").should == "rspec"
+      end
+
+      it "should use supplied template path when one is provided" do
+        File.expects(:read).with("/foo").returns("rspec")
+        @ddl.help("/foo").should == "rspec"
+      end
+
       it "should correctly execute the template with a valid binding" do
         @ddl.instance_variable_set("@meta", "meta")
-        @ddl.instance_variable_set("@actions", "actions")
-        IO.expects(:read).with("/template").returns("<%= meta %>:<%= actions %>")
+        @ddl.instance_variable_set("@entities", "actions")
+        File.expects(:read).with("/template").returns("<%= meta %>:<%= entities %>")
         @ddl.help("/template").should == "meta:actions"
       end
     end
@@ -245,6 +323,125 @@ module MCollective
       end
     end
 
+    describe "#validate_input_arguments" do
+      it "should ensure strings are String" do
+        @ddl.action(:string, :description => "rspec")
+        @ddl.instance_variable_set("@current_entity", :string)
+        @ddl.input(:string, :prompt => "prompt", :description => "descr",
+                   :type => :string, :optional => true, :validation => "",
+                   :maxlength => 1)
+
+        expect {
+          @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, 1)
+        }.to raise_error("Input string should be a string")
+
+        @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, "1")
+      end
+
+      it "should ensure strings are not longer than maxlength" do
+        @ddl.action(:string, :description => "rspec")
+        @ddl.instance_variable_set("@current_entity", :string)
+        @ddl.input(:string, :prompt => "prompt", :description => "descr",
+                   :type => :string, :optional => true, :validation => "",
+                   :maxlength => 1)
+
+        expect {
+          @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, "too long")
+        }.to raise_error("Input string is longer than 1 character(s)")
+
+        @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, "1")
+      end
+
+      it "should validate strings using regular expressions" do
+        @ddl.action(:string, :description => "rspec")
+        @ddl.instance_variable_set("@current_entity", :string)
+        @ddl.input(:string, :prompt => "prompt", :description => "descr",
+                   :type => :string, :optional => true, :validation => "^regex$",
+                   :maxlength => 100)
+
+        expect {
+          @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, "doesnt validate")
+        }.to raise_error("Input string does not match validation regex ^regex$")
+
+        @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, "regex")
+      end
+
+      it "should validate list arguments correctly" do
+        @ddl.action(:list, :description => "rspec")
+        @ddl.instance_variable_set("@current_entity", :list)
+        @ddl.input(:list, :prompt => "prompt", :description => "descr",
+                   :type => :list, :optional => true, :list => [1,2])
+
+        expect {
+          @ddl.validate_input_argument(@ddl.entities[:list][:input], :list, 3)
+        }.to raise_error("Input list doesn't match list 1, 2")
+
+        @ddl.validate_input_argument(@ddl.entities[:list][:input], :list, 1)
+      end
+
+      it "should validate boolean arguments correctly" do
+        @ddl.action(:bool, :description => "rspec")
+        @ddl.instance_variable_set("@current_entity", :bool)
+        @ddl.input(:bool, :prompt => "prompt", :description => "descr",
+                   :type => :boolean, :optional => true)
+
+        expect {
+          @ddl.validate_input_argument(@ddl.entities[:bool][:input], :bool, 3)
+        }.to raise_error("Input bool should be a boolean")
+
+        @ddl.validate_input_argument(@ddl.entities[:bool][:input], :bool, true)
+        @ddl.validate_input_argument(@ddl.entities[:bool][:input], :bool, false)
+      end
+
+      it "should validate integer arguments correctly" do
+        @ddl.action(:test, :description => "rspec")
+        @ddl.instance_variable_set("@current_entity", :test)
+        @ddl.input(:int, :prompt => "prompt", :description => "descr",
+                   :type => :integer, :optional => true)
+
+        expect {
+          @ddl.validate_input_argument(@ddl.entities[:test][:input], :int, "1")
+        }.to raise_error("Input int should be a integer")
+
+        expect {
+          @ddl.validate_input_argument(@ddl.entities[:test][:input], :int, 1.1)
+        }.to raise_error("Input int should be a integer")
+
+        @ddl.validate_input_argument(@ddl.entities[:test][:input], :int, 1)
+      end
+
+      it "should validate float arguments correctly" do
+        @ddl.action(:test, :description => "rspec")
+        @ddl.instance_variable_set("@current_entity", :test)
+        @ddl.input(:float, :prompt => "prompt", :description => "descr",
+                   :type => :float, :optional => true)
+
+        expect {
+          @ddl.validate_input_argument(@ddl.entities[:test][:input], :float, "1")
+        }.to raise_error("Input float should be a floating point number")
+
+        expect {
+          @ddl.validate_input_argument(@ddl.entities[:test][:input], :float, 1)
+        }.to raise_error("Input float should be a floating point number")
+
+        @ddl.validate_input_argument(@ddl.entities[:test][:input], :float, 1.1)
+      end
+
+      it "should validate number arguments correctly" do
+        @ddl.action(:test, :description => "rspec")
+        @ddl.instance_variable_set("@current_entity", :test)
+        @ddl.input(:number, :prompt => "prompt", :description => "descr",
+                   :type => :number, :optional => true)
+
+        expect {
+          @ddl.validate_input_argument(@ddl.entities[:test][:input], :number, "1")
+        }.to raise_error("Input number should be a number")
+
+        @ddl.validate_input_argument(@ddl.entities[:test][:input], :number, 1)
+        @ddl.validate_input_argument(@ddl.entities[:test][:input], :number, 1.1)
+      end
+    end
+
     describe "#validate_rpc_request" do
       it "should fail to validate non agent DDLs" do
         ddl = DDL.new("rspec", :foo, false)
@@ -263,7 +460,7 @@ module MCollective
 
       it "should check all required arguments are present" do
         @ddl.action(:test, :description => "rspec")
-        @ddl.instance_variable_set("@current_action", :test)
+        @ddl.instance_variable_set("@current_entity", :test)
         @ddl.input(:optional, :prompt => "prompt", :description => "descr",
                    :type => :string, :optional => true, :validation => "",
                    :maxlength => 1)
@@ -278,121 +475,21 @@ module MCollective
         @ddl.validate_rpc_request(:test, {:required => "f"}).should == true
       end
 
-      it "should ensure strings are String" do
-        @ddl.action(:string, :description => "rspec")
-        @ddl.instance_variable_set("@current_action", :string)
-        @ddl.input(:string, :prompt => "prompt", :description => "descr",
+      it "should input validate every supplied key" do
+        @ddl.action(:test, :description => "rspec")
+        @ddl.instance_variable_set("@current_entity", :test)
+        @ddl.input(:optional, :prompt => "prompt", :description => "descr",
                    :type => :string, :optional => true, :validation => "",
                    :maxlength => 1)
-
-        expect {
-          @ddl.validate_rpc_request(:string, {:string => 1})
-        }.to raise_error("Input string should be a string")
-
-        @ddl.validate_rpc_request(:string, {:string => "1"})
-      end
-
-      it "should ensure strings are not longer than maxlength" do
-        @ddl.action(:string, :description => "rspec")
-        @ddl.instance_variable_set("@current_action", :string)
-        @ddl.input(:string, :prompt => "prompt", :description => "descr",
-                   :type => :string, :optional => true, :validation => "",
+        @ddl.input(:required, :prompt => "prompt", :description => "descr",
+                   :type => :string, :optional => false, :validation => "",
                    :maxlength => 1)
 
-        expect {
-          @ddl.validate_rpc_request(:string, {:string => "too long"})
-        }.to raise_error("Input string is longer than 1 character(s)")
 
-        @ddl.validate_rpc_request(:string, {:string => "1"})
-      end
+        @ddl.expects(:validate_input_argument).with(@ddl.entities[:test][:input], :required, "f")
+        @ddl.expects(:validate_input_argument).with(@ddl.entities[:test][:input], :optional, "f")
 
-      it "should validate strings using regular expressions" do
-        @ddl.action(:string, :description => "rspec")
-        @ddl.instance_variable_set("@current_action", :string)
-        @ddl.input(:string, :prompt => "prompt", :description => "descr",
-                   :type => :string, :optional => true, :validation => "^regex$",
-                   :maxlength => 100)
-
-        expect {
-          @ddl.validate_rpc_request(:string, {:string => "doesnt validate"})
-        }.to raise_error("Input string does not match validation regex ^regex$")
-
-        @ddl.validate_rpc_request(:string, {:string => "regex"})
-      end
-
-      it "should validate list arguments correctly" do
-        @ddl.action(:list, :description => "rspec")
-        @ddl.instance_variable_set("@current_action", :list)
-        @ddl.input(:list, :prompt => "prompt", :description => "descr",
-                   :type => :list, :optional => true, :list => [1,2])
-
-        expect {
-          @ddl.validate_rpc_request(:list, {:list => 3})
-        }.to raise_error("Input list doesn't match list 1, 2")
-
-        @ddl.validate_rpc_request(:list, {:list => 1})
-      end
-
-      it "should validate boolean arguments correctly" do
-        @ddl.action(:bool, :description => "rspec")
-        @ddl.instance_variable_set("@current_action", :bool)
-        @ddl.input(:bool, :prompt => "prompt", :description => "descr",
-                   :type => :boolean, :optional => true)
-
-        expect {
-          @ddl.validate_rpc_request(:bool, {:bool => 3})
-        }.to raise_error("Input bool should be a boolean")
-
-        @ddl.validate_rpc_request(:bool, {:bool => true})
-        @ddl.validate_rpc_request(:bool, {:bool => false})
-      end
-
-      it "should validate integer arguments correctly" do
-        @ddl.action(:test, :description => "rspec")
-        @ddl.instance_variable_set("@current_action", :test)
-        @ddl.input(:int, :prompt => "prompt", :description => "descr",
-                   :type => :integer, :optional => true)
-
-        expect {
-          @ddl.validate_rpc_request(:test, {:int => "1"})
-        }.to raise_error("Input int should be a integer")
-
-        expect {
-          @ddl.validate_rpc_request(:test, {:int => 1.1})
-        }.to raise_error("Input int should be a integer")
-
-        @ddl.validate_rpc_request(:test, {:int => 1})
-      end
-
-      it "should validate float arguments correctly" do
-        @ddl.action(:test, :description => "rspec")
-        @ddl.instance_variable_set("@current_action", :test)
-        @ddl.input(:float, :prompt => "prompt", :description => "descr",
-                   :type => :float, :optional => true)
-
-        expect {
-          @ddl.validate_rpc_request(:test, {:float => "1"})
-        }.to raise_error("Input float should be a floating point number")
-
-        expect {
-          @ddl.validate_rpc_request(:test, {:float => 1})
-        }.to raise_error("Input float should be a floating point number")
-
-        @ddl.validate_rpc_request(:test, {:float => 1.1})
-      end
-
-      it "should validate number arguments correctly" do
-        @ddl.action(:test, :description => "rspec")
-        @ddl.instance_variable_set("@current_action", :test)
-        @ddl.input(:number, :prompt => "prompt", :description => "descr",
-                   :type => :number, :optional => true)
-
-        expect {
-          @ddl.validate_rpc_request(:test, {:number => "1"})
-        }.to raise_error("Input number should be a number")
-
-        @ddl.validate_rpc_request(:test, {:number => 1})
-        @ddl.validate_rpc_request(:test, {:number => 1.1})
+        @ddl.validate_rpc_request(:test, {:required => "f", :optional => "f"}).should == true
       end
     end
   end

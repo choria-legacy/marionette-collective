@@ -3,14 +3,16 @@ module MCollective
   class Config
     include Singleton
 
-    attr_reader :topicprefix, :daemonize, :pluginconf, :libdir, :configured,
-    :logfile, :keeplogs, :max_log_size, :loglevel, :logfacility, :identity,
-    :daemonize, :connector, :securityprovider, :factsource, :registration,
-    :registerinterval, :topicsep, :classesfile, :rpcauditprovider, :rpcaudit,
-    :configdir, :rpcauthprovider, :rpcauthorization, :color, :configfile,
-    :rpchelptemplate, :rpclimitmethod, :logger_type, :fact_cache_time,
-    :collectives, :main_collective, :ssl_cipher, :registration_collective,
-    :direct_addressing, :direct_addressing_threshold, :queueprefix, :ttl
+    attr_reader :topicprefix, :daemonize, :pluginconf, :libdir, :configured
+    attr_reader :logfile, :keeplogs, :max_log_size, :loglevel, :logfacility
+    attr_reader :identity, :daemonize, :connector, :securityprovider, :factsource
+    attr_reader :registration, :registerinterval, :topicsep, :classesfile
+    attr_reader :rpcauditprovider, :rpcaudit, :configdir, :rpcauthprovider
+    attr_reader :rpcauthorization, :color, :configfile, :rpchelptemplate
+    attr_reader :rpclimitmethod, :logger_type, :fact_cache_time, :collectives
+    attr_reader :main_collective, :ssl_cipher, :registration_collective
+    attr_reader :direct_addressing, :direct_addressing_threshold
+    attr_reader :ttl, :helptemplatedir, :queueprefix
 
     def initialize
       @configured = false
@@ -105,6 +107,8 @@ module MCollective
                   @ssl_cipher = val
                 when "ttl"
                   @ttl = val.to_i
+                when "helptemplatedir"
+                  @helptemplatedir = val
                 else
                   raise("Unknown config parameter #{key}")
               end
@@ -177,6 +181,7 @@ module MCollective
       # not exist
       @rpchelptemplate = File.join(File.dirname(configfile), "rpc-help.erb")
       @rpchelptemplate = "/etc/mcollective/rpc-help.erb" unless File.exists?(@rpchelptemplate)
+      @helptemplatedir = File.dirname(@rpchelptemplate)
     end
 
     def read_plugin_config_dir(dir)

@@ -40,7 +40,7 @@ module MCollective
         return "\r#{current} / #{total}" if @size == 0
 
         if current == total
-          txt = "\r " + Helpers.colorize(:green, "*") + " [ "
+          txt = "\r " + Util.colorize(:green, "*") + " [ "
         else
           txt = "\r #{@twirl[@twirldex]} [ "
         end

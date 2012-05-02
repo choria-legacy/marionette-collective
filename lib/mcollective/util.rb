@@ -265,6 +265,30 @@ module MCollective
       end
     end
 
+    # Return color codes, if the config color= option is false
+    # just return a empty string
+    def self.color(code)
+      colorize = Config.instance.color
+
+      colors = {:red => "[31m",
+                :green => "[32m",
+                :yellow => "[33m",
+                :cyan => "[36m",
+                :bold => "[1m",
+                :reset => "[0m"}
+
+      if colorize
+        return colors[code] || ""
+      else
+        return ""
+      end
+    end
+
+    # Helper to return a string in specific color
+    def self.colorize(code, msg)
+      "%s%s%s" % [ self.color(code), msg, self.color(:reset) ]
+    end
+
     # Returns the current ruby version as per RUBY_VERSION, mostly
     # doing this here to aid testing
     def self.ruby_version

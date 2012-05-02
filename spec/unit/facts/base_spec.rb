@@ -13,7 +13,7 @@ module MCollective::Facts
 
     describe "#inherited" do
       it "should add classes to the plugin manager" do
-        MCollective::PluginManager.stubs("<<").with({:type => "facts_plugin", :class => "MCollective::Facts::Bar"})
+        MCollective::PluginManager.expects("<<").with({:type => "facts_plugin", :class => "MCollective::Facts::Bar"})
 
         class Bar<Base; end
       end

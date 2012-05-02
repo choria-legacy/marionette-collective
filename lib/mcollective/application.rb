@@ -171,12 +171,12 @@ module MCollective
           end
 
           # type was given and its not one of our special types, just pass it onto optparse
-          opts_array << carg[:type] if carg[:type] and ! [:bool, :array].include?(carg[:type])
+          opts_array << carg[:type] if carg[:type] && ![:boolean, :bool, :array].include?(carg[:type])
 
           opts_array << carg[:description]
 
           # Handle our special types else just rely on the optparser to handle the types
-          if carg[:type] == :bool
+          if [:bool, :boolean].include?(carg[:type])
             parser.send(*opts_array) do |v|
               validate_option(carg[:validate], carg[:name], v)
 

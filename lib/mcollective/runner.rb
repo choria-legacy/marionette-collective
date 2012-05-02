@@ -17,6 +17,8 @@ module MCollective
 
       @agents = Agents.new
 
+      Data.load_data_sources
+
       unless Util.windows?
         Signal.trap("USR1") do
           Log.info("Reloading all agents after receiving USR1 signal")

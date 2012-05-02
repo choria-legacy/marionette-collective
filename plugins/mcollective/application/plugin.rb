@@ -7,11 +7,12 @@ module MCollective
     usage <<-END_OF_USAGE
 mco plugin package [options] <directory>
        mco plugin info <directory>
-       mco plugin doc <agent>
+       mco plugin doc <plugin>
+       mco plugin doc <type/plugin>
 
           info : Display plugin information including package details.
        package : Create all available plugin packages.
-           doc : Display documentation for a specific agent.
+           doc : Display documentation for a specific plugin.
     END_OF_USAGE
 
     option  :pluginname,
@@ -75,8 +76,8 @@ mco plugin package [options] <directory>
            :type => :boolean
 
     option :rpctemplate,
-           :description => "RPC Template to use.",
-           :arguments => ["--template RPCHELPTEMPLATE"],
+           :description => "Template to use.",
+           :arguments => ["--template HELPTEMPLATE"],
            :type => String
 
     # Handle alternative format that optparser can't parse.
@@ -108,20 +109,60 @@ mco plugin package [options] <directory>
       packager.new(plugin, configuration[:pluginpath], configuration[:sign], configuration[:verbose]).create_packages
     end
 
-    # Show application list and RPC agent help
+    # Show application list and plugin help
     def doc_command
+      known_plugin_types = [["Agents", :agent], ["Data Queries", :data]]
+
       if configuration.include?(:target) && configuration[:target] != "."
-        ddl = DDL.new(configuration[:target])
-        puts ddl.help(configuration[:rpctemplate] || Config.instance.rpchelptemplate)
+        if configuration[:target] =~ /^(.+?)\/(.+)$/
+          plugin_type = $1.to_sym
+          plugin_name = $2
+
+          # Agents are just called 'agent' but newer plugin types are
+          # called plugin_plugintype for example facter_facts etc so
+          # this will first try the old way then the new way.
+          begin
+            ddl = DDL.new(plugin_name, plugin_type)
+          rescue
+            ddl = DDL.new("#{plugin_name}_#{plugin_type}", plugin_type)
+          end
+        else
+          found_plugin_type = nil
+
+          known_plugin_types.each do |plugin_type|
+            PluginManager.find(plugin_type[1], "ddl").each do |ddl|
+              pluginname = ddl.gsub(/_#{plugin_type[1]}$/, "")
+              if pluginname == configuration[:target]
+                abort "Duplicate plugin name found, please specify a full path like agent/rpcutil" if found_plugin_type
+                found_plugin_type = plugin_type[1]
+              end
+            end
+          end
+
+          abort "Could not find a plugin named %s in any supported plugin type" % plugin_type[1] unless found_plugin_type
+          begin
+            ddl = DDL.new(configuration[:target], found_plugin_type)
+          rescue
+            ddl = DDL.new("#{configuration[:target]}_#{found_plugin_type}", found_plugin_type)
+          end
+        end
+
+        puts ddl.help(configuration[:rpctemplate])
       else
-        puts "Please specify an agent. Available agents are:"
+        puts "Please specify a plugin. Available plugins are:"
         puts
 
-        PluginManager.find("agent", "ddl").each do |ddl|
-          help = DDL.new(ddl)
-          puts "  %-15s %s" % [ddl, help.meta[:description]]
+        known_plugin_types.each do |plugin_type|
+          puts "%s:" % plugin_type[0]
+
+          PluginManager.find(plugin_type[1], "ddl").each do |ddl|
+            help = DDL.new(ddl, plugin_type[1])
+            pluginname = ddl.gsub(/_#{plugin_type[1]}$/, "")
+            puts "  %-15s %s" % [pluginname, help.meta[:description]]
+          end
+
+          puts
         end
-        puts
       end
     end
 
@@ -164,28 +205,25 @@ mco plugin package [options] <directory>
     # To keep it simple we limit it to one type per target directory.
     def identify_plugin
       plugintype = Dir.glob(File.join(configuration[:target], "*")).select do |file|
-        File.directory?(file) && file.match(/(connector|facts|registration|security|audit|pluginpackager)/)
+        File.directory?(file) && file.match(/(connector|facts|registration|security|audit|pluginpackager|data)/)
       end
+
       raise RuntimeError, "more than one plugin type detected in directory" if plugintype.size > 1
       raise RuntimeError, "no plugins detected in directory" if plugintype.size < 1
+
       stripdir = configuration[:target] == "." ? "" : configuration[:target]
       plugintype.first.gsub(/\.|\/|#{stripdir}/, "")
     end
 
-    # Returns a list of available actions in a pretty format
-    def list_actions
-      methods.sort.grep(/_command/).map{|x| x.to_s.gsub("_command", "")}.join("|")
-    end
-
     def main
-        abort "No action specified" unless configuration.include?(:action)
+        abort "No action specified, please run 'mco help plugin' for help" unless configuration.include?(:action)
 
         cmd = "#{configuration[:action]}_command"
 
         if respond_to? cmd
           send cmd
         else
-          abort "Invalid action #{configuration[:action]}. Valid actions are [#{list_actions}]."
+          abort "Invalid action #{configuration[:action]}, please run 'mco help plugin' for help."
         end
     end
   end

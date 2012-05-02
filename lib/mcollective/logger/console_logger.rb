@@ -24,7 +24,7 @@ module MCollective
       def log(level, from, msg)
         if @known_levels.index(level) >= @known_levels.index(@active_level)
           time = Time.new.strftime("%Y/%m/%d %H:%M:%S")
-          lvltxt = colorize(level, level)
+          lvltxt = Util.colorize(level, level)
           STDERR.puts("#{lvltxt} #{time}: #{from} #{msg}")
         end
       rescue
@@ -40,10 +40,10 @@ module MCollective
         colorize = Config.instance.color
 
         colors = {:error => "[31m",
-          :fatal => "[31m",
-          :warn => "[33m",
-          :info => "[32m",
-          :reset => "[0m"}
+                  :fatal => "[31m",
+                  :warn => "[33m",
+                  :info => "[32m",
+                  :reset => "[0m"}
 
         if colorize
           return colors[level] || ""
@@ -54,7 +54,7 @@ module MCollective
 
       # Helper to return a string in specific color
       def colorize(level, msg)
-        "#{self.color(level)}#{msg}#{self.color(:reset)}"
+        "%s%s%s" % [ self.color(level), msg, self.color(:reset) ]
       end
     end
   end
