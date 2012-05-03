@@ -8,7 +8,7 @@ disqus: true
 [SimpleRPCClients]: /mcollective/simplerpc/clients.html
 [SimpleRPCAuditing]: /mcollective/simplerpc/auditing.html
 [SimpleRPCAuthorization]: /mcollective/simplerpc/authorization.html
-[SimpleRPCDDL]: /mcollective/simplerpc/ddl.html
+[DDL]: /mcollective/reference/plugins/ddl.html
 [SimpleRPCMessageFormat]: /mcollective/simplerpc/messageformat.html
 [RPCUtil]: /mcollective/reference/plugins/rpcutil.html
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
@@ -26,10 +26,10 @@ SimpleRPC is a framework that provides the following:
  * Very easy to write agents including input validation and a sensible feedback mechanism in case of error
  * Provide [audit logging][SimpleRPCAuditing] abilities of calls to agents
  * Provide the ability to do [fine grain Authorization][SimpleRPCAuthorization] of calls to agents and actions.
- * Has a [Data Definition Language][SimpleRPCDDL] used to describe agents and assist in giving hints to auto generating user interfaces.
+ * Has a [Data Definition Language][DDL] used to describe agents and assist in giving hints to auto generating user interfaces.
  * The provided generic calling tool should be able to speak to most compliant agents
  * Should you need to you can still write your own clients, this should be very easy too
- * Return data should be easy to print, in most cases the framework should be able to print a sensible output with a single, provided, function.  The [SimpleRPCDDL] is used here to improve the standard one-size-fits-all methods.
+ * Return data should be easy to print, in most cases the framework should be able to print a sensible output with a single, provided, function.  The [DDL] is used here to improve the standard one-size-fits-all methods.
  * The full capabilities of the standard Client classes shouldddl still be exposed in case you want to write advanced agents and clients
  * A documented [standard message format][SimpleRPCMessageFormat] built ontop of the core format.
 

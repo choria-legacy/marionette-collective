@@ -59,7 +59,7 @@ module MCollective
           client.stubs(:call_agent)
 
           ddl = mock
-          ddl.expects(:validate_request).with("rspec", {:arg => :val}).raises("validation failed")
+          ddl.expects(:validate_rpc_request).with("rspec", {:arg => :val}).raises("validation failed")
           client.instance_variable_set("@ddl", ddl)
 
           expect { client.rspec(:arg => :val) }.to raise_error("validation failed")

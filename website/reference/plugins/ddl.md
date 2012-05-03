@@ -8,7 +8,6 @@ disqus: true
 [ResultsandExceptions]: /mcollective/simplerpc/clients.html#results_and_exceptions
 [SimpleRPCAuditing]: /mcollective/simplerpc/auditing.html
 [SimpleRPCAuthorization]: /mcollective/simplerpc/authorization.html
-[SimpleRPCDDL]: /mcollective/simplerpc/ddl.html
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
 [DDLScreenCast]: http://mcollective.blip.tv/file/3799653
 [RPCUtil]: /mcollective/reference/plugins/rpcutil.html
@@ -18,7 +17,7 @@ disqus: true
  * TOC Placeholder
  {:toc}
 
-As with other remote procedure invocation systems SimpleRPC has a DDL that defines what remote methods are available, what inputs they take and what outputs they generate.
+As with other remote procedure invocation systems MCollective has a DDL that defines what remote methods are available, what inputs they take and what outputs they generate.
 
 In addition to the usual procedure definitions we also keep meta data about author, versions, license and other key data points.
 
@@ -199,7 +198,7 @@ require 'mcollective'
 config = MCollective::Config.instance
 config.loadconfig(options[:config])
 
-ddl = MCollective::RPC::DDL.new("service")
+ddl = MCollective::DDL.new("service")
 puts ddl.help("#{config.configdir}/rpc-help.erb")
 {% endhighlight %}
 
@@ -208,7 +207,7 @@ This will produce the text help output from the above example, you can supply an
 You can also access the data structures directly:
 
 {% highlight ruby linenos %}
-ddl = MCollective::RPC::DDL.new("service")
+ddl = MCollective::DDL.new("service")
 puts "Meta Data:"
 pp ddl.meta
 

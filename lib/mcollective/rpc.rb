@@ -5,17 +5,16 @@ module MCollective
   # an RPC metaphor, standard compliant agents will make it easier
   # to create generic clients like web interfaces etc
   module RPC
-    autoload :Client, "mcollective/rpc/client"
+    autoload :ActionRunner, "mcollective/rpc/actionrunner"
     autoload :Agent, "mcollective/rpc/agent"
+    autoload :Audit, "mcollective/rpc/audit"
+    autoload :Client, "mcollective/rpc/client"
+    autoload :Helpers, "mcollective/rpc/helpers"
+    autoload :Progress, "mcollective/rpc/progress"
     autoload :Reply, "mcollective/rpc/reply"
     autoload :Request, "mcollective/rpc/request"
-    autoload :Audit, "mcollective/rpc/audit"
-    autoload :Progress, "mcollective/rpc/progress"
-    autoload :Stats, "mcollective/rpc/stats"
-    autoload :DDL, "mcollective/rpc/ddl"
     autoload :Result, "mcollective/rpc/result"
-    autoload :Helpers, "mcollective/rpc/helpers"
-    autoload :ActionRunner, "mcollective/rpc/actionrunner"
+    autoload :Stats, "mcollective/rpc/stats"
 
     # Creates a standard options hash, pass in a block to add extra headings etc
     # see Optionparser
@@ -183,6 +182,13 @@ module MCollective
     # a bit easier to understand
     def self.reply
       RPC::Reply.new
+    end
+
+    def self.const_missing(const_name)
+      super unless const_name == :DDL
+
+      Log.warn("MCollective::RPC::DDL is deprecatd, please use MCollective::DDL instead")
+      MCollective::DDL
     end
   end
 end

@@ -7,6 +7,12 @@ title: Changelog
  * TOC Placeholder
   {:toc}
 
+## Version 2.1.x
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2012/05/03|Rename the MCollective::RPC::DDL to MCollective::DDL to match its larger role in all plugins|14254|
+
 ## Version 2.0.x
 
 |Date|Description|Ticket|

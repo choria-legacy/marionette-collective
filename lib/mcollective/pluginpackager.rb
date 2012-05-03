@@ -15,7 +15,7 @@ module MCollective
 
     # Fetch and return metadata from plugin DDL
     def self.get_metadata(path, type)
-      ddl = MCollective::RPC::DDL.new("package", false)
+      ddl = DDL.new("package", false)
       ddl.instance_eval File.read(Dir.glob(File.join(path, type, "*.ddl")).first)
       ddl.meta
     end

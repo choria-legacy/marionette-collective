@@ -111,14 +111,14 @@ mco plugin package [options] <directory>
     # Show application list and RPC agent help
     def doc_command
       if configuration.include?(:target) && configuration[:target] != "."
-        ddl = MCollective::RPC::DDL.new(configuration[:target])
+        ddl = DDL.new(configuration[:target])
         puts ddl.help(configuration[:rpctemplate] || Config.instance.rpchelptemplate)
       else
         puts "Please specify an agent. Available agents are:"
         puts
 
         PluginManager.find("agent", "ddl").each do |ddl|
-          help = MCollective::RPC::DDL.new(ddl)
+          help = DDL.new(ddl)
           puts "  %-15s %s" % [ddl, help.meta[:description]]
         end
         puts

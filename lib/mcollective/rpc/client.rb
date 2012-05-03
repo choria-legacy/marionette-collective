@@ -215,7 +215,7 @@ module MCollective
 
         @stats.reset
 
-        @ddl.validate_request(action, args) if @ddl
+        @ddl.validate_rpc_request(action, args) if @ddl
 
         # if a global batch size is set just use that else set it
         # in the case that it was passed as an argument
@@ -272,7 +272,7 @@ module MCollective
       # request which technically does not need filters.  If you try to use this
       # mode with direct addressing disabled an exception will be raise
       def custom_request(action, args, expected_agents, filter = {}, &block)
-        @ddl.validate_request(action, args) if @ddl
+        @ddl.validate_rpc_request(action, args) if @ddl
 
         if filter == {} && !Config.instance.direct_addressing
           raise "Attempted to do a filterless custom_request without direct_addressing enabled, preventing unexpected call to all nodes"
@@ -576,7 +576,7 @@ module MCollective
       #
       # Should only be called via method_missing
       def fire_and_forget_request(action, args, filter=nil)
-        @ddl.validate_request(action, args) if @ddl
+        @ddl.validate_rpc_request(action, args) if @ddl
 
         req = new_request(action.to_s, args)
 

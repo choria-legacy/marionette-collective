@@ -8,7 +8,7 @@ disqus: true
 [ec2demo]: /mcollective/ec2demo.html
 [Terminology]: /mcollective/terminology.html
 [SimpleRPCIntroduction]: /mcollective/simplerpc/
-[DDL]: /mcollective/simplerpc/ddl.html
+[DDL]: /mcollective/reference/plugins/ddl.html
 
 # {{page.title}}
 We believe screen casts give the best introduction to new concepts, we've recorded

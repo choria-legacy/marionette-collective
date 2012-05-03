@@ -8,7 +8,7 @@ disqus: true
 [ResultsandExceptions]: /mcollective/simplerpc/clients.html#Results_and_Exceptions
 [SimpleRPCAuditing]: /mcollective/simplerpc/auditing.html
 [SimpleRPCAuthorization]: /mcollective/simplerpc/authorization.html
-[SimpleRPCDDL]: /mcollective/simplerpc/ddl.html
+[DDL]: /mcollective/reference/plugins/ddl.html
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
 [RPCUtil]: /mcollective/reference/plugins/rpcutil.html
 
@@ -196,12 +196,12 @@ end
 
 As you can see the DDL file expand on the basic syntax adding a lot of markup, help and other important validation data.  This information - when available - helps in making more robust clients and also potentially auto generating user interfaces.
 
-The DDL is a complex topic, read all about it in [SimpleRPCDDL].
+The DDL is a complex topic, read all about it in [DDL].
 
 ## Validating Input
 If you've followed the conventions and put the incoming data in a Hash structure then you can use a few of the provided validators to make sure your data that you received is what you expected.
 
-If you didn't use Hashes for input the validators would not be usable to you.  In future validation will happen automatically based on the [SimpleRPCDDL] so I strongly suggest you follow the agent design pattern shown here using hashes.
+If you didn't use Hashes for input the validators would not be usable to you.  In future validation will happen automatically based on the [DDL] so I strongly suggest you follow the agent design pattern shown here using hashes.
 
 In the sample action above we validate the *:msg* input to be of type *String*, here are a few more examples:
 
