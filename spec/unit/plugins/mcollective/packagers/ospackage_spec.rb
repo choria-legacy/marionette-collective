@@ -34,7 +34,7 @@ module MCollective
         File.expects(:exists?).with("/etc/debian_version").returns(false)
         expect{
           OspackagePackager.new("package")
-        }.to raise_error RuntimeError
+        }.to raise_error(RuntimeError)
       end
     end
 

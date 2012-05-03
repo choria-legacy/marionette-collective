@@ -30,7 +30,7 @@ module MCollective
           PluginPackager.expects(:build_tool?).with("debuild").returns(false)
           expect{
             DebpackagePackager.new("plugin")
-          }.to raise_error RuntimeError, "package 'debuild' is not installed"
+          }.to raise_error(RuntimeError, "package 'debuild' is not installed")
         end
 
         it "should set the correct libdir and verbose value" do
@@ -79,7 +79,7 @@ module MCollective
           packager.stubs(:create_file).raises("test exception")
           expect{
             packager.create_package
-          }.to raise_error RuntimeError, "Could not build package - test exception"
+          }.to raise_error(RuntimeError, "Could not build package - test exception")
         end
 
         it "should correctly create a package" do
@@ -139,7 +139,7 @@ module MCollective
           File.expects(:exists?).with("myscript").returns(false)
           expect{
             @packager.create_preandpost_install
-          }.to raise_error RuntimeError, "pre-install script 'myscript' not found"
+          }.to raise_error(RuntimeError, "pre-install script 'myscript' not found")
         end
 
         it "should raise an exception if postinstall is not null and postinstall script isn't present" do
@@ -148,7 +148,7 @@ module MCollective
           File.expects(:exists?).with("myscript").returns(false)
           expect{
             @packager.create_preandpost_install
-          }.to raise_error RuntimeError, "post-install script 'myscript' not found"
+          }.to raise_error(RuntimeError, "post-install script 'myscript' not found")
         end
 
         it "should copy the preinstall and postinstall scripts to the correct directory with the correct name" do
@@ -172,7 +172,7 @@ module MCollective
           File.expects(:join).raises("test error")
           expect{
             @packager.create_install
-          }.to raise_error RuntimeError, "Could not create install file - test error"
+          }.to raise_error(RuntimeError, "Could not create install file - test error")
         end
 
         it "should copy the package install file to the correct location" do
@@ -196,7 +196,7 @@ module MCollective
           PluginPackager.expects(:do_quietly?).raises("test error")
           expect{
             @packager.create_tar
-          }.to raise_error RuntimeError, "Could not create tarball - test error"
+          }.to raise_error(RuntimeError, "Could not create tarball - test error")
         end
 
         it "should create a tarball containing the package files" do
@@ -220,7 +220,7 @@ module MCollective
           File.expects(:dirname).raises("test error")
           expect{
             @packager.create_file("test")
-          }.to raise_error RuntimeError, "could not create test file - test error"
+          }.to raise_error(RuntimeError, "could not create test file - test error")
         end
 
         it "should place a build file in the debian directory" do

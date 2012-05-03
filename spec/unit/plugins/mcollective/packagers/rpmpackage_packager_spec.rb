@@ -32,7 +32,7 @@ module MCollective
           PluginPackager.expects(:build_tool?).with("rpmbuild").returns(false)
           expect{
             RpmpackagePackager.new("plugin")
-          }.to raise_exception RuntimeError, "package 'rpm-build' is not installed"
+          }.to raise_exception(RuntimeError, "package 'rpm-build' is not installed")
         end
 
         it "should set the correct libdir" do
@@ -109,7 +109,7 @@ module MCollective
           PluginPackager.stubs(:do_quietly?).raises("foo")
           expect{
             @packager.create_package("", "")
-          }.to raise_error RuntimeError, "Could not build package. Reason - foo"
+          }.to raise_error(RuntimeError, "Could not build package. Reason - foo")
         end
       end
 
@@ -122,7 +122,7 @@ module MCollective
           File.expects(:dirname).raises("test error")
           expect{
             @packager.make_spec_file
-          }.to raise_error RuntimeError, "Could not create specfile - test error"
+          }.to raise_error(RuntimeError, "Could not create specfile - test error")
         end
 
         it "should create the specfile from the erb" do
@@ -156,7 +156,7 @@ module MCollective
           File.expects(:join).raises("test error")
           expect{
             @packager.make_rpm_dirs
-          }.to raise_error RuntimeError, "Could not create BUILD directory - test error"
+          }.to raise_error(RuntimeError, "Could not create BUILD directory - test error")
         end
 
         it "should create the correct RPM build directories" do
