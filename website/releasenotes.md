@@ -44,7 +44,7 @@ The messaging layer now supports per node destinations that allows you to addres
 doesn't yet exist or if you cannot come up with a filter that would match a group of arbitrarily selected
 nodes.
 
-When this mode is in use the user configure which machine to comminicate with using either text, arrays or
+When this mode is in use the user configure which machine to communicate with using either text, arrays or
 JSON data.  It will then communicate directly to those nodes via the middleware and if any of them are down
 you will get the usual no responses report after DDL configured timeout, this is a smooth transparent to the
 end user mix in communication modes.
