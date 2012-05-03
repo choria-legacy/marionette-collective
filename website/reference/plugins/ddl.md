@@ -1,6 +1,6 @@
 ---
 layout: default
-title: SimpleRPC Data Definition Language
+title: Data Definition Language
 disqus: true
 ---
 [WritingAgents]: /mcollective/reference/basic/basic_agent_and_client.html

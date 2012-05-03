@@ -35,27 +35,28 @@ module MCollective
   class DDL
     attr_reader :meta
 
-    def initialize(agent, loadddl=true)
+    def initialize(plugin, plugintype=:agent, loadddl=true)
       @actions = {}
       @meta = {}
-      @config = MCollective::Config.instance
-      @agent = agent
+      @config = Config.instance
+      @plugin = plugin
+      @plugintype = plugintype.to_sym
 
       if loadddl
-        if ddlfile = findddlfile(agent)
+        if ddlfile = findddlfile(plugin, plugintype)
           instance_eval(File.read(ddlfile))
         else
-          raise("Can't find DDL for agent '#{agent}'")
+          raise("Can't find DDL for #{plugintype} plugin '#{plugin}'")
         end
       end
     end
 
-    def findddlfile(agent)
+    def findddlfile(ddlname, ddltype=:agent)
       @config.libdir.each do |libdir|
-        ddlfile = File.join([libdir, "mcollective", "agent", "#{agent}.ddl"])
+        ddlfile = File.join([libdir, "mcollective", ddltype.to_s, "#{ddlname}.ddl"])
 
         if File.exist?(ddlfile)
-          Log.debug("Found #{agent} ddl at #{ddlfile}")
+          Log.debug("Found #{ddlname} ddl at #{ddlfile}")
           return ddlfile
         end
       end
@@ -179,20 +180,24 @@ module MCollective
 
     # Returns an array of actions this agent support
     def actions
+      raise "Only agent DDLs have actions" unless @plugintype == :agent
       @actions.keys
     end
 
     # Returns the interface for a specific action
     def action_interface(name)
+      raise "Only agent DDLs have actions" unless @plugintype == :agent
       @actions[name] || {}
     end
 
     # Helper to use the DDL to figure out if the remote call to an
     # agent should be allowed based on action name and inputs.
     def validate_rpc_request(action, arguments)
+      raise "Can only validate RPC requests against Agent DDLs" unless @plugintype == :agent
+
       # is the action known?
       unless actions.include?(action)
-        raise DDLValidationError, "Attempted to call action #{action} for #{@agent} but it's not declared in the DDL"
+        raise DDLValidationError, "Attempted to call action #{action} for #{@plugin} but it's not declared in the DDL"
       end
 
       input = action_interface(action)[:input]

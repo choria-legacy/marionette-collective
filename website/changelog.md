@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/05/03|Add the ability for the DDL to load DDL files from any plugin type|14293|
 |2012/05/03|Rename the MCollective::RPC::DDL to MCollective::DDL to match its larger role in all plugins|14254|
 
 ## Version 2.0.x

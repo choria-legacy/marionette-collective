@@ -5,7 +5,7 @@ require 'spec_helper'
 module MCollective
   describe DDL do
     before :each do
-      @ddl = DDL.new("rspec", false)
+      @ddl = DDL.new("rspec", :agent, false)
     end
 
     describe "#findddlfile" do
@@ -222,6 +222,10 @@ module MCollective
     end
 
     describe "#actions" do
+      it "should fail on non agent DDLs" do
+        expect { DDL.new("rspec", :foo, false).actions }.to raise_error("Only agent DDLs have actions")
+      end
+
       it "should return the correct list of actions" do
         @ddl.action(:test1, :description => "rspec")
         @ddl.action(:test2, :description => "rspec")
@@ -231,6 +235,10 @@ module MCollective
     end
 
     describe "#action_interface" do
+      it "should fail on non agent DDLs" do
+        expect { DDL.new("rspec", :foo, false).action_interface(:x) }.to raise_error("Only agent DDLs have actions")
+      end
+
       it "should return the correct interface" do
         @ddl.action(:test1, :description => "rspec")
         @ddl.action_interface(:test1).should == {:description=>"rspec", :output=>{}, :input=>{}, :action=>:test1, :display=>:failed}
@@ -238,6 +246,11 @@ module MCollective
     end
 
     describe "#validate_rpc_request" do
+      it "should fail to validate non agent DDLs" do
+        ddl = DDL.new("rspec", :foo, false)
+        expect { ddl.validate_rpc_request(:fail, {}) }.to raise_error("Can only validate RPC requests against Agent DDLs")
+      end
+
       it "should ensure the action is known" do
         @ddl.action(:test, :description => "rspec")
 
