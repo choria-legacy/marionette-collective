@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/05/04|Improve version dependencies and upgrade experience of debian packages|14277|
 |*2012/04/30*|*Release 2.0.0*|13900|
 
 ## Version 1.3.x
