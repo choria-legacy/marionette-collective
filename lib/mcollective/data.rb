@@ -14,19 +14,19 @@ module MCollective
       end
     end
 
-    def self.[](plugin)
-      plugin.to_s =~ /_data$/i ? pluginname = plugin.to_s.downcase : pluginname = "%s_data" % plugin.to_s.downcase
+    def self.pluginname(plugin)
+      plugin.to_s =~ /_data$/i ? plugin.to_s.downcase : "%s_data" % plugin.to_s.downcase
+    end
 
-      PluginManager[pluginname]
+    def self.[](plugin)
+      PluginManager[pluginname(plugin)]
     end
 
     # Data.package("httpd").architecture
     def self.method_missing(method, *args)
-      method.to_s =~ /_data$/ ? pluginname = method.to_s.downcase : pluginname = "%s_data" % method.to_s.downcase
+      super unless PluginManager.include?(pluginname(method))
 
-      super unless PluginManager.include?(pluginname)
-
-      PluginManager[pluginname].lookup(args.first)
+      PluginManager[pluginname(method)].lookup(args.first)
     end
 
     def self.ddl_validate(ddl, argument)
@@ -42,6 +42,34 @@ module MCollective
       raise DDLValidationError, "No output has been defined in the DDL for data plugin #{name}" if output.keys.empty?
 
       ddl.validate_input_argument(input, :query, argument)
+    end
+
+    def self.ddl_has_output?(ddl, output)
+      ddl.entities[:data][:output].include?(output.to_sym) rescue false
+    end
+
+    # For an input where the DDL requests a boolean or some number
+    # this will convert the input to the right type where possible
+    # else just returns the origin input unedited
+    #
+    # if anything here goes wrong just return the input value
+    # this is not really the end of the world or anything since
+    # all that will happen is that DDL validation will fail and
+    # the user will get an error, no need to be too defensive here
+    def self.ddl_transform_input(ddl, input)
+      begin
+        type = ddl.entities[:data][:input][:query][:type]
+
+        case type
+          when :boolean
+            return DDL.string_to_boolean(input)
+          when :number, :integer, :float
+            return DDL.string_to_number(input)
+        end
+      rescue
+      end
+
+      return input
     end
   end
 end

@@ -551,6 +551,7 @@ module MCollective
         @app.stubs(:disconnect)
         @app.stubs(:exit).with(1)
 
+        Config.instance.stubs(:color).returns(false)
         e = mock
         e.stubs(:backtrace).returns([])
         e.stubs(:to_s).returns("rspec")
@@ -565,6 +566,7 @@ module MCollective
         @app.stubs(:disconnect)
         @app.stubs(:exit).with(1)
 
+        Config.instance.stubs(:color).returns(false)
         e = mock
         e.stubs(:backtrace).returns(["rspec"])
         e.stubs(:to_s).returns("rspec")

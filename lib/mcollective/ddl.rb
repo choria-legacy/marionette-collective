@@ -258,36 +258,36 @@ module MCollective
     def validate_input_argument(input, key, argument)
       case input[key][:type]
         when :string
-          raise DDLValidationError, "Input #{key} should be a string" unless argument.is_a?(String)
+          raise DDLValidationError, "Input #{key} should be a string for plugin #{meta[:name]}" unless argument.is_a?(String)
 
           if input[key][:maxlength].to_i > 0
             if argument.size > input[key][:maxlength].to_i
-              raise DDLValidationError, "Input #{key} is longer than #{input[key][:maxlength]} character(s)"
+              raise DDLValidationError, "Input #{key} is longer than #{input[key][:maxlength]} character(s) for plugin #{meta[:name]}"
             end
           end
 
           unless argument.match(Regexp.new(input[key][:validation]))
-            raise DDLValidationError, "Input #{key} does not match validation regex #{input[key][:validation]}"
+            raise DDLValidationError, "Input #{key} does not match validation regex #{input[key][:validation]} for plugin #{meta[:name]}"
           end
 
         when :list
           unless input[key][:list].include?(argument)
-            raise DDLValidationError, "Input #{key} doesn't match list #{input[key][:list].join(', ')}"
+            raise DDLValidationError, "Input #{key} doesn't match list #{input[key][:list].join(', ')} for plugin #{meta[:name]}"
           end
 
         when :boolean
           unless [TrueClass, FalseClass].include?(argument.class)
-            raise DDLValidationError, "Input #{key} should be a boolean"
+            raise DDLValidationError, "Input #{key} should be a boolean for plugin #{meta[:name]}"
           end
 
         when :integer
-          raise DDLValidationError, "Input #{key} should be a integer" unless argument.is_a?(Fixnum)
+          raise DDLValidationError, "Input #{key} should be a integer for plugin #{meta[:name]}" unless argument.is_a?(Fixnum)
 
         when :float
-          raise DDLValidationError, "Input #{key} should be a floating point number" unless argument.is_a?(Float)
+          raise DDLValidationError, "Input #{key} should be a floating point number for plugin #{meta[:name]}" unless argument.is_a?(Float)
 
         when :number
-          raise DDLValidationError, "Input #{key} should be a number" unless argument.is_a?(Numeric)
+          raise DDLValidationError, "Input #{key} should be a number for plugin #{meta[:name]}" unless argument.is_a?(Numeric)
       end
     end
 
@@ -316,6 +316,28 @@ module MCollective
       end
 
       true
+    end
+
+    # As we're taking arguments on the command line we need a
+    # way to input booleans, true on the cli is a string so this
+    # method will take the ddl, find all arguments that are supposed
+    # to be boolean and if they are the strings "true"/"yes" or "false"/"no"
+    # turn them into the matching boolean
+    def self.string_to_boolean(val)
+      return true if ["true", "t", "yes", "y", "1"].include?(val.downcase)
+      return false if ["false", "f", "no", "n", "0"].include?(val.downcase)
+
+      raise "#{val} does not look like a boolean argument"
+    end
+
+    # a generic string to number function, if a number looks like a float
+    # it turns it into a float else an int.  This is naive but should be sufficient
+    # for numbers typed on the cli in most cases
+    def self.string_to_number(val)
+      return val.to_f if val =~ /^\d+\.\d+$/
+      return val.to_i if val =~ /^\d+$/
+
+      raise "#{val} does not look like a number"
     end
   end
 end

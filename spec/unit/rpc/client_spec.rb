@@ -11,6 +11,7 @@ module MCollective
 
           client.stubs("options=")
           client.stubs(:collective).returns("mcollective")
+          client.stubs(:timeout_for_compound_filter).returns(0)
 
           Config.any_instance.stubs(:loadconfig).with("/nonexisting").returns(true)
           MCollective::Client.expects(:new).returns(client)
@@ -219,6 +220,7 @@ module MCollective
           discovered.stubs(:size).returns(1)
           discovered.expects(:in_groups_of).with(10).raises("spec pass")
           @client.stubs(:discover).returns(discovered)
+          @client.stubs(:timeout_for_compound_filter).returns(0)
 
           expect { client.send(:call_agent_batched, "foo", {}, {}, 10, 1) }.to raise_error("spec pass")
         end
@@ -230,6 +232,7 @@ module MCollective
           client.expects(:new_request).returns("req")
 
           @client.stubs(:discover).returns(["test"])
+          @client.stubs(:timeout_for_compound_filter).returns(0)
 
           expect { client.send(:call_agent_batched, "foo", {}, {}, 1, 1) }.to raise_error("spec pass")
         end
@@ -249,6 +252,7 @@ module MCollective
           @client.stubs(:discover).returns([1,2,3,4,5,6,7,8,9,0])
           @client.expects(:req).with(msg).yields("result").times(10)
           @client.stubs(:stats).returns stats
+          @client.stubs(:timeout_for_compound_filter).returns(0)
 
           client.expects(:process_results_with_block).with("foo", "result", instance_of(Proc)).times(10)
 
@@ -273,6 +277,7 @@ module MCollective
           @client.stubs(:discover).returns([1,2,3,4,5,6,7,8,9,0])
           @client.expects(:req).with(msg).yields("result").times(10)
           @client.stubs(:stats).returns stats
+          @client.stubs(:timeout_for_compound_filter).returns(0)
 
           client.expects(:process_results_without_block).with("result", "foo").returns("rspec").times(10)
 
@@ -352,6 +357,7 @@ module MCollective
 
           @client.stubs("options=")
           @client.stubs(:collective).returns("mcollective")
+          @client.stubs(:timeout_for_compound_filter).returns(0)
 
           @stderr = stub
           @stdout = stub
@@ -429,7 +435,7 @@ module MCollective
         it "should not set direct mode for regex identities" do
           Config.any_instance.stubs(:direct_addressing).returns(false)
 
-          @client.expects(:discover).with({'identity' => ['/foo/'], 'agent' => ['foo']}, nil).once.returns(["foo"])
+          @client.expects(:discover).with({'identity' => ['/foo/'], 'agent' => ['foo']}, 2).once.returns(["foo"])
           client = Client.new("foo", {:options => {:filter => {"identity" => ["/foo/"], "agent" => []}, :config => "/nonexisting"}})
 
           client.discover

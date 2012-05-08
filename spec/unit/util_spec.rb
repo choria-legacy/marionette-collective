@@ -318,12 +318,12 @@ module MCollective
 
     describe "#colorize" do
       it "should not add color codes when color is disabled" do
-        Config.any_instance.stubs(:color).returns(false)
+        Config.instance.stubs(:color).returns(false)
         Util.colorize(:red, "hello world").should == "hello world"
       end
 
       it "should add color when color is enabled" do
-        Config.any_instance.stubs(:color).returns(true)
+        Config.instance.stubs(:color).returns(true)
         Util.colorize(:red, "hello world").should == "[31mhello world[0m"
       end
     end

@@ -6,6 +6,7 @@ module MCollective
   describe DDL do
     before :each do
       @ddl = DDL.new("rspec", :agent, false)
+      @ddl.metadata(:name => "name", :description => "description", :author => "author", :license => "license", :version => "version", :url => "url", :timeout => "timeout")
     end
 
     describe "#findddlfile" do
@@ -333,7 +334,7 @@ module MCollective
 
         expect {
           @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, 1)
-        }.to raise_error("Input string should be a string")
+        }.to raise_error("Input string should be a string for plugin name")
 
         @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, "1")
       end
@@ -347,7 +348,7 @@ module MCollective
 
         expect {
           @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, "too long")
-        }.to raise_error("Input string is longer than 1 character(s)")
+        }.to raise_error("Input string is longer than 1 character(s) for plugin name")
 
         @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, "1")
       end
@@ -361,7 +362,7 @@ module MCollective
 
         expect {
           @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, "doesnt validate")
-        }.to raise_error("Input string does not match validation regex ^regex$")
+        }.to raise_error("Input string does not match validation regex ^regex$ for plugin name")
 
         @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, "regex")
       end
@@ -374,7 +375,7 @@ module MCollective
 
         expect {
           @ddl.validate_input_argument(@ddl.entities[:list][:input], :list, 3)
-        }.to raise_error("Input list doesn't match list 1, 2")
+        }.to raise_error("Input list doesn't match list 1, 2 for plugin name")
 
         @ddl.validate_input_argument(@ddl.entities[:list][:input], :list, 1)
       end
@@ -387,7 +388,7 @@ module MCollective
 
         expect {
           @ddl.validate_input_argument(@ddl.entities[:bool][:input], :bool, 3)
-        }.to raise_error("Input bool should be a boolean")
+        }.to raise_error("Input bool should be a boolean for plugin name")
 
         @ddl.validate_input_argument(@ddl.entities[:bool][:input], :bool, true)
         @ddl.validate_input_argument(@ddl.entities[:bool][:input], :bool, false)
@@ -401,11 +402,11 @@ module MCollective
 
         expect {
           @ddl.validate_input_argument(@ddl.entities[:test][:input], :int, "1")
-        }.to raise_error("Input int should be a integer")
+        }.to raise_error("Input int should be a integer for plugin name")
 
         expect {
           @ddl.validate_input_argument(@ddl.entities[:test][:input], :int, 1.1)
-        }.to raise_error("Input int should be a integer")
+        }.to raise_error("Input int should be a integer for plugin name")
 
         @ddl.validate_input_argument(@ddl.entities[:test][:input], :int, 1)
       end
@@ -418,11 +419,11 @@ module MCollective
 
         expect {
           @ddl.validate_input_argument(@ddl.entities[:test][:input], :float, "1")
-        }.to raise_error("Input float should be a floating point number")
+        }.to raise_error("Input float should be a floating point number for plugin name")
 
         expect {
           @ddl.validate_input_argument(@ddl.entities[:test][:input], :float, 1)
-        }.to raise_error("Input float should be a floating point number")
+        }.to raise_error("Input float should be a floating point number for plugin name")
 
         @ddl.validate_input_argument(@ddl.entities[:test][:input], :float, 1.1)
       end
@@ -435,7 +436,7 @@ module MCollective
 
         expect {
           @ddl.validate_input_argument(@ddl.entities[:test][:input], :number, "1")
-        }.to raise_error("Input number should be a number")
+        }.to raise_error("Input number should be a number for plugin name")
 
         @ddl.validate_input_argument(@ddl.entities[:test][:input], :number, 1)
         @ddl.validate_input_argument(@ddl.entities[:test][:input], :number, 1.1)
@@ -490,6 +491,40 @@ module MCollective
         @ddl.expects(:validate_input_argument).with(@ddl.entities[:test][:input], :optional, "f")
 
         @ddl.validate_rpc_request(:test, {:required => "f", :optional => "f"}).should == true
+      end
+    end
+
+    describe "#string_to_number" do
+      it "should turn valid strings into numbers" do
+        ["1", "0", "9999"].each do |i|
+          DDL.string_to_number(i).class.should == Fixnum
+        end
+
+        ["1.1", "0.0", "9999.99"].each do |i|
+          DDL.string_to_number(i).class.should == Float
+        end
+      end
+
+      it "should raise errors for invalid values" do
+        expect { DDL.string_to_number("rspec") }.to raise_error
+      end
+    end
+
+    describe "#string_to_boolean" do
+      it "should turn valid strings into boolean" do
+        ["true", "yes", "1"].each do |t|
+          DDL.string_to_boolean(t).should == true
+          DDL.string_to_boolean(t.upcase).should == true
+        end
+
+        ["false", "no", "0"].each do |f|
+          DDL.string_to_boolean(f).should == false
+          DDL.string_to_boolean(f.upcase).should == false
+        end
+      end
+
+      it "should raise errors for invalid values" do
+        expect { DDL.string_to_boolean("rspec") }.to raise_error
       end
     end
   end

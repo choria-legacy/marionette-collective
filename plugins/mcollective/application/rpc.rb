@@ -60,28 +60,6 @@ class MCollective::Application::Rpc<MCollective::Application
     end
   end
 
-  # As we're taking arguments on the command line we need a
-  # way to input booleans, true on the cli is a string so this
-  # method will take the ddl, find all arguments that are supposed
-  # to be boolean and if they are the strings "true"/"yes" or "false"/"no"
-  # turn them into the matching boolean
-  def string_to_boolean(val)
-    return true if ["true", "yes", "1"].include?(val)
-    return false if ["false", "no", "0"].include?(val)
-
-    raise "#{val} does not look like a boolean argument"
-  end
-
-  # a generic string to number function, if a number looks like a float
-  # it turns it into a float else an int.  This is naive but should be sufficient
-  # for numbers typed on the cli in most cases
-  def string_to_number(val)
-    return val.to_f if val =~ /^\d+\.\d+$/
-    return val.to_i if val =~ /^\d+$/
-
-    raise "#{val} does not look like a number"
-  end
-
   def string_to_ddl_type(arguments, ddl)
     return if ddl.empty?
 
@@ -90,10 +68,10 @@ class MCollective::Application::Rpc<MCollective::Application
         begin
           case ddl[:input][key][:type]
             when :boolean
-              arguments[key] = booleanish_to_boolean(arguments[key])
+              arguments[key] = DDL.string_to_boolean(arguments[key])
 
             when :number, :integer, :float
-              arguments[key] = string_to_number(arguments[key])
+              arguments[key] = DDL.string_to_number(arguments[key])
           end
         rescue
           # just go on to the next key, DDL validation will figure out
@@ -108,7 +86,7 @@ class MCollective::Application::Rpc<MCollective::Application
 
     mc.agent_filter(configuration[:agent])
 
-    string_to_ddl_type(configuration[:arguments], mc.ddl.action_interface(configuration[:action])) unless mc.ddl.nil?
+    string_to_ddl_type(configuration[:arguments], mc.ddl.action_interface(configuration[:action])) if mc.ddl
 
     if mc.reply_to
       configuration[:arguments][:process_results] = true

@@ -301,6 +301,9 @@ module MCollective
       f, func_hash[:value] = func.split(".")
       func_hash[:name], func_hash[:params] = f.split("(")
       func_hash[:params] = func_hash[:params].gsub(")", "").gsub("'", "")
+
+      func_hash[:operator] = "==" if func_hash[:operator] == "="
+
       func_hash
     end
 

@@ -114,6 +114,9 @@ module MCollective
     def discover(filter, timeout, limit=0)
       raise "Limit has to be an integer" unless limit.is_a?(Fixnum)
 
+      compount_timeout = timeout_for_compound_filter(options[:filter]["compound"])
+      timeout = timeout + compount_timeout
+
       begin
         hosts = []
         Timeout.timeout(timeout) do
@@ -157,12 +160,15 @@ module MCollective
 
       options = @options unless options
 
+      compount_timeout = timeout_for_compound_filter(options[:filter]["compound"])
+      timeout = options[:timeout] + compount_timeout
+
       STDOUT.sync = true
 
       hosts_responded = 0
 
       begin
-        Timeout.timeout(options[:timeout]) do
+        Timeout.timeout(timeout) do
           reqid = sendreq(body, agent, options[:filter])
 
           loop do
@@ -203,6 +209,9 @@ module MCollective
 
       options = @options unless options
 
+      compount_timeout = timeout_for_compound_filter(options[:filter]["compound"])
+      timeout = options[:timeout] + compount_timeout
+
       STDOUT.sync = true
 
       print("Determining the amount of hosts matching filter for #{options[:disctimeout]} seconds .... ")
@@ -224,7 +233,7 @@ module MCollective
       raise("No matching clients found") if discovered == 0
 
       begin
-        Timeout.timeout(options[:timeout]) do
+        Timeout.timeout(timeout) do
           reqid = sendreq(body, agent, options[:filter])
 
           (1..discovered).each do |c|
@@ -249,6 +258,27 @@ module MCollective
 
       @stats = stat
       return stat
+    end
+
+    # if a compound filter is specified and it has any function
+    # then we read the DDL for each of those plugins and sum up
+    # the timeout declared in the DDL
+    def timeout_for_compound_filter(compound_filter)
+      return 0 if compound_filter.nil? || compound_filter.empty?
+
+      timeout = 0
+
+      compound_filter.each do |filter|
+        filter.each do |statement|
+          if statement["fstatement"]
+            pluginname = Data.pluginname(statement["fstatement"][:name])
+            ddl = DDL.new(pluginname, :data)
+            timeout += ddl.meta[:timeout]
+          end
+        end
+      end
+
+      timeout
     end
 
     # Prints out the stats returns from req and discovered_req in a nice way

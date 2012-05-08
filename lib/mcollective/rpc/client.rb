@@ -39,8 +39,8 @@ module MCollective
 
         @stats = Stats.new
         @agent = agent
-        @discovery_timeout = initial_options[:disctimeout]
-        @timeout = initial_options[:timeout]
+        @discovery_timeout = initial_options[:disctimeout] || 2
+        @timeout = initial_options[:timeout] || 5
         @verbose = initial_options[:verbose]
         @filter = initial_options[:filter]
         @config = initial_options[:config]
@@ -446,16 +446,17 @@ module MCollective
         unless @discovered_agents
           @stats.time_discovery :start
 
-          @stderr.print("Determining the amount of hosts matching filter for #{discovery_timeout} seconds .... ") if verbose
+          actual_timeout = options[:disctimeout] + @client.timeout_for_compound_filter(options[:filter]["compound"])
+          @stderr.print("Determining the amount of hosts matching filter for %d seconds .... " % actual_timeout) if verbose
 
           # if the requested limit is a pure number and not a percent
           # and if we're configured to use the first found hosts as the
           # limit method then pass in the limit thus minimizing the amount
           # of work we do in the discover phase and speeding it up significantly
           if @limit_method == :first and @limit_targets.is_a?(Fixnum)
-            @discovered_agents = @client.discover(@filter, @discovery_timeout, @limit_targets)
+            @discovered_agents = @client.discover(@filter, options[:disctimeout], @limit_targets)
           else
-            @discovered_agents = @client.discover(@filter, @discovery_timeout)
+            @discovered_agents = @client.discover(@filter, options[:disctimeout])
           end
 
           @force_direct_request = false

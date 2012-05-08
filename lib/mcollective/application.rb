@@ -255,7 +255,7 @@ module MCollective
         raise(e)
       end
 
-      err_dest.puts "#{$0} failed to run: #{e} (#{e.class})"
+      err_dest.puts Util.colorize(:red, "#{$0} failed to run: #{e} ") + "(#{e.class.to_s})"
 
       if options.nil? || options[:verbose]
         e.backtrace.each{|l| err_dest.puts "\tfrom #{l}"}
