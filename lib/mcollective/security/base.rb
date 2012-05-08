@@ -78,18 +78,20 @@ module MCollective
 
               compound.each do |expression|
                 case expression.keys.first
-                when "statement"
-                  result << Util.eval_compound_statement(expression).to_s
-                when "and"
-                  result << "&&"
-                when "or"
-                  result << "||"
-                when "("
-                  result << "("
-                when ")"
-                  result << ")"
-                when "not"
-                  result << "!"
+                  when "statement"
+                    result << Util.eval_compound_statement(expression).to_s
+                  when "fstatement"
+                    result << Util.eval_compound_fstatement(expression.values.first)
+                  when "and"
+                    result << "&&"
+                  when "or"
+                    result << "||"
+                  when "("
+                    result << "("
+                  when ")"
+                    result << ")"
+                  when "not"
+                    result << "!"
                 end
               end
 

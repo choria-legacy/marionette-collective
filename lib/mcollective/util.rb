@@ -294,5 +294,37 @@ module MCollective
     def self.ruby_version
       RUBY_VERSION
     end
+
+    def self.create_function_hash(function_call)
+      func_hash = {}
+      func, func_hash[:operator], func_hash[:compare_value] = function_call.split(/(>=|<=|<|>|=)/)
+      f, func_hash[:value] = func.split(".")
+      func_hash[:name], func_hash[:params] = f.split("(")
+      func_hash[:params] = func_hash[:params].gsub(")", "").gsub("'", "")
+      func_hash
+    end
+
+    def self.execute_function(function_hash)
+      result = MCollective::Data.send(function_hash[:name], function_hash[:params])
+      if function_hash[:value]
+        result.send(function_hash[:value])
+      else
+        result
+      end
+    end
+
+    def self.eval_compound_fstatement(function_hash)
+      return eval("#{execute_function(function_hash)} #{function_hash[:operator]} #{function_hash[:compare_value]}")
+    end
+
+    def self.create_compound_callstack(call_string)
+      callstack = MCollective::Matcher::Parser.new(call_string).execution_stack
+      callstack.each_with_index do |statement, i|
+        if statement.keys.first == "fstatement"
+          callstack[i]["fstatement"] = create_function_hash(statement.values.first)
+        end
+      end
+      callstack
+    end
   end
 end
