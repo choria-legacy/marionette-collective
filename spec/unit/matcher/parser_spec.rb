@@ -49,7 +49,7 @@ module MCollective
         it "should not parse an incorrect and token" do
           expect {
             parser = Parser.new("and foo=bar")
-          }.to raise_error("Error at column 10. \n Expression cannot start with 'and'")
+          }.to raise_error(RuntimeError, /Parse errors found while parsing -S input.*/)
         end
 
         it "should parse a correct 'or' token" do
@@ -57,10 +57,10 @@ module MCollective
           parser.execution_stack.should == [{"statement" => "foo=bar"}, {"or" => "or"}, {"statement" => "bar=foo"}]
         end
 
-        it "should not parse an incorrect and token" do
-          expect {
+        it "should not parse an incorrect or token" do
+          expect{
             parser = Parser.new("or foo=bar")
-          }.to raise_error("Error at column 9. \n Expression cannot start with 'or'")
+          }.to raise_error(RuntimeError, /Parse errors found while parsing -S input.*/)
         end
 
         it "should parse a correct 'not' token" do
@@ -71,9 +71,9 @@ module MCollective
         end
 
         it "should not parse an incorrect 'not' token" do
-          expect {
+          expect{
             parser = Parser.new("foo=bar !")
-          }.to raise_error("Error at column 8. \nExpected 'and', 'or', ')'. Found 'not'")
+          }.to raise_error(RuntimeError, /Parse errors found while parsing -S input.*/)
         end
 
         it "should parse correct parentheses" do
@@ -82,15 +82,15 @@ module MCollective
         end
 
         it "should fail on incorrect parentheses" do
-          expect {
+          expect{
             parser = Parser.new(")foo=bar(")
-          }.to raise_error("Error. Missing parentheses '('.")
+          }.to raise_error(RuntimeError, /Malformed token\(s\) found while parsing -S input.*/)
         end
 
         it "should fail on missing parentheses" do
-          expect {
+          expect{
             parser = Parser.new("(foo=bar")
-          }.to raise_error("Error. Missing parentheses ')'.")
+          }.to raise_error(RuntimeError, /Missing parenthesis found while parsing -S input.*/)
         end
 
         it "should parse correctly formatted compound statements" do

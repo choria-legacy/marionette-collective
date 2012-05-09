@@ -101,10 +101,10 @@ module MCollective
               end
               current_token_value << @arguments[j]
               if be_greedy
-                begin
+                while !(j+1 >= @arguments.size) && @arguments[j] != ')'
                   j += 1
                   current_token_value << @arguments[j]
-                end while @arguments[j] != ')'
+                end
                 j += 1
                 be_greedy = false
               else
@@ -113,25 +113,22 @@ module MCollective
             end until (j >= @arguments.size) || (@arguments[j] =~ /\s|\)/)
           end
         rescue Exception => e
-          raise "An exception was raised while trying to tokenize '#{current_token_value}'"
-          puts e
+          raise "An exception was raised while trying to tokenize '#{current_token_value} - #{e}'"
         end
 
         @token_index += current_token_value.size - 1
 
-        if current_token_value.match(/^(and|or|not|!)$/)
-          return "bad_token", [@token_index - current_token_value.size + 1, @token_index]
         # bar(
-        elsif current_token_value.match(/.+?\($/)
+        if current_token_value.match(/.+?\($/)
           return "bad_token", [@token_index - current_token_value.size + 1, @token_index]
         # /foo/=bar
-        elsif current_token_value.match(/^\/.+?\/=.+/)
+        elsif current_token_value.match(/^\/.+?\/(<|>|=).+/)
           return "bad_token", [@token_index - current_token_value.size + 1, @token_index]
-        elsif current_token_value.match(/^.+?\/=.+/)
+        elsif current_token_value.match(/^.+?\/(<|>|=).+/)
           return "bad_token", [@token_index - current_token_value.size + 1, @token_index]
         else
           if func
-            if current_token_value.match(/^.+?\((\s*\'.+?\')*(?=(\s*,\s*\'.+?\')*)\s*\)(\.[a-zA-Z0-9_]+)?((=|<|>).+)?$/)
+            if current_token_value.match(/^.+?\((\s*'[^']+'\s*(,\s*'[^']+')*)?\)(\.[a-zA-Z0-9_]+)?((=|<|>).+)?$/)
               return "fstatement", current_token_value
             else
               return "bad_token", [@token_index - current_token_value.size + 1, @token_index]

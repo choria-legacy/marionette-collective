@@ -144,9 +144,9 @@ module MCollective
       compound_filter.each do |filter|
         filter.each do |statement|
           if statement["fstatement"]
-            functionname = statement["fstatement"][:name]
+            functionname = statement["fstatement"]["name"]
             pluginname = Data.pluginname(functionname)
-            value = statement["fstatement"][:value]
+            value = statement["fstatement"]["value"]
 
             begin
               ddl = DDL.new(pluginname, :data)
@@ -156,9 +156,9 @@ module MCollective
 
             # parses numbers and booleans entered as strings into proper
             # types of data so that DDL validation will pass
-            statement["fstatement"][:params] = Data.ddl_transform_input(ddl, statement["fstatement"][:params])
+            statement["fstatement"]["params"] = Data.ddl_transform_input(ddl, statement["fstatement"]["params"])
 
-            Data.ddl_validate(ddl, statement["fstatement"][:params])
+            Data.ddl_validate(ddl, statement["fstatement"]["params"])
 
             unless value && Data.ddl_has_output?(ddl, value)
               raise DDLValidationError, "#{functionname}() does not return a #{value} value"

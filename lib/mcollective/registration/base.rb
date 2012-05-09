@@ -38,7 +38,9 @@ module MCollective
       end
 
       def msg_filter
-        {"agent" => "registration"}
+        filter = Util.empty_filter
+        filter["agent"] << "registration"
+        filter
       end
 
       def target_collective

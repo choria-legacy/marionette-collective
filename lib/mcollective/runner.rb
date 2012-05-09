@@ -17,8 +17,6 @@ module MCollective
 
       @agents = Agents.new
 
-      Data.load_data_sources
-
       unless Util.windows?
         Signal.trap("USR1") do
           Log.info("Reloading all agents after receiving USR1 signal")
@@ -36,6 +34,8 @@ module MCollective
 
     # Starts the main loop, before calling this you should initialize the MCollective::Config singleton.
     def run
+      Data.load_data_sources
+
       Util.subscribe(Util.make_subscriptions("mcollective", :broadcast))
       Util.subscribe(Util.make_subscriptions("mcollective", :directed)) if @config.direct_addressing
 

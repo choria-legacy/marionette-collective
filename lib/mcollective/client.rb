@@ -271,7 +271,7 @@ module MCollective
       compound_filter.each do |filter|
         filter.each do |statement|
           if statement["fstatement"]
-            pluginname = Data.pluginname(statement["fstatement"][:name])
+            pluginname = Data.pluginname(statement["fstatement"]["name"])
             ddl = DDL.new(pluginname, :data)
             timeout += ddl.meta[:timeout]
           end
