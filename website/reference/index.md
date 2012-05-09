@@ -34,6 +34,7 @@ Index to basic users documentation.
 ### Plugins
 
  1. [The _rpcutil_ helper Agent](plugins/rpcutil.html)
+ 1. [Data Plugins](plugins/data.html)
  1. [The single application plugin system](plugins/application.html)
  1. [Registration](plugins/registration.html)
  1. [AES+RSA based Security Plugin](plugins/security_aes.html)

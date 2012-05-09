@@ -29,7 +29,7 @@ module MCollective
 
       describe "#msg_filter" do
         it "should target the registration agent" do
-          @reg.msg_filter.should == {"agent" => "registration"}
+          @reg.msg_filter["agent"].should == ["registration"]
         end
       end
 

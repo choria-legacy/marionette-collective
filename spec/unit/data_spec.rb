@@ -22,6 +22,20 @@ module MCollective
         PluginManager.expects("[]").with("rspec_data").returns(Data::Base.new)
         Data.load_data_sources
       end
+
+      it "should handle exceptions and delete broken plugins" do
+        PluginManager.expects(:find_and_load).with("data").returns(["rspec_data"])
+        PluginManager.expects(:grep).returns(["rspec_data"])
+        PluginManager.expects(:delete).with("rspec_data")
+
+        ddl = mock
+        ddl.stubs(:meta).returns({:timeout => 1})
+        DDL.stubs(:new).returns(ddl)
+        Data::Base.expects(:activate?).raises("rspec failure")
+        Log.expects(:debug).once.with("Disabling data plugin rspec_data due to exception RuntimeError: rspec failure")
+        PluginManager.expects("[]").with("rspec_data").returns(Data::Base.new)
+        Data.load_data_sources
+      end
     end
 
     describe "#pluginname" do

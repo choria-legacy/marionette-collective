@@ -17,6 +17,7 @@ module MCollective
         reply[:classes] = []
         reply[:main_collective] = config.main_collective
         reply[:collectives] = config.collectives
+        reply[:data_plugins] = PluginManager.grep(/_data$/)
 
         cfile = Config.instance.classesfile
         if File.exist?(cfile)

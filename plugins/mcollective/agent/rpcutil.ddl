@@ -44,6 +44,10 @@ action "inventory", :description => "System Inventory" do
     output :collectives,
            :description => "All Collectives",
            :display_as => "All Collectives"
+
+    output :data_plugins,
+           :description => "List of data plugin names",
+           :display_as => "Data Plugins"
 end
 
 action "get_fact", :description => "Retrieve a single fact from the fact store" do

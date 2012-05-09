@@ -305,10 +305,18 @@ module MCollective
       func_hash["value"] = func_parts.pop
       f = func_parts.join(".")
 
+      # Deal with regular expression matches
+      if func_hash["r_compare"] =~ /\/.*\//
+        func_hash["operator"] = "=~" if func_hash["operator"] == "="
+        func_hash["r_compare"] = Regexp.new(func_hash["r_compare"].gsub(/^\/|\/$/, ""))
+      # Convert = operators to == so they can be propperly evaluated
+      elsif func_hash["operator"] == "="
+        func_hash["operator"] = "=="
+      end
+
+      # Grab function name and parameters from left compare string
       func_hash["name"], func_hash["params"] = f.split("(")
       func_hash["params"] = func_hash["params"].gsub(")", "").gsub("'", "")
-
-      func_hash["operator"] = "==" if func_hash["operator"] == "="
 
       func_hash
     end
@@ -337,9 +345,23 @@ module MCollective
         return false
       end
 
-      function_hash["r_compare"] = "\"#{function_hash["r_compare"]}\"" if(l_compare.is_a?(String) && l_compare.match(/\".+\"/))
+      # Prevent backticks in function parameters
+      if function_hash["params"] =~ /`/
+        Log.debug("Cannot use backticks in function parameters")
+        return false
+      end
 
-      return eval("#{l_compare} #{function_hash["operator"]} #{function_hash["r_compare"]}")
+      # Escape strings for evaluation
+      function_hash["r_compare"] = "\"#{function_hash["r_compare"]}\"" if(l_compare.is_a?(String) && l_compare.match(/\".+\"/) && !(function_hash["operator"] == "=~"))
+
+      # Do a regex comparison if right compare string is a regex
+      if function_hash["operator"] == "=~"
+        compare_result = l_compare.match(function_hash["r_compare"])
+        (compare_result.nil?) ? false : true
+      # Otherwise evaluate the logical comparison
+      else
+        return eval("#{l_compare} #{function_hash["operator"]} #{function_hash["r_compare"]}")
+      end
     end
 
     # Creates a callstack to be evaluated from a compound evaluation string

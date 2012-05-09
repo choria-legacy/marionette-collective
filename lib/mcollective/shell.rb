@@ -7,7 +7,7 @@ module MCollective
   #   s.runcommand
   #   puts s.stdout
   #   puts s.stderr
-  #   puts s.status.exitcode
+  #   puts s.status.exitstatus
   #
   # Options hash can have:
   #

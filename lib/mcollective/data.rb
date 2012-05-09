@@ -7,8 +7,13 @@ module MCollective
       PluginManager.find_and_load("data")
 
       PluginManager.grep(/_data$/).each do |plugin|
-        unless PluginManager[plugin].class.activate?
-          Log.debug("Disabling data plugin %s due to plugin activation policy" % plugin)
+        begin
+          unless PluginManager[plugin].class.activate?
+            Log.debug("Disabling data plugin %s due to plugin activation policy" % plugin)
+            PluginManager.delete(plugin)
+          end
+        rescue Exception => e
+          Log.debug("Disabling data plugin %s due to exception #{e.class}: #{e}" % plugin)
           PluginManager.delete(plugin)
         end
       end

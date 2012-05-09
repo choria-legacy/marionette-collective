@@ -12,13 +12,17 @@ will require further internal refactoring though.
 
 ## _inventory_ Action
 
-Retrieves an inventory of the facts, classes and agents on the system, takes no arguments
+Retrieves an inventory of the facts, classes and agents and plugins on the system, takes no arguments
 and returns a hash like this:
 
 {% highlight ruby %}
 {:agents   => ["rpcutil", "discovery"],
  :facts     => {"mcollective"=>1},
- :classes   => ["common::linux", "motd"]}
+ :classes   => ["common::linux", "motd"],
+ :data_plugins=>["sysctl_data", "fstat_data"],
+ :collectives=>["mcollective"],
+ :main_collective=>"mcollective",
+ :version=>"2.0.0"}
 {% endhighlight %}
 
 ## _daemon`_`stats_ Action

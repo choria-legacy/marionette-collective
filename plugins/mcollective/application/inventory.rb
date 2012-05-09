@@ -150,6 +150,17 @@ class MCollective::Application::Inventory<MCollective::Application
 
           puts
 
+          puts "   Data Plugins:"
+          if data[:data_plugins].size > 0
+            data[:data_plugins].sort.in_groups_of(3, "") do |plugins|
+              puts "      %-15s %-15s %-15s" % plugins.map{|p| p.gsub("_data", "")}
+            end
+          else
+            puts "      No data plugins installed"
+          end
+
+          puts
+
           puts "   Configuration Management Classes:"
           if data[:classes].size > 0
             data[:classes].sort.in_groups_of(2, "") do |klasses|
