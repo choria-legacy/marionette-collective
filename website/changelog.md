@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/05/16|Add a plugable data source usable in discovery and other plugins|14254|
 |2012/05/04|Improve version dependencies and upgrade experience of debian packages|14277|
 |2012/05/03|Add the ability for the DDL to load DDL files from any plugin type|14293|
 |2012/05/03|Rename the MCollective::RPC::DDL to MCollective::DDL to match its larger role in all plugins|14254|

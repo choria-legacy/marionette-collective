@@ -19,7 +19,7 @@ module MCollective
 
         client = Client.new("/nonexisting")
 
-        filter = [Util.create_compound_callstack("test().size=1 and rspec().size=1")]
+        filter = [Matcher.create_compound_callstack("test().size=1 and rspec().size=1")]
 
         DDL.expects(:new).with("test_data", :data).returns(ddl)
         DDL.expects(:new).with("rspec_data", :data).returns(ddl)

@@ -79,9 +79,9 @@ module MCollective
               compound.each do |expression|
                 case expression.keys.first
                   when "statement"
-                    result << Util.eval_compound_statement(expression).to_s
+                    result << Matcher.eval_compound_statement(expression).to_s
                   when "fstatement"
-                    result << Util.eval_compound_fstatement(expression.values.first)
+                    result << Matcher.eval_compound_fstatement(expression.values.first)
                   when "and"
                     result << "&&"
                   when "or"

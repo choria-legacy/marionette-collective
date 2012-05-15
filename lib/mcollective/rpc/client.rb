@@ -359,7 +359,7 @@ module MCollective
 
       # Set a compound filter
       def compound_filter(filter)
-        @filter["compound"] <<  Util.create_compound_callstack(filter)
+        @filter["compound"] <<  Matcher.create_compound_callstack(filter)
         reset
       end
 

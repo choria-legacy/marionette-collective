@@ -5,6 +5,10 @@ require 'spec_helper'
 module MCollective
   module Matcher
     describe Parser do
+      before :each do
+        Config.instance.stubs(:color).returns(false)
+      end
+
       describe '#parse' do
         it "should parse statements seperated by '='" do
           parser = Parser.new("foo=bar")
@@ -49,7 +53,7 @@ module MCollective
         it "should not parse an incorrect and token" do
           expect {
             parser = Parser.new("and foo=bar")
-          }.to raise_error(RuntimeError, /Parse errors found while parsing -S input.*/)
+          }.to raise_error(RuntimeError, "Parse errors found while parsing -S input and foo=bar")
         end
 
         it "should parse a correct 'or' token" do
@@ -60,7 +64,7 @@ module MCollective
         it "should not parse an incorrect or token" do
           expect{
             parser = Parser.new("or foo=bar")
-          }.to raise_error(RuntimeError, /Parse errors found while parsing -S input.*/)
+          }.to raise_error(RuntimeError, "Parse errors found while parsing -S input or foo=bar")
         end
 
         it "should parse a correct 'not' token" do
@@ -73,7 +77,7 @@ module MCollective
         it "should not parse an incorrect 'not' token" do
           expect{
             parser = Parser.new("foo=bar !")
-          }.to raise_error(RuntimeError, /Parse errors found while parsing -S input.*/)
+          }.to raise_error(RuntimeError, "Parse errors found while parsing -S input foo=bar !")
         end
 
         it "should parse correct parentheses" do
@@ -84,13 +88,13 @@ module MCollective
         it "should fail on incorrect parentheses" do
           expect{
             parser = Parser.new(")foo=bar(")
-          }.to raise_error(RuntimeError, /Malformed token\(s\) found while parsing -S input.*/)
+          }.to raise_error(RuntimeError, "Malformed token(s) found while parsing -S input )foo=bar(")
         end
 
         it "should fail on missing parentheses" do
           expect{
             parser = Parser.new("(foo=bar")
-          }.to raise_error(RuntimeError, /Missing parenthesis found while parsing -S input.*/)
+          }.to raise_error(RuntimeError, "Missing parenthesis found while parsing -S input (foo=bar")
         end
 
         it "should parse correctly formatted compound statements" do
