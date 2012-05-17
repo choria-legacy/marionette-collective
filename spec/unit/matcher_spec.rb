@@ -87,7 +87,7 @@ module MCollective
       it "should create a correct hash when no parameters are given" do
         result = Matcher.create_function_hash("foo()<=1")
         result["value"].should == nil
-        result["params"].should == ""
+        result["params"].should == nil
         result["r_compare"].should == "1"
         result["operator"].should == "<="
         result["name"].should == "foo"

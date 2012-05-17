@@ -41,7 +41,11 @@ module MCollective
 
       # Grab function name and parameters from left compare string
       func_hash["name"], func_hash["params"] = f.split("(")
-      func_hash["params"] = func_hash["params"].gsub(")", "").gsub(/'|"/, "")
+      if func_hash["params"] == ")"
+        func_hash["params"] = nil
+      else
+        func_hash["params"] = func_hash["params"].gsub(")", "").gsub(/'|"/, "")
+      end
 
       func_hash
     end
