@@ -102,6 +102,7 @@ module MCollective
                         "stomp.pool.max_reconnect_attempts" => "5",
                         "stomp.pool.randomize" => "true",
                         "stomp.pool.backup" => "true",
+                        "stomp.pool.connect_timeout" => 30,
                         "stomp.pool.timeout" => "1"}
 
 
@@ -120,6 +121,7 @@ module MCollective
                                        :use_exponential_back_off => false,
                                        :max_reconnect_attempts => 5,
                                        :initial_reconnect_delay => 0.02,
+                                       :connect_timeout => 30,
                                        :randomize => true,
                                        :reliable => true,
                                        :logger => "logger",

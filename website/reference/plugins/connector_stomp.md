@@ -75,6 +75,7 @@ plugin.stomp.pool.back_off_multiplier = 2
 plugin.stomp.pool.max_reconnect_attempts = 0
 plugin.stomp.pool.randomize = false
 plugin.stomp.pool.timeout = -1
+plugin.stomp.pool.connect_timeout = 30
 {% endhighlight %}
 
 ### Message Priority

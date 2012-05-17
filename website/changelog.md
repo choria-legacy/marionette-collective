@@ -11,6 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/05/17|Adjust the ActiveMQ and Stomp connect_timeout to allow IPv4 fall back to happen in dual homed hosts|14496|
 |2012/05/16|Add a plugable data source usable in discovery and other plugins|14254|
 |2012/05/04|Improve version dependencies and upgrade experience of debian packages|14277|
 |2012/05/03|Add the ability for the DDL to load DDL files from any plugin type|14293|

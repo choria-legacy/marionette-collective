@@ -69,7 +69,7 @@ module MCollective
     # You can set the initial connetion timeout - this is when your stomp server is simply
     # unreachable - after which it would failover to the next in the pool:
     #
-    #     plugin.activemq.connect_timeout = 5
+    #     plugin.activemq.connect_timeout = 30
     #
     # ActiveMQ JMS message priorities can be set:
     #
@@ -186,7 +186,7 @@ module MCollective
           connection[:randomize] = get_bool_option("activemq.randomize", false)
           connection[:backup] = get_bool_option("activemq.backup", false)
           connection[:timeout] = Integer(get_option("activemq.timeout", -1))
-          connection[:connect_timeout] = Integer(get_option("activemq.connect_timeout", 5))
+          connection[:connect_timeout] = Integer(get_option("activemq.connect_timeout", 30))
           connection[:reliable] = true
 
           connection[:logger] = EventLogger.new
