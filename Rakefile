@@ -51,6 +51,7 @@ spec = Gem::Specification.new do |s|
   s.default_executable = "mco"
   s.add_dependency "systemu"
   s.add_dependency "json"
+  s.add_dependency "stomp"
 
   excluded_files = ["bin/mcollectived", "lib/mcollective/runner.rb", "lib/mcollective/vendor/json", "lib/mcollective/vendor/systemu", "lib/mcollective/vendor/load"]
 
