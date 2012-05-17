@@ -133,6 +133,12 @@ module MCollective
         expect { Data.ddl_validate(@ddl, "rspec") }.to raise_error("No output has been defined in the DDL for data plugin rspec test")
       end
 
+      it "should skip optional arguments that were not supplied" do
+        @ddl.expects(:entities).returns({:data => {:input => {:query => {:optional => true}}, :output => {:test => {}}}})
+        @ddl.expects(:validate_input_argument).never
+        Data.ddl_validate(@ddl, nil).should == true
+      end
+
       it "should validate the argument" do
         @ddl.expects(:entities).returns({:data => {:input => {:query => {}}, :output => {:test => {}}}})
         @ddl.expects(:validate_input_argument).returns("rspec validated")

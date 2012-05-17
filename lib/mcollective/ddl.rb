@@ -289,6 +289,8 @@ module MCollective
         when :number
           raise DDLValidationError, "Input #{key} should be a number for plugin #{meta[:name]}" unless argument.is_a?(Numeric)
       end
+
+      return true
     end
 
     # Helper to use the DDL to figure out if the remote call to an

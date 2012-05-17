@@ -46,6 +46,8 @@ module MCollective
       raise DDLValidationError, "No :query input has been defined in the DDL for data plugin #{name}" unless input[:query]
       raise DDLValidationError, "No output has been defined in the DDL for data plugin #{name}" if output.keys.empty?
 
+      return true if argument.nil? && input[:query][:optional]
+
       ddl.validate_input_argument(input, :query, argument)
     end
 
