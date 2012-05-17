@@ -92,6 +92,15 @@ module MCollective
         result["operator"].should == "<="
         result["name"].should == "foo"
      end
+
+      it "should create a correct hash parameters are empty strings" do
+        result = Matcher.create_function_hash("foo('')=1")
+        result["value"].should == nil
+        result["params"].should == ""
+        result["r_compare"].should == "1"
+        result["operator"].should == "=="
+        result["name"].should == "foo"
+      end
     end
 
     describe "#execute_function" do

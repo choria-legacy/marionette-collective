@@ -136,6 +136,12 @@ module MCollective
         token = scanner.get_token
         token.should == ["statement", "a=c"]
       end
+
+      it "should idenify a function statement where a parameter is an empty string" do
+        scanner = Scanner.new("foo('')")
+        token = scanner.get_token
+        token.should == ["fstatement", "foo('')"]
+      end
     end
   end
 end
