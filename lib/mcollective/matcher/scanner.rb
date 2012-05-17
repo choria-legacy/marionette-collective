@@ -6,6 +6,8 @@ module MCollective
       def initialize(arguments)
         @token_index = 0
         @arguments = arguments.split("")
+        @seperation_counter = 0
+        @white_spaces = 0
       end
 
       # Scans the input string and identifies single language tokens
@@ -110,13 +112,20 @@ module MCollective
               else
                 j += 1
               end
+              if( (@arguments[j] == ' ') && (@seperation_counter < 2) && !(current_token_value.match(/^.+(=|<|>).+$/)) )
+                if((index = lookahead(j)))
+                  j = index
+                end
+              end
             end until (j >= @arguments.size) || (@arguments[j] =~ /\s|\)/)
+            @seperation_counter = 0
           end
         rescue Exception => e
           raise "An exception was raised while trying to tokenize '#{current_token_value} - #{e}'"
         end
 
-        @token_index += current_token_value.size - 1
+        @token_index += current_token_value.size + @white_spaces - 1
+        @white_spaces = 0
 
         # bar(
         if current_token_value.match(/.+?\($/)
@@ -144,6 +153,20 @@ module MCollective
             return "statement", current_token_value
           end
         end
+      end
+
+      # Eat spaces while looking for the next comparison symbol
+      def lookahead(index)
+        index += 1
+        while(index <= @arguments.size)
+          @white_spaces += 1
+          unless(@arguments[index] =~ /\s/)
+            @seperation_counter +=1
+            return index
+          end
+          index += 1
+        end
+        return nil
       end
     end
   end

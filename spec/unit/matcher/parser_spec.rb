@@ -104,6 +104,10 @@ module MCollective
                                             {")"=>")"}]
         end
 
+        it "should parse complex fstatements and statements with operators seperated by whitespaces" do
+          parser = Parser.new("foo('bar').value = 1 and foo=bar or foo  = bar")
+          parser.execution_stack.should == [{"fstatement"=>"foo('bar').value=1"}, {"and"=>"and"}, {"statement"=>"foo=bar"}, {"or"=>"or"}, {"statement"=>"foo=bar"}]
+        end
       end
     end
   end

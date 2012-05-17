@@ -124,6 +124,18 @@ module MCollective
         token = scanner.get_token
         token.should == ["bad_token", [0,11]]
       end
+
+      it "should identify fstatement tokens where the values and the comparison operator are seperated by whitespaces" do
+        scanner = Scanner.new("foo('a').bar  = 1")
+        token = scanner.get_token
+        token.should == ["fstatement", "foo('a').bar=1"]
+      end
+
+      it "should identify statement tokens where the values and the comparison operator are seperated by whitespaces" do
+        scanner = Scanner.new("a =  c")
+        token = scanner.get_token
+        token.should == ["statement", "a=c"]
+      end
     end
   end
 end
