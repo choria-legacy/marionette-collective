@@ -74,28 +74,33 @@ module MCollective
 
           when "compound"
             filter[key].each do |compound|
-              result = []
+              result = false
+              truth_values = []
 
-              compound.each do |expression|
-                case expression.keys.first
+              begin
+                compound.each do |expression|
+                  case expression.keys.first
                   when "statement"
-                    result << Matcher.eval_compound_statement(expression).to_s
+                    truth_values << Matcher.eval_compound_statement(expression).to_s
                   when "fstatement"
-                    result << Matcher.eval_compound_fstatement(expression.values.first)
+                    truth_values << Matcher.eval_compound_fstatement(expression.values.first)
                   when "and"
-                    result << "&&"
+                    truth_values << "&&"
                   when "or"
-                    result << "||"
+                    truth_values << "||"
                   when "("
-                    result << "("
+                    truth_values << "("
                   when ")"
-                    result << ")"
+                    truth_values << ")"
                   when "not"
-                    result << "!"
+                    truth_values << "!"
+                  end
                 end
-              end
 
-              result = eval(result.join(" "))
+                result = eval(truth_values.join(" "))
+              rescue DDLValidationError
+                result = false
+              end
 
               if result
                 Log.debug("Passing based on class and fact composition")

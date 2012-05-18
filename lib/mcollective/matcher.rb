@@ -52,13 +52,34 @@ module MCollective
 
     # Returns the result of an executed function
     def self.execute_function(function_hash)
-      result = MCollective::Data.send(function_hash["name"], function_hash["params"])
+      # In the case where a data plugin isn't present there are two ways we can handle
+      # the raised exception. The function result can either be false or the entire
+      # expression can fail.
+      #
+      # In the case where we return the result as false it opens us op to unexpected
+      # negation behavior.
+      #
+      #   !foo('bar').name = bar
+      #
+      # In this case the user would expect discovery to match on all machines where
+      # the name value of the foo function does not equal bar. If a non existent function
+      # returns false then it is posible to match machines where the name value of the
+      # foo function is bar.
+      #
+      # Instead we raise a DDLValidationError to prevent this unexpected behavior from
+      # happening.
+
+      result = Data.send(function_hash["name"], function_hash["params"])
+
       if function_hash["value"]
         eval_result = result.send(function_hash["value"])
         return eval_result
       else
         return result
       end
+    rescue NoMethodError
+      Log.debug("cannot execute discovery function '#{function_hash["name"]}'. data plugin not found")
+      raise DDLValidationError
     end
 
     # Evaluates a compound statement
@@ -126,7 +147,7 @@ module MCollective
 
     # Creates a callstack to be evaluated from a compound evaluation string
     def self.create_compound_callstack(call_string)
-      callstack = MCollective::Matcher::Parser.new(call_string).execution_stack
+      callstack = Matcher::Parser.new(call_string).execution_stack
       callstack.each_with_index do |statement, i|
         if statement.keys.first == "fstatement"
           callstack[i]["fstatement"] = create_function_hash(statement.values.first)
