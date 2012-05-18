@@ -17,8 +17,10 @@ module MCollective
     def self.create_function_hash(function_call)
       func_hash = {}
       f = ""
-      func, func_hash["operator"], func_hash["r_compare"] = function_call.split(/(!=|>=|<=|<|>|=)/)
-
+      func_parts = function_call.split(/(!=|>=|<=|<|>|=)/)
+      func_hash["r_compare"] = func_parts.pop
+      func_hash["operator"] = func_parts.pop
+      func = func_parts.join
 
       # Deal with dots in function parameters and functions without dot values
       if func.match(/^.+\(.*\)$/)
@@ -44,7 +46,29 @@ module MCollective
       if func_hash["params"] == ")"
         func_hash["params"] = nil
       else
-        func_hash["params"] = func_hash["params"].gsub(")", "").gsub(/'|"/, "")
+
+        # Walk the function parameters from the front and from the
+        # back removing the first and last instances of single of
+        # double qoutes. We do this to handle the case where params
+        # contain escaped qoutes.
+        func_hash["params"] = func_hash["params"].gsub(")", "")
+        func_quotes = func_hash["params"].split(/('|")/)
+
+        func_quotes.each_with_index do |item, i|
+          if item.match(/'|"/)
+            func_quotes.delete_at(i)
+            break
+          end
+        end
+
+        func_quotes.reverse.each_with_index do |item,i|
+          if item.match(/'|"/)
+            func_quotes.delete_at(func_quotes.size - i - 1)
+            break
+          end
+        end
+
+        func_hash["params"] = func_quotes.join
       end
 
       func_hash

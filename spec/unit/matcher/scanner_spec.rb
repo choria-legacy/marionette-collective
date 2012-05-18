@@ -123,6 +123,11 @@ module MCollective
         scanner = Scanner.new("foo('a' 'b')")
         token = scanner.get_token
         token.should == ["bad_token", [0,11]]
+
+        scanner = Scanner.new("foo(\"a\" \"b\")")
+        token = scanner.get_token
+        token.should == ["bad_token", [0,11]]
+
       end
 
       it "should identify fstatement tokens where the values and the comparison operator are seperated by whitespaces" do
@@ -141,6 +146,22 @@ module MCollective
         scanner = Scanner.new("foo('')")
         token = scanner.get_token
         token.should == ["fstatement", "foo('')"]
+      end
+
+      it "should correctly tokenise a statement with escaped qoutes in parameters" do
+        scanner = Scanner.new("foo('\"bar\"')")
+        token = scanner.get_token
+        token.should == ["fstatement", "foo('\"bar\"')"]
+
+        scanner = Scanner.new('foo("\'bar\'")')
+        token =scanner.get_token
+        token.should == ["fstatement", "foo(\"'bar'\")"]
+      end
+
+      it "Should correctly tokenize a statement with a comparison operator in a parameter" do
+        scanner = Scanner.new("foo('bar=baz')")
+        token = scanner.get_token
+        token.should == ["fstatement", "foo('bar=baz')"]
       end
     end
   end
