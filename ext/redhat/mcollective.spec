@@ -54,7 +54,11 @@ rm -rf %{buildroot}
 %{__install} -d -m0755  %{buildroot}/%{ruby_sitelib}/mcollective
 %{__install} -d -m0755  %{buildroot}%{_bindir}
 %{__install} -d -m0755  %{buildroot}%{_sbindir}
+%if 0%{?fedora} >= 17
+%{__install} -d -m0755  %{buildroot}%{_unitdir}
+%else
 %{__install} -d -m0755  %{buildroot}%{_sysconfdir}/init.d
+%endif
 %{__install} -d -m0755  %{buildroot}%{_libexecdir}/mcollective/
 %{__install} -d -m0755  %{buildroot}%{_sysconfdir}/mcollective
 %{__install} -d -m0755  %{buildroot}%{_sysconfdir}/mcollective/plugin.d
@@ -69,7 +73,11 @@ rm -rf %{buildroot}
 %if 0%{?suse_version}
 %{__install} -m0755 mcollective.init %{buildroot}%{_sysconfdir}/init.d/mcollective
 %else
+%if 0%{?fedora} >= 17
+%{__install} -m0755 ext/redhat/mcollective.service %{buildroot}%{_unitdir}/mcollective.service
+%else
 %{__install} -m0755 ext/redhat/mcollective.init %{buildroot}%{_sysconfdir}/init.d/mcollective
+%endif
 %endif
 
 
@@ -83,18 +91,39 @@ chmod 0755 %{buildroot}%{_sbindir}/*
 rm -rf %{buildroot}
 
 %post
+%if 0%{?fedora} >= 17
+if [ $1 -eq 1 ] ; then
+    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+fi
+%else
 /sbin/chkconfig --add mcollective || :
+%endif
 
 %postun
+%if 0%{?fedora} >= 17
+if [ $1 -ge 1 ] ; then
+    # Package upgrade, not uninstall
+    /bin/systemctl try-restart mcollective.service >/dev/null 2>&1 || :
+fi
+%else
 if [ "$1" -ge 1 ]; then
   /sbin/service mcollective condrestart &>/dev/null || :
 fi
+%endif
 
 %preun
+%if 0%{?fedora} >= 17
+if [ $1 -eq 0 ] ; then
+    # Package removal, not upgrade
+    /bin/systemctl --no-reload disable mcollective.service > /dev/null 2>&1 || :
+    /bin/systemctl stop mcollective.service > /dev/null 2>&1 || :
+fi
+%else
 if [ "$1" = 0 ] ; then
   /sbin/service mcollective stop > /dev/null 2>&1
   /sbin/chkconfig --del mcollective || :
 fi
+%endif
 
 %files common
 %doc COPYING
@@ -123,7 +152,11 @@ fi
 %files
 %doc COPYING
 %{_sbindir}/mcollectived
+%if 0%{?fedora} >= 17
+%{_unitdir}/mcollective.service
+%else
 %{_sysconfdir}/init.d/mcollective
+%endif
 %config(noreplace)%{_sysconfdir}/mcollective/server.cfg
 %config(noreplace)%{_sysconfdir}/mcollective/facts.yaml
 %dir %{_sysconfdir}/mcollective/ssl/clients
