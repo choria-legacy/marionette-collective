@@ -11,11 +11,12 @@ Index to basic users documentation.
 
  1. [Getting Started](basic/gettingstarted.html)
  1. [Configuration Guide](basic/configuration.html)
- 1. [Controlling mcollectived](basic/daemon.html)
+ 1. [Using MCollective Command Line Applications](basic/basic_cli_usage.html)
  1. [Message Flow](basic/messageflow.html)
  1. [Network Partitioning using Subcollectives](basic/subcollectives.html)
  1. [Message Format](basic/messageformat.html)
  1. [Basic Agent and Client](basic/basic_agent_and_client.html)
+ 1. [Controlling mcollectived](basic/daemon.html)
 
 
 ### User Interface

@@ -17,7 +17,7 @@ This code will only work with version _1.1.8_ or newer of the Stomp gem.
 The ActiveMQ connector requires MCollective 1.3.1 or newer and introduce a new structure to the middleware messsages.
 
  * Replies goes direct to clients using short lived queues
- * Agent topics are called _/topic/&lt;collective&gt;.&lt;agent_name&gt;.agent_
+ * Agent topics are called */topic/&lt;collective&gt;.&lt;agent_name&gt;.agent*
  * Support for point to point messages are added by using _/queue/&lt;collective&gt;.nodes_ and using JMS selectors.
 
 The use of short lived queues mean that replies are now going to go back only to the person who sent the request.

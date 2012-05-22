@@ -223,7 +223,7 @@ The table below shows the validators we support currently
 |IPv6 Checks|Validates an ip v6 address|validate :ipaddr, :ipv6address|
 |system call safety checks|Makes sure the input is a string and has no &gt;&lt;backtick, semi colon, dollar, ambersand or pipe characters in it|validate :command, :shellsafe|
 |Boolean|Ensures a input value is either real boolean true or false|validate :enable, :bool|
-|List of valid options|Ensures the input data is one of a list of known good values|validate :mode, ["all", "packages"]|
+|List of valid options|Ensures the input data is one of a list of known good values|validate :mode, \["all", "packages"\]|
 
 All of these checks will raise an InvalidRPCData exception, you shouldn't catch this exception as the Simple RPC framework catches those and handles them appropriately.
 
