@@ -32,7 +32,7 @@ module MCollective
         Dir.stubs(:glob).returns('')
         expect{
           PluginPackager.get_metadata("/tmp", "foo")
-        }.to raise_error RuntimeError, "failed to load ddl file in plugin directory"
+        }.to raise_error RuntimeError
       end
 
       it "should load the ddl file and return the metadata" do
