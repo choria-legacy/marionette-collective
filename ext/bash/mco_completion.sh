@@ -24,7 +24,7 @@ _mco() {
     --wi --with-identity"
 
   if [ $COMP_CWORD -eq 1 ]; then
-    agents=$($cmd | sed -n 's@Known commands: @@p')
+    agents=$($cmd | grep '^ ')
     COMPREPLY=($(compgen -W "$agents" -- "$cur"))
   elif [ $COMP_CWORD -gt 1 ]; then
     options="${common_options} $($cmd $agent --help | grep -o -- '-[^, ]\+')"
