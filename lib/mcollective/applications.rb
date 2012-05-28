@@ -36,18 +36,7 @@ module MCollective
     def self.list
       load_config
 
-      applist = []
-
-      Config.instance.libdir.each do |libdir|
-        applicationdir = "#{libdir}/mcollective/application"
-        next unless File.directory?(applicationdir)
-
-        Dir.entries(applicationdir).grep(/\.rb$/).each do |application|
-          applist << File.basename(application, ".rb")
-        end
-      end
-
-      applist
+      PluginManager.find("application")
     rescue SystemExit
       exit 1
     rescue Exception => e

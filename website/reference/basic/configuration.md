@@ -68,7 +68,6 @@ The server configuration file should be root only readable
 |rpclimitmethod|The method used for --limit-results.  Can be either _first_ or _random_|
 |fact_cache_time|300|How long to cache fact results for before refreshing from source|
 |plugin.discovery.timeout|10|Sets the timeout for the discovery agent, useful if facts are very slow|
-|direct_addressing|false|Enable this to listen to a per node directed destination for point to point communication|
 
 The last example sets a option for the _discovery_ plugin, you can also set this in _/etc/mcollective/plugin.d/discovery.cfg_, in that case
 you'd just set _timeout=10_ in the file.
