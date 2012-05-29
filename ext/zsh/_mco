@@ -1,0 +1,86 @@
+#compdef mco
+
+# completion for the mcollective cli.
+#
+# for the main mco application it will complete
+# the list of available applications
+#
+# for the rpc application it will complete first
+# the list of agents, then actions and then each
+# input.
+#
+# For all other applications it will just complete
+# the common command line options, to add another
+# application simply define a function called
+# _mco_application_foo() for the foo application
+
+_mco() {
+  if (( CURRENT > 2 )); then
+    local application=${words[2]}
+
+    shift words
+
+    args=({-W,--with}'[Combined class and fact filter]' \
+          {-S,--select}'[Select filter]' \
+          {-F,--wf,--with-fact}'[Fact filter]' \
+          {-C,--wc,--with-class}'[Class filter]' \
+          {-A,--wa,--with-agent}'[Agent filter]' \
+          {-I,--wi,--with-identity}'[Identity filter]' \
+          {-T,--target}'[Target collective]' \
+          {--dt,--discovery-timeout}'[Discovery timeout]' \
+          {-t,--timeout}'[Command Timeout]' \
+          {-q,--quiet}'[Surpress verbose output]' \
+          {-c,--config}'[Path to the config file]' \
+          {-v,--verbose}'[Be verbose]' \
+          {-h,--help}'[Show complete help message]' \
+          '-ttl[Time To Live for the request]' \
+          '--reply-to[Custom reply target]')
+
+    if (( $+functions[_mco_application_$application] > 0 ));then
+      _mco_application_$application
+    fi
+
+    _arguments -s : $args
+  else
+    local -a cmdlist
+    _call_program list-applications mco completion --list-applications -v | while read -A hline; do
+      cmdlist=($cmdlist "${hline}")
+    done
+    _describe -t mco-application 'MCollective applications' cmdlist
+  fi
+}
+
+_mco_application_rpc() {
+  local -a clist
+
+  if (( CURRENT == 3 )); then
+    _call_program list-applications mco completion --list-agents -v | while read -A hline; do
+      clist=($clist "${hline}")
+    done
+
+    _describe -t mco-agents "MCollective agents" clist
+  elif (( CURRENT == 4 )); then
+    _call_program list-applications mco completion --list-actions --agent=${words[2]} -v | while read -A hline; do
+      clist=($clist "${hline}")
+    done
+
+    _describe -t mco-agents "${words[2]} actions" clist
+
+  elif (( CURRENT > 4 )); then
+    _call_program list-applications mco completion --list-inputs --action=${words[3]} --agent=${words[2]} -v | while read hline; do
+      clist=($clist $hline)
+    done
+
+    _describe -t mco-agents "${words[3]} inputs" clist -S =
+  fi
+
+  args+=(
+        {--np,--no-progress}'[Do not show the progress bar]' \
+        {--nr,--no-results}'[Do not process results, just send request]' \
+        {-1,--one}'[Send request to only one discovered node]' \
+        '--batch[Do request in batches]' \
+        '--batch-sleep[Sleep time between batches]' \
+        {--ln,--limit-nodes}'[Only send the request to a certain number of discovered nodes]' \
+        {-j,--json}'[Output result as JSON data]'
+       )
+}

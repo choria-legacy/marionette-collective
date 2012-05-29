@@ -11,7 +11,7 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
-|2012/05/28|Add an application to assist shell completion systems|14196|
+|2012/05/28|Add an application to assist shell completion systems with bash and zsh completion plugins|14196|
 |2012/05/22|Improve error messages from the packager when a DDL file cannot be found|14595|
 |2012/05/17|Add a dependency on stomp to the rubygem|14300|
 |2012/05/17|Adjust the ActiveMQ and Stomp connect_timeout to allow IPv4 fall back to happen in dual homed hosts|14496|

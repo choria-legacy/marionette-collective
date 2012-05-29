@@ -39,25 +39,54 @@ module MCollective
            :required => false
 
     def list_agents
-      PluginManager.find(:agent, "ddl").each {|p| puts p}
+      if options[:verbose]
+        PluginManager.find(:agent, "ddl").each do |agent|
+          ddl = DDL.new(agent)
+          puts "%s:%s" % [ agent, ddl.meta[:description] ]
+        end
+      else
+        PluginManager.find(:agent, "ddl").each {|p| puts p}
+      end
     end
 
     def list_actions
       abort "Please specify an agent to list actions for" unless configuration[:agent]
 
-      DDL.new(configuration[:agent], :agent).actions.sort.each {|a| puts a}
+      if options[:verbose]
+        ddl = DDL.new(configuration[:agent], :agent)
+
+        ddl.actions.sort.each do |action|
+          puts "%s:%s" % [action, ddl.action_interface(action)[:description]]
+        end
+      else
+        DDL.new(configuration[:agent], :agent).actions.sort.each {|a| puts a}
+      end
     rescue
     end
 
     def list_inputs
       abort "Please specify an action and agent to list inputs for" unless configuration[:agent] && configuration[:action]
 
-      DDL.new(configuration[:agent], :agent).action_interface(configuration[:action])[:input].keys.sort.each {|i| puts i}
+      if options[:verbose]
+        ddl = DDL.new(configuration[:agent], :agent)
+        action = ddl.action_interface(configuration[:action])
+        action[:input].keys.sort.each do |input|
+          puts "%s:%s" % [input, action[:input][input][:description]]
+        end
+      else
+        DDL.new(configuration[:agent], :agent).action_interface(configuration[:action])[:input].keys.sort.each {|i| puts i}
+      end
     rescue
     end
 
     def list_applications
-      Applications.list.each {|a| puts a}
+      if options[:verbose]
+        Applications.list.each do |app|
+          puts "%s:%s" % [app, Applications[app].application_description]
+        end
+      else
+        Applications.list.each {|a| puts a}
+      end
     end
 
     def main
