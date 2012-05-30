@@ -550,13 +550,14 @@ module MCollective
         out = StringIO.new
         @app.stubs(:disconnect)
         @app.stubs(:exit).with(1)
+        @app.stubs(:options).returns({})
 
         Config.instance.stubs(:color).returns(false)
         e = mock
         e.stubs(:backtrace).returns([])
         e.stubs(:to_s).returns("rspec")
 
-        out.expects(:puts).with("#{$0} failed to run: rspec (Mocha::Mock)")
+        out.expects(:puts).with(regexp_matches(/rspec application failed to run/))
 
         @app.application_failure(e, out)
       end
@@ -565,6 +566,7 @@ module MCollective
         out = StringIO.new
         @app.stubs(:disconnect)
         @app.stubs(:exit).with(1)
+        @app.stubs(:options).returns(nil)
 
         Config.instance.stubs(:color).returns(false)
         e = mock
@@ -572,7 +574,7 @@ module MCollective
         e.stubs(:to_s).returns("rspec")
 
         @app.expects(:options).returns({:verbose => true}).twice
-        out.expects(:puts).with("#{$0} failed to run: rspec (Mocha::Mock)")
+        out.expects(:puts).with(regexp_matches(/rspec.+Mocha::Mock/))
         out.expects(:puts).with("\tfrom rspec")
 
         @app.application_failure(e, out)

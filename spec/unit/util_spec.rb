@@ -107,12 +107,12 @@ module MCollective
           Util.make_subscriptions("test", "test", "test")
         }.to raise_error("Unknown target type test")
 
-        Config.any_instance.stubs(:collectives).returns(["test"])
+        Config.instance.stubs(:collectives).returns(["test"])
         Util.make_subscriptions("test", :broadcast, "test")
       end
 
       it "should return a subscription for each collective" do
-        Config.any_instance.stubs(:collectives).returns(["collective1", "collective2"])
+        Config.instance.stubs(:collectives).returns(["collective1", "collective2"])
         Util.make_subscriptions("test", :broadcast).should == [{:type=>:broadcast,
                                                                  :agent=>"test",
                                                                  :collective=>"collective1"},
@@ -122,7 +122,7 @@ module MCollective
       end
 
       it "should validate given collective" do
-        Config.any_instance.stubs(:collectives).returns(["collective1", "collective2"])
+        Config.instance.stubs(:collectives).returns(["collective1", "collective2"])
 
         expect {
           Util.make_subscriptions("test", :broadcast, "test")
@@ -130,7 +130,7 @@ module MCollective
       end
 
       it "should return a single subscription array given a collective" do
-        Config.any_instance.stubs(:collectives).returns(["collective1", "collective2"])
+        Config.instance.stubs(:collectives).returns(["collective1", "collective2"])
         Util.make_subscriptions("test", :broadcast, "collective1").should == [{:type=>:broadcast, :agent=>"test", :collective=>"collective1"}]
       end
     end
@@ -194,10 +194,11 @@ module MCollective
 
     describe "#default_options" do
       it "should supply correct default options" do
+        Config.instance.stubs(:default_discovery_options).returns([])
         empty_filter = Util.empty_filter
         config_file = Util.config_file_for_user
 
-        Util.default_options.should == {:verbose => false, :disctimeout => 2, :timeout => 5, :config => config_file, :filter => empty_filter, :collective => nil}
+        Util.default_options.should == {:verbose => false, :disctimeout => nil, :timeout => 5, :config => config_file, :filter => empty_filter, :collective => nil, :discovery_method => nil, :discovery_options => []}
       end
     end
 

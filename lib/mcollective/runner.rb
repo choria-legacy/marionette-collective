@@ -50,10 +50,10 @@ module MCollective
         begin
           request = receive
 
-          if request.agent == "mcollective"
-            controlmsg(request)
-          else
+          unless request.agent == "mcollective"
             agentmsg(request)
+          else
+            Log.error("Received a control message, possibly via 'mco controller' but this has been deprecated")
           end
         rescue SignalException => e
           Log.warn("Exiting after signal: #{e}")

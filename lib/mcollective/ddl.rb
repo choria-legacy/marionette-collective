@@ -99,10 +99,36 @@ module MCollective
       @current_entity = nil
     end
 
-    # Returns the interface for the data query
-    def dataquery_interface
-      raise "Only data DDLs have data queries" unless @plugintype == :data
-      @entities[:data] || {}
+    # Creates the definition for new discovery plugins
+    #
+    #    discovery do
+    #       capabilities [:classes, :facts, :identity, :agents, :compound]
+    #    end
+    def discovery(&block)
+      raise "Discovery plugins can only have one definition" if @entities[:discovery]
+
+      @entities[:discovery] = {:capabilities => []}
+
+      @current_entity = :discovery
+      block.call if block_given?
+      @current_entity = nil
+    end
+
+    # records valid capabilities for discovery plugins
+    def capabilities(caps)
+      raise "Only discovery DDLs have capabilities" unless @plugintype == :discovery
+
+      caps = [caps].flatten
+
+      raise "Discovery plugin capabilities can't be empty" if caps.empty?
+
+      caps.each do |cap|
+        if [:classes, :facts, :identity, :agents, :compound].include?(cap)
+          @entities[:discovery][:capabilities] << cap
+        else
+          raise "%s is not a valid capability, valid capabilities are :classes, :facts, :identity, :agents and :compound" % cap
+        end
+      end
     end
 
     # Creates the definition for an action, you can nest input definitions inside the
@@ -240,10 +266,21 @@ module MCollective
       @entities.keys
     end
 
+    # Returns the interface for the data query
+    def dataquery_interface
+      raise "Only data DDLs have data queries" unless @plugintype == :data
+      @entities[:data] || {}
+    end
+
     # Returns the interface for a specific action
     def action_interface(name)
       raise "Only agent DDLs have actions" unless @plugintype == :agent
       @entities[name] || {}
+    end
+
+    def discovery_interface
+      raise "Only discovery DDLs have discovery interfaces" unless @plugintype == :discovery
+      @entities[:discovery]
     end
 
     # validate strings, lists and booleans, we'll add more types of validators when

@@ -185,7 +185,7 @@ module MCollective
         end
 
         it "should find the first match in the libdir" do
-          Config.any_instance.expects(:libdir).returns(["#{File::SEPARATOR}libdir1", "#{File::SEPARATOR}libdir2"])
+          Config.instance.expects(:libdir).returns(["#{File::SEPARATOR}libdir1", "#{File::SEPARATOR}libdir2"])
 
           action_in_first_dir = File.join(File::SEPARATOR, "libdir1", "agent", "spectester", "action.sh")
           action_in_last_dir = File.join(File::SEPARATOR, "libdir2", "agent", "spectester", "action.sh")
@@ -197,7 +197,7 @@ module MCollective
         end
 
         it "should find the match even in the last libdir" do
-          Config.any_instance.expects(:libdir).returns(["#{File::SEPARATOR}libdir1", "#{File::SEPARATOR}libdir2"])
+          Config.instance.expects(:libdir).returns(["#{File::SEPARATOR}libdir1", "#{File::SEPARATOR}libdir2"])
 
           action_in_first_dir = File.join(File::SEPARATOR, "libdir1", "agent", "spectester", "action.sh")
           action_in_last_dir = File.join(File::SEPARATOR, "libdir2", "agent", "spectester", "action.sh")

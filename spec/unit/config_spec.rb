@@ -75,6 +75,17 @@ module MCollective
         Config.instance.loadconfig("/nonexisting")
         Config.instance.rpchelptemplate.should == "/etc/mcollective/rpc-help.erb"
       end
+
+      it "should support multiple default_discovery_options" do
+        File.expects(:open).with("/nonexisting", "r").returns(StringIO.new("default_discovery_options = 1\ndefault_discovery_options = 2"))
+        File.expects(:exists?).with("/nonexisting").returns(true)
+        File.expects(:exists?).with(File.join(File.dirname("/nonexisting"), "rpc-help.erb")).returns(true)
+        PluginManager.stubs(:loadclass)
+        PluginManager.stubs("<<")
+
+        Config.instance.loadconfig("/nonexisting")
+        Config.instance.default_discovery_options.should == ["1", "2"]
+      end
     end
 
     describe "#read_plugin_config_dir" do

@@ -111,13 +111,13 @@ module MCollective
     describe "#list" do
       it "should load the configuration" do
         Applications.expects("load_config").returns(true).once
-        Config.any_instance.expects("libdir").returns([@tmpdir])
+        Config.instance.expects("libdir").returns([@tmpdir])
         Applications.list
       end
 
       it "should add found applications to the list" do
         Applications.expects("load_config").returns(true).once
-        Config.any_instance.expects("libdir").returns([@tmpdir])
+        Config.instance.expects("libdir").returns([@tmpdir])
 
         Applications.list.should == ["test"]
       end

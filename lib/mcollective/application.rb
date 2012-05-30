@@ -255,7 +255,11 @@ module MCollective
         raise(e)
       end
 
-      err_dest.puts Util.colorize(:red, "#{$0} failed to run: #{e} ") + "(#{e.class.to_s})"
+      if options.nil? || options[:verbose]
+        err_dest.puts "\n%s %s" % [ Util.colorize(:red, e.to_s), Util.colorize(:bold, "(#{e.class.to_s})")]
+      else
+        err_dest.puts "\nThe %s application failed to run, use -v for full error details: %s\n" % [ Util.colorize(:bold, $0), Util.colorize(:red, e.to_s)]
+      end
 
       if options.nil? || options[:verbose]
         e.backtrace.each{|l| err_dest.puts "\tfrom #{l}"}
@@ -307,7 +311,7 @@ module MCollective
     # Exit with 0 if no discovery were done and > 0 responses were received
     # Exit with 1 if no nodes were discovered
     # Exit with 2 if nodes were discovered but some RPC requests failed
-    # Exit with 3 if nodes were discovered, but not responses receivedif
+    # Exit with 3 if nodes were discovered, but not responses received
     # Exit with 4 if no discovery were done and no responses were received
     def halt(stats)
       request_stats = {:discoverytime => 0,

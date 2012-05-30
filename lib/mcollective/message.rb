@@ -72,15 +72,21 @@ module MCollective
     # this is to force a workflow that doesnt not yield in a mistake when someone might assume
     # direct_addressing is enabled when its not.
     def type=(type)
+      raise "Unknown message type #{type}" unless VALIDTYPES.include?(type)
+
       if type == :direct_request
         raise "Direct requests is not enabled using the direct_addressing config option" unless Config.instance.direct_addressing
 
         unless @discovered_hosts && !@discovered_hosts.empty?
           raise "Can only set type to :direct_request if discovered_hosts have been set"
         end
-      end
 
-      raise "Unknown message type #{type}" unless VALIDTYPES.include?(type)
+        # clear out the filter, custom discovery sources might interpret the filters
+        # different than the remote mcollectived and in directed mode really the only
+        # filter that matters is the agent filter
+        @filter = Util.empty_filter
+        @filter["agent"] << @agent
+      end
 
       @type = type
     end
@@ -213,7 +219,7 @@ module MCollective
         # send it as is.
         if @discovered_hosts && Config.instance.direct_addressing
           if @discovered_hosts.size <= Config.instance.direct_addressing_threshold
-            @type = :direct_request
+            self.type = :direct_request
             Log.debug("Handling #{requestid} as a direct request")
           end
 

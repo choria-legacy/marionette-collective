@@ -27,14 +27,19 @@ _mco() {
           {-A,--wa,--with-agent}'[Agent filter]' \
           {-I,--wi,--with-identity}'[Identity filter]' \
           {-T,--target}'[Target collective]' \
+          {--dm,--disc-method}'[Which discovery method to use]' \
+          {--do,--disc-option}'[Options to pass to the discovery method]' \
           {--dt,--discovery-timeout}'[Discovery timeout]' \
           {-t,--timeout}'[Command Timeout]' \
           {-q,--quiet}'[Surpress verbose output]' \
           {-c,--config}'[Path to the config file]' \
           {-v,--verbose}'[Be verbose]' \
           {-h,--help}'[Show complete help message]' \
-          '-ttl[Time To Live for the request]' \
+          '--nodes[List of nodes to address]' \
+          '--ttl[Time To Live for the request]' \
           '--reply-to[Custom reply target]')
+
+    curcontext="${curcontext%:*:*}:mco-${application}"
 
     if (( $+functions[_mco_application_$application] > 0 ));then
       _mco_application_$application
@@ -43,9 +48,12 @@ _mco() {
     _arguments -s : $args
   else
     local -a cmdlist
-    _call_program list-applications mco completion --list-applications -v | while read -A hline; do
+    _call_program mco-list-applications mco completion --list-applications -v | while read -A hline; do
       cmdlist=($cmdlist "${hline}")
     done
+
+    curcontext="${curcontext%:*:*}:mco-applications"
+
     _describe -t mco-application 'MCollective applications' cmdlist
   fi
 }
@@ -54,24 +62,24 @@ _mco_application_rpc() {
   local -a clist
 
   if (( CURRENT == 3 )); then
-    _call_program list-applications mco completion --list-agents -v | while read -A hline; do
+    _call_program mco-list-agents mco completion --list-agents -v | while read -A hline; do
       clist=($clist "${hline}")
     done
 
     _describe -t mco-agents "MCollective agents" clist
   elif (( CURRENT == 4 )); then
-    _call_program list-applications mco completion --list-actions --agent=${words[2]} -v | while read -A hline; do
+    _call_program mco-list-actions mco completion --list-actions --agent=${words[2]} -v | while read -A hline; do
       clist=($clist "${hline}")
     done
 
-    _describe -t mco-agents "${words[2]} actions" clist
+    _describe -t mco-actions "${words[2]} actions" clist
 
   elif (( CURRENT > 4 )); then
-    _call_program list-applications mco completion --list-inputs --action=${words[3]} --agent=${words[2]} -v | while read hline; do
+    _call_program mco-list-inputs mco completion --list-inputs --action=${words[3]} --agent=${words[2]} -v | while read hline; do
       clist=($clist $hline)
     done
 
-    _describe -t mco-agents "${words[3]} inputs" clist -S =
+    _describe -t mco-inputs "${words[3]} inputs" clist -S =
   fi
 
   args+=(

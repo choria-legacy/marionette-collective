@@ -1,7 +1,7 @@
 module MCollective
   # Helpers for writing clients that can talk to agents, do discovery and so forth
   class Client
-    attr_accessor :options, :stats
+    attr_accessor :options, :stats, :discoverer
 
     def initialize(configfile)
       @config = Config.instance
@@ -14,6 +14,7 @@ module MCollective
       @options = nil
       @subscriptions = {}
 
+      @discoverer = Discovery.new(self)
       @connection.connect
     end
 
@@ -114,31 +115,10 @@ module MCollective
     def discover(filter, timeout, limit=0)
       raise "Limit has to be an integer" unless limit.is_a?(Fixnum)
 
-      compount_timeout = timeout_for_compound_filter(options[:filter]["compound"])
+      compount_timeout = timeout_for_compound_filter(@options[:filter]["compound"])
       timeout = timeout + compount_timeout
 
-      begin
-        hosts = []
-        Timeout.timeout(timeout) do
-          reqid = sendreq("ping", "discovery", filter)
-          Log.debug("Waiting #{timeout} seconds for discovery replies to request #{reqid}")
-
-          loop do
-            reply = receive(reqid)
-            Log.debug("Got discovery reply from #{reply.payload[:senderid]}")
-            hosts << reply.payload[:senderid]
-
-            return hosts if limit > 0 && hosts.size == limit
-          end
-        end
-      rescue Timeout::Error => e
-      rescue Exception => e
-        raise
-      ensure
-        unsubscribe("discovery", :reply)
-      end
-
-      hosts.sort
+      discovered = @discoverer.discover(filter, timeout, limit)
     end
 
     # Send a request, performs the passed block for each response

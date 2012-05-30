@@ -129,10 +129,10 @@ module MCollective
     # Creates an empty filter
     def self.empty_filter
       {"fact"     => [],
-        "cf_class" => [],
-        "agent"    => [],
-        "identity" => [],
-        "compound" => []}
+       "cf_class" => [],
+       "agent"    => [],
+       "identity" => [],
+       "compound" => []}
     end
 
     # Picks a config file defaults to ~/.mcollective
@@ -156,12 +156,14 @@ module MCollective
 
     # Creates a standard options hash
     def self.default_options
-      {:verbose     => false,
-        :disctimeout => 2,
-        :timeout     => 5,
-        :config      => config_file_for_user,
-        :collective  => nil,
-        :filter      => empty_filter}
+      {:verbose           => false,
+       :disctimeout       => nil,
+       :timeout           => 5,
+       :config            => config_file_for_user,
+       :collective        => nil,
+       :discovery_method  => nil,
+       :discovery_options => Config.instance.default_discovery_options,
+       :filter            => empty_filter}
     end
 
     def self.make_subscriptions(agent, type, collective=nil)
@@ -268,7 +270,7 @@ module MCollective
 
     # Helper to return a string in specific color
     def self.colorize(code, msg)
-      "%s%s%s" % [ self.color(code), msg, self.color(:reset) ]
+      "%s%s%s" % [ color(code), msg, color(:reset) ]
     end
 
     # Returns the current ruby version as per RUBY_VERSION, mostly

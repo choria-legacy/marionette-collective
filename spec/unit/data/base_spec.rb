@@ -10,14 +10,6 @@ module MCollective
         @ddl.stubs(:meta).returns({:timeout => 1})
       end
 
-      describe "#inherited" do
-        it "should add classes to the plugin manager" do
-          PluginManager.expects("<<").with(:type => "rspec_data", :class => "MCollective::Data::Rspec_data", :single_instance => false)
-
-          class Rspec_data<Base; end
-        end
-      end
-
       describe "#initialize" do
         it "should set the plugin name, ddl and timeout and call the startup hook" do
           DDL.stubs(:new).returns(@ddl)

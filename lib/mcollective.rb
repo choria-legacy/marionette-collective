@@ -44,6 +44,7 @@ module MCollective
   autoload :Connector, "mcollective/connector"
   autoload :Data, "mcollective/data"
   autoload :DDL, "mcollective/ddl"
+  autoload :Discovery, "mcollective/discovery"
   autoload :Facts, "mcollective/facts"
   autoload :Logger, "mcollective/logger"
   autoload :Log, "mcollective/log"

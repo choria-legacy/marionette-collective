@@ -1,16 +1,21 @@
 class MCollective::Application::Find<MCollective::Application
-  description "Find hosts matching criteria"
+  description "Find hosts using the discovery system matching filter criteria"
 
   def main
-    client = MCollective::Client.new(options[:config])
-    client.options = options
+    mc = rpcclient("rpcutil")
 
-    stats = client.req("ping", "discovery") do |resp|
-      puts resp[:senderid]
-    end
+    starttime = Time.now
 
-    client.display_stats(stats) if options[:verbose]
+    nodes = mc.discover
 
-    halt stats
+    discoverytime = Time.now - starttime
+
+    STDERR.puts if options[:verbose]
+
+    nodes.each {|c| puts c}
+
+    STDERR.puts "\nDiscovered %s nodes in %.2f seconds using the %s discovery plugin" % [nodes.size, discoverytime, mc.client.discoverer.discovery_method] if options[:verbose]
+
+    nodes.size > 0 ? exit(0) : exit(1)
   end
 end

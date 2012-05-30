@@ -67,7 +67,7 @@ module MCollective
 
     describe "#reply_to=" do
       it "should only set the reply-to header for requests" do
-        Config.instance.instance_variable_set("@direct_addressing", true)
+        Config.instance.expects(:direct_addressing).returns(true)
         m = Message.new("payload", "message", :type => :reply)
         m.discovered_hosts = ["foo"]
         expect { m.reply_to = "foo" }.to raise_error(/reply targets/)
@@ -146,7 +146,7 @@ module MCollective
     describe "#type=" do
       it "should only allow types to be set when discovered hosts were given" do
         m = Message.new("payload", "message")
-        Config.instance.instance_variable_set("@direct_addressing", true)
+        Config.instance.stubs(:direct_addressing).returns(true)
 
         expect {
           m.type = :direct_request
@@ -155,7 +155,7 @@ module MCollective
 
       it "should not allow direct_request to be set if direct addressing isnt enabled" do
         m = Message.new("payload", "message")
-        Config.instance.instance_variable_set("@direct_addressing", false)
+        Config.instance.stubs(:direct_addressing).returns(false)
 
         expect {
           m.type = :direct_request
@@ -164,11 +164,22 @@ module MCollective
 
       it "should only accept valid types" do
         m = Message.new("payload", "message")
-        Config.instance.instance_variable_set("@direct_addressing", true)
+        Config.instance.stubs(:direct_addressing).returns(true)
 
         expect {
           m.type = :foo
         }.to raise_error("Unknown message type foo")
+      end
+
+      it "should clear the filter in direct_request mode and add just an agent filter" do
+        m = Message.new("payload", "message")
+        m.discovered_hosts = ["rspec"]
+        Config.instance.stubs(:direct_addressing).returns(true)
+
+        m.filter = Util.empty_filter.merge({"cf_class" => ["test"]})
+        m.agent = "rspec"
+        m.type = :direct_request
+        m.filter.should == Util.empty_filter.merge({"agent" => ["rspec"]})
       end
 
       it "should set the type" do
@@ -201,7 +212,7 @@ module MCollective
         security.expects(:encoderequest).with("identity", 'payload', '123', Util.empty_filter, 'rspec_agent', 'mcollective', 60).twice
         PluginManager.expects("[]").with("security_plugin").returns(security).twice
 
-        Config.any_instance.expects(:identity).returns("identity").times(4)
+        Config.instance.expects(:identity).returns("identity").times(4)
 
         Message.any_instance.expects(:requestid).returns("123").twice
 
@@ -358,8 +369,8 @@ module MCollective
         m = Message.new("msg", "message", :type => :request)
         m.discovered_hosts = ["one", "two", "three"]
 
-        Config.any_instance.expects(:direct_addressing).returns(true)
-        Config.any_instance.expects(:direct_addressing_threshold).returns(10)
+        Config.instance.stubs(:direct_addressing).returns(true)
+        Config.instance.stubs(:direct_addressing_threshold).returns(10)
 
         connector = mock
         connector.expects(:publish).with(m)
@@ -373,8 +384,8 @@ module MCollective
         m = Message.new("msg", "message", :type => :request)
         m.discovered_hosts = ["one", "two", "three"]
 
-        Config.any_instance.expects(:direct_addressing).returns(true)
-        Config.any_instance.expects(:direct_addressing_threshold).returns(1)
+        Config.instance.expects(:direct_addressing).returns(true)
+        Config.instance.expects(:direct_addressing_threshold).returns(1)
 
         connector = mock
         connector.expects(:publish).with(m)
@@ -389,7 +400,7 @@ module MCollective
       it "should create a valid request id" do
         m = Message.new("msg", "message", :agent => "rspec", :collective => "mc")
 
-        Config.any_instance.expects(:identity).returns("rspec")
+        Config.instance.expects(:identity).returns("rspec")
         Time.expects(:now).returns(1.1)
 
         Digest::MD5.expects(:hexdigest).with("rspec-1.1-rspec-mc").returns("reqid")

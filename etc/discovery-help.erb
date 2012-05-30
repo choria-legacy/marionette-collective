@@ -1,0 +1,22 @@
+<%= meta[:name] %>
+<% meta[:name].size.times do %>=<% end %>
+
+<%= meta[:description] %>
+
+      Author: <%= meta[:author] %>
+     Version: <%= meta[:version] %>
+     License: <%= meta[:license] %>
+     Timeout: <%= meta[:timeout] %>
+   Home Page: <%= meta[:url] %>
+
+DISCOVERY METHOD CAPABILITIES:
+% [["Filter based on configuration management classes", :classes],
+%  ["Filter based on system facts", :facts],
+%  ["Filter based on mcollective identity", :identity],
+%  ["Filter based on mcollective agents", :agents],
+%  ["Compound filters combining classes and facts", :compound]].each do |cap|
+%   if entities[:discovery][:capabilities].include?(cap.last)
+      <%= cap.first %>
+%   end
+% end
+

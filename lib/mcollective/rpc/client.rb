@@ -3,8 +3,9 @@ module MCollective
     # The main component of the Simple RPC client system, this wraps around MCollective::Client
     # and just brings in a lot of convention and standard approached.
     class Client
-      attr_accessor :discovery_timeout, :timeout, :verbose, :filter, :config, :progress, :ttl, :reply_to
+      attr_accessor :timeout, :verbose, :filter, :config, :progress, :ttl, :reply_to
       attr_reader :client, :stats, :ddl, :agent, :limit_targets, :limit_method, :output_format, :batch_size, :batch_sleep_time, :batch_mode
+      attr_reader :discovery_options, :discovery_method
 
       @@initial_options = nil
 
@@ -37,9 +38,9 @@ module MCollective
           @@initial_options = Marshal.dump(initial_options)
         end
 
+        @initial_options = initial_options
         @stats = Stats.new
         @agent = agent
-        @discovery_timeout = initial_options[:disctimeout] || 2
         @timeout = initial_options[:timeout] || 5
         @verbose = initial_options[:verbose]
         @filter = initial_options[:filter]
@@ -51,6 +52,8 @@ module MCollective
         @output_format = initial_options[:output_format] || :console
         @force_direct_request = false
         @reply_to = initial_options[:reply_to]
+        @discovery_method = initial_options[:discovery_method]
+        @discovery_options = initial_options[:discovery_options] || []
 
         @batch_size = Integer(initial_options[:batch_size] || 0)
         @batch_sleep_time = Float(initial_options[:batch_sleep_time] || 1)
@@ -60,6 +63,8 @@ module MCollective
 
         @client = MCollective::Client.new(@config)
         @client.options = initial_options
+
+        @discovery_timeout = discovery_timeout
 
         @collective = @client.collective
         @ttl = initial_options[:ttl] || Config.instance.ttl
@@ -319,6 +324,30 @@ module MCollective
         end
       end
 
+      def discovery_timeout
+        return @initial_options[:disctimeout] if @initial_options[:disctimeout]
+        return @client.discoverer.ddl.meta[:timeout]
+      end
+
+      def discovery_method=(method)
+        @discovery_method = method
+
+        if @initial_options[:discovery_options]
+          @discovery_options = @initial_options[:discovery_options]
+        else
+          @discovery_options.clear
+        end
+
+        @client.options = options
+        @discovery_timeout = discovery_timeout
+        reset
+      end
+
+      def discovery_options=(options)
+        @discovery_options = [options].flatten
+        reset
+      end
+
       # Sets the class filter
       def class_filter(klass)
         @filter["cf_class"] << klass
@@ -446,8 +475,21 @@ module MCollective
         unless @discovered_agents
           @stats.time_discovery :start
 
+          # if compound filters are used the only real option is to use the mc
+          # discovery plugin since its the only capable of using data queries etc
+          # and we do not want to degrade that experience just to allow compounds
+          # on other discovery plugins the UX would be too bad raising complex sets
+          # of errors etc.
+          @client.discoverer.force_discovery_method_by_filter(options[:filter])
+
           actual_timeout = options[:disctimeout] + @client.timeout_for_compound_filter(options[:filter]["compound"])
-          @stderr.print("Determining the amount of hosts matching filter for %d seconds .... " % actual_timeout) if verbose
+          if actual_timeout > 0
+            @stderr.print("Discovering hosts using the %s method for %d second(s) .... " % [@client.discoverer.discovery_method, actual_timeout]) if verbose
+          else
+            @stderr.print("Discovering hosts using the %s method .... " % [@client.discoverer.discovery_method]) if verbose
+          end
+
+          @client.options = options
 
           # if the requested limit is a pure number and not a percent
           # and if we're configured to use the first found hosts as the
@@ -459,8 +501,9 @@ module MCollective
             @discovered_agents = @client.discover(@filter, options[:disctimeout])
           end
 
-          @force_direct_request = false
           @stderr.puts(@discovered_agents.size) if verbose
+
+          @force_direct_request = @client.discoverer.force_direct_mode?
 
           @stats.time_discovery :end
         end
@@ -481,6 +524,8 @@ module MCollective
          :collective => @collective,
          :output_format => @output_format,
          :ttl => @ttl,
+         :discovery_method => @discovery_method,
+         :discovery_options => @discovery_options,
          :config => @config}
       end
 
@@ -694,12 +739,13 @@ module MCollective
 
         message = Message.new(req, nil, {:agent => @agent, :type => :request, :collective => @collective, :filter => opts[:filter], :options => opts})
         message.discovered_hosts = discovered.clone
-        message.type = :direct_request if @force_direct_request
 
         result = []
         respcount = 0
 
         if discovered.size > 0
+          message.type = :direct_request if @force_direct_request
+
           if @progress && !block_given?
             twirl = Progress.new
             @stdout.puts
@@ -767,25 +813,25 @@ module MCollective
           @stats.time_block_execution :start
 
           case block.arity
-          when 1
-            block.call(resp)
-          when 2
-            rpcresp = Result.new(@agent, action, {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode],
-                                   :statusmsg => resp[:body][:statusmsg], :data => resp[:body][:data]})
-            block.call(resp, rpcresp)
+            when 1
+              block.call(resp)
+            when 2
+              rpcresp = Result.new(@agent, action, {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode],
+                                                    :statusmsg => resp[:body][:statusmsg], :data => resp[:body][:data]})
+              block.call(resp, rpcresp)
           end
 
           @stats.time_block_execution :end
         else
           case resp[:body][:statuscode]
-          when 2
-            raise UnknownRPCAction, resp[:body][:statusmsg]
-          when 3
-            raise MissingRPCData, resp[:body][:statusmsg]
-          when 4
-            raise InvalidRPCData, resp[:body][:statusmsg]
-          when 5
-            raise UnknownRPCError, resp[:body][:statusmsg]
+            when 2
+              raise UnknownRPCAction, resp[:body][:statusmsg]
+            when 3
+              raise MissingRPCData, resp[:body][:statusmsg]
+            when 4
+              raise InvalidRPCData, resp[:body][:statusmsg]
+            when 5
+              raise UnknownRPCError, resp[:body][:statusmsg]
           end
         end
       end

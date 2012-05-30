@@ -21,6 +21,7 @@ RSpec.configure do |config|
   config.mock_with :mocha
 
   config.before :each do
+    MCollective::Config.instance.set_config_defaults("")
     MCollective::PluginManager.clear
   end
 end

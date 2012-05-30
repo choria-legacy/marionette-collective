@@ -1,6 +1,11 @@
 # Rakefile to build a project using HUDSON
 
-require 'rake/rdoctask'
+begin
+  require 'rdoc/task'
+rescue LoadError
+  require 'rake/rdoctask'
+end
+
 require 'rake/packagetask'
 require 'rake/clean'
 require 'find'
@@ -73,7 +78,7 @@ task :default => [:clean, :doc, :package]
 rd = Rake::RDocTask.new(:doc) { |rdoc|
   rdoc.rdoc_dir = 'doc'
   rdoc.title    = "#{PROJ_DOC_TITLE} version #{CURRENT_VERSION}"
-  rdoc.options << '--line-numbers' << '--inline-source' << '--main' << 'MCollective'
+  rdoc.options << '--line-numbers' << '--main' << 'MCollective'
 
   RDOC_EXCLUDES.each do |ext|
     rdoc.options << '--exclude' << ext

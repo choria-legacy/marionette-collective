@@ -66,6 +66,7 @@ rm -rf %{buildroot}
 %{__install} -m0444 etc/facts.yaml.dist %{buildroot}%{_sysconfdir}/mcollective/facts.yaml
 %{__install} -m0444 etc/rpc-help.erb %{buildroot}%{_sysconfdir}/mcollective/rpc-help.erb
 %{__install} -m0444 etc/data-help.erb %{buildroot}%{_sysconfdir}/mcollective/data-help.erb
+%{__install} -m0444 etc/discovery-help.erb %{buildroot}%{_sysconfdir}/mcollective/discovery-help.erb
 %if 0%{?suse_version}
 %{__install} -m0755 mcollective.init %{buildroot}%{_sysconfdir}/init.d/mcollective
 %else
@@ -100,17 +101,12 @@ fi
 %doc COPYING
 %{ruby_sitelib}/mcollective.rb
 %{ruby_sitelib}/mcollective
-%{_libexecdir}/mcollective/mcollective/agent
-%{_libexecdir}/mcollective/mcollective/audit
-%{_libexecdir}/mcollective/mcollective/connector
-%{_libexecdir}/mcollective/mcollective/facts
-%{_libexecdir}/mcollective/mcollective/registration
-%{_libexecdir}/mcollective/mcollective/security
-%{_libexecdir}/mcollective/mcollective/data
+%{_libexecdir}/mcollective/mcollective
 %dir %{_sysconfdir}/mcollective
 %dir %{_sysconfdir}/mcollective/ssl
 %config%{_sysconfdir}/mcollective/rpc-help.erb
 %config%{_sysconfdir}/mcollective/data-help.erb
+%config%{_sysconfdir}/mcollective/discovery-help.erb
 
 %files client
 %attr(0755, root, root)%{_sbindir}/mc-call-agent

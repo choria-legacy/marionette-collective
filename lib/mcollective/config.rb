@@ -11,8 +11,8 @@ module MCollective
     attr_reader :rpcauthorization, :color, :configfile, :rpchelptemplate
     attr_reader :rpclimitmethod, :logger_type, :fact_cache_time, :collectives
     attr_reader :main_collective, :ssl_cipher, :registration_collective
-    attr_reader :direct_addressing, :direct_addressing_threshold
-    attr_reader :ttl, :helptemplatedir, :queueprefix
+    attr_reader :direct_addressing, :direct_addressing_threshold, :ttl, :helptemplatedir
+    attr_reader :queueprefix, :default_discovery_method, :default_discovery_options
 
     def initialize
       @configured = false
@@ -109,6 +109,10 @@ module MCollective
                   @ttl = val.to_i
                 when "helptemplatedir"
                   @helptemplatedir = val
+                when "default_discovery_options"
+                  @default_discovery_options << val
+                when "default_discovery_method"
+                  @default_discovery_method = val
                 else
                   raise("Unknown config parameter #{key}")
               end
@@ -174,6 +178,8 @@ module MCollective
       @ssl_cipher = "aes-256-cbc"
       @direct_addressing = false
       @direct_addressing_threshold = 10
+      @default_discovery_method = "mc"
+      @default_discovery_options = []
       @ttl = 60
 
       # look in the config dir for the template so users can provide their own and windows

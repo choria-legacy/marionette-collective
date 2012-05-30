@@ -27,7 +27,7 @@ module MCollective
 
     describe "#initialize" do
       it "should fail if configuration has not been loaded" do
-        Config.any_instance.expects(:configured).returns(false)
+        Config.instance.expects(:configured).returns(false)
 
         expect {
           Agents.new
@@ -35,7 +35,7 @@ module MCollective
       end
 
       it "should load agents" do
-        Config.any_instance.expects(:configured).returns(true)
+        Config.instance.expects(:configured).returns(true)
         Agents.any_instance.expects(:loadagents).once
 
         Agents.new
@@ -44,8 +44,8 @@ module MCollective
 
     describe "#clear!" do
       it "should delete and unsubscribe all loaded agents" do
-        Config.any_instance.expects(:configured).returns(true).at_least_once
-        Config.any_instance.expects(:libdir).returns([@tmpdir])
+        Config.instance.expects(:configured).returns(true).at_least_once
+        Config.instance.expects(:libdir).returns([@tmpdir])
         PluginManager.expects(:delete).with("foo_agent").once
         Util.expects(:make_subscriptions).with("foo", :broadcast).returns("foo_target")
         Util.expects(:unsubscribe).with("foo_target")
@@ -56,8 +56,8 @@ module MCollective
 
     describe "#loadagents" do
       before do
-        Config.any_instance.stubs(:configured).returns(true)
-        Config.any_instance.stubs(:libdir).returns([@tmpdir])
+        Config.instance.stubs(:configured).returns(true)
+        Config.instance.stubs(:libdir).returns([@tmpdir])
         Agents.any_instance.stubs("clear!").returns(true)
       end
 
@@ -67,7 +67,7 @@ module MCollective
       end
 
       it "should attempt to load agents from all libdirs" do
-        Config.any_instance.expects(:libdir).returns(["/nonexisting", "/nonexisting"])
+        Config.instance.expects(:libdir).returns(["/nonexisting", "/nonexisting"])
         File.expects("directory?").with("/nonexisting/mcollective/agent").twice
 
         a = Agents.new
@@ -94,8 +94,8 @@ module MCollective
     describe "#loadagent" do
       before do
         FileUtils.touch(File.join([@agentsdir, "test.rb"]))
-        Config.any_instance.stubs(:configured).returns(true)
-        Config.any_instance.stubs(:libdir).returns([@tmpdir])
+        Config.instance.stubs(:configured).returns(true)
+        Config.instance.stubs(:libdir).returns([@tmpdir])
         Agents.any_instance.stubs("clear!").returns(true)
         PluginManager.stubs(:loadclass).returns(true)
         Util.stubs(:make_subscriptions).with("test", :broadcast).returns([{:agent => "test", :type => :broadcast, :collective => "test"}])
@@ -183,7 +183,7 @@ module MCollective
 
     describe "#class_for_agent" do
       it "should return the correct class" do
-        Config.any_instance.stubs(:configured).returns(true)
+        Config.instance.stubs(:configured).returns(true)
         Agents.any_instance.stubs(:loadagents).returns(true)
         Agents.new.class_for_agent("foo").should == "MCollective::Agent::Foo"
       end
@@ -191,7 +191,7 @@ module MCollective
 
     describe "#activate_agent?" do
       before do
-        Config.any_instance.stubs(:configured).returns(true)
+        Config.instance.stubs(:configured).returns(true)
         Agents.any_instance.stubs(:loadagents).returns(true)
         @a = Agents.new
 
@@ -225,14 +225,14 @@ module MCollective
 
     describe "#findagentfile" do
       before do
-        Config.any_instance.stubs(:configured).returns(true)
-        Config.any_instance.stubs(:libdir).returns([@tmpdir])
+        Config.instance.stubs(:configured).returns(true)
+        Config.instance.stubs(:libdir).returns([@tmpdir])
         Agents.any_instance.stubs(:loadagents).returns(true)
         @a = Agents.new
       end
 
       it "should support multiple libdirs" do
-        Config.any_instance.expects(:libdir).returns([@tmpdir, @tmpdir]).once
+        Config.instance.expects(:libdir).returns([@tmpdir, @tmpdir]).once
         File.expects("exist?").returns(false).twice
         @a.findagentfile("test")
       end
@@ -255,8 +255,8 @@ module MCollective
 
     describe "#include?" do
       it "should correctly report the plugin state" do
-        Config.any_instance.stubs(:configured).returns(true)
-        Config.any_instance.stubs(:libdir).returns([@tmpdir])
+        Config.instance.stubs(:configured).returns(true)
+        Config.instance.stubs(:libdir).returns([@tmpdir])
         Agents.any_instance.stubs(:loadagents).returns(true)
         PluginManager.expects("include?").with("test_agent").returns(true)
 
@@ -268,8 +268,8 @@ module MCollective
 
     describe "#agentlist" do
       it "should return the correct agent list" do
-        Config.any_instance.stubs(:configured).returns(true)
-        Config.any_instance.stubs(:libdir).returns([@tmpdir])
+        Config.instance.stubs(:configured).returns(true)
+        Config.instance.stubs(:libdir).returns([@tmpdir])
         Agents.any_instance.stubs(:loadagents).returns(true)
 
         @a = Agents.new("test" => true)

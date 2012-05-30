@@ -97,7 +97,7 @@ module MCollective
         parser = Optionparser.new(defaults={:collective => "rspec"})
         parser.stubs(:add_required_options)
         parser.stubs(:add_common_options)
-        Config.any_instance.expects(:main_collective).never
+        Config.instance.expects(:main_collective).never
         parser.parse
       end
 
@@ -105,7 +105,7 @@ module MCollective
         parser = Optionparser.new(defaults={})
         parser.stubs(:add_required_options)
         parser.stubs(:add_common_options)
-        Config.any_instance.expects(:main_collective).returns(:rspec).once
+        Config.instance.expects(:main_collective).returns(:rspec).once
         parser.parse[:collective].should == :rspec
       end
     end

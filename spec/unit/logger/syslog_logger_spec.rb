@@ -10,8 +10,8 @@ module MCollective
       describe Syslog_logger do
         describe "#start" do
           before do
-            Config.any_instance.stubs(:logfacility).returns("user")
-            Config.any_instance.stubs(:loglevel).returns("error")
+            Config.instance.stubs(:logfacility).returns("user")
+            Config.instance.stubs(:loglevel).returns("error")
           end
 
           it "should close the syslog if already opened" do

@@ -152,6 +152,23 @@ module MCollective
       @parser.on('--reply-to TARGET', 'Set a custom target for replies') do |v|
         @options[:reply_to] = v
       end
+
+      @parser.on('--dm', '--disc-method METHOD', 'Which discovery method to use') do |v|
+        raise "Discovery method is already set by a competing option" if @options[:discovery_method] && @options[:discovery_method] != v
+        @options[:discovery_method] = v
+      end
+
+      @parser.on('--do', '--disc-option OPTION', 'Options to pass to the discovery method') do |a|
+        @options[:discovery_options] << a
+      end
+
+      @parser.on("--nodes FILE", "List of nodes to address") do |v|
+        raise "Cannot mix --disc-method, --disc-option and --nodes" if @options[:discovery_method] || @options[:discovery_options].size > 0
+        raise "Cannot read the discovery file #{v}" unless File.readable?(v)
+
+        @options[:discovery_method] = "flatfile"
+        @options[:discovery_options] = v
+      end
     end
 
     private

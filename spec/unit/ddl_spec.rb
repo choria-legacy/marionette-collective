@@ -11,14 +11,14 @@ module MCollective
 
     describe "#findddlfile" do
       it "should construct the correct ddl file name" do
-        Config.any_instance.expects(:libdir).returns(["/nonexisting"])
+        Config.instance.expects(:libdir).returns(["/nonexisting"])
         File.expects("exist?").with("/nonexisting/mcollective/agent/foo.ddl").returns(false)
 
         @ddl.findddlfile("foo").should == false
       end
 
       it "should check each libdir for a ddl file" do
-        Config.any_instance.expects(:libdir).returns(["/nonexisting1", "/nonexisting2"])
+        Config.instance.expects(:libdir).returns(["/nonexisting1", "/nonexisting2"])
         File.expects("exist?").with("/nonexisting1/mcollective/agent/foo.ddl").returns(false)
         File.expects("exist?").with("/nonexisting2/mcollective/agent/foo.ddl").returns(false)
 
@@ -26,7 +26,7 @@ module MCollective
       end
 
       it "should return the ddl file path if found" do
-        Config.any_instance.expects(:libdir).returns(["/nonexisting"])
+        Config.instance.expects(:libdir).returns(["/nonexisting"])
         File.expects("exist?").with("/nonexisting/mcollective/agent/foo.ddl").returns(true)
         Log.expects(:debug).with("Found foo ddl at /nonexisting/mcollective/agent/foo.ddl")
 
@@ -101,6 +101,57 @@ module MCollective
 
       it "should call the block if given" do
         @ddl.dataquery(:description => "rspec") { @ddl.instance_variable_get("@current_entity").should == :data }
+      end
+    end
+
+    describe "#discovery_interface" do
+      it "should fail for non discovery plugin DDLs" do
+        expect { @ddl.discovery_interface }.to raise_error("Only discovery DDLs have discovery interfaces")
+      end
+
+      it "should return correct data" do
+        @ddl.instance_variable_set("@plugintype", :discovery)
+        @ddl.discovery do
+          @ddl.capabilities :identity
+        end
+
+        @ddl.discovery_interface.should == {:capabilities => [:identity]}
+      end
+    end
+
+    describe "#capabilities" do
+      it "should fail on non discovery plugins" do
+        expect { @ddl.capabilities :rspec }.to raise_error("Only discovery DDLs have capabilities")
+      end
+
+      it "should support non arrays" do
+        @ddl.instance_variable_set("@plugintype", :discovery)
+        @ddl.discovery do
+          @ddl.capabilities :identity
+        end
+        @ddl.discovery_interface.should == {:capabilities => [:identity]}
+      end
+
+      it "should not accept empty capability lists" do
+        @ddl.instance_variable_set("@plugintype", :discovery)
+        @ddl.discovery do
+          expect { @ddl.capabilities [] }.to raise_error("Discovery plugin capabilities can't be empty")
+        end
+      end
+
+      it "should only accept known capabilities" do
+        @ddl.instance_variable_set("@plugintype", :discovery)
+        @ddl.discovery do
+          expect { @ddl.capabilities :rspec }.to raise_error(/rspec is not a valid capability/)
+        end
+      end
+
+      it "should correctly store the capabilities" do
+        @ddl.instance_variable_set("@plugintype", :discovery)
+        @ddl.discovery do
+          @ddl.capabilities [:identity, :classes]
+        end
+        @ddl.discovery_interface.should == {:capabilities => [:identity, :classes]}
       end
     end
 
@@ -277,7 +328,6 @@ module MCollective
 
     describe "#help" do
       it "should use conventional template paths when none is provided" do
-        Config.instance.set_config_defaults("")
         File.expects(:read).with("/etc/mcollective/rpc-help.erb").returns("rspec")
         @ddl.help.should == "rspec"
       end

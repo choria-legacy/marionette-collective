@@ -80,20 +80,20 @@ module MCollective
               begin
                 compound.each do |expression|
                   case expression.keys.first
-                  when "statement"
-                    truth_values << Matcher.eval_compound_statement(expression).to_s
-                  when "fstatement"
-                    truth_values << Matcher.eval_compound_fstatement(expression.values.first)
-                  when "and"
-                    truth_values << "&&"
-                  when "or"
-                    truth_values << "||"
-                  when "("
-                    truth_values << "("
-                  when ")"
-                    truth_values << ")"
-                  when "not"
-                    truth_values << "!"
+                    when "statement"
+                      truth_values << Matcher.eval_compound_statement(expression).to_s
+                    when "fstatement"
+                      truth_values << Matcher.eval_compound_fstatement(expression.values.first)
+                    when "and"
+                      truth_values << "&&"
+                    when "or"
+                      truth_values << "||"
+                    when "("
+                      truth_values << "("
+                    when ")"
+                      truth_values << ")"
+                    when "not"
+                      truth_values << "!"
                   end
                 end
 
@@ -168,24 +168,24 @@ module MCollective
         Log.debug("Encoded a message for request #{reqid}")
 
         {:senderid => @config.identity,
-          :requestid => reqid,
-          :senderagent => agent,
-          :msgtime => Time.now.utc.to_i,
-          :body => body}
+         :requestid => reqid,
+         :senderagent => agent,
+         :msgtime => Time.now.utc.to_i,
+         :body => body}
       end
 
       def create_request(reqid, filter, msg, initiated_by, target_agent, target_collective, ttl=60)
         Log.debug("Encoding a request for agent '#{target_agent}' in collective #{target_collective} with request id #{reqid}")
 
         {:body => msg,
-          :senderid => @config.identity,
-          :requestid => reqid,
-          :filter => filter,
-          :collective => target_collective,
-          :agent => target_agent,
-          :callerid => callerid,
-          :ttl => ttl,
-          :msgtime => Time.now.utc.to_i}
+         :senderid => @config.identity,
+         :requestid => reqid,
+         :filter => filter,
+         :collective => target_collective,
+         :agent => target_agent,
+         :callerid => callerid,
+         :ttl => ttl,
+         :msgtime => Time.now.utc.to_i}
       end
 
       # Give a MC::Message instance and a message id this will figure out if you the incoming

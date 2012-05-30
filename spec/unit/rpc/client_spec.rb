@@ -5,21 +5,90 @@ require 'spec_helper'
 module MCollective
   module RPC
     describe Client do
-      describe "#limit_method" do
-        before do
-          client = stub
+      before do
+        @coreclient = mock
+        @discoverer = mock
+        ddl = stub
 
-          client.stubs("options=")
-          client.stubs(:collective).returns("mcollective")
-          client.stubs(:timeout_for_compound_filter).returns(0)
+        ddl.stubs(:meta).returns({:timeout => 2})
 
-          Config.any_instance.stubs(:loadconfig).with("/nonexisting").returns(true)
-          MCollective::Client.expects(:new).returns(client)
-          Config.any_instance.stubs(:direct_addressing).returns(true)
+        @discoverer.stubs(:force_direct_mode?).returns(false)
+        @discoverer.stubs(:ddl).returns(ddl)
+        @discoverer.stubs(:discovery_method).returns("mc")
+        @discoverer.stubs(:force_discovery_method_by_filter).returns(false)
 
-          @client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
+        @coreclient.stubs("options=")
+        @coreclient.stubs(:collective).returns("mcollective")
+        @coreclient.stubs(:timeout_for_compound_filter).returns(0)
+        @coreclient.stubs(:discoverer).returns(@discoverer)
+
+        Config.instance.stubs(:loadconfig).with("/nonexisting").returns(true)
+        MCollective::Client.stubs(:new).returns(@coreclient)
+        Config.instance.stubs(:direct_addressing).returns(true)
+
+        @stderr = StringIO.new
+        @stdout = StringIO.new
+
+        @client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
+      end
+
+      describe "#discovery_method=" do
+        it "should set the method" do
+          @client.discovery_method = "rspec"
+          @client.discovery_method.should == "rspec"
         end
 
+        it "should set initial options if provided" do
+          client = Client.new("rspec", {:options => {:discovery_options => ["rspec"], :filter => Util.empty_filter, :config => "/nonexisting"}})
+          client.discovery_method = "rspec"
+          client.discovery_method.should == "rspec"
+          client.discovery_options.should == ["rspec"]
+        end
+
+        it "should clear the options if none are given initially" do
+          @client.discovery_options = ["rspec"]
+          @client.discovery_method = "rspec"
+          @client.discovery_options.should == []
+        end
+
+        it "should set the client options" do
+          @client.expects(:options).returns("rspec")
+          @client.client.expects(:options=).with("rspec")
+          @client.discovery_method = "rspec"
+        end
+
+        it "should adjust discovery timeout for the new method" do
+          @client.expects(:discovery_timeout).once.returns(1)
+          @client.discovery_method = "rspec"
+          @client.instance_variable_get("@discovery_timeout").should == 1
+        end
+
+        it "should reset the rpc client" do
+          @client.expects(:reset)
+          @client.discovery_method = "rspec"
+        end
+      end
+
+      describe "#discovery_options=" do
+        it "should flatten the options array" do
+          @client.discovery_options = "foo"
+          @client.discovery_options.should == ["foo"]
+        end
+      end
+
+      describe "#discovery_timeout" do
+        it "should favour the initial options supplied timeout" do
+          client = Client.new("rspec", {:options => {:disctimeout => 3, :filter => Util.empty_filter, :config => "/nonexisting"}})
+          client.discovery_timeout.should == 3
+        end
+
+        it "should return the DDL data if no specific options are supplied" do
+          client = Client.new("rspec", {:options => {:disctimeout => nil, :filter => Util.empty_filter, :config => "/nonexisting"}})
+          client.discovery_timeout.should == 2
+        end
+      end
+
+      describe "#limit_method" do
         it "should force strings to symbols" do
           @client.limit_method = "first"
           @client.limit_method.should == :first
@@ -37,15 +106,6 @@ module MCollective
       end
 
       describe "#method_missing" do
-        before do
-          client = stub
-          client.stubs("options=")
-          client.stubs(:collective).returns("mcollective")
-          MCollective::Client.stubs(:new).returns(client)
-
-          Config.any_instance.stubs(:loadconfig).with("/nonexisting").returns(true)
-        end
-
         it "should reset the stats" do
           client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
           client.stubs(:call_agent)
@@ -78,7 +138,7 @@ module MCollective
 
         describe "batch mode" do
           before do
-            Config.any_instance.stubs(:direct_addressing).returns(true)
+            Config.instance.stubs(:direct_addressing).returns(true)
             @client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
           end
 
@@ -132,13 +192,22 @@ module MCollective
       describe "#limit_targets=" do
         before do
           client = stub
+          discoverer = stub
+          ddl = stub
+
+          ddl.stubs(:meta).returns({:timeout => 2})
+
+          discoverer.stubs(:force_direct_mode?).returns(false)
+          discoverer.stubs(:ddl).returns(ddl)
+          discoverer.stubs(:discovery_method).returns("mc")
 
           client.stubs("options=")
           client.stubs(:collective).returns("mcollective")
+          client.stubs(:discoverer).returns(discoverer)
 
-          Config.any_instance.stubs(:loadconfig).with("/nonexisting").returns(true)
+          Config.instance.stubs(:loadconfig).with("/nonexisting").returns(true)
           MCollective::Client.expects(:new).returns(client)
-          Config.any_instance.stubs(:direct_addressing).returns(true)
+          Config.instance.stubs(:direct_addressing).returns(true)
 
           @client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
         end
@@ -169,17 +238,26 @@ module MCollective
       describe "#call_agent_batched" do
         before do
           @client = stub
+          @discoverer = stub
+          @ddl = stub
+
+          @ddl.stubs(:meta).returns({:timeout => 2})
+
+          @discoverer.stubs(:force_direct_mode?).returns(false)
+          @discoverer.stubs(:ddl).returns(@ddl)
+          @discoverer.stubs(:discovery_method).returns("mc")
 
           @client.stubs("options=")
           @client.stubs(:collective).returns("mcollective")
+          @client.stubs(:discoverer).returns(@discoverer)
 
-          Config.any_instance.stubs(:loadconfig).with("/nonexisting").returns(true)
+          Config.instance.stubs(:loadconfig).with("/nonexisting").returns(true)
           MCollective::Client.expects(:new).returns(@client)
-          Config.any_instance.stubs(:direct_addressing).returns(true)
+          Config.instance.stubs(:direct_addressing).returns(true)
         end
 
         it "should require direct addressing" do
-          Config.any_instance.stubs(:direct_addressing).returns(false)
+          Config.instance.stubs(:direct_addressing).returns(false)
           client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
 
           expect {
@@ -219,8 +297,10 @@ module MCollective
           discovered = mock
           discovered.stubs(:size).returns(1)
           discovered.expects(:in_groups_of).with(10).raises("spec pass")
-          @client.stubs(:discover).returns(discovered)
-          @client.stubs(:timeout_for_compound_filter).returns(0)
+
+          client.instance_variable_set("@client", @coreclient)
+          @coreclient.stubs(:discover).returns(discovered)
+          @coreclient.stubs(:timeout_for_compound_filter).returns(0)
 
           expect { client.send(:call_agent_batched, "foo", {}, {}, 10, 1) }.to raise_error("spec pass")
         end
@@ -231,8 +311,9 @@ module MCollective
           Message.expects(:new).with('req', nil, {:type => :direct_request, :agent => 'foo', :filter => nil, :options => {}, :collective => 'mcollective'}).raises("spec pass")
           client.expects(:new_request).returns("req")
 
-          @client.stubs(:discover).returns(["test"])
-          @client.stubs(:timeout_for_compound_filter).returns(0)
+          client.instance_variable_set("@client", @coreclient)
+          @coreclient.stubs(:discover).returns(["test"])
+          @coreclient.stubs(:timeout_for_compound_filter).returns(0)
 
           expect { client.send(:call_agent_batched, "foo", {}, {}, 1, 1) }.to raise_error("spec pass")
         end
@@ -249,10 +330,11 @@ module MCollective
           client.expects(:new_request).returns("req")
           client.expects(:sleep).with(1.0).times(9)
 
-          @client.stubs(:discover).returns([1,2,3,4,5,6,7,8,9,0])
-          @client.expects(:req).with(msg).yields("result").times(10)
-          @client.stubs(:stats).returns stats
-          @client.stubs(:timeout_for_compound_filter).returns(0)
+          client.instance_variable_set("@client", @coreclient)
+          @coreclient.stubs(:discover).returns([1,2,3,4,5,6,7,8,9,0])
+          @coreclient.expects(:req).with(msg).yields("result").times(10)
+          @coreclient.stubs(:stats).returns stats
+          @coreclient.stubs(:timeout_for_compound_filter).returns(0)
 
           client.expects(:process_results_with_block).with("foo", "result", instance_of(Proc)).times(10)
 
@@ -262,6 +344,7 @@ module MCollective
 
         it "should return an array of results in array mode" do
           client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :stderr => StringIO.new}})
+          client.instance_variable_set("@client", @coreclient)
 
           msg = mock
           msg.expects(:discovered_hosts=).times(10)
@@ -274,10 +357,10 @@ module MCollective
           client.expects(:new_request).returns("req")
           client.expects(:sleep).with(1.0).times(9)
 
-          @client.stubs(:discover).returns([1,2,3,4,5,6,7,8,9,0])
-          @client.expects(:req).with(msg).yields("result").times(10)
-          @client.stubs(:stats).returns stats
-          @client.stubs(:timeout_for_compound_filter).returns(0)
+          @coreclient.stubs(:discover).returns([1,2,3,4,5,6,7,8,9,0])
+          @coreclient.expects(:req).with(msg).yields("result").times(10)
+          @coreclient.stubs(:stats).returns stats
+          @coreclient.stubs(:timeout_for_compound_filter).returns(0)
 
           client.expects(:process_results_without_block).with("result", "foo").returns("rspec").times(10)
 
@@ -286,18 +369,8 @@ module MCollective
       end
 
       describe "#batch_sleep_time=" do
-        before do
-          @client = stub
-
-          @client.stubs("options=")
-          @client.stubs(:collective).returns("mcollective")
-
-          Config.any_instance.stubs(:loadconfig).with("/nonexisting").returns(true)
-          MCollective::Client.expects(:new).returns(@client)
-        end
-
         it "should correctly set the sleep" do
-          Config.any_instance.stubs(:direct_addressing).returns(true)
+          Config.instance.stubs(:direct_addressing).returns(true)
 
           client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
           client.batch_sleep_time = 5
@@ -305,7 +378,8 @@ module MCollective
         end
 
         it "should only allow batch sleep to be set for direct addressing capable clients" do
-          Config.any_instance.stubs(:loadconfig).with("/nonexisting").returns(true)
+          Config.instance.stubs(:direct_addressing).returns(false)
+          Config.instance.stubs(:loadconfig).with("/nonexisting").returns(true)
           client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
 
           expect { client.batch_sleep_time = 5 }.to raise_error("Can only set batch sleep time if direct addressing is supported")
@@ -313,18 +387,8 @@ module MCollective
       end
 
       describe "#batch_size=" do
-        before do
-          @client = stub
-
-          @client.stubs("options=")
-          @client.stubs(:collective).returns("mcollective")
-
-          Config.any_instance.stubs(:loadconfig).with("/nonexisting").returns(true)
-          MCollective::Client.expects(:new).returns(@client)
-        end
-
         it "should correctly set the size" do
-          Config.any_instance.stubs(:direct_addressing).returns(true)
+          Config.instance.stubs(:direct_addressing).returns(true)
 
           client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
           client.batch_mode.should == false
@@ -334,14 +398,15 @@ module MCollective
         end
 
         it "should only allow batch size to be set for direct addressing capable clients" do
-          Config.any_instance.stubs(:loadconfig).with("/nonexisting").returns(true)
+          Config.instance.stubs(:loadconfig).with("/nonexisting").returns(true)
+          Config.instance.stubs(:direct_addressing).returns(false)
           client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
 
           expect { client.batch_size = 5 }.to raise_error("Can only set batch size if direct addressing is supported")
         end
 
         it "should support disabling batch mode when supplied a batch size of 0" do
-          Config.any_instance.stubs(:direct_addressing).returns(true)
+          Config.instance.stubs(:direct_addressing).returns(true)
 
           client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
           client.batch_size = 5
@@ -352,29 +417,15 @@ module MCollective
       end
 
       describe "#discover" do
-        before do
-          @client = stub
-
-          @client.stubs("options=")
-          @client.stubs(:collective).returns("mcollective")
-          @client.stubs(:timeout_for_compound_filter).returns(0)
-
-          @stderr = stub
-          @stdout = stub
-
-          Config.any_instance.stubs(:loadconfig).with("/nonexisting").returns(true)
-          MCollective::Client.expects(:new).returns(@client)
-        end
-
         it "should not accept invalid flags" do
-          Config.any_instance.stubs(:direct_addressing).returns(true)
+          Config.instance.stubs(:direct_addressing).returns(true)
           client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
 
           expect { client.discover(:rspec => :rspec) }.to raise_error("Unknown option rspec passed to discover")
         end
 
         it "should reset when :json, :hosts or :nodes are provided" do
-          Config.any_instance.stubs(:direct_addressing).returns(true)
+          Config.instance.stubs(:direct_addressing).returns(true)
           client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
           client.expects(:reset).times(3)
           client.discover(:hosts => ["one"])
@@ -383,7 +434,7 @@ module MCollective
         end
 
         it "should only allow discovery data in direct addressing mode" do
-          Config.any_instance.stubs(:direct_addressing).returns(false)
+          Config.instance.stubs(:direct_addressing).returns(false)
           client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
           client.expects(:reset).once
 
@@ -393,7 +444,7 @@ module MCollective
         end
 
         it "should parse :nodes and :hosts and force direct requests" do
-          Config.any_instance.stubs(:direct_addressing).returns(true)
+          Config.instance.stubs(:direct_addressing).returns(true)
           Helpers.expects(:extract_hosts_from_array).with(["one"]).returns(["one"]).twice
 
           client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
@@ -404,7 +455,7 @@ module MCollective
         end
 
         it "should parse :json and force direct requests" do
-          Config.any_instance.stubs(:direct_addressing).returns(true)
+          Config.instance.stubs(:direct_addressing).returns(true)
           Helpers.expects(:extract_hosts_from_json).with('["one"]').returns(["one"]).once
 
           client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
@@ -414,7 +465,7 @@ module MCollective
         end
 
         it "should force direct mode for non regex identity filters" do
-          Config.any_instance.stubs(:direct_addressing).returns(true)
+          Config.instance.stubs(:direct_addressing).returns(true)
 
           client = Client.new("foo", {:options => {:filter => {"identity" => ["foo"], "agent" => []}, :config => "/nonexisting"}})
           client.discover
@@ -423,7 +474,7 @@ module MCollective
         end
 
         it "should not set direct mode if its disabled" do
-          Config.any_instance.stubs(:direct_addressing).returns(false)
+          Config.instance.stubs(:direct_addressing).returns(false)
 
           client = Client.new("foo", {:options => {:filter => {"identity" => ["foo"], "agent" => []}, :config => "/nonexisting"}})
 
@@ -433,95 +484,100 @@ module MCollective
         end
 
         it "should not set direct mode for regex identities" do
-          Config.any_instance.stubs(:direct_addressing).returns(false)
+          Config.instance.stubs(:direct_addressing).returns(false)
 
-          @client.expects(:discover).with({'identity' => ['/foo/'], 'agent' => ['foo']}, 2).once.returns(["foo"])
-          client = Client.new("foo", {:options => {:filter => {"identity" => ["/foo/"], "agent" => []}, :config => "/nonexisting"}})
+          rpcclient = Client.new("foo", {:options => {:filter => {"identity" => ["/foo/"], "agent" => []}, :config => "/nonexisting"}})
 
-          client.discover
-          client.instance_variable_get("@force_direct_request").should == false
-          client.instance_variable_get("@discovered_agents").should == ["foo"]
+          rpcclient.client.expects(:discover).with({'identity' => ['/foo/'], 'agent' => ['foo']}, 2).once.returns(["foo"])
+
+          rpcclient.discover
+          rpcclient.instance_variable_get("@force_direct_request").should == false
+          rpcclient.instance_variable_get("@discovered_agents").should == ["foo"]
         end
 
         it "should print status to stderr if in verbose mode" do
-          @client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
-          @stderr.expects(:print).with("Determining the amount of hosts matching filter for 2 seconds .... ")
+          @stderr.expects(:print).with("Discovering hosts using the mc method for 2 second(s) .... ")
           @stderr.expects(:puts).with(1)
 
-          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => true, :disctimeout => 2, :stderr => @stderr, :stdout => @stdout}})
-          client.discover
+          rpcclient = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => true, :disctimeout => 2, :stderr => @stderr, :stdout => @stdout}})
+
+          rpcclient.client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
+
+          rpcclient.discover
         end
 
-        it "should not print status to stderr if in verbose mode" do
-          @client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
-          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2, :stderr => @stderr, :stdout => @stdout}})
-
+        it "should not print status to stderr if in nonverbose mode" do
           @stderr.expects(:print).never
           @stderr.expects(:puts).never
 
-          client.discover
+          rpcclient = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2, :stderr => @stderr, :stdout => @stdout}})
+          rpcclient.client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
+
+          rpcclient.discover
         end
 
         it "should record the start and end times" do
           Stats.any_instance.expects(:time_discovery).with(:start)
           Stats.any_instance.expects(:time_discovery).with(:end)
 
-          @client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
-          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
+          rpcclient = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
+          rpcclient.client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
 
-          client.discover
+          rpcclient.discover
         end
 
         it "should discover using limits in :first rpclimit mode given a number" do
-          Config.any_instance.stubs(:rpclimitmethod).returns(:first)
-          @client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2, 1).returns(["foo"])
-          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
-          client.limit_targets = 1
+          Config.instance.stubs(:rpclimitmethod).returns(:first)
+          rpcclient = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
+          rpcclient.client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2, 1).returns(["foo"])
 
-          client.discover
+          rpcclient.limit_targets = 1
+
+          rpcclient.discover
         end
 
         it "should not discover using limits in :first rpclimit mode given a string" do
-          Config.any_instance.stubs(:rpclimitmethod).returns(:first)
-          @client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
-          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
-          client.limit_targets = "10%"
+          Config.instance.stubs(:rpclimitmethod).returns(:first)
+          rpcclient = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
+          rpcclient.client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
+          rpcclient.limit_targets = "10%"
 
-          client.discover
+          rpcclient.discover
         end
 
         it "should not discover using limits when not in :first mode" do
-          Config.any_instance.stubs(:rpclimitmethod).returns(:random)
-          @client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
-          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
-          client.limit_targets = 1
+          Config.instance.stubs(:rpclimitmethod).returns(:random)
 
-          client.discover
+          rpcclient = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
+          rpcclient.client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
+
+          rpcclient.limit_targets = 1
+          rpcclient.discover
         end
 
         it "should ensure force_direct mode is false when doing traditional discovery" do
-          @client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
-          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
+          rpcclient = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
+          rpcclient.client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
 
-          client.instance_variable_set("@force_direct_request", true)
-          client.discover
-          client.instance_variable_get("@force_direct_request").should == false
+          rpcclient.instance_variable_set("@force_direct_request", true)
+          rpcclient.discover
+          rpcclient.instance_variable_get("@force_direct_request").should == false
         end
 
         it "should store discovered nodes in stats" do
-          @client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
-          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
+          rpcclient = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
+          rpcclient.client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
 
-          client.discover
-          client.stats.discovered_nodes.should == ["foo"]
+          rpcclient.discover
+          rpcclient.stats.discovered_nodes.should == ["foo"]
         end
 
         it "should save discovered nodes in RPC" do
-          @client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
-          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
+          rpcclient = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
+          rpcclient.client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
 
           RPC.expects(:discovered).with(["foo"]).once
-          client.discover
+          rpcclient.discover
         end
       end
     end

@@ -50,7 +50,7 @@ module MCollective
       end
 
       it "should take the configured value when present" do
-        Config.any_instance.stubs("ssl_cipher").returns("aes-128-cbc")
+        Config.instance.stubs("ssl_cipher").returns("aes-128-cbc")
         @ssl = SSL.new("#{@rootdir}/../fixtures/test-public.pem", "#{@rootdir}/../fixtures/test-private.pem")
 
         @ssl.ssl_cipher.should == "aes-128-cbc"
@@ -62,7 +62,7 @@ module MCollective
       end
 
       it "should prefer the supplied cipher over configured cipher" do
-        Config.any_instance.stubs("aes_key_size").returns("foo-foo-foo")
+        Config.instance.stubs("aes_key_size").returns("foo-foo-foo")
         @ssl = SSL.new("#{@rootdir}/../fixtures/test-public.pem", "#{@rootdir}/../fixtures/test-private.pem", nil, "aes-128-cbc")
 
         @ssl.ssl_cipher.should == "aes-128-cbc"
