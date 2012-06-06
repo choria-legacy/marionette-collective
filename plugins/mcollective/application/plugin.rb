@@ -9,6 +9,8 @@ mco plugin package [options] <directory>
        mco plugin info <directory>
        mco plugin doc <plugin>
        mco plugin doc <type/plugin>
+       mco plugin generate agent <pluginname> [actions=val,val]
+       mco plugin generate data <pluginname> [outputs=val,val]
 
           info : Display plugin information including package details.
        package : Create all available plugin packages.
@@ -80,12 +82,70 @@ mco plugin package [options] <directory>
            :arguments => ["--template HELPTEMPLATE"],
            :type => String
 
+    option :description,
+           :description => "Plugin description",
+           :arguments => ["--description DESCRIPTION"],
+           :type => String
+
+    option :author,
+           :description => "The author of the plugin",
+           :arguments => ["--author AUTHOR"],
+           :type => String
+
+    option :license,
+           :description => "The license under which the plugin is distributed",
+           :arguments => ["--license LICENSE"],
+           :type => String
+
+    option :version,
+           :description => "The version of the plugin",
+           :arguments => ["--pluginversion VERSION"],
+           :type => String
+
+    option :url,
+           :description => "Url at which information about the plugin can be found",
+           :arguments => ["--url URL"],
+           :type => String
+
+    option :timeout,
+           :description => "The plugin's timeout",
+           :arguments => ["--timeout TIMEOUT"],
+           :type => Integer
+
+    option :actions,
+           :description => "Actions to be generated for an Agent Plugin",
+           :arguments => ["--actions [ACTIONS]"],
+           :type => Array
+
+    option :outputs,
+           :description => "Outputs to be generated for an Data Plugin",
+           :arguments => ["--outputs [OUTPUTS]"],
+           :type => Array
+
     # Handle alternative format that optparser can't parse.
     def post_option_parser(configuration)
       if ARGV.length >= 1
         configuration[:action] = ARGV.delete_at(0)
 
         configuration[:target] = ARGV.delete_at(0) || "."
+
+        if configuration[:action] == "generate"
+          unless ARGV[0].match(/(actions|outputs)=(.+)/i)
+            unless configuration[:pluginname]
+              configuration[:pluginname] = ARGV.delete_at(0)
+            else
+              ARGV.delete_at(0)
+            end
+          end
+
+          ARGV.each do |argument|
+            if argument.match(/(actions|outputs)=(.+)/i)
+              configuration[$1.downcase.to_sym]= $2.split(",")
+            else
+              raise "Could not parse --arg '#{argument}'"
+            end
+          end
+        end
       end
     end
 
@@ -94,6 +154,30 @@ mco plugin package [options] <directory>
       plugin = prepare_plugin
       packager = PluginPackager["#{configuration[:format].capitalize}Packager"]
       packager.new(plugin).package_information
+    end
+
+    # Generate a plugin skeleton
+    def generate_command
+      unless configuration[:pluginname]
+        puts "No plugin name specified. Using 'new_plugin'"
+        configuration[:pluginname] = "new_plugin"
+      end
+
+      load_plugin_config_values
+
+      case configuration[:target].downcase
+      when 'agent'
+        Generators::AgentGenerator.new(configuration[:pluginname], configuration[:actions], configuration[:pluginname],
+                                       configuration[:description], configuration[:author], configuration[:license],
+                                       configuration[:version], configuration[:url], configuration[:timeout])
+      when 'data'
+        raise "data plugin must have at least one output" unless configuration[:outputs]
+        Generators::DataGenerator.new(configuration[:pluginname], configuration[:outputs], configuration[:pluginname],
+                                       configuration[:description], configuration[:author], configuration[:license],
+                                       configuration[:version], configuration[:url], configuration[:timeout])
+      else
+        raise "invalid plugin type. cannot generate plugin '#{configuration[:target]}'"
+      end
     end
 
     # Package plugin
@@ -213,6 +297,18 @@ mco plugin package [options] <directory>
 
       stripdir = configuration[:target] == "." ? "" : configuration[:target]
       plugintype.first.gsub(/\.|\/|#{stripdir}/, "")
+    end
+
+    # Load preset metadata values from config if they are present
+    # This makes it possible to override metadata values in a local
+    # client config file.
+    #
+    # Example : plugin.metadata.license = Apache 2
+    def load_plugin_config_values
+      config = Config.instance
+      [:pluginname, :description, :author, :license, :version, :url, :timeout].each do |confoption|
+        configuration[confoption] = config.pluginconf["metadata.#{confoption}"] unless configuration[confoption]
+      end
     end
 
     def main

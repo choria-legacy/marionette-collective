@@ -51,6 +51,7 @@ module MCollective
   autoload :Matcher, "mcollective/matcher"
   autoload :Message, "mcollective/message"
   autoload :Optionparser, "mcollective/optionparser"
+  autoload :Generators, "mcollective/generators"
   autoload :PluginManager, "mcollective/pluginmanager"
   autoload :PluginPackager, "mcollective/pluginpackager"
   autoload :Registration, "mcollective/registration"

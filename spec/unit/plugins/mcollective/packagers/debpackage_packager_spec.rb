@@ -237,11 +237,11 @@ module MCollective
       end
 
       describe "#prepare_tmpdirs" do
-        before :all do
+        before :each do
           @tmpfile = Tempfile.new("mc-file").path
         end
 
-        after :all do
+        after :each do
           FileUtils.rm(@tmpfile)
         end
 

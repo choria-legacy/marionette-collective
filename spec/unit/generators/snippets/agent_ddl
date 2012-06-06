@@ -1,0 +1,19 @@
+metadata
+action "action1", :description => "%ACTIONDESCRIPTION%" do
+     # Example Input
+     input :name,
+           :prompt => "%PROMPT%",
+           :description => "%DESCRIPTION%",
+           :type => %TYPE%,
+           :validation => '%VALIDATION%',
+           :optional => %OPTIONAL%,
+           :maxlength => %MAXLENGTH%
+
+     # Example output
+     output :name,
+            :description => "%DESCRIPTION%",
+            :display_as => "%DISPLAYAS%"
+end
+
+action "action2", :description => "%ACTIONDESCRIPTION%" do
+end

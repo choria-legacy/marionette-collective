@@ -1,0 +1,20 @@
+metadata :name => "%FULLNANE%",
+         :description => "%DESCRIPTION%",
+         :author => "%AUTHOR%",
+         :license => "%LICENSE%",
+         :version => "%VERSION%",
+         :url => "%URL%",
+         :timeout => %TIMEOUT%
+
+dataquery :description => "Query information" do
+  input :query,
+        :prompt => "%PROMP%",
+        :description => "%DESCRIPTION%",
+        :type => %TYPE%,
+        :validation => %VALIDATION%,
+        :maxlength => %MAXLENGTH%
+
+  output :output,
+         :description => "%DESCRIPTION%",
+         :display_as => "%DESCRIPTION%"
+end
