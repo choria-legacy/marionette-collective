@@ -1,13 +1,11 @@
 ---
 layout: default
 title: ActiveMQ TLS
-disqus: true
+toc: false
 ---
 [Security]: http://activemq.apache.org/security.html
 [Registration]: /mcollective/reference/plugins/registration.html
 [Wildcard]: http://activemq.apache.org/wildcards.html
-
-# {{page.title}}
 
 In order to achieve end to end encryption we use TLS encryption between
 ActiveMQ, the nodes and the client.

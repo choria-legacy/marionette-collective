@@ -1,11 +1,9 @@
 ---
 layout: default
 title: Registration
-disqus: true
+toc: false
 ---
 [RegistrationMonitor]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/AgentRegistrationMonitor
-
-# {{page.title}}
 
 MCollective supports the ability for each node to register with a central inventory. The core functionality
 of Mcollective doesn't require registration internally; it's simply provided as a framework to enable you to

@@ -1,10 +1,8 @@
 ---
 layout: default
 title: Release Tasks
-disqus: true
+toc: false
 ---
-
-# {{page.title}}
 
 Notes on what to do when we release
 

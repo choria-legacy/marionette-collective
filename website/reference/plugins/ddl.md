@@ -1,7 +1,6 @@
 ---
 layout: default
 title: Data Definition Language
-disqus: true
 ---
 [WritingAgents]: /mcollective/reference/basic/basic_agent_and_client.html
 [SimpleRPCClients]: /mcollective/simplerpc/clients.html
@@ -11,11 +10,6 @@ disqus: true
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
 [DDLScreenCast]: http://mcollective.blip.tv/file/3799653
 [RPCUtil]: /mcollective/reference/plugins/rpcutil.html
-
-# {{page.title}}
-
- * TOC Placeholder
- {:toc}
 
 As with other remote procedure invocation systems MCollective has a DDL that defines what remote methods are available, what inputs they take and what outputs they generate.
 

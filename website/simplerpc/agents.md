@@ -1,7 +1,6 @@
 ---
 layout: default
 title: Writing SimpleRPC Agents
-disqus: true
 ---
 [WritingAgents]: /mcollective/reference/basic/basic_agent_and_client.html
 [SimpleRPCClients]: /mcollective/simplerpc/clients.html
@@ -11,11 +10,6 @@ disqus: true
 [DDL]: /mcollective/reference/plugins/ddl.html
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
 [RPCUtil]: /mcollective/reference/plugins/rpcutil.html
-
-# {{page.title}}
-
- * TOC Placeholder
- {:toc}
 
 Simple RPC works because it makes a lot of assumptions about how you write agents, we'll try to capture those assumptions here and show you how to apply them to our Helloworld agent.
 

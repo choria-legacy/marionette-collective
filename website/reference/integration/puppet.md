@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Using with Puppet
-disqus: true
+toc: false
 ---
 [FactsRLFacter]: http://code.google.com/p/mcollective-plugins/wiki/FactsRLFacter
 [PluginSync]: http://docs.reductivelabs.com/guides/plugins_in_modules.html
@@ -18,8 +18,6 @@ disqus: true
 [ServiceAgent]: http://code.google.com/p/mcollective-plugins/wiki/AgentService
 [PackageAgent]: http://code.google.com/p/mcollective-plugins/wiki/AgentPackage
 [Facter2YAML]: http://www.semicomplete.com/blog/geekery/puppet-facts-into-mcollective.html
-
-# {{page.title}}
 
 If you're a Puppet user you are supported in both facts and classes filters.
 

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: ActiveMQ Clustering
-disqus: true
+toc: false
 ---
 [MessageFormat]: /mcollective/reference/basic/messageformat.html
 [MessageFlow]: /mcollective/reference/basic/messageflow.html
@@ -9,8 +9,6 @@ disqus: true
 [UsingSSL]: http://activemq.apache.org/how-do-i-use-ssl.html
 [SecurityWithActiveMQ]: /mcollective/reference/integration/activemq_security.html
 [SampleConfig]: http://github.com/puppetlabs/marionette-collective/tree/master/ext/activemq/
-
-# {{page.title}}
 
 Relying on existing middleware tools and not re-inventing the transport wheel ourselves means we can take advantage of a lot of the built in features they provide.  One such feature is clustering in ActiveMQ that allows for highly scalable and flexible network layouts.
 

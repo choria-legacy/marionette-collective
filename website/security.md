@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Security Overview
-disqus: true
+toc: false
 ---
 [broadcast paradigm]: /mcollective/reference/basic/messageflow.html
 [SimpleRPC]: /mcollective/simplerpc/
@@ -18,8 +18,6 @@ disqus: true
 [CentralAudit]: http://code.google.com/p/mcollective-plugins/wiki/AuditCentralRPCLog
 [Subcollectives]: reference/basic/subcollectives.html
 
-
-# {{page.title}}
 
 Due to the [broadcast paradigm] of mcollective security is a complex topic to
 discuss.
@@ -41,9 +39,6 @@ MCollective Setup and indicates the areas of discussion.
 
 The focus here is on ActiveMQ, some of the details and capabilities will
 differ between middleware systems.
-
- * TOC Placeholder
- {:toc}
 
 ## Client Connections and Credentials
 

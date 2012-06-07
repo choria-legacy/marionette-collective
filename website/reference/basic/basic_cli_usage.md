@@ -1,7 +1,6 @@
 ---
 layout: default
 title: Using MCollective Command Line Applications
-disqus: true
 ---
 # Using MCollective Command Line Applications
 

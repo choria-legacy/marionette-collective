@@ -3,11 +3,6 @@ title: Data Plugins
 ---
 [DDL]: /mcollective/reference/plugins/ddl.html
 
-# {{page.title}}
-
- * TOC Placeholder
- {:toc}
-
 ## Overview
 Up to MCollective 2.0 the discovery system could only discover against
 installed agents, configuration management classes or facts and the node

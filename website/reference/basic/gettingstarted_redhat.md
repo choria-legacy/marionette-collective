@@ -1,7 +1,6 @@
 ---
 layout: default
 title: Getting Started
-disqus: true
 ---
 [Screencasts]: /mcollective/screencasts.html
 [ActiveMQ]: http://activemq.apache.org/
@@ -24,11 +23,6 @@ disqus: true
 [Plugins]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki
 [MCDownloads]: http://www.puppetlabs.com/downloads/mcollective/
 [EPEL]: http://fedoraproject.org/wiki/EPEL
-
-# {{page.title}}
-
- * TOC Placeholder
- {:toc}
 
 Getting started using Red Hat based distribution like Red Hat Enterprise Linux and CentOS is easy as RPMs are available for all the required components.  This guide walks you through the process.
 

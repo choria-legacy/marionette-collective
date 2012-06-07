@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Terminology
-disqus: true
+toc: false
 ---
 [Software_agent]: http://en.wikipedia.org/wiki/Software_agent
 [Plugin]: http://en.wikipedia.org/wiki/Plugin
@@ -14,7 +14,6 @@ disqus: true
 [Registration]: /mcollective/reference/plugins/registration.html
 [SimpleRPCAuthorization]: /mcollective/simplerpc/authorization.html
 
-# {{page.title}}
 This page documents the various terms used in relation to mcollective.
 
 ## Server

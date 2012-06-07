@@ -1,9 +1,8 @@
 ---
 layout: default
 title: The rpcutil Agent
-disqus: true
+toc: false
 ---
-# {{page.title}}
 
 We include an agent with a few utilities and helpers there to assist in retrieving information about the running mcollectived.
 

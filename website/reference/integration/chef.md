@@ -1,11 +1,9 @@
 ---
 layout: default
 title: Using With Chef
-disqus: true
+toc: false
 ---
 [FactsOpsCodeOhai]: http://code.google.com/p/mcollective-plugins/wiki/FactsOpsCodeOhai
-
-# {{page.title}}
 
 If you're a Chef user you are supported in both facts and classes filters.
 

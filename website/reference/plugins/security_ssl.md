@@ -1,17 +1,11 @@
 ---
 layout: default
 title: OpenSSL based Security Plugin
-disqus: true
 ---
 [SimpleRPCAuthorization]: /mcollective/simplerpc/authorization.html
 [Registration]: registration.html
 [AESPlugin]: security_aes.html
 [SecurityOverview]: ../../security.html
-
-# {{page.title}}
-
- * TOC Placeholder
- {:toc}
 
 ## Overview
 Implements a public/private key based message validation system using SSL

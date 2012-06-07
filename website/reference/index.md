@@ -1,9 +1,8 @@
 ---
 layout: default
 title: Users Documentation and Reference
+toc: false
 ---
-
-# {{page.title}}
 
 Index to basic users documentation.
 

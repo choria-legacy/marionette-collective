@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Screen Casts
-disqus: true
+toc: false
 ---
 [blip]: http://mcollective.blip.tv/
 [slideshare]: http://www.slideshare.net/mcollective
@@ -10,7 +10,6 @@ disqus: true
 [SimpleRPCIntroduction]: /mcollective/simplerpc/
 [DDL]: /mcollective/reference/plugins/ddl.html
 
-# {{page.title}}
 We believe screen casts give the best introduction to new concepts, we've recorded
 quite a few that compliments the documentation.
 

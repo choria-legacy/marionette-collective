@@ -1,8 +1,8 @@
 ---
 layout: default
 title: Release Notes
+toc: false
 ---
-# {{page.title}}
 
 This is a list of release notes for various releases, you should review these before upgrading as any potential problems and backward incompatible changes will be highlighted here.
 

@@ -1,17 +1,11 @@
 ---
 layout: default
 title: OpenSSL based Security Plugin
-disqus: true
 ---
 [SimpleRPCAuthorization]: /mcollective/simplerpc/authorization.html
 [Registration]: registration.html
 [SSLSecurity]: security_ssl.html
 [SecurityOverview]: ../../security.html
-
-# {{page.title}}
-
- * TOC Placeholder
- {:toc}
 
 ## Overview
 This plugin impliments a AES encryption and RSA public / private key based security system

@@ -1,15 +1,9 @@
 ---
 layout: default
 title: Discovery Filters
-disqus: true
 ---
 
 [FactPlugin]: /mcollective/reference/plugins/facts.html
-
-# {{page.title}}
-
- * TOC Placeholder
- {:toc}
 
 Using filters to control discovery and addressing is a key concept in mcollective.
 You can use facts, classes, agents and server identities in filters and combine

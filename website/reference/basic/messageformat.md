@@ -1,17 +1,11 @@
 ---
 layout: default
 title: Message Format
-disqus: true
 ---
 [SecurityPlugins]: http://github.com/puppetlabs/marionette-collective/tree/master/plugins/mcollective/security/
 [SimpleRPCIntroduction]: /mcollective/simplerpc/
 [MessageFlow]: messageflow.html
 [ScreenCast]: /mcollective/screencasts.html#message_flow
-
-# {{page.title}}
-
- * TOC Placeholder
- {:toc}
 
 The messages that gets put on the middleware attempts to contain everything that mcollective needs to function, avoiding where possible special features in the Middle Ware.  This will hopefully make it easier to create Connector plugins for other middleware.
 

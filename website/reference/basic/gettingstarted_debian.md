@@ -1,7 +1,6 @@
 ---
 layout: default
 title: Getting Started
-disqus: true
 ---
 [Screencasts]: /mcollective/screencasts.html
 [ActiveMQ]: http://activemq.apache.org/
@@ -25,11 +24,6 @@ disqus: true
 [Plugins]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki
 [MCDownloads]: http://www.puppetlabs.com/downloads/mcollective/
 [RubyGems]: http://packages.debian.org/search?suite=default&section=all&arch=any&searchon=names&keywords=rubygems
-
-# {{page.title}}
-
- * TOC Placeholder
- {:toc}
 
 Getting started using Debian based distribution like Debian squeeze and Ubuntu is easy as DEBs are available for most the required components.  This guide walks you through the process.
 

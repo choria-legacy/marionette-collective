@@ -1,11 +1,8 @@
 ---
 layout: default
 title: Changelog
+toc: false
 ---
-# {{page.title}}
-
- * TOC Placeholder
-  {:toc}
 
 ## Version 2.1.x
 

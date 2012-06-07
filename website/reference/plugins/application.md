@@ -1,16 +1,10 @@
 ---
 layout: default
 title: Single Executable Application Plugin
-disqus: true
 ---
 [Clients]: ../../simplerpc/clients.html
 [SimpleRPCAgents]: ../../simplerpc/agents.html
 
-
-# {{page.title}}
-
- * a list for the toc
- {:toc}
 
 ## Overview
 The Marionette Collective 1.1.1 and newer supports a single executable - called

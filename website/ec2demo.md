@@ -1,7 +1,7 @@
 ---
 layout: default
 title: EC2 Demo
-disqus: true
+toc: false
 ---
 [Amazon Console]: https://console.aws.amazon.com/ec2/
 [Puppet based Service]: http://code.google.com/p/mcollective-plugins/wiki/AgentService
@@ -12,13 +12,12 @@ disqus: true
 [Registration]: /mcollective/reference/plugins/registration.html
 [Registration Monitor]: http://code.google.com/p/mcollective-plugins/wiki/AgentRegistrationMonitor
 
-# {{page.title}}
 We've created an Amazon hosted demo of mcollective that can give you a quick feel
 for how things work without all the hassle of setting up from scratch.
 
-The demo uses the new Amazon CloudFormation technology that you can access using the [Amazon Console]. 
-To access the AMI you must select the 'EU - West' Region. Also, prior to following the steps in the demo 
-please create a SSH keypair and register it under the EC2 tab in the console for that region. 
+The demo uses the new Amazon CloudFormation technology that you can access using the [Amazon Console].
+To access the AMI you must select the 'EU - West' Region. Also, prior to following the steps in the demo
+please create a SSH keypair and register it under the EC2 tab in the console for that region.
 
 The video below shows how to get going with the demo and runs through a few of the availbable options.
 For best experience please maximise the video.

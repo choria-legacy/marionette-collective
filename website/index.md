@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Marionette Collective
-disqus: true
+toc: false
 ---
 [Func]: https://fedorahosted.org/func/
 [Fabric]: http://fabfile.org/
@@ -37,7 +37,6 @@ disqus: true
 [MessageFormat]: /mcollective/reference/basic/messageformat.html
 [ChangeLog]: /mcollective/changelog.html
 
-# {{page.title}}
 The Marionette Collective AKA mcollective is a framework to build server
 orchestration or parallel job execution systems.
 

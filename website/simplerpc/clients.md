@@ -1,7 +1,6 @@
 ---
 layout: default
 title: Writing SimpleRPC Clients
-disqus: true
 ---
 [SimpleRPCIntroduction]: index.html
 [WritingAgents]: agents.html
@@ -10,11 +9,6 @@ disqus: true
 [RubyMixin]: http://juixe.com/techknow/index.php/2006/06/15/mixins-in-ruby/
 [OptionParser]: http://github.com/puppetlabs/marionette-collective/blob/master/lib/mcollective/optionparser.rb
 [AppPlugin]: ../reference/plugins/application.html
-
-# {{page.title}}
-
- * a list for the toc
- {:toc}
 
 As pointed out in the [SimpleRPCIntroduction] page you can use the _mco rpc_ CLI
 to call agents and it will do it's best to print results in a sane way.  When

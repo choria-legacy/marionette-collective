@@ -1,12 +1,7 @@
 ---
 layout: default
 title: Controlling the Daemon
-disqus: true
 ---
-# {{page.title}}
-
- * TOC Placeholder
- {:toc}
 
 The main daemon that runs on nodes keeps internal stats and supports reloading of agents, we provide
 a tool - *mco controller* - to interact with any running daemon from a client.

@@ -1,14 +1,8 @@
 ---
 layout: default
 title: Node Reports
-disqus: true
 ---
 [Subcollectives]: ../basic/subcollectives.html
-
-# {{page.title}}
-
- * TOC Placeholder
- {:toc}
 
 As we have all facts, classes and agents for nodes we can do some custom reporting on all of these.
 

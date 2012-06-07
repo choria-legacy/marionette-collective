@@ -1,15 +1,9 @@
 ---
 layout: default
 title: SimpleRPC Message Format
-disqus: true
 ---
 [MessageFormat]: ../reference/basic/messageformat.html
 [ErrorCodes]: clients.html#dealing-with-the-results-directly
-
-# {{page.title}}
-
- * TOC Placeholder
- {:toc}
 
 SimpleRPC has a specific message structure that builds on the core
 [MessageFormat].  As such SimpleRPC is simply a plugin developed

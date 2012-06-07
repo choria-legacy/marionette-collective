@@ -1,7 +1,6 @@
 ---
 layout: default
 title: Configuration Guide
-disqus: true
 ---
 
 [SSLSecurity]: /mcollective/reference/plugins/security_ssl.html
@@ -10,11 +9,6 @@ disqus: true
 [Auditing]: /mcollective/simplerpc/auditing.html
 [Authorization]: /mcollective/simplerpc/authorization.html
 [Subcollectives]: /mcollective/reference/basic/subcollectives.html
-
-# {{page.title}}
-
- * TOC Placeholder
- {:toc}
 
 This guide tells you about the major configuration options in the daemon and client config files.  There are options not mentioned
 here typically ones specific to a certain plugin.

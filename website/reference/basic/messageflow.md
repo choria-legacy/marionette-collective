@@ -1,14 +1,12 @@
 ---
 layout: default
 title: Message Flow
-disqus: true
+toc: false
 ---
 [MessageFormat]: /mcollective/reference/basic/messageformat.html
 [ActiveMQClusters]: /mcollective/reference/integration/activemq_clusters.html
 [SecurityWithActiveMQ]: /mcollective/reference/integration/activemq_security.html
 [ScreenCast]: /mcollective/screencasts.html#message_flow
-
-# {{page.title}}
 
 The diagram below shows basic message flow on a MCollective system.  There is also a [screencast][ScreenCast] that shows this process, recommend you watch that.
 

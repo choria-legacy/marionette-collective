@@ -1,15 +1,9 @@
 ---
 layout: default
 title: Subcollectives
-disqus: true
 ---
 [ActiveMQClustering]: /mcollective/reference/integration/activemq_clusters.html
 [MessageFlow]: messageflow.html
-
-# {{page.title}}
-
- * TOC Placeholder
- {:toc}
 
 # Overview
 

@@ -1,12 +1,10 @@
 ---
 layout: default
 title: Writing Fact Plugins
-disqus: true
+toc: false
 ---
 [SimpleRPCAuthorization]: /mcollective/simplerpc/authorization.html
 [Registration]: registration.html
-
-# {{page.title}}
 
 Fact plugins are used during discovery whenever you run the agent with queries like *-W country=de*.
 

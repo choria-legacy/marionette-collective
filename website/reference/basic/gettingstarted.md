@@ -1,7 +1,6 @@
 ---
 layout: default
 title: Getting Started
-disqus: true
 ---
 [Screencasts]: /mcollective/screencasts.html
 [ActiveMQ]: http://activemq.apache.org/
@@ -23,12 +22,6 @@ disqus: true
 [Plugins]: http://code.google.com/p/mcollective-plugins/
 [RedHatGuide]: gettingstarted_redhat.html
 [DebianGuide]: gettingstarted_debian.html
-
-# {{page.title}}
-
- * TOC Placeholder
- {:toc}
-
 
 *NOTE:* We are currently improving the Getting Started documentation.  Red Hat and CentOS users can refer to [our Redhat guide][RedHatGuide]. Debian users can refer to [our Debian guide][DebianGuide].
 

@@ -1,11 +1,9 @@
 ---
 layout: default
 title: ActiveMQ Connector
-disqus: true
+toc: false
 ---
 [STOMP]: http://stomp.codehaus.org/
-
-# {{page.title}}
 
 The ActiveMQ connector uses the [STOMP] rubygem to connect to ActiveMQ servers.  It is specifically optimiszed for ActiveMQ
 and uses features in ActiveMQ 5.5.0 and later.

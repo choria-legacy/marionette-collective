@@ -1,14 +1,8 @@
 ---
 layout: default
 title: Basic Agents and Clients
-disqus: true
 ---
 [SimpleRPCIntroduction]: /mcollective/simplerpc/
-
-# {{page.title}}
-
- * TOC Placeholder
- {:toc}
 
 In general you should use [SimpleRPC][SimpleRPCIntroduction] for writing agents and clients.  SimpleRPC is a framework that wraps the core MCollective client and agent structures in a lot of helpful convention and tools.
 

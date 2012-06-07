@@ -1,14 +1,12 @@
 ---
 layout: default
 title: ActiveMQ Security
-disqus: true
+toc: false
 ---
 [Security]: http://activemq.apache.org/security.html
 [Registration]: /mcollective/reference/plugins/registration.html
 [Wildcard]: http://activemq.apache.org/wildcards.html
 [ActiveMQ TLS]: activemq_ssl.html
-
-# {{page.title}}
 
 As part of rolling out mcollective you need to think about security. The various examples in the quick start guide and on this blog has allowed all agents to talk to all nodes all agents. The problem with this approach is that should you have untrusted users on a node they can install the client applications and read the username/password from the server config file and thus control your entire architecture.
 
