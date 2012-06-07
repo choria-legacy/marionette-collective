@@ -280,7 +280,7 @@ module MCollective
           @stats.discovered_agents ["foo", "bar"]
           @stats.finish_request
 
-          @stats.no_response_report.should match(Regexp.new(/No response from.+foo.+bar/m))
+          @stats.no_response_report.should match(Regexp.new(/No response from.+bar\s+foo/m))
         end
       end
     end

@@ -165,20 +165,21 @@ module MCollective
 
       # Returns a blob of text indicating what nodes did not respond
       def no_response_report
-        result_text = []
+        result_text = StringIO.new
 
         if @noresponsefrom.size > 0
-          result_text << Util.colorize(:red, "\nNo response from:\n")
+          result_text.puts
+          result_text.puts Util.colorize(:red, "No response from:")
+          result_text.puts
 
-          @noresponsefrom.each_with_index do |c,i|
-            result_text << "" if i % 4 == 0
-            result_text << "%30s" % [c]
+          @noresponsefrom.sort.in_groups_of(3) do |c|
+            result_text.puts "   %-30s%-30s%-30s" % c
           end
 
-          result_text << ""
+          result_text.puts
         end
 
-        result_text.join("\n")
+        result_text.string
       end
     end
   end

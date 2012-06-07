@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/06/07|Fix the _No response from_ report to be correctly formatted|14868|
 |2012/06/07|Sub collectives and direct addressing mode now works correctly|14668|
 |2012/06/07|The discovery method is now pluggable, included is one supporting flat files|14255|
 |2012/05/28|Add an application to assist shell completion systems with bash and zsh completion plugins|14196|
