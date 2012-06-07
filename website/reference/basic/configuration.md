@@ -43,6 +43,8 @@ Configuration is a simple *key = val* style configuration file.
 |direct_addressing_threshold|10|When direct requests are enabled, send direct messages for less than or equal to this many hosts|
 |ttl|60|Sets the default TTL for requests - 1.3.2 and newer only|
 |logfacility|When using the syslog logger sets the facility, defaults to user|
+|default_discovery_method|The default method to use for discovery - _mc_ by default|
+|default_discovery_options|Options to pass to the discovery plugin, empty by default|
 
 ## Server Configuration
 The server configuration file should be root only readable

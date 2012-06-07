@@ -1,4 +1,5 @@
 ---
+layout: default
 title: Data Plugins
 ---
 [DDL]: /mcollective/reference/plugins/ddl.html
@@ -54,6 +55,7 @@ On the servers the DDL will:
  * be used to validate requests for known output values
 
 ## Writing a data plugin
+
 ### The Ruby logic for the plugin
 The data plugins should not change the system in anyway, you should take
 care to create plugins that only reads the state of the system.  If you

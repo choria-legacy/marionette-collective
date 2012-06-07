@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|*2012/06/08*|*Release 2.1.0*|14846|
 |2012/06/07|Force discovery state to be reset when changing collectives in the RPC client|14874|
 |2012/06/07|Create code generators for agents and data plugins|14717|
 |2012/06/07|Fix the _No response from_ report to be correctly formatted|14868|

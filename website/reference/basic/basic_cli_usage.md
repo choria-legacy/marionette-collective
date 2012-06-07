@@ -2,8 +2,6 @@
 layout: default
 title: Using MCollective Command Line Applications
 ---
-# Using MCollective Command Line Applications
-
 MCollective is designed first and foremost for the CLI. You will mostly
 interact with a single executable called *mco* which has a number of
 sub-commands, arguments and flags.
@@ -46,7 +44,7 @@ The Marionette Collective version 2.0.0
 {% endhighlight %}
 
 You can request help for a specific application using either *mco help
-application* or *mco application --help*. Shown below is part of the
+application* or *mco application ---help*. Shown below is part of the
 help for the *rpc* application:
 
 {% highlight console %}
@@ -127,7 +125,7 @@ The order of events in this process are:
 
 Mcollective client applications aim to only provide the most relevant
 information.  In this case, the application is not showing verbose
-information about the ten *OK* results, since the most important issue
+information about the nine *OK* results, since the most important issue
 is the one *Failure*. Keep this in mind when viewing the results of
 commands.
 

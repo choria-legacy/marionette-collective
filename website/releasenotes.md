@@ -6,6 +6,132 @@ toc: false
 
 This is a list of release notes for various releases, you should review these before upgrading as any potential problems and backward incompatible changes will be highlighted here.
 
+<a name="2_1_0">&nbsp;</a>
+
+## 2.1.0 - 2012/06/08
+
+This is the first release in the new development series of MCollective.  This
+releas features major new features and enhancements.
+
+This release is for early adopters, production users should consider the 2.0.x
+series.
+
+### Major Enhancements
+
+ * Discovery requests can now run custom data plugins on nodes to facilitate discovery against any node-side data
+ * Discovery sources are now pluggable, one supporting flat files are included in this release
+ * All applications now have a --nodes option to read a text file of identities to operate on
+ * A new _completion_ application was added to assist with shell completion systems, zsh and bash tab completion plugins are in ext
+ * Users can now use a generator to create skeleton agents and data sources
+
+### Changes in behavior
+
+ * The _mco controller_ application is being deprecated for the next major release and has now been removed from the development series
+ * The _mco find_ application is now a discovery client so it's output mode has changed slightly but the functionality stays the same
+
+### Bug Fixes
+
+ * Numerous small improvement to user facing errors and status outputs have been made
+ * Sub collectives combined with direct addressing has been fixed
+ * Various packaging issues were resolved
+ * The ActiveMQ and Stomp connectors will now by default handle dual homed IPv6 and IPv4 hosts better in cases where the IPv6 target isn't reachable
+
+### Data Plugins
+
+A new plugin type called _data plugins_ have been added, these plugins are
+usable in discovery requests and in any agent code.
+
+You can use these plugins to expose any node side data to your client discovery
+command line, an example can be seen below, this will discover all nodes where
+_/etc/syslog.conf_ has a md5 summ matching the regular expression
+_/19ff4997e/_:
+
+{% highlight console %}
+$ mco rpc rpcutil ping -S "fstat('/etc/rsyslog.conf').md5 = /19ff4997e/"
+{% endhighlight %}
+
+For full information see the plugins documentation on our website. The _fstat_
+plugin seen above is included at the moment, more will be added in due course
+but as always users can also write their own suitable to their needs.
+
+### Custom Discovery Sources
+
+Since the introduction of direct addressing mode in 2.0.0 you've been able to
+pragmatically specify arbitrary host lists as discovery data but this was never
+exposed to the user interface.
+
+We now introduce plugins that can be used as alternative data sources and
+include the traditional network broadcast mode and a flat file one.  The hope
+is that more will be added in future perhaps integrating with systems like
+PuppetDB.  There is also one that uses the MongoDB Registration plugin to build
+a local node cache.
+
+Custom discovery sources can be made the default for a client using the
+*default_discovery_method* configuration option but can be selected on the
+command line using _--discovery-method_.
+
+All applications now have a _--nodes_ option that takes as an argument a flat
+file full of mcollective identity names, one per line.
+
+Users can write their own discovery plugins and distribute it using the normal
+plugin packager.
+
+In the event that the _-S_ filter is used the network discovery mode will be
+forced so that data source plugins in discovery queries will always work as
+expected.
+
+### Code generation
+
+A first iteration on generating agents and data sources has been added, you can
+use the _plugin_ command to create a basic skeleton agent or data source
+including the DDL files.
+
+{% highlight console %}
+$ mco plugin generate agent myagent actions=do_something,do_something_else
+{% endhighlight %}
+
+Defaults used in the metadata templates can be set in the config file:
+
+{% highlight ini %}
+plugin.metadata.url=http://devco.net
+plugin.metadata.author=R.I.Pienaar <rip@devco.net>
+plugin.metadata.license=ASL2.0
+plugin.metadata.version=0.0.1
+{% endhighlight %}
+
+All generator produced output will have these settings set, the other fields
+are constructed using a pattern convenient for using in your editor as a
+template.
+
+### Backwards Compatibility and Upgrading
+
+This release can co-exist with 2.0.0 but using the new discovery data plugins in a
+mixed environment will result in the old nodes not being discovered and they will
+log exceptions in their logs.  This was done by choice and ensures the safest
+possible upgrade path.
+
+When the 2.0.0 collective is running with directed mode enabled a client using the
+new discovery plugins will be able to communicate wth the older nodes without
+problem.
+
+### Changes since 2.0.0
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2012/06/07|Force discovery state to be reset when changing collectives in the RPC client|14874|
+|2012/06/07|Create code generators for agents and data plugins|14717|
+|2012/06/07|Fix the _No response from_ report to be correctly formatted|14868|
+|2012/06/07|Sub collectives and direct addressing mode now works correctly|14668|
+|2012/06/07|The discovery method is now pluggable, included is one supporting flat files|14255|
+|2012/05/28|Add an application to assist shell completion systems with bash and zsh completion plugins|14196|
+|2012/05/22|Improve error messages from the packager when a DDL file cannot be found|14595|
+|2012/05/17|Add a dependency on stomp to the rubygem|14300|
+|2012/05/17|Adjust the ActiveMQ and Stomp connect_timeout to allow IPv4 fall back to happen in dual homed hosts|14496|
+|2012/05/16|Add a plugable data source usable in discovery and other plugins|14254|
+|2012/05/04|Improve version dependencies and upgrade experience of debian packages|14277|
+|2012/05/03|Add the ability for the DDL to load DDL files from any plugin type|14293|
+|2012/05/03|Rename the MCollective::RPC::DDL to MCollective::DDL to match its larger role in all plugins|14254|
+
 <a name="2_0_0">&nbsp;</a>
 
 ## 2.0.0 - 2012/04/30
