@@ -23,13 +23,32 @@ module MCollective
         @coreclient.stubs(:discoverer).returns(@discoverer)
 
         Config.instance.stubs(:loadconfig).with("/nonexisting").returns(true)
-        MCollective::Client.stubs(:new).returns(@coreclient)
         Config.instance.stubs(:direct_addressing).returns(true)
+        Config.instance.stubs(:collectives).returns(["mcollective", "rspec"])
+        MCollective::Client.stubs(:new).returns(@coreclient)
 
         @stderr = StringIO.new
         @stdout = StringIO.new
 
         @client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
+      end
+
+      describe "#collective=" do
+        it "should validate the collective" do
+          expect { @client.collective = "fail" }.to raise_error("Unknown collective fail")
+          @client.collective = "rspec"
+        end
+
+        it "should set the collective" do
+          @client.options[:collective].should == "mcollective"
+          @client.collective = "rspec"
+          @client.options[:collective].should == "rspec"
+        end
+
+        it "should reset the client" do
+          @client.expects(:reset)
+          @client.collective = "rspec"
+        end
       end
 
       describe "#discovery_method=" do

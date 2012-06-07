@@ -531,8 +531,11 @@ module MCollective
 
       # Sets the collective we are communicating with
       def collective=(c)
+        raise "Unknown collective #{c}" unless Config.instance.collectives.include?(c)
+
         @collective = c
-        @client.options[:collective] = c
+        @client.options = options
+        reset
       end
 
       # Sets and sanity checks the limit_targets variable
