@@ -438,7 +438,7 @@ module MCollective
           @c.make_target("test", :broadcast, "mcollective").should == {:name => "/topic/mcollective.test.agent", :headers => {}, :id => "/topic/mcollective.test.agent"}
           @c.make_target("test", :request, "mcollective").should == {:name => "/topic/mcollective.test.agent", :headers => {}, :id => "/topic/mcollective.test.agent"}
           @c.make_target("test", :direct_request, "mcollective").should == {:headers=>{}, :name=>"/queue/mcollective.nodes", :id => "/queue/mcollective.nodes"}
-          @c.make_target("test", :directed, "mcollective").should == {:name => "/queue/mcollective.nodes", :headers=>{"selector"=>"mc_identity = 'rspec'"}, :id => "directed_to_identity"}
+          @c.make_target("test", :directed, "mcollective").should == {:name => "/queue/mcollective.nodes", :headers=>{"selector"=>"mc_identity = 'rspec'"}, :id => "mcollective_directed_to_identity"}
         end
 
         it "should raise an error for unknown collectives" do

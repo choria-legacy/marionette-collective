@@ -13,7 +13,7 @@ module MCollective
     #  - Agents use /topic/<collective>.<agent>.agent
     #  - Replies use temp-topics so they are private and transient.
     #  - Point to Point messages using topics are supported by subscribing to
-    #    /topic/<collective>.nodes with a selector "mc_identity = 'identity'
+    #    /queue/<collective>.nodes with a selector "mc_identity = 'identity'
     #
     # The use of temp-topics for the replies is a huge improvement over the old style.
     # In the old way all clients got replies for all clients that were active at that
@@ -350,7 +350,7 @@ module MCollective
           when :directed
             target[:name] = ["/queue/" + collective, :nodes].join(".")
             target[:headers]["selector"] = "mc_identity = '#{@config.identity}'"
-            target[:id] = "directed_to_identity"
+            target[:id] = "%s_directed_to_identity" % collective
         end
 
         target[:id] = target[:name] unless target[:id]
