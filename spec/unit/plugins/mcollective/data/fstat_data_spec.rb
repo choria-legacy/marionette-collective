@@ -12,7 +12,7 @@ module MCollective
           @ddl = mock
           @ddl.stubs(:meta).returns({:timeout => 1})
           DDL.stubs(:new).returns(@ddl)
-          @plugin = MCollective::Data::Fstat_data.new
+          @plugin = Fstat_data.new
 
           @time = Time.now
 
