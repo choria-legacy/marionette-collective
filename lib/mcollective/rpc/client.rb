@@ -460,8 +460,12 @@ module MCollective
           # only really be for a few -I's on the CLI
           #
           # For safety we leave the filter in place for now, that way we can support this
-          # enhancement also in broadcast mode
-          elsif options[:filter]["identity"].size > 0
+          # enhancement also in broadcast mode.
+          #
+          # This is only needed for the 'mc' discovery method, other methods might change
+          # the concept of identity to mean something else so we should pass the full
+          # identity filter to them
+          elsif options[:filter]["identity"].size > 0 && @discovery_method == "mc"
             regex_filters = options[:filter]["identity"].select{|i| i.match("^\/")}.size
 
             if regex_filters == 0

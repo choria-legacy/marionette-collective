@@ -483,10 +483,21 @@ module MCollective
           client.instance_variable_get("@discovered_agents").should == ["one"]
         end
 
+        it "should not set direct mode for non 'mc' discovery methods" do
+          Config.instance.stubs(:direct_addressing).returns(true)
+
+          client = Client.new("foo", {:options => {:discovery_method => "rspec", :filter => {"identity" => ["foo"], "agent" => []}, :config => "/nonexisting"}})
+          @coreclient.expects(:discover).returns(["foo"])
+
+          client.discover
+          client.instance_variable_get("@discovered_agents").should == ["foo"]
+          client.instance_variable_get("@force_direct_request").should == false
+        end
+
         it "should force direct mode for non regex identity filters" do
           Config.instance.stubs(:direct_addressing).returns(true)
 
-          client = Client.new("foo", {:options => {:filter => {"identity" => ["foo"], "agent" => []}, :config => "/nonexisting"}})
+          client = Client.new("foo", {:options => {:discovery_method => "mc", :filter => {"identity" => ["foo"], "agent" => []}, :config => "/nonexisting"}})
           client.discover
           client.instance_variable_get("@discovered_agents").should == ["foo"]
           client.instance_variable_get("@force_direct_request").should == true
@@ -495,7 +506,7 @@ module MCollective
         it "should not set direct mode if its disabled" do
           Config.instance.stubs(:direct_addressing).returns(false)
 
-          client = Client.new("foo", {:options => {:filter => {"identity" => ["foo"], "agent" => []}, :config => "/nonexisting"}})
+          client = Client.new("foo", {:options => {:discovery_method => "mc", :filter => {"identity" => ["foo"], "agent" => []}, :config => "/nonexisting"}})
 
           client.discover
           client.instance_variable_get("@force_direct_request").should == false
