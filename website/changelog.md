@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/06/12|Remove the Client#discovered_req method and add warnings to the documentation about its use|14777|
 |2012/06/11|Add a discovery source capable of doing introspection on running agents|14945|
 |2012/06/11|Only do identity filter optimisations for the *mc* discovery source|14942|
 |*2012/06/08*|*Release 2.1.0*|14846|

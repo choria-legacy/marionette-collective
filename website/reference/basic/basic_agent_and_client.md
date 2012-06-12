@@ -4,9 +4,13 @@ title: Basic Agents and Clients
 ---
 [SimpleRPCIntroduction]: /mcollective/simplerpc/
 
-In general you should use [SimpleRPC][SimpleRPCIntroduction] for writing agents and clients.  SimpleRPC is a framework that wraps the core MCollective client and agent structures in a lot of helpful convention and tools.
+## Deprecation Warning
 
-SimpleRPC though is a wrapper around the core message flow and routing components, this page documents the core.  You should first read up about [SimpleRPC][SimpleRPCIntroduction] before delving into this.
+You must use [SimpleRPC][SimpleRPCIntroduction] for writing agents and clients.  SimpleRPC is a framework that wraps the core MCollective client and agent structures in a lot of helpful convention and tools.
+
+**The approach to developing agents and clients documented below is not supported post version 2.0.0 and the functionality will be removed for the next major release.**
+
+## Overview
 
 Writing agents for mcollective is simple, we'll write a simple _echo_ agent as well as a cli tool to communicate with it that supports discovery, filtering and more.
 

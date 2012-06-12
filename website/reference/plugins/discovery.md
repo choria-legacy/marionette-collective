@@ -129,7 +129,7 @@ end
 {% endhighlight %}
 
 This is the *flatfile* plugin that is included in the distribution.  You
-can see it using the *client.options[:discovery_options]* array to get
+can see it using the *client.options\[:discovery_options\]* array to get
 access to the file supplied using the *--do* command line argument,
 reading that file and doing either string or Regular Expression matching
 against it finally returning the list of nodes.

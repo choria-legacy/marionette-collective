@@ -176,68 +176,8 @@ module MCollective
       return stat
     end
 
-    # Performs a discovery and then send a request, performs the passed block for each response
-    #
-    #    times = discovered_req("status", "mcollectived", options, client) {|resp|
-    #       pp resp
-    #    }
-    #
-    # It returns a hash of times and timeouts for discovery and total run is taken from the options
-    # hash which in turn is generally built using MCollective::Optionparser
     def discovered_req(body, agent, options=false)
-      stat = {:starttime => Time.now.to_f, :discoverytime => 0, :blocktime => 0, :totaltime => 0}
-
-      options = @options unless options
-
-      compount_timeout = timeout_for_compound_filter(options[:filter]["compound"])
-      timeout = options[:timeout] + compount_timeout
-
-      STDOUT.sync = true
-
-      print("Determining the amount of hosts matching filter for #{options[:disctimeout]} seconds .... ")
-
-      begin
-        discovered_hosts = discover(options[:filter], options[:disctimeout])
-        discovered = discovered_hosts.size
-        hosts_responded = []
-        hosts_not_responded = discovered_hosts
-
-        stat[:discoverytime] = Time.now.to_f - stat[:starttime]
-
-        puts("#{discovered}\n\n")
-      rescue Interrupt
-        puts("Discovery interrupted.")
-        exit!
-      end
-
-      raise("No matching clients found") if discovered == 0
-
-      begin
-        Timeout.timeout(timeout) do
-          reqid = sendreq(body, agent, options[:filter])
-
-          (1..discovered).each do |c|
-            resp = receive(reqid)
-
-            hosts_responded << resp.payload[:senderid]
-            hosts_not_responded.delete(resp.payload[:senderid]) if hosts_not_responded.include?(resp.payload[:senderid])
-
-            yield(resp.payload)
-          end
-        end
-      rescue Interrupt => e
-      rescue Timeout::Error => e
-      end
-
-      stat[:totaltime] = Time.now.to_f - stat[:starttime]
-      stat[:blocktime] = stat[:totaltime] - stat[:discoverytime]
-      stat[:responses] = hosts_responded.size
-      stat[:responsesfrom] = hosts_responded
-      stat[:noresponsefrom] = hosts_not_responded
-      stat[:discovered] = discovered
-
-      @stats = stat
-      return stat
+      raise "Client#discovered_req has been removed, please port your agent and client to the SimpleRPC framework"
     end
 
     # if a compound filter is specified and it has any function
