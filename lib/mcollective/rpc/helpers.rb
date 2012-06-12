@@ -295,6 +295,10 @@ module MCollective
           options[:batch_sleep_time] = v
         end
 
+        parser.on('--limit-seed NUMBER', Integer, 'Seed value for deterministic random batching') do |v|
+          options[:limit_seed] = v
+        end
+
         parser.on('--limit-nodes COUNT', '--ln', 'Send request to only a subset of nodes, can be a percentage') do |v|
           raise "Invalid limit specified: #{v} valid limits are /^\d+%*$/" unless v =~ /^\d+%*$/
 
