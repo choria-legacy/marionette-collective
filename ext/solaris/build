@@ -29,9 +29,9 @@ install:
 	ginstall -g bin -d $(DESTDIR)/opt/csw/share $(DESTDIR)/opt/csw/share/mcollective
 
 	# install binaries
-	ginstall -g bin $(CURDIR)/../../mc-* $(DESTDIR)/opt/csw/sbin/
-	ginstall -g bin $(CURDIR)/../../mco $(DESTDIR)/opt/csw/sbin/
-	ginstall -g bin $(CURDIR)/../../mcollectived.rb $(DESTDIR)/opt/csw/sbin/mcollectived
+	ginstall -g bin $(CURDIR)/../../bin/mc-* $(DESTDIR)/opt/csw/sbin/
+	ginstall -g bin $(CURDIR)/../../bin/mco $(DESTDIR)/opt/csw/sbin/
+	ginstall -g bin $(CURDIR)/../../bin/mcollectived $(DESTDIR)/opt/csw/sbin/mcollectived
 	# install libraries
 	gcp -a $(CURDIR)/../../lib/* $(RUBY_SITE)/
 	chgrp -R bin $(RUBY_SITE)/
