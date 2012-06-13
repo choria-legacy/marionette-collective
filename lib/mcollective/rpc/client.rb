@@ -4,7 +4,7 @@ module MCollective
     # and just brings in a lot of convention and standard approached.
     class Client
       attr_accessor :timeout, :verbose, :filter, :config, :progress, :ttl, :reply_to
-      attr_reader :client, :stats, :ddl, :agent, :limit_targets, :limit_method, :output_format, :batch_size, :batch_sleep_time, :batch_mode
+      attr_reader :client, :stats, :ddl, :agent, :limit_targets, :limit_method, :output_format, :batch_size, :batch_sleep_time, :limit_seed, :batch_mode
       attr_reader :discovery_options, :discovery_method
 
       @@initial_options = nil
@@ -49,6 +49,7 @@ module MCollective
         @progress = initial_options[:progress_bar]
         @limit_targets = initial_options[:mcollective_limit_targets]
         @limit_method = Config.instance.rpclimitmethod
+	@limit_seed = initial_options[:limit_seed] || nil
         @output_format = initial_options[:output_format] || :console
         @force_direct_request = false
         @reply_to = initial_options[:reply_to]
@@ -595,8 +596,11 @@ module MCollective
       #   - :first would be a simple way to do a distance based
       #     selection
       #   - anything else will just pick one at random
+      #   - if random chosen, and batch-seed set, then set srand
+      #     for the generator, and reset afterwards
       def pick_nodes_from_discovered(count)
         if count =~ /%$/
+          srand(@limit_seed) unless @limit_seed.nil?
           pct = (discover.size * (count.to_f / 100)).to_i
           pct == 0 ? count = 1 : count = pct
         else
@@ -610,12 +614,17 @@ module MCollective
         if @limit_method == :first
           return discover[0, count]
         else
+          discover.sort!
           count.times do
             rnd = rand(discover.size)
             result << discover[rnd]
             discover.delete_at(rnd)
           end
         end
+
+        # Reset random number generator to fresh seed
+        # As our seed from options is most likely short
+        srand() unless @limit_seed.nil?
 
         [result].flatten
       end
