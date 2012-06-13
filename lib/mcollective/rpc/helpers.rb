@@ -295,8 +295,8 @@ module MCollective
           options[:batch_sleep_time] = v
         end
 
-        parser.on('--limit-seed NUMBER', '-ls NUMBER', Integer, 'Seed value for deterministic random batching') do |v|
-          options[:batch_limit_seed] = v
+        parser.on('--limit-seed NUMBER', Integer, 'Seed value for deterministic random batching') do |v|
+          options[:limit_seed] = v
         end
 
         parser.on('--limit-nodes COUNT', '--ln', 'Send request to only a subset of nodes, can be a percentage') do |v|
