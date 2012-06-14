@@ -299,7 +299,7 @@ module MCollective
           options[:limit_seed] = v
         end
 
-        parser.on('--limit-nodes COUNT', '--ln', 'Send request to only a subset of nodes, can be a percentage') do |v|
+        parser.on('--limit-nodes COUNT', '--ln', '--limit', 'Send request to only a subset of nodes, can be a percentage') do |v|
           raise "Invalid limit specified: #{v} valid limits are /^\d+%*$/" unless v =~ /^\d+%*$/
 
           if v =~ /^\d+$/

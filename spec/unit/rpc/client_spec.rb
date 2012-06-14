@@ -208,6 +208,49 @@ module MCollective
         end
       end
 
+      describe "#pick_nodes_from_discovered" do
+        before do
+          client = stub
+          discoverer = stub
+          ddl = stub
+
+          ddl.stubs(:meta).returns({:timeout => 2})
+
+          discoverer.stubs(:ddl).returns(ddl)
+
+          client.stubs("options=")
+          client.stubs(:collective).returns("mcollective")
+          client.stubs(:discoverer).returns(discoverer)
+
+          Config.instance.stubs(:loadconfig).with("/nonexisting").returns(true)
+          MCollective::Client.stubs(:new).returns(client)
+          Config.instance.stubs(:direct_addressing).returns(true)
+        end
+
+        it "should return a percentage of discovered hosts" do
+          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
+          client.stubs(:discover).returns((1..10).map{|i| i.to_s})
+          client.limit_method = :first
+          client.pick_nodes_from_discovered("20%").should == ["1", "2"]
+        end
+
+        it "should return the same list when a random seed is supplied" do
+          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :limit_seed => 5}})
+          client.stubs(:discover).returns((1..10).map{|i| i.to_s})
+          client.limit_method = :random
+          client.pick_nodes_from_discovered("30%").should == ["3", "7", "8"]
+          client.pick_nodes_from_discovered("30%").should == ["3", "7", "8"]
+        end
+
+        it "should correctly pick a numeric amount of discovered nodes" do
+          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :limit_seed => 5}})
+          client.stubs(:discover).returns((1..10).map{|i| i.to_s})
+          client.limit_method = :first
+          client.pick_nodes_from_discovered(5).should == (1..5).map{|i| i.to_s}
+          client.pick_nodes_from_discovered(5).should == (1..5).map{|i| i.to_s}
+        end
+      end
+
       describe "#limit_targets=" do
         before do
           client = stub
