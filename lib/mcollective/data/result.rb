@@ -24,6 +24,10 @@ module MCollective
         @data[key.to_sym] = val
       end
 
+      def keys
+        @data.keys
+      end
+
       def method_missing(method, *args)
         key = method.to_sym
 

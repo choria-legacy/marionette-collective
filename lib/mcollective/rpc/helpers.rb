@@ -114,21 +114,21 @@ module MCollective
 
                 # appand the results only according to what the DDL says
                 case display
-                when :ok
-                  if status == 0
+                  when :ok
+                    if status == 0
+                      result_text << text_for_result(sender, status, message, result, ddl)
+                    end
+
+                  when :failed
+                    if status > 0
+                      result_text << text_for_result(sender, status, message, result, ddl)
+                    end
+
+                  when :always
                     result_text << text_for_result(sender, status, message, result, ddl)
-                  end
 
-                when :failed
-                  if status > 0
-                    result_text << text_for_result(sender, status, message, result, ddl)
-                  end
-
-                when :always
-                  result_text << text_for_result(sender, status, message, result, ddl)
-
-                when :flatten
-                  result_text << text_for_flattened_result(status, result)
+                  when :flatten
+                    result_text << text_for_flattened_result(status, result)
 
                 end
               rescue Exception => e
@@ -168,7 +168,7 @@ module MCollective
               end
             end
 
-            result.keys.each do |k|
+            result.keys.sort_by{|k| k}.each do |k|
               # get all the output fields nicely lined up with a
               # 3 space front padding
               begin

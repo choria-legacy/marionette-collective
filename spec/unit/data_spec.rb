@@ -38,6 +38,15 @@ module MCollective
       end
     end
 
+    describe "#ddl" do
+      it "should load the right data ddl" do
+        DDL.expects(:new).with("fstat_data", :data).times(3)
+        Data.ddl("fstat")
+        Data.ddl("fstat_data")
+        Data.ddl(:fstat)
+      end
+    end
+
     describe "#pluginname" do
       it "should return the correct plugin name" do
         Data.pluginname("Rspec").should == "rspec_data"

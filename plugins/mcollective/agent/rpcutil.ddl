@@ -54,12 +54,12 @@ action "get_fact", :description => "Retrieve a single fact from the fact store" 
      display :always
 
      input :fact,
-         :prompt      => "The name of the fact",
-         :description => "The fact to retrieve",
-         :type        => :string,
-         :validation  => '^[\w\-\.]+$',
-         :optional    => false,
-         :maxlength   => 40
+           :prompt      => "The name of the fact",
+           :description => "The fact to retrieve",
+           :type        => :string,
+           :validation  => '^[\w\-\.]+$',
+           :optional    => false,
+           :maxlength   => 40
 
      output :fact,
             :description => "The name of the fact being returned",
@@ -142,12 +142,12 @@ action "get_config_item", :description => "Get the active value of a specific co
     display :always
 
     input :item,
-        :prompt      => "Configuration Item",
-        :description => "The item to retrieve from the server",
-        :type        => :string,
-        :validation  => '^.+$',
-        :optional    => false,
-        :maxlength    => 50
+          :prompt      => "Configuration Item",
+          :description => "The item to retrieve from the server",
+          :type        => :string,
+          :validation  => '^.+$',
+          :optional    => false,
+          :maxlength    => 50
 
     output :item,
            :description => "The config property being retrieved",
@@ -156,6 +156,26 @@ action "get_config_item", :description => "Get the active value of a specific co
     output :value,
            :description => "The value that is in use",
            :display_as => "Value"
+end
+
+action "get_data", :description => "Get data from a data plugin" do
+    display :always
+
+    input :source,
+          :prompt      => "Data Source",
+          :description => "The data plugin to retrieve information from",
+          :type        => :string,
+          :validation  => '^\w+$',
+          :optional    => false,
+          :maxlength   => 50
+
+    input :query,
+          :prompt      => "Data Source",
+          :description => "The data plugin to retrieve information from",
+          :type        => :string,
+          :validation  => '^.+$',
+          :optional    => true,
+          :maxlength   => 50
 end
 
 action "ping", :description => "Responds to requests for PING with PONG" do

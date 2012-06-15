@@ -34,6 +34,10 @@ module MCollective
       PluginManager[pluginname(method)].lookup(args.first)
     end
 
+    def self.ddl(plugin)
+      DDL.new(pluginname(plugin), :data)
+    end
+
     def self.ddl_validate(ddl, argument)
       name = ddl.meta[:name]
       query = ddl.entities[:data]
@@ -70,6 +74,7 @@ module MCollective
         case type
           when :boolean
             return DDL.string_to_boolean(input)
+
           when :number, :integer, :float
             return DDL.string_to_number(input)
         end

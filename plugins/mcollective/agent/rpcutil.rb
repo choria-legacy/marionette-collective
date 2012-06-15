@@ -92,6 +92,18 @@ module MCollective
         reply[:main_collective] = config.main_collective
         reply[:collectives] = config.collectives
       end
+
+      action "get_data" do
+        validate :source, String
+
+        query = Data.ddl_transform_input(Data.ddl(request[:source]), request[:query].to_s)
+
+        data = Data[ request[:source] ].lookup(query)
+
+        data.keys.each do |key|
+          reply[key] = data[key]
+        end
+      end
     end
   end
 end

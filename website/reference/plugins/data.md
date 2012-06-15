@@ -30,7 +30,7 @@ below:
 You could also use these data sources in your own agents or other
 plugins:
 
-{% highlight console %}
+{% highlight ruby %}
 action "query" do
    reply[:value] = Data.sysctl(request[:sysctl_name]).value
 end
@@ -53,6 +53,37 @@ On the servers the DDL will:
  * be used to validate known plugins
  * be used to validate input arguments
  * be used to validate requests for known output values
+
+## Viewing or retrieving results from a data plugin
+
+You can view the output from a data plugin using the *rpcutil* agent:
+
+{% highlight console %}
+% mco rpc rpcutil get_data source=fstat query=/etc/hosts
+.
+.
+your.node.net
+           atime: 2012-06-14 21:41:54
+       atime_age: 54128
+   atime_seconds: 1339706514
+           ctime: 2012-01-18 20:28:34
+       ctime_age: 12842128
+   ctime_seconds: 1326918514
+             gid: 0
+             md5: 54fb6627dbaa37721048e4549db3224d
+            mode: 100644
+           mtime: 2010-01-12 13:28:22
+       mtime_age: 76457740
+   mtime_seconds: 1263302902
+            name: /etc/hosts
+          output: present
+         present: 1
+            size: 158
+            type: file
+             uid: 0
+{% endhighlight %}
+
+The same action can be used to retrieve data programatically.
 
 ## Writing a data plugin
 

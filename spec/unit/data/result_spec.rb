@@ -25,6 +25,14 @@ module MCollective
         end
       end
 
+      describe "#include" do
+        it "should return the correct list of keys" do
+          @result["x"] = "1"
+          @result[:y] = "2"
+          @result.keys.sort.should == [:x, :y]
+        end
+      end
+
       describe "#include?" do
         it "should correctly report that a key is present or absent" do
           @result.include?("rspec").should == false
