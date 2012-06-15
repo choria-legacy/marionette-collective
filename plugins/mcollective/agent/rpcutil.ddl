@@ -170,8 +170,8 @@ action "get_data", :description => "Get data from a data plugin" do
           :maxlength   => 50
 
     input :query,
-          :prompt      => "Data Source",
-          :description => "The data plugin to retrieve information from",
+          :prompt      => "Query",
+          :description => "The query argument to supply to the data plugin",
           :type        => :string,
           :validation  => '^.+$',
           :optional    => true,
