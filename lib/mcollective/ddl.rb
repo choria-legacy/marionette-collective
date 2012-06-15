@@ -42,16 +42,21 @@ module MCollective
       @plugin = plugin
       @plugintype = plugintype.to_sym
 
-      if loadddl
-        if ddlfile = findddlfile(plugin, plugintype)
-          instance_eval(File.read(ddlfile))
-        else
-          raise("Can't find DDL for #{plugintype} plugin '#{plugin}'")
-        end
+      loadddlfile if loadddl
+    end
+
+    def loadddlfile
+      if ddlfile = findddlfile
+        instance_eval(File.read(ddlfile), ddlfile, 1)
+      else
+        raise("Can't find DDL for #{@plugintype} plugin '#{@plugin}'")
       end
     end
 
-    def findddlfile(ddlname, ddltype=:agent)
+    def findddlfile(ddlname=nil, ddltype=nil)
+      ddlname = @plugin unless ddlname
+      ddltype = @plugintype unless ddltype
+
       @config.libdir.each do |libdir|
         ddlfile = File.join([libdir, "mcollective", ddltype.to_s, "#{ddlname}.ddl"])
 

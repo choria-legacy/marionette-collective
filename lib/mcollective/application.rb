@@ -256,6 +256,7 @@ module MCollective
       end
 
       if options.nil? || options[:verbose]
+        e.backtrace.first << Util.colorize(:red, "  <----")
         err_dest.puts "\n%s %s" % [ Util.colorize(:red, e.to_s), Util.colorize(:bold, "(#{e.class.to_s})")]
       else
         err_dest.puts "\nThe %s application failed to run, use -v for full error details: %s\n" % [ Util.colorize(:bold, $0), Util.colorize(:red, e.to_s)]

@@ -574,8 +574,8 @@ module MCollective
         e.stubs(:to_s).returns("rspec")
 
         @app.expects(:options).returns({:verbose => true}).twice
+        out.expects(:puts).with(regexp_matches(/from rspec  <---/))
         out.expects(:puts).with(regexp_matches(/rspec.+Mocha::Mock/))
-        out.expects(:puts).with("\tfrom rspec")
 
         @app.application_failure(e, out)
       end

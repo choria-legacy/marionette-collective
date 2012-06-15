@@ -193,23 +193,26 @@ mco plugin package [options] <directory>
       packager.new(plugin, configuration[:pluginpath], configuration[:sign], configuration[:verbose]).create_packages
     end
 
+    # Agents are just called 'agent' but newer plugin types are
+    # called plugin_plugintype for example facter_facts etc so
+    # this will first try the old way then the new way.
+    def load_plugin_ddl(plugin, type)
+      [plugin, "#{plugin}_#{type}"].each do |plugin|
+        ddl = DDL.new(plugin, type, false)
+        if ddl.findddlfile(plugin, type)
+          ddl.loadddlfile
+          return ddl
+        end
+      end
+    end
+
     # Show application list and plugin help
     def doc_command
       known_plugin_types = [["Agents", :agent], ["Data Queries", :data], ["Discovery Methods", :discovery]]
 
       if configuration.include?(:target) && configuration[:target] != "."
         if configuration[:target] =~ /^(.+?)\/(.+)$/
-          plugin_type = $1.to_sym
-          plugin_name = $2
-
-          # Agents are just called 'agent' but newer plugin types are
-          # called plugin_plugintype for example facter_facts etc so
-          # this will first try the old way then the new way.
-          begin
-            ddl = DDL.new(plugin_name, plugin_type)
-          rescue
-            ddl = DDL.new("#{plugin_name}_#{plugin_type}", plugin_type)
-          end
+          ddl = load_plugin_ddl($1.to_sym, $2)
         else
           found_plugin_type = nil
 
@@ -224,11 +227,8 @@ mco plugin package [options] <directory>
           end
 
           abort "Could not find a plugin named %s in any supported plugin type" % plugin_type[1] unless found_plugin_type
-          begin
-            ddl = DDL.new(configuration[:target], found_plugin_type)
-          rescue
-            ddl = DDL.new("#{configuration[:target]}_#{found_plugin_type}", found_plugin_type)
-          end
+
+          ddl = load_plugin_ddl(configuration[:target], found_plugin_type)
         end
 
         puts ddl.help(configuration[:rpctemplate])

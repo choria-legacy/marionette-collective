@@ -9,6 +9,13 @@ module MCollective
       @ddl.metadata(:name => "name", :description => "description", :author => "author", :license => "license", :version => "version", :url => "url", :timeout => "timeout")
     end
 
+    describe "#loaddlfile" do
+      it "should raise the correct error when a ddl isnt present" do
+        @ddl.expects(:findddlfile).returns(false)
+        expect { @ddl.loadddlfile }.to raise_error("Can't find DDL for agent plugin 'rspec'")
+      end
+    end
+
     describe "#findddlfile" do
       it "should construct the correct ddl file name" do
         Config.instance.expects(:libdir).returns(["/nonexisting"])
@@ -32,6 +39,8 @@ module MCollective
 
         @ddl.findddlfile("foo").should == "/nonexisting/mcollective/agent/foo.ddl"
       end
+
+      it "should default to the current plugin and type"
     end
 
     describe "#metadata" do
