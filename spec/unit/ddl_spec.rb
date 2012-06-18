@@ -40,7 +40,12 @@ module MCollective
         @ddl.findddlfile("foo").should == "/nonexisting/mcollective/agent/foo.ddl"
       end
 
-      it "should default to the current plugin and type"
+      it "should default to the current plugin and type" do
+        Config.instance.expects(:libdir).returns(["/nonexisting"])
+        File.expects("exist?").with("/nonexisting/mcollective/agent/rspec.ddl").returns(true)
+
+        @ddl.findddlfile.should == "/nonexisting/mcollective/agent/rspec.ddl"
+      end
     end
 
     describe "#metadata" do
