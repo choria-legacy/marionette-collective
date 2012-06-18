@@ -59,7 +59,7 @@ end
 
 Strictly speaking this Agent will work but isn't considered complete - there's no meta data and no help.
 
-A helper agent called [_rpcutil_][RPCUtil] is included that helps you gather stats, inventory etc about the running daemon.  It's a full SimpleRPC agent including DDL, you can look at it too for an example.
+A helper agent called [_rpcutil_][RPCUtil] is included that helps you gather stats, inventory etc about the running daemon.  It's a full SimpleRPC agent including DDL, you can look at it for an example.
 
 ### Agent Name
 The agent name is derived from the class name, the example code creates *MCollective::Agent::Helloworld* and the agent name would be *helloworld*.
@@ -68,6 +68,8 @@ The agent name is derived from the class name, the example code creates *MCollec
 
 ### Meta Data and Initialization
 Simple RPC agents still need meta data like in [WritingAgents], without it you'll just have some defaults assigned, code below adds the meta data to our agent:
+
+**NOTE**: As of version 2.1.1 the _metadata_ section is deprecated, all agents must have DDL files with this information in them.
 
 {% highlight ruby linenos %}
 module MCollective
@@ -163,6 +165,8 @@ will this agent be enabled.
 
 ## Help and the Data Description Language
 We have a separate file that goes together with an agent and is used to describe the agent in detail, a DDL file for the above echo agent can be seen below:
+
+**NOTE**: As of version 2.1.1 the DDL files are required to be on the the nodes before an agent will be activated
 
 {% highlight ruby linenos %}
 metadata :name        => "SimpleRPC Sample Agent",

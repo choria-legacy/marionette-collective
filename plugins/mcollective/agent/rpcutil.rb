@@ -1,14 +1,6 @@
 module MCollective
   module Agent
     class Rpcutil<RPC::Agent
-      metadata    :name        => "Utilities and Helpers for SimpleRPC Agents",
-      :description => "General helpful actions that expose stats and internals to SimpleRPC clients",
-      :author      => "R.I.Pienaar <rip@devco.net>",
-      :license     => "Apache License, Version 2.0",
-      :version     => "1.0",
-      :url         => "http://marionette-collective.org/",
-      :timeout     => 10
-
       # Basic system inventory, same as the basic discovery agent
       action "inventory" do
         reply[:agents] = Agents.agentlist

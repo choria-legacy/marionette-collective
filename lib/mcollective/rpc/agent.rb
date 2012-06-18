@@ -10,24 +10,17 @@ module MCollective
     # usage would be:
     #
     #    module MCollective
-    #       module Agent
-    #          class Helloworld<RPC::Agent
-    #             matadata :name        => "Test SimpleRPC Agent",
-    #                      :description => "A simple test",
-    #                      :author      => "You",
-    #                      :license     => "1.1",
-    #                      :url         => "http://your.com/,
-    #                      :timeout     => 60
-    #
-    #             action "hello" do
-    #                 reply[:msg] = "Hello #{request[:name]}"
-    #             end
-    #
-    #             action "foo" do
-    #                 implemented_by "/some/script.sh"
-    #             end
+    #      module Agent
+    #        class Helloworld<RPC::Agent
+    #          action "hello" do
+    #            reply[:msg] = "Hello #{request[:name]}"
     #          end
-    #       end
+    #
+    #          action "foo" do
+    #            implemented_by "/some/script.sh"
+    #          end
+    #        end
+    #      end
     #    end
     #
     # If you wish to implement the logic for an action using an external script use the
@@ -38,38 +31,32 @@ module MCollective
     #
     # We also currently have the validation code in here, this will be moved to plugins soon.
     class Agent
-      attr_accessor :meta, :reply, :request
-      attr_reader :logger, :config, :timeout, :ddl
+      attr_accessor :reply, :request, :agent_name
+      attr_reader :logger, :config, :timeout, :ddl, :meta
 
       def initialize
-        # Default meta data unset
-        @meta = {:timeout     => 10,
-                 :name        => "Unknown",
-                 :description => "Unknown",
-                 :author      => "Unknown",
-                 :license     => "Unknown",
-                 :version     => "Unknown",
-                 :url         => "Unknown"}
-
-        @timeout = meta[:timeout] || 10
-        @logger = Log.instance
-        @config = Config.instance
         @agent_name = self.class.to_s.split("::").last.downcase
 
-        # Loads the DDL so we can later use it for validation
-        # and help generation
-        begin
-          @ddl = DDL.new(@agent_name)
-        rescue Exception => e
-          Log.debug("Failed to load DDL for agent: #{e.class}: #{e}")
-          @ddl = nil
-        end
+        load_ddl
+
+        @logger = Log.instance
+        @config = Config.instance
 
         # if we have a global authorization provider enable it
         # plugins can still override it per plugin
         self.class.authorized_by(@config.rpcauthprovider) if @config.rpcauthorization
 
         startup_hook
+      end
+
+      def load_ddl
+        @ddl = DDL.new(@agent_name, :agent)
+        @meta = @ddl.meta
+        @timeout = @meta[:timeout] || 10
+
+      rescue Exception => e
+        Log.error("Failed to load DDL for the '%s' agent, DDLs are required: %s: %s" % [@agent_name, e.class, e.to_s])
+        raise DDLValidationError
       end
 
       def handlemsg(msg, connection)
@@ -255,20 +242,7 @@ module MCollective
 
       # Registers meta data for the introspection hash
       def self.metadata(data)
-        [:name, :description, :author, :license, :version, :url, :timeout].each do |arg|
-          raise "Metadata needs a :#{arg}" unless data.include?(arg)
-        end
-
-        # Our old style agents were able to do all sorts of things to the meta
-        # data during startup_hook etc, don't really want that but also want
-        # backward compat.
-        #
-        # Here if you're using the new metadata way this replaces the getter
-        # with one that always return the same data, setter will still work but
-        # wont actually do anything of note.
-        define_method("meta") {
-          data
-        }
+        Log.warn("%s: setting meta data in agents have been deprecated, DDL files are now being used for this information." % File.basename(caller.first))
       end
 
       # Creates the needed activate? class in a manner similar to the other

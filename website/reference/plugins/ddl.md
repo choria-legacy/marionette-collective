@@ -22,8 +22,11 @@ The DDL is used in various scenarios:
  * The RPC client auto configures and use appropriate timeouts in waiting for responses
  * Before sending a call over the network inputs get validated so we do not send unexpected data to remote nodes.
  * Module repositories can use the meta data to display a standard view of available modules to assist a user in picking the right ones.
+ * The server will validate incoming requests prior to sending it to agents
 
 We've created [a screencast showing the capabilities of the DDL][DDLScreenCast] that might help give you a better overview.
+
+**NOTE:** As of version 2.1.1 the DDL is required on all servers before an agent will be activated
 
 ## Examples
 We'll start with a few examples as I think it's pretty simple what they do, and later on show what other permutations are allowed for defining inputs and outputs.

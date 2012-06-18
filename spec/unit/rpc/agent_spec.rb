@@ -6,9 +6,46 @@ module MCollective
   module RPC
     describe Agent do
       before do
+        ddl = stub
+        ddl.stubs(:meta).returns({})
+        DDL.stubs(:new).returns(ddl)
+
         @agent = Agent.new
         @agent.reply = {}
         @agent.request = {}
+      end
+
+      describe "#meta" do
+        it "should be deprecated" do
+          Log.expects(:warn).with(regexp_matches(/setting meta data in agents have been deprecated/))
+          Agent.metadata("foo")
+        end
+      end
+
+      describe "#load_ddl" do
+        it "should load the correct DDL" do
+          ddl = stub
+          ddl.stubs(:meta).returns({:timeout => 5})
+
+          DDL.expects(:new).with("agent", :agent).returns(ddl)
+
+          Agent.new.timeout.should == 5
+        end
+
+        it "should fail if the DDL isn't loaded" do
+          DDL.expects(:new).raises("failed to load")
+          Log.expects(:error).once
+          expect { Agent.new }.to raise_error(DDLValidationError)
+        end
+
+        it "should default to 10 second timeout" do
+          ddl = stub
+          ddl.stubs(:meta).returns({})
+
+          DDL.expects(:new).with("agent", :agent).returns(ddl)
+
+          Agent.new.timeout.should == 10
+        end
       end
 
       describe "#run" do
