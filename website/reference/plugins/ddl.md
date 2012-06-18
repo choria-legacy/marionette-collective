@@ -65,13 +65,16 @@ action "status", :description => "Gets the status of a service" do
           :optional    => false,
           :maxlength   => 30
 
-    output "status",
-          :description => "The status of service",
-          :display_as  => "Service Status"
+    output :status,
+           :description => "The status of service",
+           :display_as  => "Service Status",
+           :default     => "unknown status"
 end
 {% endhighlight %}
 
 As you see we can define all the major components of input and output parameters.  *:type* can be one of various values and each will have different parameters, more on that later.
+
+As of version 2.1.1 the outputs can define a default value.  For agents the reply structures are pre-populated with all the defined outputs, if no default is supplied a default of nil will be set.
 
 By default mcollective only show data from actions that failed, the *display* line above tells it to always show the results.  Possible values are *:ok*, *:failed* (the default behavior) and *:always*.
 
@@ -88,9 +91,10 @@ Finally the service agent has 3 almost identical actions - *start*, *stop* and *
               :optional    => false,
               :maxlength   => 30
 
-        output "status",
-              :description => "The status of service after #{act}",
-              :display_as  => "Service Status"
+        output :status,
+               :description => "The status of service after #{act}",
+               :display_as  => "Service Status",
+               :default     => "unknown status"
     end
 end
 {% endhighlight %}

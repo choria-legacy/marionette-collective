@@ -20,7 +20,7 @@ module MCollective
   #    action "status", :description => "Gets the status of a service" do
   #       display :always
   #
-  #       input "service",
+  #       input :service,
   #             :prompt      => "Service Name",
   #             :description => "The service to get the status for",
   #             :type        => :string,
@@ -28,9 +28,9 @@ module MCollective
   #             :optional    => true,
   #             :maxlength   => 30
   #
-  #       output "status",
-  #             :description => "The status of service",
-  #             :display_as  => "Service Status"
+  #       output :status,
+  #              :description => "The status of service",
+  #              :display_as  => "Service Status"
   #   end
   class DDL
     attr_reader :meta, :entities, :pluginname, :plugintype
@@ -222,7 +222,8 @@ module MCollective
       action = @current_entity
 
       @entities[action][:output][argument] = {:description => properties[:description],
-                                              :display_as  => properties[:display_as]}
+                                              :display_as  => properties[:display_as],
+                                              :default     => properties[:default]}
     end
 
     # Sets the display preference to either :ok, :failed, :flatten or :always

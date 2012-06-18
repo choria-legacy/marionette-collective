@@ -176,7 +176,7 @@ module MCollective
 
       it "should return the correct data" do
         input = {:prompt => "Matcher", :description => "Augeas Matcher", :type => :string, :validation => /.+/, :maxlength => 0}
-        output = {:description=>"rspec", :display_as=>"rspec"}
+        output = {:description=>"rspec", :display_as=>"rspec", :default => nil}
 
         @ddl.instance_variable_set("@plugintype", :data)
         @ddl.dataquery(:description => "rspec") do
@@ -302,12 +302,24 @@ module MCollective
         @ddl.action(:test, :description => "rspec")
         @ddl.instance_variable_set("@current_entity", :test)
 
-        @ddl.output(:test, {:description => "rspec", :display_as => "RSpec"})
+        @ddl.output(:test, {:description => "rspec", :display_as => "RSpec", :default => "default"})
 
         action = @ddl.action_interface(:test)
 
         action[:output][:test][:description].should == "rspec"
         action[:output][:test][:display_as].should == "RSpec"
+        action[:output][:test][:default].should == "default"
+      end
+
+      it "should set unsupplied defaults to our internal unset representation" do
+        @ddl.action(:test, :description => "rspec")
+        @ddl.instance_variable_set("@current_entity", :test)
+
+        @ddl.output(:test, {:description => "rspec", :display_as => "RSpec"})
+
+        action = @ddl.action_interface(:test)
+
+        action[:output][:test][:default].should == nil
       end
     end
 

@@ -4,10 +4,22 @@ module MCollective
     class Reply
       attr_accessor :statuscode, :statusmsg, :data
 
-      def initialize
+      def initialize(action, ddl)
         @data = {}
         @statuscode = 0
         @statusmsg = "OK"
+        @ddl = ddl
+        @action = action
+
+        initialize_data
+      end
+
+      def initialize_data
+        interface = @ddl.action_interface(@action)
+
+        interface[:output].keys.each do |output|
+          @data[output] = interface[:output][output][:default]
+        end
       end
 
       # Helper to fill in statusmsg and code on failure
@@ -22,20 +34,20 @@ module MCollective
         @statuscode = code
 
         case code
-        when 1
-          raise RPCAborted, msg
+          when 1
+            raise RPCAborted, msg
 
-        when 2
-          raise UnknownRPCAction, msg
+          when 2
+            raise UnknownRPCAction, msg
 
-        when 3
-          raise MissingRPCData, msg
+          when 3
+            raise MissingRPCData, msg
 
-        when 4
-          raise InvalidRPCData, msg
+          when 4
+            raise InvalidRPCData, msg
 
-        else
-          raise UnknownRPCError, msg
+          else
+            raise UnknownRPCError, msg
         end
       end
 
@@ -53,8 +65,8 @@ module MCollective
       # over the middleware
       def to_hash
         return {:statuscode => @statuscode,
-          :statusmsg => @statusmsg,
-          :data => @data}
+                :statusmsg => @statusmsg,
+                :data => @data}
       end
     end
   end

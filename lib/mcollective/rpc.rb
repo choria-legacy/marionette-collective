@@ -172,18 +172,6 @@ module MCollective
       end
     end
 
-    # Factory for RPC::Request messages, only really here to make agents
-    # a bit easier to understand
-    def self.request(msg)
-      RPC::Request.new(msg)
-    end
-
-    # Factory for RPC::Reply messages, only really here to make agents
-    # a bit easier to understand
-    def self.reply
-      RPC::Reply.new
-    end
-
     def self.const_missing(const_name)
       super unless const_name == :DDL
 

@@ -6,7 +6,9 @@ module MCollective
   module RPC
     describe Reply do
       before(:each) do
-        @reply = Reply.new
+        ddl = stub
+        ddl.stubs(:action_interface).returns({:output => {}})
+        @reply = Reply.new("rspec", ddl)
       end
 
       describe "#initialize" do
@@ -20,6 +22,21 @@ module MCollective
 
         it "should set statusmsg to OK" do
           @reply.statusmsg.should == "OK"
+        end
+      end
+
+      describe "#initialize_data" do
+        it "should set defaults correctly" do
+          ddl = DDL.new("rspec", :agent, false)
+
+          ddl.action :rspec, :description => "testing rspec" do
+            ddl.output :one, :description => "rspec test", :display_as => "rspec", :default => "default"
+            ddl.output :three, :description => "rspec test", :display_as => "rspec", :default => []
+            ddl.output :two, :description => "rspec test", :display_as => "rspec"
+          end
+
+          reply = Reply.new(:rspec, ddl)
+          reply.data.should == {:one => "default", :two => nil, :three => []}
         end
       end
 

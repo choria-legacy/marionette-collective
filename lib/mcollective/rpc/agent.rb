@@ -60,8 +60,8 @@ module MCollective
       end
 
       def handlemsg(msg, connection)
-        @request = RPC.request(msg)
-        @reply = RPC.reply
+        @request = RPC::Request.new(msg)
+        @reply = RPC::Reply.new(@request.action, @ddl)
 
         begin
           # Calls the authorization plugin if any is defined
