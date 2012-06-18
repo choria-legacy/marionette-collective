@@ -134,7 +134,6 @@ module MCollective
         return
       end
 
-      puts
       puts stats.report(caption, verbose)
     end
 

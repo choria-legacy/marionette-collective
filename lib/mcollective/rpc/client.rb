@@ -85,6 +85,7 @@ module MCollective
         # get applied
         begin
           @ddl = DDL.new(agent)
+          @stats.ddl = @ddl
           @timeout = @ddl.meta[:timeout] + @discovery_timeout if @timeout == 5
         rescue Exception => e
           Log.debug("Could not find DDL: #{e}")
@@ -784,8 +785,13 @@ module MCollective
             @stdout.print twirl.twirl(respcount, discovered.size)
           end
 
+          aggregate = Aggregate.new(@ddl.action_interface(action)) if @ddl && @ddl.action_interface(action).keys.include?(:aggregate)
+
           @client.req(message) do |resp|
+
             respcount += 1
+
+            aggregate.call_functions(resp[:body][:data]) if aggregate
 
             if block_given?
               process_results_with_block(action, resp, block)
@@ -796,6 +802,7 @@ module MCollective
             end
           end
 
+          @stats.aggregate_summary = aggregate.summarize if aggregate
           @stats.client_stats = @client.stats
         else
           @stderr.print("\nNo request sent, we did not discover any nodes.")

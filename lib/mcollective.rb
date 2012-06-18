@@ -37,6 +37,7 @@ module MCollective
   class UnknownRPCError<RPCError;end
 
   autoload :Agents, "mcollective/agents"
+  autoload :Aggregate, "mcollective/aggregate"
   autoload :Application, "mcollective/application"
   autoload :Applications, "mcollective/applications"
   autoload :Client, "mcollective/client"

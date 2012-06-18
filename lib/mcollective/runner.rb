@@ -6,6 +6,7 @@ module MCollective
     def initialize(configfile)
       @config = Config.instance
       @config.loadconfig(configfile) unless @config.configured
+      @config.mode = :server
 
       @stats = PluginManager["global_stats"]
 

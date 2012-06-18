@@ -42,6 +42,10 @@ module MCollective
       @pluginname = plugin
       @plugintype = plugintype.to_sym
 
+      # used to track if the method_missing that handles the
+      # aggregate functions should do so or not
+      @process_aggregate_functions = nil
+
       loadddlfile if loadddl
     end
 
@@ -238,6 +242,36 @@ module MCollective
       @entities[action][:display] = pref
     end
 
+    # Calls the summarize block defined in the ddl. Block will not be called
+    # if the ddl is getting processed on the server side. This means that
+    # aggregate plugins only have to be present on the client side.
+    #
+    # The @process_aggregate_functions variable is used by the method_missing
+    # block to determine if it should kick in, this way we very tightly control
+    # where we activate the method_missing behavior turning it into a noop
+    # otherwise to maximise the chance of providing good user feedback
+    def summarize(&block)
+      unless @config.mode == :server
+        @process_aggregate_functions = true
+        block.call
+        @process_aggregate_functions = nil
+      end
+    end
+
+    # Sets the aggregate array for the given action
+    def aggregate(function, format = {:format => nil})
+      raise(DDLValidationError, "Formats supplied to aggregation functions should be a hash") unless format.is_a?(Hash)
+      raise(DDLValidationError, "Formats supplied to aggregation functions must have a :format key") unless format.keys.include?(:format)
+      raise(DDLValidationError, "Functions supplied to aggregate should be a hash") unless function.is_a?(Hash)
+
+      unless (function.keys.include?(:args)) && function[:args]
+        raise DDLValidationError, "aggregate method for action '%s' missing a function parameter" % entities[@current_entity][:action]
+      end
+
+      entities[@current_entity][:aggregate] ||= []
+      entities[@current_entity][:aggregate] << (format[:format].nil? ? function : function.merge(format))
+    end
+
     def template_for_plugintype
       case @plugintype
         when :agent
@@ -383,6 +417,22 @@ module MCollective
       return val.to_i if val =~ /^\d+$/
 
       raise "#{val} does not look like a number"
+    end
+
+    # If the ddl's plugin type is 'agent' and the method name matches a
+    # aggregate function, we return the function with args as a hash.
+    def method_missing(name, *args, &block)
+      super unless @process_aggregate_functions
+      super unless is_function?(name)
+
+      return {:function => name, :args => args}
+    end
+
+    # Checks if a method name matches a aggregate plugin.
+    # This is used by method missing so that we dont greedily assume that
+    # every method_missing call in an agent ddl has hit a aggregate function.
+    def is_function?(method_name)
+      PluginManager.find("aggregate").include?(method_name.to_s)
     end
   end
 end

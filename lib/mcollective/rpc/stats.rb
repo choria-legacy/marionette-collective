@@ -4,7 +4,7 @@ module MCollective
     class Stats
       attr_accessor :noresponsefrom, :starttime, :discoverytime, :blocktime, :responses, :totaltime
       attr_accessor :discovered, :discovered_nodes, :okcount, :failcount, :noresponsefrom, :responsesfrom
-      attr_accessor :requestid
+      attr_accessor :requestid, :aggregate_summary, :ddl
 
       def initialize
         reset
@@ -29,18 +29,19 @@ module MCollective
 
       # returns a hash of our stats
       def to_hash
-        {:noresponsefrom   => @noresponsefrom,
-         :starttime        => @starttime,
-         :discoverytime    => @discoverytime,
-         :blocktime        => @blocktime,
-         :responses        => @responses,
-         :totaltime        => @totaltime,
-         :discovered       => @discovered,
-         :discovered_nodes => @discovered_nodes,
-         :noresponsefrom   => @noresponsefrom,
-         :okcount          => @okcount,
-         :requestid        => @requestid,
-         :failcount        => @failcount}
+        {:noresponsefrom    => @noresponsefrom,
+         :starttime         => @starttime,
+         :discoverytime     => @discoverytime,
+         :blocktime         => @blocktime,
+         :responses         => @responses,
+         :totaltime         => @totaltime,
+         :discovered        => @discovered,
+         :discovered_nodes  => @discovered_nodes,
+         :noresponsefrom    => @noresponsefrom,
+         :okcount           => @okcount,
+         :requestid         => @requestid,
+         :failcount         => @failcount,
+         :aggregate_summary => @aggregate_summary}
       end
 
       # Fake hash access to keep things backward compatible
@@ -128,12 +129,36 @@ module MCollective
         @responsesfrom = [node]
       end
 
+      def text_for_aggregates
+        result = StringIO.new
+
+        @aggregate_summary.each do |aggregate|
+          output_item = aggregate.result[:output]
+
+          begin
+            action_interface = @ddl.action_interface(aggregate.action)
+            display_as = action_interface[:output][output_item][:display_as]
+          rescue
+            display_as = output_item
+          end
+
+          result.puts Util.colorize(:bold, "Summary of %s:" % display_as)
+          result.puts
+          result.puts aggregate.to_s
+          result.puts
+        end
+
+        result.string
+      end
+
       # Returns a blob of text representing the request status based on the
       # stats contained in this class
       def report(caption = "rpc stats", verbose = false)
         result_text = []
 
         if verbose
+          result_text << text_for_aggregates if @aggregate_summary
+
           result_text << Util.colorize(:yellow, "---- #{caption} ----")
 
           if @discovered
@@ -154,6 +179,7 @@ module MCollective
           if @discovered
             @responses < @discovered ? color = :red : color = :green
 
+            result_text << text_for_aggregates if @aggregate_summary
             result_text << "Finished processing %s / %s hosts in %.2f ms" % [Util.colorize(color, @responses), Util.colorize(color, @discovered), @blocktime * 1000]
           else
             result_text << "Finished processing %s hosts in %.2f ms" % [Util.colorize(:bold, @responses), @blocktime * 1000]

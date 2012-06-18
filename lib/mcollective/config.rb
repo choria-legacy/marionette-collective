@@ -3,6 +3,8 @@ module MCollective
   class Config
     include Singleton
 
+    attr_accessor :mode
+
     attr_reader :topicprefix, :daemonize, :pluginconf, :libdir, :configured
     attr_reader :logfile, :keeplogs, :max_log_size, :loglevel, :logfacility
     attr_reader :identity, :daemonize, :connector, :securityprovider, :factsource
@@ -181,6 +183,7 @@ module MCollective
       @default_discovery_method = "mc"
       @default_discovery_options = []
       @ttl = 60
+      @mode = :client
 
       # look in the config dir for the template so users can provide their own and windows
       # with odd paths will just work more often, but fall back to old behavior if it does

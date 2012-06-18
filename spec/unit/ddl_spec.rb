@@ -337,7 +337,63 @@ module MCollective
 
         expect {
           @ddl.display(:foo)
-        }.to raise_error("Display preference foo is not valid, should be :ok, :failed, :flatten or :always")
+        }.to raise_error(/Display preference foo is not valid/)
+      end
+    end
+
+    describe "#summarize" do
+      before :each do
+        @block_result = nil
+        @block = Proc.new{@block_result = :success}
+      end
+
+      after :each do
+        @block_result = nil
+      end
+
+      it "should call the block parameter if config mode is not server" do
+        Config.instance.mode = :client
+        result = @ddl.summarize(&@block)
+        @block_result.should == :success
+      end
+
+      it "should not call the block parameter if config mode is server" do
+        Config.instance.mode = :server
+        result = @ddl.summarize(&@block)
+        @block_result.should == nil
+      end
+    end
+
+    describe "#aggregate" do
+      it "should raise an exception if aggregate format isn't a hash" do
+        expect{
+          @ddl.aggregate(:foo, :format)
+        }.to raise_error DDLValidationError, "Formats supplied to aggregation functions should be a hash"
+      end
+
+      it "should raise an exception if format hash does not include a :format key" do
+        expect{
+          @ddl.aggregate(:foo, {})
+        }.to raise_error DDLValidationError, "Formats supplied to aggregation functions must have a :format key"
+      end
+
+      it "should raise an exception if aggregate function is not a hash" do
+        expect{
+          @ddl.aggregate(:foo)
+        }.to raise_error DDLValidationError, "Functions supplied to aggregate should be a hash"
+      end
+
+      it "should raise an exception if function hash does not include a :args key" do
+        expect{
+          @ddl.stubs(:entities).returns({nil => {:action => :foo}})
+          @ddl.aggregate({})
+        }.to raise_error DDLValidationError, "aggregate method for action 'foo' missing a function parameter"
+      end
+
+      it "should correctly add an aggregate function to the function array" do
+        @ddl.stubs(:entities).returns({nil => {:aggregate => nil}})
+        @ddl.aggregate({:function => :foo, :args => [:bar]})
+        @ddl.entities.should == {nil => {:aggregate => [{:function => :foo, :args => [:bar]}]}}
       end
     end
 
@@ -601,6 +657,42 @@ module MCollective
 
       it "should raise errors for invalid values" do
         expect { DDL.string_to_boolean("rspec") }.to raise_error
+      end
+    end
+
+    describe "#method_missing" do
+      it "should call super if the aggregate plugin isn't present" do
+        expect{
+          @ddl.test
+        }.to raise_error NoMethodError
+      end
+
+      it "should call super if @process_aggregate_function is false" do
+        expect{
+          result = @ddl.test(:value)
+        }.to raise_error NoMethodError
+      end
+
+      it "should return the function hash" do
+        Config.instance.mode = :client
+        @ddl.expects(:is_function?).returns(true)
+        @ddl.instance_variable_set(:@process_aggregate_functions, true)
+        result = @ddl.method_missing(:test_function, :rspec)
+        result.should == {:args => [:rspec], :function => :test_function }
+      end
+    end
+
+    describe "#is_function" do
+      before :each do
+        PluginManager.expects(:find).with("aggregate").returns(["plugin"])
+      end
+
+      it "should return true if the aggregate function is present" do
+        @ddl.is_function?("plugin").should == true
+      end
+
+      it "should return false if the aggregate function is not present" do
+        @ddl.is_function?("no_plugin").should == false
       end
     end
   end
