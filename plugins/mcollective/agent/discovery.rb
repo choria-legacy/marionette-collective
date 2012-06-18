@@ -25,17 +25,8 @@ module MCollective
         reply = "unknown request"
 
         case msg[:body]
-          when "inventory"
-            reply = inventory
-
-          when /echo (.+)/
-            reply = $1
-
           when "ping"
             reply = "pong"
-
-          when /^get_fact (.+)/
-            reply = Facts[$1]
 
           else
             reply = "Unknown Request: #{msg[:body]}"
@@ -60,28 +51,6 @@ module MCollective
                 ping          - simply responds with 'pong'
                 get_fact fact - replies with the value of a facter fact
                 EOH
-      end
-
-      private
-      def inventory
-        reply = {:agents => Agents.agentlist,
-                 :threads => [],
-                 :facts => {},
-                 :classes => [],
-                 :times => ::Process.times}
-
-        reply[:facts] = PluginManager["facts_plugin"].get_facts
-
-        cfile = Config.instance.classesfile
-        if File.exist?(cfile)
-          reply[:classes] = File.readlines(cfile).map {|i| i.chomp}
-        end
-
-        Thread.list.each do |t|
-          reply[:threads] << "#{t.inspect}"
-        end
-
-        reply
       end
     end
   end
