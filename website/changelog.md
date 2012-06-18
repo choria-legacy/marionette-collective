@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/06/18|The Plugin Name and Type is now available to DDL objects|15076|
 |2012/06/15|Add a get_data action to the rpcutil agent that can retrieve data from data plugins|15057|
 |2012/06/14|Allow the random selection of nodes to be deterministic|14960|
 |2012/06/12|Remove the Client#discovered_req method and add warnings to the documentation about its use|14777|

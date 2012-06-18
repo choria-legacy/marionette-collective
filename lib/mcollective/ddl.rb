@@ -33,13 +33,13 @@ module MCollective
   #             :display_as  => "Service Status"
   #   end
   class DDL
-    attr_reader :meta, :entities
+    attr_reader :meta, :entities, :pluginname, :plugintype
 
     def initialize(plugin, plugintype=:agent, loadddl=true)
       @entities = {}
       @meta = {}
       @config = Config.instance
-      @plugin = plugin
+      @pluginname = plugin
       @plugintype = plugintype.to_sym
 
       loadddlfile if loadddl
@@ -49,12 +49,12 @@ module MCollective
       if ddlfile = findddlfile
         instance_eval(File.read(ddlfile), ddlfile, 1)
       else
-        raise("Can't find DDL for #{@plugintype} plugin '#{@plugin}'")
+        raise("Can't find DDL for #{@plugintype} plugin '#{@pluginname}'")
       end
     end
 
     def findddlfile(ddlname=nil, ddltype=nil)
-      ddlname = @plugin unless ddlname
+      ddlname = @pluginname unless ddlname
       ddltype = @plugintype unless ddltype
 
       @config.libdir.each do |libdir|
@@ -342,7 +342,7 @@ module MCollective
 
       # is the action known?
       unless actions.include?(action)
-        raise DDLValidationError, "Attempted to call action #{action} for #{@plugin} but it's not declared in the DDL"
+        raise DDLValidationError, "Attempted to call action #{action} for #{@pluginname} but it's not declared in the DDL"
       end
 
       input = action_interface(action)[:input]
