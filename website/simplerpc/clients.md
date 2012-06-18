@@ -353,7 +353,7 @@ Here's an example that will print out results in a custom way.
 
 {% highlight ruby %}
 mc.echo(:msg => "hello world").each do |resp|
-   printf("%-40s: %s\n", resp[:sender], resp[:data])
+   printf("%-40s: %s\n", resp[:sender], resp[:data][:msg])
 end
 {% endhighlight %}
 
@@ -370,11 +370,11 @@ The _each_ in the above code just loops through the array of results.  Results a
 {% highlight console %}
 [{:statusmsg=>"OK",
  :sender=>"dev1.your.net",
- :data=>"hello world",
+ :data=>{:msg => "hello world"},
  :statuscode=>0},
 {:statusmsg=>"OK",
  :sender=>"dev2.your.net",
- :data=>"hello world",
+ :data=>{:msg => "hello world"},
  :statuscode=>0}]
 {% endhighlight %}
 
@@ -404,7 +404,7 @@ In this mode the results you get will be like this:
  :senderid=>"dev2.your.net",
  :msgtime=>1261696663,
  :hash=>"2d37daf690c4bcef5b5380b1e0c55f0c",
- :body=>{:statusmsg=>"OK", :statuscode=>0, :data=>"hello world"},
+ :body=>{:statusmsg=>"OK", :statuscode=>0, :data=>{:msg => "hello world"}},
  :requestid=>"2884afb0b52cb38ea4d4a3146d18ef5f",
  :senderagent=>"helloworld"}
 {% endhighlight %}
@@ -416,7 +416,7 @@ You can additionally gain access to a SimpleRPC style result in addition to the 
 {% highlight ruby %}
 mc.echo(:msg => "hello world") do |resp, simpleresp|
    begin
-      printf("%-40s: %s\n", simpleresp[:sender], simpleresp[:data])
+      printf("%-40s: %s\n", simpleresp[:sender], simpleresp[:data][:msg])
    rescue RPCError => e
       puts "The RPC agent returned an error: #{e}"
    end
@@ -464,7 +464,7 @@ end
 mc = rpcclient("helloworld", :options => options)
 
 mc.echo(:msg => options[:msg]).each do |resp|
-   printf("%-40s: %s\n", resp[:sender], resp[:data])
+   printf("%-40s: %s\n", resp[:sender], resp[:data][:msg])
 end
 {% endhighlight %}
 

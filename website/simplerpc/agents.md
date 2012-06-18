@@ -50,7 +50,7 @@ module MCollective
             action "echo" do
                 validate :msg, String
 
-                reply.data = request[:msg]
+                reply[:msg] = request[:msg]
             end
         end
     end
@@ -87,7 +87,7 @@ module MCollective
             action "echo" do
                 validate :msg, String
 
-                reply.data = request[:msg]
+                reply[:msg] = request[:msg]
             end
         end
     end
@@ -99,27 +99,15 @@ The added code sets our creator info, license and version as well as a timeout. 
 The default timeout for SimpleRPC agents is *10*.
 
 ### Writing Actions
-Actions are the individual tasks that your agent can do, they should just be in methods matching the _name`_`action_.
+Actions are the individual tasks that your agent can do:
 
 {% highlight ruby linenos %}
-            def echo_action
-                validate :msg, String
+action "echo" do
+  validate :msg, String
 
-                reply.data = request[:msg]
-            end
+  reply[:msg] = request[:msg]
+end
 {% endhighlight %}
-
-There's a helper to create this for you, you saw it earlier:
-
-{% highlight ruby linenos %}
-            action "echo" do
-                validate :msg, String
-
-                reply.data = request[:msg]
-            end
-{% endhighlight %}
-
-These two code blocks have the identical outcome, the 2nd usage is recommended.
 
 Creates an action called "echo".  They don't and can't take any arguments.
 
@@ -186,7 +174,7 @@ action "echo", :description "Echos back any message it receives" do
          :optional    => false,
          :maxlength   => 30
 
-   output :data,
+   output :msg,
           :description => "The message we received",
           :display_as  => "Message"
 end
@@ -250,7 +238,7 @@ In your code you can retrieve the config setting like this:
 This will set the setting to whatever is the config file of "" if unset.
 
 ## Accessing the Input
-As you see from the echo example our input is easy to get to by just looking in *request.data*, this would be a Hash of exactly what was sent in by the client in the original request.
+As you see from the echo example our input is easy to get to by just looking in *request*, this would be a Hash of exactly what was sent in by the client in the original request.
 
 The request object is in instance of *MCollective::RPC::Request*, you can also gain access to the following:
 
@@ -350,21 +338,9 @@ the context of a multi threaded Ruby application.
 ### Reply Data
 The reply data is in the *reply* variable and is an instance of *MCollective::RPC::Reply*.
 
-You can pass values back by simply assining anything to the data like here:
-
-{% highlight ruby %}
-reply.data = request[:msg]
-{% endhighlight %}
-
-In this example data will be a String, nothing fancy gets done to it if you assign directly to _reply.data_
-
-Or there's a few convenience methods if you wanted to pass back a hash of data.
-
 {% highlight ruby %}
 reply[:msg] = request[:msg]
 {% endhighlight %}
-
-Here reply will act as if it's a hash so you don't have to do *reply.data`[`:msg`]`* all the time.
 
 ### Reply Status
 As pointed out in the [ResultsandExceptions] page results all include status messages and the reply object has a helper to create those.
@@ -455,17 +431,17 @@ You'd use these hooks to add some functionality into the processing chain of age
 |before_processing_hook(msg, connection)|Before processing of a message starts, pass in the raw message and the <em>MCollective::Connector</em> class|
 |after_processing_hook|Just before the message is dispatched to the client|
 
-### startup`_`hook
+### *startup_hook*
 Called at the end of the _RPC::Agent_ standard initialize method use this to adjust meta parameters, timeouts and any setup you need to do.
 
 This will not be called right when the daemon starts up, we use lazy loading and initialization so it will only be called the first time a request for this agent arrives.
 
-### before`_`processing`_`hook
+### *before_processing_hook*
 Called just after a message was received from the middleware before it gets passed to the handlers.  *request* and *reply* will already be set, the msg passed is the message as received from the normal mcollective runner and the connection is the actual connector.
 
 You can in theory send off new messages over the connector maybe for auditing or something, probably limited use case in simple agents.
 
-### after`_`processing`_`hook
+### *after_processing_hook*
 Called at the end of processing just before the response gets sent to the middleware.
 
 This gets run outside of the main exception handling block of the agent so you should handle any exceptions you could raise yourself.  The reason  it is outside of the block is so you'll have access to even status codes set by the exception handlers.  If you do raise an exception it will just be passed onto the runner and processing will fail.
