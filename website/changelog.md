@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/06/18|Remove unused agent help code|15084|
 |2012/06/18|Remove unused code from the *discovery* agent related to inventory and facts|15083|
 |2012/06/18|Nodes will now refuse to load RPC agents without DDL files|15082|
 |2012/06/18|The Plugin Name and Type is now available to DDL objects|15076|

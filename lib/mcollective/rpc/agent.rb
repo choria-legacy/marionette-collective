@@ -144,28 +144,12 @@ module MCollective
         return true
       end
 
-      # Generates help using the template based on the data
-      # created with metadata and input
-      def self.help(template)
-        if @ddl
-          @ddl.help(template)
-        else
-          "No DDL defined"
-        end
-      end
-
-      # to auto generate help
-      def help
-        self.help("#{@config[:configdir]}/rpc-help.erb")
-      end
-
       # Returns an array of actions this agent support
       def self.actions
         public_instance_methods.sort.grep(/_action$/).map do |method|
           $1 if method =~ /(.+)_action$/
         end
       end
-
 
       private
       # Runs a command via the MC::Shell wrapper, options are as per MC::Shell

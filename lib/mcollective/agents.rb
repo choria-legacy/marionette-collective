@@ -108,22 +108,6 @@ module MCollective
       PluginManager.include?("#{agentname}_agent")
     end
 
-    # Returns the help for an agent after first trying to get
-    # rid of some indentation infront
-    def help(agentname)
-      raise("No such agent") unless include?(agentname)
-
-      body = PluginManager["#{agentname}_agent"].help.split("\n")
-
-      if body.first =~ /^(\s+)\S/
-        indent = $1
-
-        body = body.map {|b| b.gsub(/^#{indent}/, "")}
-      end
-
-      body.join("\n")
-    end
-
     # Dispatches a message to an agent, accepts a block that will get run if there are
     # any replies to process from the agent
     def dispatch(request, connection)

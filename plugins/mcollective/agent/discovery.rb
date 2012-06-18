@@ -34,24 +34,6 @@ module MCollective
 
         reply
       end
-
-      def help
-        <<-EOH
-                Discovery Agent
-                ===============
-
-                Agent to facilitate discovery of machines and data about machines.
-
-                Accepted Messages
-                -----------------
-
-                inventory     - returns a hash with various bits of information like
-                                list of agents, threads, etc
-
-                ping          - simply responds with 'pong'
-                get_fact fact - replies with the value of a facter fact
-                EOH
-      end
     end
   end
 end
