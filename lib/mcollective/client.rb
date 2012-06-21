@@ -2,6 +2,7 @@ module MCollective
   # Helpers for writing clients that can talk to agents, do discovery and so forth
   class Client
     attr_accessor :options, :stats, :discoverer
+    attr_reader   :reqid
 
     def initialize(configfile)
       @config = Config.instance
@@ -11,6 +12,7 @@ module MCollective
       @security = PluginManager["security_plugin"]
 
       @security.initiated_by = :client
+      @reqid = nil
       @options = nil
       @subscriptions = {}
 
@@ -149,10 +151,10 @@ module MCollective
 
       begin
         Timeout.timeout(timeout) do
-          reqid = sendreq(body, agent, options[:filter])
+          @reqid = sendreq(body, agent, options[:filter])
 
           loop do
-            resp = receive(reqid)
+            resp = receive(@reqid)
 
             hosts_responded += 1
 
