@@ -56,7 +56,7 @@ module MCollective
 
       request.publish
 
-      request.requestid
+      @reqid = request.requestid
     end
 
     def subscribe(agent, type)
@@ -151,10 +151,10 @@ module MCollective
 
       begin
         Timeout.timeout(timeout) do
-          @reqid = sendreq(body, agent, options[:filter])
+          reqid = sendreq(body, agent, options[:filter])
 
           loop do
-            resp = receive(@reqid)
+            resp = receive(reqid)
 
             hosts_responded += 1
 
