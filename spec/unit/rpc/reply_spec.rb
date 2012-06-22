@@ -8,6 +8,9 @@ module MCollective
       before(:each) do
         ddl = stub
         ddl.stubs(:action_interface).returns({:output => {}})
+        ddl.stubs(:actions).returns(["rspec"])
+        ddl.stubs(:pluginname).returns("rspec")
+
         @reply = Reply.new("rspec", ddl)
       end
 
@@ -26,17 +29,25 @@ module MCollective
       end
 
       describe "#initialize_data" do
-        it "should set defaults correctly" do
-          ddl = DDL.new("rspec", :agent, false)
+        before do
+          Log.stubs(:warn)
+          @ddl = DDL.new("rspec", :agent, false)
+        end
 
-          ddl.action :rspec, :description => "testing rspec" do
-            ddl.output :one, :description => "rspec test", :display_as => "rspec", :default => "default"
-            ddl.output :three, :description => "rspec test", :display_as => "rspec", :default => []
-            ddl.output :two, :description => "rspec test", :display_as => "rspec"
+        it "should set defaults correctly" do
+          @ddl.action :rspec, :description => "testing rspec" do
+            @ddl.output :one, :description => "rspec test", :display_as => "rspec", :default => "default"
+            @ddl.output :three, :description => "rspec test", :display_as => "rspec", :default => []
+            @ddl.output :two, :description => "rspec test", :display_as => "rspec"
           end
 
-          reply = Reply.new(:rspec, ddl)
+          reply = Reply.new(:rspec, @ddl)
           reply.data.should == {:one => "default", :two => nil, :three => []}
+        end
+
+        it "should detect missing actions" do
+          reply = Reply.new(:rspec, @ddl)
+          expect { reply.initialize_data }.to raise_error(/No action 'rspec' defined/)
         end
       end
 

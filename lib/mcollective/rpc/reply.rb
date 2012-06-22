@@ -11,10 +11,18 @@ module MCollective
         @ddl = ddl
         @action = action
 
-        initialize_data
+        begin
+          initialize_data
+        rescue Exception => e
+          Log.warn("Could not pre-populate reply data from the DDL: %s: %s" % [e.class, e.to_s ])
+        end
       end
 
       def initialize_data
+        unless @ddl.actions.include?(@action)
+          raise "No action '%s' defined for agent '%s' in the DDL" % [@action, @ddl.pluginname]
+        end
+
         interface = @ddl.action_interface(@action)
 
         interface[:output].keys.each do |output|
