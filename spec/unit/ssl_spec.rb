@@ -240,5 +240,15 @@ module MCollective
         }.to raise_error("Crypted data should include data")
       end
     end
+
+    describe "#uuid" do
+      it "should produce repeatable uuids" do
+        SSL.uuid("hello world").should == SSL.uuid("hello world")
+      end
+
+      it "should not always produce the same uuid" do
+        SSL.uuid.should_not == SSL.uuid
+      end
+    end
   end
 end
