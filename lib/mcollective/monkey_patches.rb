@@ -59,6 +59,15 @@ class Array
   end unless method_defined?(:in_groups_of)
 end
 
+class String
+  def bytes(&block)
+    # This should not be necessary, really ...
+    require 'enumerator'
+    return to_enum(:each_byte) unless block_given?
+    each_byte(&block)
+  end unless method_defined?(:bytes)
+end
+
 class Dir
   def self.mktmpdir(prefix_suffix=nil, tmpdir=nil)
     case prefix_suffix

@@ -10,6 +10,7 @@ toc: false
 |----|-----------|------|
 |2012/06/25|Batched RPC requests will now all have the same requestid|15195|
 |2012/06/25|Record the request id on M::Client and in the RPC client stats|15194|
+|2012/06/24|Use UUIDs for the request id rather than our own weak implementation|15191|
 |2012/06/18|The DDL can now define defaults for outputs and the RPC replies are pre-populated|15087|
 |2012/06/18|Remove unused agent help code|15084|
 |2012/06/18|Remove unused code from the *discovery* agent related to inventory and facts|15083|
