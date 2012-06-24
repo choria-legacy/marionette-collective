@@ -212,7 +212,7 @@ module MCollective
         security.expects(:encoderequest).with("identity", 'payload', '123', Util.empty_filter, 'rspec_agent', 'mcollective', 60).twice
         PluginManager.expects("[]").with("security_plugin").returns(security).twice
 
-        Config.instance.expects(:identity).returns("identity").twice
+        Config.instance.expects(:identity).returns("identity").times(4)
 
         Message.any_instance.expects(:requestid).returns("123").twice
 
@@ -400,7 +400,10 @@ module MCollective
       it "should create a valid request id" do
         m = Message.new("msg", "message", :agent => "rspec", :collective => "mc")
 
-        SSL.expects(:uuid).returns("reqid")
+        Config.instance.expects(:identity).returns("rspec")
+        Time.expects(:now).returns(1.1)
+
+        Digest::MD5.expects(:hexdigest).with("rspec-1.1-rspec-mc").returns("reqid")
 
         m.create_reqid.should == "reqid"
       end

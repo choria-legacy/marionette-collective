@@ -8,7 +8,6 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
-|2012/06/24|Use UUIDs for the request id rather than our own weak implementation|15191|
 |2012/06/18|The DDL can now define defaults for outputs and the RPC replies are pre-populated|15087|
 |2012/06/18|Remove unused agent help code|15084|
 |2012/06/18|Remove unused code from the *discovery* agent related to inventory and facts|15083|

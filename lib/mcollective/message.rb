@@ -231,10 +231,7 @@ module MCollective
     end
 
     def create_reqid
-      # we gsub out the -s so that the format of the id does not
-      # change from previous versions, these should just be more
-      # unique than previous ones
-      SSL.uuid.gsub("-", "")
+      Digest::MD5.hexdigest("#{Config.instance.identity}-#{Time.now.to_f}-#{agent}-#{collective}")
     end
   end
 end

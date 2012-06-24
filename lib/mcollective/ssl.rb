@@ -204,34 +204,6 @@ module MCollective
       Digest::MD5.hexdigest(string)
     end
 
-    # Creates a RFC 4122 version 5 UUID. If string is supplied it will produce repeatable
-    # UUIDs for that string else a random 128bit string will be used from OpenSSL::BN
-    #
-    # Code used with permission from:
-    #    https://github.com/kwilczynski/puppet-functions/blob/master/lib/puppet/parser/functions/uuid.rb
-    #
-    def self.uuid(string=nil)
-      string ||= OpenSSL::BN.rand(128).to_s
-      uuid_name_space_dns = "\x6b\xa7\xb8\x10\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8"
-
-      sha1 = Digest::SHA1.new
-      sha1.update(uuid_name_space_dns)
-      sha1.update(string)
-
-      # first 16 bytes..
-      bytes = sha1.digest[0, 16]
-
-      # version 5 adjustments
-      bytes[6] &= 0x0f
-      bytes[6] |= 0x50
-
-      # variant is DCE 1.1
-      bytes[8] &= 0x3f
-      bytes[8] |= 0x80
-
-      [4, 2, 2, 2, 6].collect { |i| bytes.slice!(0, i).unpack('H*') }.join('-')
-    end
-
     # Reads either a :public or :private key from disk, uses an
     # optional passphrase to read the private key
     def read_key(type, key=nil, passphrase=nil)
