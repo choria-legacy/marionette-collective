@@ -2,6 +2,7 @@ module MCollective
   # Helpers for writing clients that can talk to agents, do discovery and so forth
   class Client
     attr_accessor :options, :stats, :discoverer
+    attr_reader   :reqid
 
     def initialize(configfile)
       @config = Config.instance
@@ -11,6 +12,7 @@ module MCollective
       @security = PluginManager["security_plugin"]
 
       @security.initiated_by = :client
+      @reqid = nil
       @options = nil
       @subscriptions = {}
 
@@ -54,7 +56,7 @@ module MCollective
 
       request.publish
 
-      request.requestid
+      @reqid = request.requestid
     end
 
     def subscribe(agent, type)
