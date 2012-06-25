@@ -6,16 +6,17 @@ module MCollective
   module RPC
     describe Stats do
       before(:each) do
-        @expected = {:discoverytime=>0,
-          :okcount=>0,
-          :blocktime=>0,
-          :failcount=>0,
-          :noresponsefrom=>[],
-          :responses=>0,
-          :totaltime=>0,
-          :discovered=>0,
-          :starttime=>1300031826.0,
-          :discovered_nodes=>[]}
+        @expected = {:discoverytime => 0,
+                     :okcount => 0,
+                     :blocktime => 0,
+                     :failcount => 0,
+                     :noresponsefrom => [],
+                     :responses => 0,
+                     :totaltime => 0,
+                     :discovered => 0,
+                     :starttime => 1300031826.0,
+                     :requestid => nil,
+                     :discovered_nodes => []}
 
         @stats = Stats.new
       end
@@ -43,9 +44,7 @@ module MCollective
           Time.stubs(:now).returns(Time.at(1300031826))
           s = Stats.new
 
-          @expected.keys.each do |k|
-            @expected[k].should == s.to_hash[k]
-          end
+          s.to_hash.should == @expected
         end
       end
 

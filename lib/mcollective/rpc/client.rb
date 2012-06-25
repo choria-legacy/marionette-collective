@@ -711,6 +711,11 @@ module MCollective
             @stats.totaltime += @client.stats[:totaltime]
             @stats.discoverytime += @client.stats[:discoverytime]
 
+            # for now, this is just outright broken because each message
+            # gets a unique id, but we're keeping it here for completion
+            # a bug has been filed to rectify this
+            @stats.requestid = @client.stats[:requestid]
+
             sleep sleep_time unless last_batch
           end
         else

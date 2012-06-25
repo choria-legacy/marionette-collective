@@ -386,7 +386,7 @@ module MCollective
           msg = mock
           msg.expects(:discovered_hosts=).times(10)
 
-          stats = {:noresponsefrom => [], :responses => 0, :blocktime => 0, :totaltime => 0, :discoverytime => 0}
+          stats = {:noresponsefrom => [], :responses => 0, :blocktime => 0, :totaltime => 0, :discoverytime => 0, :requestid => "823a3419a0975c3facbde121f72ab61f"}
 
           Message.expects(:new).with('req', nil, {:type => :direct_request, :agent => 'foo', :filter => nil, :options => {}, :collective => 'mcollective'}).returns(msg).times(10)
           client.expects(:new_request).returns("req")
@@ -401,6 +401,7 @@ module MCollective
           client.expects(:process_results_with_block).with("foo", "result", instance_of(Proc)).times(10)
 
           result = client.send(:call_agent_batched, "foo", {}, {}, 1, 1) { }
+          result[:requestid].should == "823a3419a0975c3facbde121f72ab61f"
           result.class.should == Stats
         end
 
@@ -411,7 +412,7 @@ module MCollective
           msg = mock
           msg.expects(:discovered_hosts=).times(10)
 
-          stats = {:noresponsefrom => [], :responses => 0, :blocktime => 0, :totaltime => 0, :discoverytime => 0}
+          stats = {:noresponsefrom => [], :responses => 0, :blocktime => 0, :totaltime => 0, :discoverytime => 0, :requestid => "823a3419a0975c3facbde121f72ab61f"}
 
           Progress.expects(:new).never
 
@@ -427,6 +428,8 @@ module MCollective
           client.expects(:process_results_without_block).with("result", "foo").returns("rspec").times(10)
 
           client.send(:call_agent_batched, "foo", {}, {}, 1, 1).should == ["rspec", "rspec", "rspec", "rspec", "rspec", "rspec", "rspec", "rspec", "rspec", "rspec"]
+
+          client.stats[:requestid].should == "823a3419a0975c3facbde121f72ab61f"
         end
       end
 

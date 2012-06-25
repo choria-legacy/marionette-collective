@@ -4,6 +4,7 @@ module MCollective
     class Stats
       attr_accessor :noresponsefrom, :starttime, :discoverytime, :blocktime, :responses, :totaltime
       attr_accessor :discovered, :discovered_nodes, :okcount, :failcount, :noresponsefrom, :responsesfrom
+      attr_accessor :requestid
 
       def initialize
         reset
@@ -23,6 +24,7 @@ module MCollective
         @okcount = 0
         @failcount = 0
         @noresponsefrom = []
+        @requestid = nil
       end
 
       # returns a hash of our stats
@@ -37,6 +39,7 @@ module MCollective
          :discovered_nodes => @discovered_nodes,
          :noresponsefrom   => @noresponsefrom,
          :okcount          => @okcount,
+         :requestid        => @requestid,
          :failcount        => @failcount}
       end
 
@@ -68,6 +71,7 @@ module MCollective
         @starttime = stats[:starttime]
         @blocktime = stats[:blocktime]
         @totaltime = stats[:totaltime]
+        @requestid = stats[:requestid]
         @discoverytime = stats[:discoverytime] if @discoverytime == 0
       end
 

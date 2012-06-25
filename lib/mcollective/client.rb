@@ -146,6 +146,7 @@ module MCollective
       STDOUT.sync = true
 
       hosts_responded = 0
+      reqid = nil
 
       begin
         Timeout.timeout(timeout) do
@@ -171,6 +172,7 @@ module MCollective
       stat[:blocktime] = stat[:totaltime] - stat[:discoverytime]
       stat[:responses] = hosts_responded
       stat[:noresponsefrom] = []
+      stat[:requestid] = reqid
 
       @stats = stat
       return stat
