@@ -385,6 +385,8 @@ module MCollective
 
           msg = mock
           msg.expects(:discovered_hosts=).times(10)
+          msg.expects(:create_reqid).returns("823a3419a0975c3facbde121f72ab61f")
+          msg.expects(:requestid=).with("823a3419a0975c3facbde121f72ab61f").times(10)
 
           stats = {:noresponsefrom => [], :responses => 0, :blocktime => 0, :totaltime => 0, :discoverytime => 0, :requestid => "823a3419a0975c3facbde121f72ab61f"}
 
@@ -411,6 +413,8 @@ module MCollective
 
           msg = mock
           msg.expects(:discovered_hosts=).times(10)
+          msg.expects(:create_reqid).returns("823a3419a0975c3facbde121f72ab61f")
+          msg.expects(:requestid=).with("823a3419a0975c3facbde121f72ab61f").times(10)
 
           stats = {:noresponsefrom => [], :responses => 0, :blocktime => 0, :totaltime => 0, :discoverytime => 0, :requestid => "823a3419a0975c3facbde121f72ab61f"}
 

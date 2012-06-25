@@ -689,8 +689,16 @@ module MCollective
             @stdout.print twirl.twirl(respcount, discovered.size)
           end
 
+          @stats.requestid = nil
+
           discovered.in_groups_of(batch_size) do |hosts, last_batch|
             message = Message.new(req, nil, {:agent => @agent, :type => :direct_request, :collective => @collective, :filter => opts[:filter], :options => opts})
+
+            # first time round we let the Message object create a request id
+            # we then re-use it for future requests to keep auditing sane etc
+            @stats.requestid = message.create_reqid unless @stats.requestid
+            message.requestid = @stats.requestid
+
             message.discovered_hosts = hosts.clone.compact
 
             @client.req(message) do |resp|
@@ -710,11 +718,6 @@ module MCollective
             @stats.blocktime += @client.stats[:blocktime] + sleep_time
             @stats.totaltime += @client.stats[:totaltime]
             @stats.discoverytime += @client.stats[:discoverytime]
-
-            # for now, this is just outright broken because each message
-            # gets a unique id, but we're keeping it here for completion
-            # a bug has been filed to rectify this
-            @stats.requestid = @client.stats[:requestid]
 
             sleep sleep_time unless last_batch
           end

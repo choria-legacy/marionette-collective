@@ -19,6 +19,7 @@ module MCollective
     # options[:options]        - the normal client options hash
     # options[:ttl]            - the maximum amount of seconds this message can be valid for
     # options[:expected_msgid] - in the case of replies this is the msgid it is expecting in the replies
+    # options[:requestid]      - specific request id to use else one will be generated
     def initialize(payload, message, options = {})
       options = {:base64 => false,
                  :agent => nil,
@@ -29,11 +30,12 @@ module MCollective
                  :options => {},
                  :ttl => 60,
                  :expected_msgid => nil,
+                 :requestid => nil,
                  :collective => nil}.merge(options)
 
       @payload = payload
       @message = message
-      @requestid = nil
+      @requestid = options[:requestid]
       @discovered_hosts = nil
       @reply_to = nil
 
@@ -139,7 +141,7 @@ module MCollective
         when :request, :direct_request
           validate_compount_filter(@filter["compound"]) unless @filter["compound"].empty?
 
-          @requestid = create_reqid
+          @requestid = create_reqid unless @requestid
           @payload = PluginManager["security_plugin"].encoderequest(Config.instance.identity, payload, requestid, filter, agent, collective, ttl)
         else
           raise "Cannot encode #{type} messages"

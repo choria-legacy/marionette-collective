@@ -223,6 +223,20 @@ module MCollective
         m.encode!
       end
 
+      it "should retain the requestid if it was specifically set" do
+        security = mock
+        security.expects(:encoderequest).with("identity", 'payload', '123', Util.empty_filter, 'rspec_agent', 'mcollective', 60)
+        PluginManager.expects("[]").with("security_plugin").returns(security)
+
+        Config.instance.expects(:identity).returns("identity")
+
+        m = Message.new("payload", "message", :type => :request, :agent => "rspec_agent", :collective => "mcollective")
+        m.expects(:create_reqid).never
+        m.requestid = "123"
+        m.encode!
+        m.requestid.should == "123"
+      end
+
       it "should not allow bad callerids when replying" do
         request = mock
         request.stubs(:agent).returns("rspec_agent")
