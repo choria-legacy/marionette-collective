@@ -25,6 +25,28 @@ module MCollective
       @client.options = Util.default_options
     end
 
+    describe "#sendreq" do
+      it "should send the supplied message" do
+        message = Message.new("rspec", nil, {:agent => "rspec", :type => :request, :collective => "mcollective", :filter => Util.empty_filter, :options => Util.default_options})
+
+        message.expects(:encode!)
+        @client.expects(:subscribe).with("rspec", :reply)
+        message.expects(:publish)
+        message.expects(:requestid).twice
+        @client.sendreq(message, "rspec")
+      end
+
+      it "should not subscribe to a reply queue for a message with a reply-to" do
+        message = Message.new("rspec", nil, {:agent => "rspec", :type => :request, :collective => "mcollective", :filter => Util.empty_filter, :options => Util.default_options})
+        message.reply_to = "rspec"
+
+        message.expects(:encode!)
+        @client.expects(:subscribe).never
+        message.expects(:publish)
+        message.expects(:requestid).twice
+        @client.sendreq(message, "rspec")
+      end
+    end
     describe "#req" do
       it "should record the requestid" do
         message = Message.new("rspec", nil, {:agent => "rspec", :type => :request, :collective => "mcollective", :filter => Util.empty_filter, :options => Util.default_options})

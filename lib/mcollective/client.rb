@@ -50,7 +50,7 @@ module MCollective
 
       Log.debug("Sending request #{request.requestid} to the #{request.agent} agent with ttl #{request.ttl} in collective #{request.collective}")
 
-      subscribe(agent, :reply)
+      subscribe(agent, :reply) unless request.reply_to
 
       request.publish
 

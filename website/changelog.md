@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/06/26|Surpress subscribing to reply queues when no reply is expected|15226|
 |2012/06/25|Batched RPC requests will now all have the same requestid|15195|
 |2012/06/25|Record the request id on M::Client and in the RPC client stats|15194|
 |2012/06/24|Use UUIDs for the request id rather than our own weak implementation|15191|
