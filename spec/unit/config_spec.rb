@@ -90,69 +90,56 @@ module MCollective
 
     describe "#read_plugin_config_dir" do
       before do
-        tmpfile = Tempfile.new("mc_config_spec")
-        path = tmpfile.path
-        tmpfile.close!
+        @plugindir = File.join("/", "nonexisting", "plugin.d")
 
-        @tmpdir = FileUtils.mkdir_p(path)
-        @tmpdir = @tmpdir[0] if @tmpdir.is_a?(Array) # ruby 1.9.2
-
-        @plugindir = File.join([@tmpdir, "plugin.d"])
-        FileUtils.mkdir(@plugindir)
+        File.stubs(:directory?).with(@plugindir).returns(true)
 
         Config.instance.set_config_defaults("")
       end
 
       it "should not fail if the supplied directory is missing" do
-        Config.instance.read_plugin_config_dir("/nonexisting")
+        File.expects(:directory?).with(@plugindir).returns(false)
+        Config.instance.read_plugin_config_dir(@plugindir)
         Config.instance.pluginconf.should == {}
       end
 
       it "should skip files that do not match the expected filename pattern" do
-        File.open(File.join([@tmpdir, "plugin.d", "foo.txt"]), "w") { }
-        IO.expects(:open).with(File.join([@tmpdir, "plugin.d", "foo.txt"])).never
+        Dir.expects(:new).with(@plugindir).returns(["foo.txt"])
+
+        IO.expects(:open).with(File.join(@plugindir, "foo.txt")).never
 
         Config.instance.read_plugin_config_dir(@plugindir)
       end
 
       it "should load the config files" do
-        configfile = File.join([@tmpdir, "plugin.d", "foo.cfg"])
-        File.open(configfile, "w") { }
-
-        File.expects(:open).with(configfile, "r").returns([]).once
+        Dir.expects(:new).with(@plugindir).returns(["foo.cfg"])
+        File.expects(:open).with(File.join(@plugindir, "foo.cfg"), "r").returns([]).once
         Config.instance.read_plugin_config_dir(@plugindir)
       end
 
       it "should set config parameters correctly" do
-        configfile = File.join([@tmpdir, "plugin.d", "foo.cfg"])
-
-        File.open(configfile, "w") do |f|
-          f.puts "bar = baz"
-        end
-
-        Config.instance.set_config_defaults(@tmpdir)
+        Dir.expects(:new).with(@plugindir).returns(["foo.cfg"])
+        File.expects(:open).with(File.join(@plugindir, "foo.cfg"), "r").returns(["rspec = test"])
         Config.instance.read_plugin_config_dir(@plugindir)
-        Config.instance.pluginconf.should == {"foo.bar" => "baz"}
+        Config.instance.pluginconf.should == {"foo.rspec" => "test"}
       end
 
       it "should override main config file" do
-        configfile = File.join([@tmpdir, "plugin.d", "foo.cfg"])
-        servercfg = File.join(@tmpdir, "server.cfg")
-
-        File.open(servercfg, "w") {|f| f.puts "plugin.foo.bar = foo"}
+        configfile = File.join(@plugindir, "foo.cfg")
+        servercfg = File.join(File.dirname(@plugindir), "server.cfg")
 
         PluginManager.stubs(:loadclass)
 
-        Config.instance.loadconfig(servercfg)
-        Config.instance.pluginconf.should == {"foo.bar" => "foo"}
+        File.stubs(:exists?).returns(true)
+        File.stubs(:directory?).with(@plugindir).returns(true)
+        File.stubs(:exists?).with(servercfg).returns(true)
+        File.expects(:open).with(servercfg, "r").returns(["plugin.rspec.key = default"])
 
-        File.open(configfile, "w") do |f|
-          f.puts "bar = baz"
-        end
+        Dir.expects(:new).with(@plugindir).returns(["rspec.cfg"])
+        File.expects(:open).with(File.join(@plugindir, "rspec.cfg"), "r").returns(["key = overridden"])
 
-        PluginManager.delete("global_stats")
         Config.instance.loadconfig(servercfg)
-        Config.instance.pluginconf.should == {"foo.bar" => "baz"}
+        Config.instance.pluginconf.should == {"rspec.key" => "overridden"}
       end
     end
   end
