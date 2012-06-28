@@ -16,6 +16,10 @@ action "collective_info", :description => "Info about the main and sub collectiv
     output :collectives,
            :description => "All Collectives",
            :display_as => "All Collectives"
+
+    summarize do
+        aggregate summary(:collectives)
+    end
 end
 
 action "inventory", :description => "System Inventory" do
@@ -68,6 +72,10 @@ action "get_fact", :description => "Retrieve a single fact from the fact store" 
      output :value,
             :description => "The value of the fact",
             :display_as => "Value"
+
+    summarize do
+        aggregate summary(:value)
+    end
 end
 
 action "daemon_stats", :description => "Get statistics from the running daemon" do
@@ -128,6 +136,11 @@ action "daemon_stats", :description => "Get statistics from the running daemon" 
     output :ttlexpired,
            :description => "Messages that did pass TTL checks",
            :display_as => "TTL Expired"
+
+    summarize do
+        aggregate summary(:version)
+        aggregate summary(:agents)
+    end
 end
 
 action "agent_inventory", :description => "Inventory of all agents on the server" do
@@ -156,6 +169,10 @@ action "get_config_item", :description => "Get the active value of a specific co
     output :value,
            :description => "The value that is in use",
            :display_as => "Value"
+
+    summarize do
+        aggregate summary(:value)
+    end
 end
 
 action "get_data", :description => "Get data from a data plugin" do
