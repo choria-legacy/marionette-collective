@@ -62,10 +62,12 @@ module MCollective
         clientdir = File.join(@path, "application")
         bindir = File.join(@path, "bin")
         ddldir = File.join(@path, "agent")
+        aggregatedir = File.join(@path, "aggregate")
 
         client[:files] += Dir.glob(File.join(clientdir, "*")) if PluginPackager.check_dir_present clientdir
         client[:files] += Dir.glob(File.join(bindir,"*")) if PluginPackager.check_dir_present bindir
         client[:files] += Dir.glob(File.join(ddldir, "*.ddl")) if PluginPackager.check_dir_present ddldir
+        client[:files] += Dir.glob(File.join(aggregatedir, "*")) if PluginPackager.check_dir_present aggregatedir
         client[:dependencies] << "mcollective-#{@metadata[:name]}-common" if @packagedata[:common]
         client[:files].empty? ? nil : client
       end
