@@ -114,18 +114,18 @@ module MCollective
     # If you've passed -v on the command line a detailed stat block
     # will be printed, else just a one liner.
     #
-    # You can pass flags into it, at the moment only one flag is
-    # supported:
+    # You can pass flags into it:
     #
-    # printrpcstats :caption => "Foo"
+    #   printrpcstats :caption => "Foo", :summarize => true
     #
     # This will use "Foo" as the caption to the stats in verbose
-    # mode
+    # mode and print out any aggregate summary information if present
     def printrpcstats(flags={})
       return unless @options[:output_format] == :console
 
+      flags = {:summarize => false, :caption => "rpc stats"}.merge(flags)
+
       verbose = @options[:verbose] rescue verbose = false
-      caption = flags[:caption] || "rpc stats"
 
       begin
         stats = @@stats
@@ -134,7 +134,7 @@ module MCollective
         return
       end
 
-      puts stats.report(caption, verbose)
+      puts stats.report(flags[:caption], flags[:summarize], verbose)
     end
 
     # Prints the result of an RPC call.

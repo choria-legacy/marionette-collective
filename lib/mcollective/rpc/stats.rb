@@ -153,11 +153,15 @@ module MCollective
 
       # Returns a blob of text representing the request status based on the
       # stats contained in this class
-      def report(caption = "rpc stats", verbose = false)
+      def report(caption = "rpc stats", summarize = true, verbose = false)
         result_text = []
 
         if verbose
-          result_text << text_for_aggregates if @aggregate_summary
+            if @aggregate_summary && summarize
+              result_text << text_for_aggregates
+            else
+              result_text << ""
+            end
 
           result_text << Util.colorize(:yellow, "---- #{caption} ----")
 
@@ -179,7 +183,12 @@ module MCollective
           if @discovered
             @responses < @discovered ? color = :red : color = :green
 
-            result_text << text_for_aggregates if @aggregate_summary
+            if @aggregate_summary && summarize
+              result_text << text_for_aggregates
+            else
+              result_text << ""
+            end
+
             result_text << "Finished processing %s / %s hosts in %.2f ms" % [Util.colorize(color, @responses), Util.colorize(color, @discovered), @blocktime * 1000]
           else
             result_text << "Finished processing %s hosts in %.2f ms" % [Util.colorize(:bold, @responses), @blocktime * 1000]
