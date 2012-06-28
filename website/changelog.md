@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/06/28|Improve parsing of compound filters where the first argument is a class|15271|
 |2012/06/28|Add the ability to declare automatic result summarization in the DDL files for agents|15031|
 |2012/06/26|Surpress subscribing to reply queues when no reply is expected|15226|
 |2012/06/25|Batched RPC requests will now all have the same requestid|15195|
