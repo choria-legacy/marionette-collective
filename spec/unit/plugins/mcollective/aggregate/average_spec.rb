@@ -15,7 +15,7 @@ module MCollective
 
         it "should set a defauly aggregate_format if one isn't defined" do
           result = Average.new(:test, [], nil, :test_action)
-          result.aggregate_format.should == "Average of test : %f"
+          result.aggregate_format.should == "Average of test: %f"
         end
       end
 

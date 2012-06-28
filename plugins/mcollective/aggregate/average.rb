@@ -9,7 +9,7 @@ module MCollective
         @count = 0
 
         # Set default aggregate_function if it is undefined
-        @aggregate_format = "Average of #{@result[:output]} : %f" unless @aggregate_format
+        @aggregate_format = "Average of #{@result[:output]}: %f" unless @aggregate_format
       end
 
       # Determines the average of a set of numerical values
