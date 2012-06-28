@@ -7,7 +7,7 @@ module MCollective
         @result[:type] = :collection
 
         # set default aggregate_format if it is undefined
-        @aggregate_format = "%s : %s" unless @aggregate_format
+        @aggregate_format = :calculate unless @aggregate_format
       end
 
       # Increments the value field if value has been seen before
@@ -28,6 +28,15 @@ module MCollective
         else
           @result[:value][value] = 1
         end
+      end
+
+      def summarize
+        if @aggregate_format == :calculate
+          max_key_length = @result[:value].keys.map{|k| k.length}.max
+          @aggregate_format = "%#{max_key_length}s = %s"
+        end
+
+        super
       end
     end
   end
