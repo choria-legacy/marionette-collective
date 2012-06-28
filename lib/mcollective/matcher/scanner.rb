@@ -112,6 +112,9 @@ module MCollective
               else
                 j += 1
               end
+              if(@arguments[j] == ' ')
+                break if(is_klass?(j) && !(@arguments[j-1] =~ /=|<|>/))
+              end
               if( (@arguments[j] == ' ') && (@seperation_counter < 2) && !(current_token_value.match(/^.+(=|<|>).+$/)) )
                 if((index = lookahead(j)))
                   j = index
@@ -153,6 +156,19 @@ module MCollective
             return "bad_token", [@token_index - current_token_value.size + 1, @token_index] if slash_err
             return "statement", current_token_value
           end
+        end
+      end
+
+      # Deal with special puppet class statement
+      def is_klass?(j)
+        while(j < @arguments.size && @arguments[j] == ' ')
+          j += 1
+        end
+
+        if @arguments[j] =~ /=|<|>/
+          return false
+        else
+          return true
         end
       end
 

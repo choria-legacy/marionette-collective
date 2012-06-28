@@ -108,6 +108,15 @@ module MCollective
           parser = Parser.new("foo('bar').value = 1 and foo=bar or foo  = bar")
           parser.execution_stack.should == [{"fstatement"=>"foo('bar').value=1"}, {"and"=>"and"}, {"statement"=>"foo=bar"}, {"or"=>"or"}, {"statement"=>"foo=bar"}]
         end
+
+        it "should parse statements where classes are mixed with fact comparisons and fstatements" do
+          parser = Parser.new("klass and function('param').value = 1 and fact=value")
+          parser.execution_stack.should == [{"statement" => "klass"},
+                                            {"and" => "and"},
+                                            {"fstatement" => "function('param').value=1"},
+                                            {"and" => "and"},
+                                            {"statement" => "fact=value"}]
+        end
       end
     end
   end

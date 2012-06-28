@@ -158,7 +158,7 @@ module MCollective
         token.should == ["fstatement", "foo(\"'bar'\")"]
       end
 
-      it "Should correctly tokenize a statement with a comparison operator in a parameter" do
+      it "should correctly tokenize a statement with a comparison operator in a parameter" do
         scanner = Scanner.new("foo('bar=baz')")
         token = scanner.get_token
         token.should == ["fstatement", "foo('bar=baz')"]
