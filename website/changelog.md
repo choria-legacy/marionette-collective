@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/07/11|Add a --display option to RPC clients that overrides the DDL display mode|15273|
 |2012/07/10|Do not add a metadata to agents created with the generator as they are now deprecated|15445|
 |2012/07/03|Correctly parse numeric and boolean data on the CLI in the rpc application|15344|
 |2012/07/03|Fix a bug related to parsing regular expressions in compound statements|15323|

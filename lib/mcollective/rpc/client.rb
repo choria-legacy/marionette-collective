@@ -55,6 +55,7 @@ module MCollective
         @reply_to = initial_options[:reply_to]
         @discovery_method = initial_options[:discovery_method]
         @discovery_options = initial_options[:discovery_options] || []
+        @force_display_mode = initial_options[:force_display_mode] || false
 
         @batch_size = Integer(initial_options[:batch_size] || 0)
         @batch_sleep_time = Float(initial_options[:batch_sleep_time] || 1)
@@ -532,6 +533,7 @@ module MCollective
          :ttl => @ttl,
          :discovery_method => @discovery_method,
          :discovery_options => @discovery_options,
+         :force_display_mode => @force_display_mode,
          :config => @config}
       end
 
