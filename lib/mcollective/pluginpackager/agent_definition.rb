@@ -49,7 +49,7 @@ module MCollective
         else
           return nil
         end
-        agent[:dependencies] << "mcollective-#{@metadata[:name]}-common" if @packagedata[:common]
+        agent[:dependencies] << "mcollective-#{@metadata[:name]}-common"
         agent
       end
 
@@ -61,14 +61,12 @@ module MCollective
 
         clientdir = File.join(@path, "application")
         bindir = File.join(@path, "bin")
-        ddldir = File.join(@path, "agent")
         aggregatedir = File.join(@path, "aggregate")
 
         client[:files] += Dir.glob(File.join(clientdir, "*")) if PluginPackager.check_dir_present clientdir
         client[:files] += Dir.glob(File.join(bindir,"*")) if PluginPackager.check_dir_present bindir
-        client[:files] += Dir.glob(File.join(ddldir, "*.ddl")) if PluginPackager.check_dir_present ddldir
         client[:files] += Dir.glob(File.join(aggregatedir, "*")) if PluginPackager.check_dir_present aggregatedir
-        client[:dependencies] << "mcollective-#{@metadata[:name]}-common" if @packagedata[:common]
+        client[:dependencies] << "mcollective-#{@metadata[:name]}-common"
         client[:files].empty? ? nil : client
       end
 
@@ -79,10 +77,17 @@ module MCollective
                   :description => "Common libraries for #{@metadata[:name]}"}
 
         commondir = File.join(@path, "util")
+        ddldir = File.join(@path, "agent")
+        common[:files] += Dir.glob(File.join(ddldir, "*.ddl")) if PluginPackager.check_dir_present ddldir
+
+        # We fail if there is no ddl file present
+        if common[:files].empty?
+          raise "cannot create package - No ddl file found in #{File.join(@path, "agent")}"
+        end
+
         common[:files] += Dir.glob(File.join(commondir,"*")) if PluginPackager.check_dir_present commondir
         common[:files].empty? ? nil : common
       end
-
     end
   end
 end
