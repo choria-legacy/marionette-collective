@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/07/02|Update vim snippets in ext for new DDL features|15273|
 |2012/06/29|Create a common package for agent packages containing the DDL for servers and clients|15268|
 |2012/06/28|Improve parsing of compound filters where the first argument is a class|15271|
 |2012/06/28|Add the ability to declare automatic result summarization in the DDL files for agents|15031|

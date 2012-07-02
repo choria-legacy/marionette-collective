@@ -4,16 +4,16 @@
 # and copy this to your snippets directory.
 #
 # Create a file .vim/ftdetect/mcollective_ddl.vim with the following:
-# 
+#
 #   au BufRead,BufNewFile *.ddl   setfiletype mcollective_ddl
 #
 # Your file type should now be correctly set automatically and editing
 # DDLs should be easier.
 #
-# Please contact R.I.Pienaar <rip@devco.net> for additions and feedback, 
+# Please contact R.I.Pienaar <rip@devco.net> for additions and feedback,
 snippet meta
 	metadata    :name        => "${1:`Filename('', 'name')`}",
-	            :description => "${2:description}", 
+	            :description => "${2:description}",
 	            :author      => "${3:`g:snips_author`}",
 	            :license     => "${4:license}",
 	            :version     => "${5:version}",
@@ -21,35 +21,60 @@ snippet meta
 	            :timeout     => ${7:run timeout}
 
 	${8}
+snippet discovery
+	discovery do
+		capabilities ${1:capability list}
+	end
+snippet	dataquery
+	dataquery :description => "${1:data query description}" do
+	    ${2}
+	end
 snippet	action
 	action "${1:action name}", :description => "${2:action description}" do
 	    ${3}
 	end
 snippet input String
 	input :${1:input name},
-	    :prompt      => "${2:prompt when asking for information}",
-	    :description => "${3:description of the input}",
-	    :type        => :string,
-	    :validation  => '${4:^.+$}',
-	    :optional    => ${5:false},
-            :maxlength   => ${6:20}
+	      :prompt      => "${2:prompt when asking for information}",
+	      :description => "${3:description of the input}",
+	      :type        => :string,
+	      :validation  => '${4:^.+$}',
+	      :optional    => ${5:false},
+	      :maxlength   => ${6:20}
 
 	${7}
 snippet input List
 	input :${1:input name},
-	    :prompt      => "${2:prompt when asking for information}",
-	    :description => "${3:description of the input}",
-	    :type        => :list,
-	    :optional    => ${4:false},
-	    :list        => [${5:list members}]
+	      :prompt      => "${2:prompt when asking for information}",
+	      :description => "${3:description of the input}",
+	      :type        => :list,
+	      :optional    => ${4:false},
+	      :list        => [${5:list members}]
 
 	${6}
+snippet input Numeric
+	input :${1:input name},
+	      :prompt      => "${2:prompt when asking for information}",
+	      :description => "${3:description of the input}",
+	      :type        => :number,
+	      :optional    => ${4:false}
+
+	${5}
+snippet input Boolean
+	input :${1:input name},
+	      :prompt      => "${2:prompt when asking for information}",
+	      :description => "${3:description of the input}",
+	      :type        => :boolean,
+	      :optional    => ${4:false}
+
+	${5}
 snippet output
 	output ${1:output name},
 	       :description => "${2:description of this output data}",
-	       :display_as => "${3:what do display}"
+	       :display_as  => "${3:what do display}",
+	       :default     => ${4:nil}
 
-	${4}
+	${5}
 snippet display Always
 	display :always
 
@@ -60,5 +85,5 @@ snippet display Only OK results
 
 snippet display Only failed results
 	display :failed
-	
+
 

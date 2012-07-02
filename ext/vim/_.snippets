@@ -1,18 +1,10 @@
 snippet mcagent
 	module MCollective
-	    module Agent
-	        class ${1:Agentname}<RPC::Agent
-	            metadata    :name        => "${2:`Filename('', 'name')`}",
-	                        :description => "${3:description}", 
-	                        :author      => "${4:`g:snips_author`}",
-	                        :license     => "${5:license}",
-	                        :version     => "${6:version}",
-	                        :url         => "${7:homepage}",
-	                        :timeout     => ${8:run timeout}
-
-	            action "${9:action name}" do
-	                ${10}
-	            end
-	        end
+	  module Agent
+	    class ${1:Agentname}<RPC::Agent
+	      action "${2:action name}" do
+	        ${3}
+	      end
 	    end
+	  end
 	end
