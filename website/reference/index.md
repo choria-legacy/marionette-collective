@@ -28,16 +28,20 @@ Index to basic users documentation.
  1. [ActiveMQ SSL](integration/activemq_ssl.html)
  1. [ActiveMQ Clusters](integration/activemq_clusters.html)
 
+### Plugin Types
+
+ 1. [Data Plugins](plugins/data.html)
+ 1. [Discovery Plugins](plugins/discovery.html)
+ 1. [Result Aggregation Plugins](plugins/aggregate.html)
+ 1. [The single application plugin system](plugins/application.html)
+ 1. [Registration](plugins/registration.html)
+ 1. [Fact Source Plugins](plugins/facts.html)
+
 ### Plugins
 
  1. [The _rpcutil_ helper Agent](plugins/rpcutil.html)
- 1. [Data Plugins](plugins/data.html)
- 1. [Discovery Plugins](plugins/discovery.html)
- 1. [The single application plugin system](plugins/application.html)
- 1. [Registration](plugins/registration.html)
  1. [AES+RSA based Security Plugin](plugins/security_aes.html)
  1. [OpenSSL based Security Plugin](plugins/security_ssl.html)
- 1. [Fact Source Plugins](plugins/facts.html)
  1. [Stomp Connector](plugins/connector_stomp.html)
  1. [ActiveMQ Connector](plugins/connector_activemq.html)
  1. [User Contributed Plugins](http://projects.puppetlabs.com/projects/mcollective-plugins/wiki)
