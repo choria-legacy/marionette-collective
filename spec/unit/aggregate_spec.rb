@@ -56,10 +56,10 @@ module MCollective
         aggregate = Aggregate.new(ddl)
 
         function = mock
-        function.expects(:process_result).with(:result, {:test => :result}).once
+        function.expects(:process_result).with(:result, {:data => {:test => :result}}).once
         function.expects(:output_name).returns(:test)
         aggregate.functions = [function]
-        aggregate.call_functions({:test => :result})
+        aggregate.call_functions({:data => {:test => :result}})
       end
     end
 

@@ -59,7 +59,7 @@ module MCollective
 
         it "should call the aggregate functions with the right data" do
           aggregate = mock
-          aggregate.expects(:call_functions).with("rspec")
+          aggregate.expects(:call_functions).with({:data => "rspec"})
 
           @client.aggregate_reply({:body => {:data => "rspec"}}, aggregate).should == aggregate
         end

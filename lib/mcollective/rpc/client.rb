@@ -651,7 +651,7 @@ module MCollective
       def aggregate_reply(reply, aggregate)
         return nil unless aggregate
 
-        aggregate.call_functions(reply[:body][:data])
+        aggregate.call_functions(reply[:body])
         return aggregate
       rescue Exception => e
         Log.error("Failed to calculate aggregate summaries for reply from %s, calculating summaries disabled: %s: %s (%s)" % [reply[:senderid], e.backtrace.first, e.to_s, e.class])
