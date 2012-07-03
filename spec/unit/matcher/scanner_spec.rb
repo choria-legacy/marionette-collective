@@ -148,7 +148,7 @@ module MCollective
         token.should == ["fstatement", "foo('')"]
       end
 
-      it "should correctly tokenise a statement with escaped qoutes in parameters" do
+      it "should correctly tokenize a statement with escaped qoutes in parameters" do
         scanner = Scanner.new("foo('\"bar\"')")
         token = scanner.get_token
         token.should == ["fstatement", "foo('\"bar\"')"]
@@ -156,6 +156,12 @@ module MCollective
         scanner = Scanner.new('foo("\'bar\'")')
         token =scanner.get_token
         token.should == ["fstatement", "foo(\"'bar'\")"]
+      end
+
+      it "should correctly tokenize a statement where a regular expression contains parentheses" do
+        scanner = Scanner.new("foo=/bar(1|2)/")
+        token = scanner.get_token
+        token.should == ["statement", "foo=/bar(1|2)/"]
       end
 
       it "should correctly tokenize a statement with a comparison operator in a parameter" do

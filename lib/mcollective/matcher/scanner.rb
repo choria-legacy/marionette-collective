@@ -97,6 +97,17 @@ module MCollective
             end
           else
             begin
+              # Identify and tokenize regular expressions by ignoring everything between /'s
+              if @arguments[j] == '/'
+                current_token_value << '/'
+                j+=1
+                while(j < @arguments.size && @arguments[j] != '/')
+                  current_token_value << @arguments[j]
+                  j += 1
+                end
+                current_token_value << @arguments[j] if @arguments[j]
+                break
+              end
               if @arguments[j+1] == "("
                 func = true
                 be_greedy = true
