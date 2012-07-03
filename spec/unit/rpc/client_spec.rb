@@ -31,6 +31,47 @@ module MCollective
         @stdout = StringIO.new
 
         @client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
+        @client.stubs(:ddl).returns(ddl)
+      end
+
+      describe "#load_aggregate_functions" do
+        it "should not load if the ddl is not set" do
+          @client.load_aggregate_functions("rspec", nil).should == nil
+        end
+
+        it "should create the aggregate for the right action" do
+          @client.ddl.expects(:action_interface).with("rspec").returns({:aggregate => []}).twice
+          Aggregate.expects(:new).with(:aggregate => []).returns("rspec aggregate")
+          @client.load_aggregate_functions("rspec", @client.ddl).should == "rspec aggregate"
+        end
+
+        it "should log and return nil on failure" do
+          @client.ddl.expects(:action_interface).raises("rspec")
+          Log.expects(:error).with(regexp_matches(/Failed to load aggregate/))
+          @client.load_aggregate_functions("rspec", @client.ddl)
+        end
+      end
+
+      describe "#aggregate_reply" do
+        it "should not call anything if the aggregate isnt set" do
+          @client.aggregate_reply([], nil).should == nil
+        end
+
+        it "should call the aggregate functions with the right data" do
+          aggregate = mock
+          aggregate.expects(:call_functions).with("rspec")
+
+          @client.aggregate_reply({:body => {:data => "rspec"}}, aggregate).should == aggregate
+        end
+
+        it "should log and return nil on failure" do
+          aggregate = mock
+          aggregate.expects(:call_functions).raises
+
+          Log.expects(:error).with(regexp_matches(/Failed to calculate aggregate summaries/))
+
+          @client.aggregate_reply({:body => {:data => "rspec"}}, aggregate).should == nil
+        end
       end
 
       describe "#collective=" do

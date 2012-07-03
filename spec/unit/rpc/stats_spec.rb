@@ -16,7 +16,7 @@ module MCollective
                      :discovered => 0,
                      :starttime => 1300031826.0,
                      :requestid => nil,
-                     :aggregate_summary => nil,
+                     :aggregate_summary => [],
                      :discovered_nodes => []}
 
         @stats = Stats.new

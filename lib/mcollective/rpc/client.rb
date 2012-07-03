@@ -637,6 +637,27 @@ module MCollective
         [result].flatten
       end
 
+      def load_aggregate_functions(action, ddl)
+        return nil unless ddl
+        return nil unless ddl.action_interface(action).keys.include?(:aggregate)
+
+        return Aggregate.new(ddl.action_interface(action))
+
+      rescue => e
+        Log.error("Failed to load aggregate functions, calculating summaries disabled: %s: %s (%s)" % [e.backtrace.first, e.to_s, e.class])
+        return nil
+      end
+
+      def aggregate_reply(reply, aggregate)
+        return nil unless aggregate
+
+        aggregate.call_functions(reply[:body][:data])
+        return aggregate
+      rescue Exception => e
+        Log.error("Failed to calculate aggregate summaries for reply from %s, calculating summaries disabled: %s: %s (%s)" % [reply[:senderid], e.backtrace.first, e.to_s, e.class])
+        return nil
+      end
+
       private
       # for requests that do not care for results just
       # return the request id and don't do any of the
@@ -785,13 +806,12 @@ module MCollective
             @stdout.print twirl.twirl(respcount, discovered.size)
           end
 
-          aggregate = Aggregate.new(@ddl.action_interface(action)) if @ddl && @ddl.action_interface(action).keys.include?(:aggregate)
+          aggregate = load_aggregate_functions(action, @ddl)
 
           @client.req(message) do |resp|
-
             respcount += 1
 
-            aggregate.call_functions(resp[:body][:data]) if aggregate
+            aggregate = aggregate_reply(resp, aggregate) if aggregate
 
             if block_given?
               process_results_with_block(action, resp, block)

@@ -25,6 +25,7 @@ module MCollective
         @failcount = 0
         @noresponsefrom = []
         @requestid = nil
+        @aggregate_summary = []
       end
 
       # returns a hash of our stats
@@ -157,7 +158,7 @@ module MCollective
         result_text = []
 
         if verbose
-            if @aggregate_summary && summarize
+            if @aggregate_summary.size > 0 && summarize
               result_text << text_for_aggregates
             else
               result_text << ""
@@ -183,7 +184,7 @@ module MCollective
           if @discovered
             @responses < @discovered ? color = :red : color = :green
 
-            if @aggregate_summary && summarize
+            if @aggregate_summary.size > 0 && summarize
               result_text << text_for_aggregates
             else
               result_text << ""
