@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/07/03|Correctly parse numeric and boolean data on the CLI in the rpc application|15344|
 |2012/07/03|Fix a bug related to parsing regular expressions in compound statements|15323|
 |2012/07/02|Update vim snippets in ext for new DDL features|15273|
 |2012/06/29|Create a common package for agent packages containing the DDL for servers and clients|15268|

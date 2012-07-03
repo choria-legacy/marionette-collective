@@ -65,17 +65,12 @@ class MCollective::Application::Rpc<MCollective::Application
 
     arguments.keys.each do |key|
       if ddl[:input].keys.include?(key)
-        begin
-          case ddl[:input][key][:type]
-            when :boolean
-              arguments[key] = DDL.string_to_boolean(arguments[key])
+        case ddl[:input][key][:type]
+          when :boolean
+            arguments[key] = MCollective::DDL.string_to_boolean(arguments[key])
 
-            when :number, :integer, :float
-              arguments[key] = DDL.string_to_number(arguments[key])
-          end
-        rescue
-          # just go on to the next key, DDL validation will figure out
-          # any inconsistancies caused by exceptions when the request is made
+          when :number, :integer, :float
+            arguments[key] = MCollective::DDL.string_to_number(arguments[key])
         end
       end
     end
