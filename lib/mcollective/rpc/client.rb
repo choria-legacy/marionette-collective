@@ -705,6 +705,8 @@ module MCollective
         if discovered.size > 0
           req = new_request(action.to_s, args)
 
+          aggregate = load_aggregate_functions(action, @ddl)
+
           if @progress && !block_given?
             twirl = Progress.new
             @stdout.puts
@@ -726,6 +728,8 @@ module MCollective
             @client.req(message) do |resp|
               respcount += 1
 
+              aggregate = aggregate_reply(resp, aggregate) if aggregate
+
               if block_given?
                 process_results_with_block(action, resp, block)
               else
@@ -743,6 +747,8 @@ module MCollective
 
             sleep sleep_time unless last_batch
           end
+
+          @stats.aggregate_summary = aggregate.summarize if aggregate
         else
           @stderr.print("\nNo request sent, we did not discover any nodes.")
         end
