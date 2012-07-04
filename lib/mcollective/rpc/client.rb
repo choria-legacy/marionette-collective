@@ -660,7 +660,11 @@ module MCollective
         return nil
       end
 
-      private
+      def rpc_result_from_reply(agent, action, reply)
+        Result.new(agent, action, {:sender => reply[:senderid], :statuscode => reply[:body][:statuscode],
+                                   :statusmsg => reply[:body][:statusmsg], :data => reply[:body][:data]})
+      end
+
       # for requests that do not care for results just
       # return the request id and don't do any of the
       # response processing.
@@ -701,7 +705,7 @@ module MCollective
         @force_direct_request = true
 
         discovered = discover
-        result = []
+        results = []
         respcount = 0
 
         if discovered.size > 0
@@ -730,14 +734,14 @@ module MCollective
             @client.req(message) do |resp|
               respcount += 1
 
-              aggregate = aggregate_reply(resp, aggregate) if aggregate
-
               if block_given?
-                process_results_with_block(action, resp, block)
+                aggregate = process_results_with_block(action, resp, block, aggregate)
               else
                 @stdout.print twirl.twirl(respcount, discovered.size) if @progress
 
-                result << process_results_without_block(resp, action)
+                result, aggregate = process_results_without_block(resp, action, aggregate)
+
+                results << result
               end
             end
 
@@ -764,7 +768,7 @@ module MCollective
         if block_given?
           return stats
         else
-          return [result].flatten
+          return [results].flatten
         end
       end
 
@@ -802,7 +806,7 @@ module MCollective
         message = Message.new(req, nil, {:agent => @agent, :type => :request, :collective => @collective, :filter => opts[:filter], :options => opts})
         message.discovered_hosts = discovered.clone
 
-        result = []
+        results = []
         respcount = 0
 
         if discovered.size > 0
@@ -819,14 +823,14 @@ module MCollective
           @client.req(message) do |resp|
             respcount += 1
 
-            aggregate = aggregate_reply(resp, aggregate) if aggregate
-
             if block_given?
-              process_results_with_block(action, resp, block)
+              aggregate = process_results_with_block(action, resp, block, aggregate)
             else
               @stdout.print twirl.twirl(respcount, discovered.size) if @progress
 
-              result << process_results_without_block(resp, action)
+              result, aggregate = process_results_without_block(resp, action, aggregate)
+
+              results << result
             end
           end
 
@@ -845,51 +849,55 @@ module MCollective
         if block_given?
           return stats
         else
-          return [result].flatten
+          return [results].flatten
         end
       end
 
       # Handles result sets that has no block associated, sets fails and ok
       # in the stats object and return a hash of the response to send to the
       # caller
-      def process_results_without_block(resp, action)
+      def process_results_without_block(resp, action, aggregate)
         @stats.node_responded(resp[:senderid])
+
+        result = rpc_result_from_reply(@agent, action, resp)
+        aggregate = aggregate_reply(result, aggregate) if aggregate
 
         if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
           @stats.ok if resp[:body][:statuscode] == 0
           @stats.fail if resp[:body][:statuscode] == 1
-
-          return Result.new(@agent, action, {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode],
-                              :statusmsg => resp[:body][:statusmsg], :data => resp[:body][:data]})
         else
           @stats.fail
-
-          return Result.new(@agent, action, {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode],
-                              :statusmsg => resp[:body][:statusmsg], :data => nil})
         end
+
+        [result, aggregate]
       end
 
       # process client requests by calling a block on each result
       # in this mode we do not do anything fancy with the result
       # objects and we raise exceptions if there are problems with
       # the data
-      def process_results_with_block(action, resp, block)
+      def process_results_with_block(action, resp, block, aggregate)
         @stats.node_responded(resp[:senderid])
 
+        result = rpc_result_from_reply(@agent, action, resp)
+        aggregate = aggregate_reply(result, aggregate) if aggregate
+
         if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
+          @stats.ok if resp[:body][:statuscode] == 0
+          @stats.fail if resp[:body][:statuscode] == 1
           @stats.time_block_execution :start
 
           case block.arity
             when 1
               block.call(resp)
             when 2
-              rpcresp = Result.new(@agent, action, {:sender => resp[:senderid], :statuscode => resp[:body][:statuscode],
-                                                    :statusmsg => resp[:body][:statusmsg], :data => resp[:body][:data]})
-              block.call(resp, rpcresp)
+              block.call(resp, result)
           end
 
           @stats.time_block_execution :end
         else
+          @stats.fail
+
           case resp[:body][:statuscode]
             when 2
               raise UnknownRPCAction, resp[:body][:statusmsg]
@@ -901,6 +909,8 @@ module MCollective
               raise UnknownRPCError, resp[:body][:statusmsg]
           end
         end
+
+        return aggregate
       end
     end
   end

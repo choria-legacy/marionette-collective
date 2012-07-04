@@ -34,6 +34,97 @@ module MCollective
         @client.stubs(:ddl).returns(ddl)
       end
 
+      describe "#process_results_with_block" do
+        it "should inform the stats object correctly for passed requests" do
+          response = {:senderid => "rspec", :body => {:statuscode => 0}}
+
+          @client.stubs(:rpc_result_from_reply).with("foo", "rspec", response)
+          @client.stats.expects(:ok)
+          @client.stats.expects(:node_responded).with("rspec")
+          @client.stats.expects(:time_block_execution).with(:start)
+          @client.stats.expects(:time_block_execution).with(:end)
+          @client.expects(:aggregate_reply).returns("aggregate stub")
+
+          blk = Proc.new {}
+
+          @client.process_results_with_block("rspec", response, blk, "").should == "aggregate stub"
+        end
+
+        it "should inform the stats object correctly for failed requests" do
+          @client.stats.expects(:fail)
+          @client.stats.expects(:node_responded).with("rspec")
+
+          response = {:senderid => "rspec", :body => {:statuscode => 1}}
+          blk = Proc.new {}
+
+          @client.stubs(:rpc_result_from_reply).with("foo", "rspec", response)
+          @client.process_results_with_block("rspec", response, blk, nil)
+        end
+
+        it "should raise correct exceptions on failure" do
+          blk = Proc.new {}
+
+          @client.stubs(:rpc_result_from_reply)
+
+          [[2, UnknownRPCAction], [3, MissingRPCData], [4, InvalidRPCData], [5, UnknownRPCError]].each do |err|
+            response = {:senderid => "rspec", :body => {:statuscode => err[0]}}
+
+            expect { @client.process_results_with_block("rspec", response, blk, nil) }.to raise_error(err[1])
+          end
+        end
+
+        it "should pass raw results for single arity blocks" do
+          response = {:senderid => "rspec", :body => {:statuscode => 1}}
+          blk = Proc.new {|r| r.should == response}
+
+          @client.stubs(:rpc_result_from_reply).with("foo", "rspec", response)
+          @client.process_results_with_block("rspec", response, blk, nil)
+        end
+
+        it "should pass raw and rpc style results for 2 arity blocks" do
+          response = {:senderid => "rspec", :body => {:statuscode => 1}}
+          blk = Proc.new do |r, s|
+            r.should == response
+            s.should.class == RPC::Result
+          end
+
+          @client.process_results_with_block("rspec", response, blk, nil)
+        end
+      end
+
+      describe "#process_results_without_block" do
+        it "should inform the stats object correctly for passed requests" do
+          response = {:senderid => "rspec", :body => {:statuscode => 0}}
+          @client.stubs(:rpc_result_from_reply).with("foo", "rspec", response)
+          @client.stats.expects(:ok)
+          @client.stats.expects(:node_responded).with("rspec")
+          @client.process_results_without_block(response, "rspec", nil)
+        end
+
+        it "should inform the stats object correctly for failed requests" do
+          @client.stats.expects(:fail).twice
+          @client.stats.expects(:node_responded).with("rspec").twice
+
+          response = {:senderid => "rspec", :body => {:statuscode => 1}}
+          @client.stubs(:rpc_result_from_reply).with("foo", "rspec", response)
+          @client.process_results_without_block(response, "rspec", nil)
+
+          response = {:senderid => "rspec", :body => {:statuscode => 3}}
+          @client.stubs(:rpc_result_from_reply).with("foo", "rspec", response)
+          @client.process_results_without_block(response, "rspec", nil)
+        end
+
+        it "should return the result and the aggregate" do
+          @client.expects(:aggregate_reply).returns("aggregate stub")
+
+          response = {:senderid => "rspec", :body => {:statuscode => 0}}
+          result = @client.rpc_result_from_reply("foo", "rspec", response)
+
+          @client.stubs(:rpc_result_from_reply).with("foo", "rspec", response).returns(result)
+          @client.process_results_without_block(response, "rspec", "").should == [result, "aggregate stub"]
+        end
+      end
+
       describe "#load_aggregate_functions" do
         it "should not load if the ddl is not set" do
           @client.load_aggregate_functions("rspec", nil).should == nil
@@ -54,14 +145,16 @@ module MCollective
 
       describe "#aggregate_reply" do
         it "should not call anything if the aggregate isnt set" do
-          @client.aggregate_reply([], nil).should == nil
+          @client.aggregate_reply(nil, nil).should == nil
         end
 
         it "should call the aggregate functions with the right data" do
-          aggregate = mock
-          aggregate.expects(:call_functions).with({:body => {:data => "rspec"}})
+          result = @client.rpc_result_from_reply("rspec", "rspec", {:body => {:data => "rspec"}})
 
-          @client.aggregate_reply({:body => {:data => "rspec"}}, aggregate).should == aggregate
+          aggregate = mock
+          aggregate.expects(:call_functions).with(result).returns(aggregate)
+
+          @client.aggregate_reply(result, aggregate).should == aggregate
         end
 
         it "should log and return nil on failure" do
@@ -70,7 +163,7 @@ module MCollective
 
           Log.expects(:error).with(regexp_matches(/Failed to calculate aggregate summaries/))
 
-          @client.aggregate_reply({:body => {:data => "rspec"}}, aggregate).should == nil
+          @client.aggregate_reply({}, aggregate).should == nil
         end
       end
 
@@ -443,7 +536,7 @@ module MCollective
           @coreclient.stubs(:stats).returns stats
           @coreclient.stubs(:timeout_for_compound_filter).returns(0)
 
-          client.expects(:process_results_with_block).with("foo", "result", instance_of(Proc)).times(10)
+          client.expects(:process_results_with_block).with("foo", "result", instance_of(Proc), nil).times(10)
 
           result = client.send(:call_agent_batched, "foo", {}, {}, 1, 1) { }
           result[:requestid].should == "823a3419a0975c3facbde121f72ab61f"
@@ -472,7 +565,7 @@ module MCollective
           @coreclient.stubs(:stats).returns stats
           @coreclient.stubs(:timeout_for_compound_filter).returns(0)
 
-          client.expects(:process_results_without_block).with("result", "foo").returns("rspec").times(10)
+          client.expects(:process_results_without_block).with("result", "foo", nil).returns("rspec").times(10)
 
           client.send(:call_agent_batched, "foo", {}, {}, 1, 1).should == ["rspec", "rspec", "rspec", "rspec", "rspec", "rspec", "rspec", "rspec", "rspec", "rspec"]
 

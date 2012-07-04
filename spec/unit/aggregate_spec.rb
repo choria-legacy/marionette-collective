@@ -55,11 +55,15 @@ module MCollective
         Aggregate.any_instance.stubs(:create_functions)
         aggregate = Aggregate.new(ddl)
 
+        result = RPC::Result.new("rspec", "rspec", :sender => "rspec", :statuscode => 0, :statusmsg => "rspec", :data => {:test => :result})
+
         function = mock
-        function.expects(:process_result).with(:result, {:body => {:data => {:test => :result}}}).once
+        function.expects(:process_result).with(:result, result).once
         function.expects(:output_name).returns(:test)
+
         aggregate.functions = [function]
-        aggregate.call_functions({:body => {:data => {:test => :result}}})
+
+        aggregate.call_functions(result)
       end
     end
 

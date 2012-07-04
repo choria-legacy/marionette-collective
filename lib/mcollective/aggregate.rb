@@ -35,7 +35,7 @@ module MCollective
     def call_functions(reply)
       @functions.each do |function|
         Log.debug("Calling aggregate function #{function} for result")
-        function.process_result(reply[:body][:data][function.output_name], reply)
+        function.process_result(reply[:data][function.output_name], reply)
       end
     end
 
