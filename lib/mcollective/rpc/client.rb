@@ -600,8 +600,6 @@ module MCollective
       #     for the generator, and reset afterwards
       def pick_nodes_from_discovered(count)
         if count =~ /%$/
-          srand(@limit_seed) if @limit_seed
-
           pct = Integer((discover.size * (count.to_f / 100)))
           pct == 0 ? count = 1 : count = pct
         else
@@ -622,17 +620,21 @@ module MCollective
           # once per discovery cycle and not actually return the
           # right nodes.
           haystack = discover.clone
-          haystack.sort! if @limit_seed
+
+          if @limit_seed
+            haystack.sort!
+            srand(@limit_seed)
+          end
 
           count.times do
             rnd = rand(haystack.size)
             result << haystack.delete_at(rnd)
           end
-        end
 
-        # Reset random number generator to fresh seed
-        # As our seed from options is most likely short
-        srand if @limit_seed
+          # Reset random number generator to fresh seed
+          # As our seed from options is most likely short
+          srand if @limit_seed
+        end
 
         [result].flatten
       end

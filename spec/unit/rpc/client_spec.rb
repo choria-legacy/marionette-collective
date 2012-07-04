@@ -281,6 +281,8 @@ module MCollective
           client.limit_method = :random
           client.pick_nodes_from_discovered("30%").should == ["3", "7", "8"]
           client.pick_nodes_from_discovered("30%").should == ["3", "7", "8"]
+          client.pick_nodes_from_discovered("3").should == ["3", "7", "8"]
+          client.pick_nodes_from_discovered("3").should == ["3", "7", "8"]
         end
 
         it "should correctly pick a numeric amount of discovered nodes" do
