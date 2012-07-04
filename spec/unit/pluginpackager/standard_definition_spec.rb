@@ -6,7 +6,7 @@ module MCollective
   module PluginPackager
     describe StandardDefinition do
       before :each do
-        PluginPackager.expects(:get_metadata).once.returns({:name => "foo"})
+        PluginPackager.expects(:get_metadata).once.returns({:name => "foo", :version => 1})
       end
 
       describe "#initialize" do
@@ -61,7 +61,7 @@ module MCollective
           Dir.expects(:glob).with("./testplugin/*").returns(["file.rb"])
           plugin = StandardDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "testplugin")
           plugin.packagedata["testplugin"][:files].should == ["file.rb"]
-          plugin.packagedata["testplugin"][:dependencies].should == ["mcollective", "mcollective-foo-common"]
+          plugin.packagedata["testplugin"][:dependencies].should == ["mcollective", ["mcollective-foo-common", 1]]
         end
       end
 
