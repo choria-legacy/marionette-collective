@@ -3,7 +3,7 @@ layout: default
 title: Using With Chef
 toc: false
 ---
-[FactsOpsCodeOhai]: http://code.google.com/p/mcollective-plugins/wiki/FactsOpsCodeOhai
+[FactsOpsCodeOhai]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/FactsOhai
 
 If you're a Chef user you are supported in both facts and classes filters.
 

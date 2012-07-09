@@ -12,11 +12,11 @@ toc: false
 [broadcast paradigm]: /mcollective/reference/basic/messageflow.html
 [UsingWithPuppet]: /mcollective/reference/integration/puppet.html
 [UsingWithChef]: /mcollective/reference/integration/chef.html
-[Facter]: http://code.google.com/p/mcollective-plugins/wiki/FactsRLFacter
-[Ohai]: http://code.google.com/p/mcollective-plugins/wiki/FactsOpsCodeOhai
+[Facter]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/FactsFacterYAML
+[Ohai]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/FactsOhai
 [WritingFactsPlugins]: /mcollective/reference/plugins/facts.html
 [NodeReports]: /mcollective/reference/ui/nodereports.html
-[PluginsSite]: http://code.google.com/p/mcollective-plugins/
+[PluginsSite]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki
 [SimpleRPCIntroduction]: /mcollective/simplerpc/
 [SecurityOverview]: /mcollective/security.html
 [SecurityWithActiveMQ]: /mcollective/reference/integration/activemq_security.html

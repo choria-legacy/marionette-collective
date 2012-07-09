@@ -19,7 +19,7 @@ title: Getting Started
 [AESSecurityPlugin]: /mcollective/reference/plugins/security_aes.html
 [ConnectorStomp]: /mcollective/reference/plugins/connector_stomp.html
 [MessageFlowCast]: /mcollective/screencasts.html#message_flow
-[Plugins]: http://code.google.com/p/mcollective-plugins/
+[Plugins]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki
 [RedHatGuide]: gettingstarted_redhat.html
 [DebianGuide]: gettingstarted_debian.html
 

@@ -3,9 +3,9 @@ layout: default
 title: Using with Puppet
 toc: false
 ---
-[FactsRLFacter]: http://code.google.com/p/mcollective-plugins/wiki/FactsRLFacter
+[FactsRLFacter]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/FactsFacterYAML
 [PluginSync]: http://docs.reductivelabs.com/guides/plugins_in_modules.html
-[AgentPuppetd]: http://code.google.com/p/mcollective-plugins/wiki/AgentPuppetd
+[AgentPuppetd]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/AgentPuppetd
 [AgentPuppetca]: http://github.com/puppetlabs/mcollective-plugins/tree/master/agent/puppetca/
 [AgentPuppetRal]: http://github.com/puppetlabs/mcollective-plugins/tree/master/agent/puppetral/
 [PuppetCommander]: http://github.com/puppetlabs/mcollective-plugins/tree/master/agent/puppetd/commander/
@@ -15,8 +15,8 @@ toc: false
 [SchedulingPuppet]: http://www.devco.net/archives/2010/03/17/scheduling_puppet_with_mcollective.php
 [ManagingPuppetd]: http://www.devco.net/archives/2009/11/30/managing_puppetd_with_mcollective.php
 [CloudBootstrap]: http://vuksan.com/blog/2010/07/28/bootstraping-your-cloud-environment-with-puppet-and-mcollective/
-[ServiceAgent]: http://code.google.com/p/mcollective-plugins/wiki/AgentService
-[PackageAgent]: http://code.google.com/p/mcollective-plugins/wiki/AgentPackage
+[ServiceAgent]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/AgentService
+[PackageAgent]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/AgentPackage
 [Facter2YAML]: http://www.semicomplete.com/blog/geekery/puppet-facts-into-mcollective.html
 
 If you're a Puppet user you are supported in both facts and classes filters.
