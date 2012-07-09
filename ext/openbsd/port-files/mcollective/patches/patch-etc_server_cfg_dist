@@ -4,7 +4,7 @@ $OpenBSD$
 @@ -1,5 +1,5 @@
  topicprefix = /topic/mcollective
 -libdir = /usr/libexec/mcollective
-+libdir = /usr/local/share/mcollective/plugins 
++libdir = ${PREFIX}/share/mcollective/plugins 
  logfile = /var/log/mcollective.log
  loglevel = info
  daemonize = 1
