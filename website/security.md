@@ -15,7 +15,7 @@ toc: false
 [ActiveMQ STOMP]: http://activemq.apache.org/stomp.html
 [MCollective STOMP Connector]: /mcollective/reference/plugins/connector_stomp.html
 [ActionPolicy]: http://code.google.com/p/mcollective-plugins/wiki/ActionPolicy
-[CentralAudit]: http://code.google.com/p/mcollective-plugins/wiki/AuditCentralRPCLog
+[CentralAudit]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/AuditCentralRPC
 [Subcollectives]: reference/basic/subcollectives.html
 
 
