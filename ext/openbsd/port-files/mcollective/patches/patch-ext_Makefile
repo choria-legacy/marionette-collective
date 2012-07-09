@@ -1,6 +1,7 @@
-$OpenBSD$
---- ext/Makefile.orig	Tue Aug 24 16:26:59 2010
-+++ ext/Makefile	Tue Aug 24 16:27:08 2010
+diff --git ext/Makefile ext/Makefile
+index 029fda4..638d7a5 100644
+--- ext/Makefile
++++ ext/Makefile
 @@ -1,6 +1,5 @@
  #!/usr/bin/make -f
  
@@ -8,16 +9,20 @@ $OpenBSD$
  
  build:
  
-@@ -9,34 +8,30 @@ clean:
+@@ -9,36 +8,34 @@ clean:
  install: install-bin install-lib install-conf install-plugins install-doc
  
  install-bin:
 -	install -d $(DESTDIR)/usr/sbin
--	cp mc-* $(DESTDIR)/usr/sbin
--	cp mcollectived.rb $(DESTDIR)/usr/sbin/mcollectived
+-	install -d $(DESTDIR)/usr/bin
+-	cp bin/mc-* $(DESTDIR)/usr/sbin
+-	cp bin/mco $(DESTDIR)/usr/bin
+-	cp bin/mcollectived $(DESTDIR)/usr/sbin/mcollectived
 +	install -d $(PREFIX)/sbin
-+	cp mc-* $(PREFIX)/sbin
-+	cp mcollectived.rb $(PREFIX)/sbin/mcollectived
++	install -d $(PREFIX)/bin
++	cp bin/mc-* $(PREFIX)/sbin
++	cp bin/mco $(PREFIX)/bin
++	cp bin/mcollectived $(PREFIX)/sbin/mcollectived
  
  install-lib:
 -	install -d $(DESTDIR)/usr/lib/ruby/1.8/
@@ -33,7 +38,9 @@ $OpenBSD$
 -	rm $(DESTDIR)/etc/mcollective/ssl/PLACEHOLDER
 -	rm $(DESTDIR)/etc/mcollective/ssl/clients/PLACEHOLDER
 +	install -d $(PREFIX)/share/examples/mcollective/
-+	cp -r etc/* $(PREFIX)/share/examples/mcollective/
++	cp -R etc/* $(PREFIX)/share/examples/mcollective/
++	rm $(PREFIX)/share/examples/mcollective/ssl/PLACEHOLDER
++	rm $(PREFIX)/share/examples/mcollective/ssl/clients/PLACEHOLDER
  
  install-plugins:
 -	install -d $(DESTDIR)/usr/share/mcollective/
@@ -55,6 +62,6 @@ $OpenBSD$
 +	rm -f $(PREFIX)/sbin/mcollectived
 +	rm -rf $(PREFIX)/lib/ruby/1.8/mcollective*
 +	rm -rf $(PREFIX)/share/mcollective
-+	rm -rf $(PREFIX)/etc/mcollective
++	rm -rf $(PREFIX)/share/examples/mcollective
  
  .PHONY: build clean install uninstall

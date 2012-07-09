@@ -1,12 +1,12 @@
 PKG_ARCH=	*
 COMMENT=	The Marionette Collective	
 
-DISTNAME=	mcollective-0.4.9
+DISTNAME=	mcollective-2.1.0
 
 CATEGORIES=	sysutils
 
-HOMEPAGE=	http://code.google.com/p/mcollective/
-MASTER_SITES=	http://mcollective.googlecode.com/files/
+HOMEPAGE=	http://puppetlabs.com/mcollective/
+MASTER_SITES=	http://puppetlabs.com/downloads/mcollective/
 EXTRACT_SUFX=	.tgz
 
 # GFDL
@@ -20,5 +20,9 @@ NO_REGRESS=	Yes
 
 # makefile is in ext/
 MAKE_FILE=ext/Makefile
+
+post-patch:
+	${SUBST_CMD} ${WRKSRC}/etc/server.cfg.dist
+	rm -f ${WRKSRC}/etc/server.cfg.dist.{orig,beforesubst}
 
 .include <bsd.port.mk>
