@@ -33,11 +33,6 @@ module MCollective
       def create_plugin_content
         content_text = ""
 
-        # Add metadata to agent file
-        create_metadata_string.each_line do |line|
-          content_text += "%6s%s" % [" ", line ]
-        end
-
         # Add actions to agent file
         @actions.each_with_index do |action, i|
           content_text +=  "%6s%s" % [" ", "action \"#{action}\" do\n"]
