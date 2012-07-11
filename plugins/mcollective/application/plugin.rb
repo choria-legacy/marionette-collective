@@ -130,7 +130,7 @@ mco plugin package [options] <directory>
         configuration[:target] = ARGV.delete_at(0) || "."
 
         if configuration[:action] == "generate"
-          unless ARGV[0].match(/(actions|outputs)=(.+)/i)
+          unless ARGV[0] && ARGV[0].match(/(actions|outputs)=(.+)/i)
             unless configuration[:pluginname]
               configuration[:pluginname] = ARGV.delete_at(0)
             else
@@ -158,6 +158,8 @@ mco plugin package [options] <directory>
 
     # Generate a plugin skeleton
     def generate_command
+      raise "undefined plugin type. cannot generate plugin. valid types are 'agent' and 'data'" if configuration["target"] == '.' 
+      
       unless configuration[:pluginname]
         puts "No plugin name specified. Using 'new_plugin'"
         configuration[:pluginname] = "new_plugin"
