@@ -54,6 +54,11 @@ module MCollective
         if activate_agent?(agentname)
           PluginManager << {:type => "#{agentname}_agent", :class => classname, :single_instance => single_instance}
 
+          # Attempt to instantiate the agent once so any validation and hooks get run
+          # this does a basic sanity check on the agent as a whole, if this fails it
+          # will be removed from the plugin list
+          PluginManager["#{agentname}_agent"]
+
           Util.subscribe(Util.make_subscriptions(agentname, :broadcast)) unless @@agents.include?(agentname)
 
           @@agents[agentname] = {:file => agentfile}
