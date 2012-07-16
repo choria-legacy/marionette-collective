@@ -53,7 +53,7 @@ module MCollective
         @output_format = initial_options[:output_format] || :console
         @force_direct_request = false
         @reply_to = initial_options[:reply_to]
-        @discovery_method = initial_options[:discovery_method]
+        @discovery_method = initial_options[:discovery_method] || Config.instance.default_discovery_method
         @discovery_options = initial_options[:discovery_options] || []
         @force_display_mode = initial_options[:force_display_mode] || false
 
