@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/07/16|Improve error handling in generate application|15473|
 |*2012/07/12*|*Release 2.1.1*|15379|
 |2012/07/11|Add a --display option to RPC clients that overrides the DDL display mode|15273|
 |2012/07/10|Do not add a metadata to agents created with the generator as they are now deprecated|15445|
