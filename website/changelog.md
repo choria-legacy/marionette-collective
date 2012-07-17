@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/07/17|Update the *name* field in the rpcutil DDL for consistency|15558
 |2012/07/17|Validate requests against the DDL in the agents prior to authorization or calling actions|15557|
 |2012/07/17|Refactor the single big DDL class into a class per type of plugin|15109|
 |2012/07/16|Default to the configured default in the RPC client when nothing is supplied|15506|
@@ -21,7 +22,7 @@ toc: false
 |2012/06/29|Create a common package for agent packages containing the DDL for servers and clients|15268|
 |2012/06/28|Improve parsing of compound filters where the first argument is a class|15271|
 |2012/06/28|Add the ability to declare automatic result summarization in the DDL files for agents|15031|
-|2012/06/26|Surpress subscribing to reply queues when no reply is expected|15226|
+|2012/06/26|Suppress subscribing to reply queues when no reply is expected|15226|
 |2012/06/25|Batched RPC requests will now all have the same requestid|15195|
 |2012/06/25|Record the request id on M::Client and in the RPC client stats|15194|
 |2012/06/24|Use UUIDs for the request id rather than our own weak implementation|15191|

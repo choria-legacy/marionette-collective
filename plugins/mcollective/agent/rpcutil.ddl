@@ -1,4 +1,4 @@
-metadata    :name        => "Utilities and Helpers for SimpleRPC Agents",
+metadata    :name        => "rpcutil",
             :description => "General helpful actions that expose stats and internals to SimpleRPC clients",
             :author      => "R.I.Pienaar <rip@devco.net>",
             :license     => "Apache License, Version 2.0",
