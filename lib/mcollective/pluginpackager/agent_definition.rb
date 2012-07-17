@@ -78,7 +78,10 @@ module MCollective
 
         commondir = File.join(@path, "util")
         ddldir = File.join(@path, "agent")
+        validatordir = File.join(@path, "validator")
+
         common[:files] += Dir.glob(File.join(ddldir, "*.ddl")) if PluginPackager.check_dir_present ddldir
+        common[:files] += Dir.glob(File.join(validatordir, "*")) if PluginPackager.check_dir_present validatordir
 
         # We fail if there is no ddl file present
         if common[:files].empty?

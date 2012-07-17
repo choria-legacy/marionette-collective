@@ -87,6 +87,7 @@ module MCollective
           AgentDefinition.any_instance.expects(:client)
 
           PluginPackager.expects(:check_dir_present).with("./util").returns(false)
+          PluginPackager.expects(:check_dir_present).with("./validator").returns(false)
           PluginPackager.expects(:check_dir_present).with("./agent").returns(true)
           Dir.stubs(:glob).returns(["file.rb"])
           common = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
@@ -99,14 +100,17 @@ module MCollective
 
           PluginPackager.expects(:check_dir_present).with("./util").returns(true)
           PluginPackager.expects(:check_dir_present).with("./agent").returns(true)
+          PluginPackager.expects(:check_dir_present).with("./validator").returns(true)
           Dir.stubs(:glob).with("./util/*").returns(["file.rb"])
           Dir.stubs(:glob).with("./agent/*.ddl").returns(["ddl.rb"])
+          Dir.stubs(:glob).with("./validator/*").returns(["validator.rb"])
           common = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
-          common.packagedata[:common][:files].should == ["ddl.rb", "file.rb"]
+          common.packagedata[:common][:files].should == ["ddl.rb", "validator.rb", "file.rb"]
         end
 
         it "should raise an exception if the ddl file isn't present" do
           PluginPackager.expects(:check_dir_present).with("./agent").returns(false)
+          PluginPackager.expects(:check_dir_present).with("./validator").returns(false)
           expect{
             common = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
           }.to raise_error RuntimeError, "cannot create package - No ddl file found in ./agent"

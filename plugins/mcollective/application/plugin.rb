@@ -158,8 +158,8 @@ mco plugin package [options] <directory>
 
     # Generate a plugin skeleton
     def generate_command
-      raise "undefined plugin type. cannot generate plugin. valid types are 'agent' and 'data'" if configuration["target"] == '.' 
-      
+      raise "undefined plugin type. cannot generate plugin. valid types are 'agent' and 'data'" if configuration["target"] == '.'
+
       unless configuration[:pluginname]
         puts "No plugin name specified. Using 'new_plugin'"
         configuration[:pluginname] = "new_plugin"
@@ -199,9 +199,9 @@ mco plugin package [options] <directory>
     # called plugin_plugintype for example facter_facts etc so
     # this will first try the old way then the new way.
     def load_plugin_ddl(plugin, type)
-      [plugin, "#{plugin}_#{type}"].each do |plugin|
-        ddl = DDL.new(plugin, type, false)
-        if ddl.findddlfile(plugin, type)
+      [plugin, "#{plugin}_#{type}"].each do |p|
+        ddl = DDL.new(p, type, false)
+        if ddl.findddlfile(p, type)
           ddl.loadddlfile
           return ddl
         end
@@ -210,11 +210,11 @@ mco plugin package [options] <directory>
 
     # Show application list and plugin help
     def doc_command
-      known_plugin_types = [["Agents", :agent], ["Data Queries", :data], ["Discovery Methods", :discovery]]
+      known_plugin_types = [["Agents", :agent], ["Data Queries", :data], ["Discovery Methods", :discovery], ["Validator Plugins", :validator]]
 
       if configuration.include?(:target) && configuration[:target] != "."
         if configuration[:target] =~ /^(.+?)\/(.+)$/
-          ddl = load_plugin_ddl($1.to_sym, $2)
+          ddl = load_plugin_ddl($2.to_sym, $1)
         else
           found_plugin_type = nil
 
@@ -244,7 +244,7 @@ mco plugin package [options] <directory>
           PluginManager.find(plugin_type[1], "ddl").each do |ddl|
             help = DDL.new(ddl, plugin_type[1])
             pluginname = ddl.gsub(/_#{plugin_type[1]}$/, "")
-            puts "  %-15s %s" % [pluginname, help.meta[:description]]
+            puts "  %-25s %s" % [pluginname, help.meta[:description]]
           end
 
           puts
@@ -291,7 +291,7 @@ mco plugin package [options] <directory>
     # To keep it simple we limit it to one type per target directory.
     def identify_plugin
       plugintype = Dir.glob(File.join(configuration[:target], "*")).select do |file|
-        File.directory?(file) && file.match(/(connector|facts|registration|security|audit|pluginpackager|data|discovery)/)
+        File.directory?(file) && file.match(/(connector|facts|registration|security|audit|pluginpackager|data|discovery|validator)/)
       end
 
       raise RuntimeError, "more than one plugin type detected in directory" if plugintype.size > 1

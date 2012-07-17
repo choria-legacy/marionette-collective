@@ -10,6 +10,7 @@ title: Data Definition Language
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
 [DDLScreenCast]: http://mcollective.blip.tv/file/3799653
 [RPCUtil]: /mcollective/reference/plugins/rpcutil.html
+[ValidatorPlugins]: /mcollective/reference/plugins/validator.html
 
 As with other remote procedure invocation systems MCollective has a DDL that defines what remote methods are available, what inputs they take and what outputs they generate.
 
@@ -147,7 +148,7 @@ ACTIONS:
 The input block has a mandatory *:optional* field, when true it would be ok if a client attempts to call the agent without this input supplied.  If it is supplied though it will be validated.
 
 ### Types of Input
-As you see above the input block has *:type* option, types can be *:string*, *:list*, *:boolean* or *:any* today, we intend to expand this to other validations.
+As you see above the input block has *:type* option, types can be *:string*, *:list*, *:boolean*, *:integer*, *:float* or *:number*
 
 #### :string type
 The string type validates initially that the input is infact a String, then it validates the length of the input and finally matches the supplied Regular Expression.
@@ -155,6 +156,8 @@ The string type validates initially that the input is infact a String, then it v
 Both *:validation* and *:maxlength* are required arguments for the string type of input.
 
 If you want to allow unlimited length text you can make *:maxlength => 0* but use this with care.
+
+As of version 2.2.0 a new plugin type called [Validator Plugins][ValidatorPlugins] exist that allow you to supply your own validations for *:string* types.
 
 #### :list type
 List types provide a list of valid options and only those will be allowed, see an example below:

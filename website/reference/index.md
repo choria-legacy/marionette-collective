@@ -36,6 +36,7 @@ Index to basic users documentation.
  1. [The single application plugin system](plugins/application.html)
  1. [Registration](plugins/registration.html)
  1. [Fact Source Plugins](plugins/facts.html)
+ 1. [Validator Plugins](plugins/validator.html)
 
 ### Plugins
 

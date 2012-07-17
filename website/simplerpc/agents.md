@@ -10,6 +10,7 @@ title: Writing SimpleRPC Agents
 [DDL]: /mcollective/reference/plugins/ddl.html
 [WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
 [RPCUtil]: /mcollective/reference/plugins/rpcutil.html
+[ValidatorPlugins]: /mcollective/reference/plugins/validator.html
 
 Simple RPC works because it makes a lot of assumptions about how you write agents, we'll try to capture those assumptions here and show you how to apply them to our Helloworld agent.
 
@@ -217,6 +218,8 @@ Additionally if can escape strings being passed to a shell, escaping is done in 
 {% highlight ruby linenos %}
    safe = shellescape(request[:foo])
 {% endhighlight %}
+
+As of version 2.2.0 you can add your own types of validation using [Validator Plugins][ValidatorPlugins].
 
 ## Agent Configuration
 

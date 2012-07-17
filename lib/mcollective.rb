@@ -25,6 +25,7 @@ require 'mcollective/cache'
 module MCollective
   # Exceptions for the RPC system
   class DDLValidationError<RuntimeError;end
+  class ValidatorError<RuntimeError; end
   class MsgDoesNotMatchRequestID < RuntimeError; end
   class MsgTTLExpired<RuntimeError;end
   class NotTargettedAtUs<RuntimeError;end
@@ -65,6 +66,7 @@ module MCollective
   autoload :Shell, "mcollective/shell"
   autoload :SSL, "mcollective/ssl"
   autoload :Util, "mcollective/util"
+  autoload :Validator, "mcollective/validator"
   autoload :Vendor, "mcollective/vendor"
 
   MCollective::Vendor.load_vendored

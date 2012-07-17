@@ -53,7 +53,12 @@ module MCollective
         when :agent
           return "rpc-help.erb"
         else
-          return "#{@plugintype}-help.erb"
+          if File.exists?(File.join(@config.helptemplatedir,"#{@plugintype}-help.erb"))
+            return "#{@plugintype}-help.erb"
+          else
+            # Default help template gets loaded if plugintype-help does not exist.
+            return "metadata-help.erb"
+          end
         end
       end
 
@@ -71,7 +76,6 @@ module MCollective
 
         @config.libdir.each do |libdir|
           ddlfile = File.join([libdir, "mcollective", ddltype.to_s, "#{ddlname}.ddl"])
-
           if File.exist?(ddlfile)
             Log.debug("Found #{ddlname} ddl at #{ddlfile}")
             return ddlfile
@@ -90,44 +94,29 @@ module MCollective
       # :string can have maxlength and regex.  A maxlength of 0 will bypasss checks
       # :list has a array of valid values
       def validate_input_argument(input, key, argument)
+        Validator.load_validators
+
         case input[key][:type]
-          when :string
-            raise DDLValidationError, "Input #{key} should be a string for plugin #{meta[:name]}" unless argument.is_a?(String)
+        when :string
+          Validator.validate(argument, :string)
 
-            if input[key][:maxlength].to_i > 0
-              if argument.size > input[key][:maxlength].to_i
-                raise DDLValidationError, "Input #{key} is longer than #{input[key][:maxlength]} character(s) for plugin #{meta[:name]}"
-              end
-            end
+          Validator.length(argument, input[key][:maxlength].to_i)
 
-            unless argument.match(Regexp.new(input[key][:validation]))
-              raise DDLValidationError, "Input #{key} does not match validation regex #{input[key][:validation]} for plugin #{meta[:name]}"
-            end
+          Validator.validate(argument, input[key][:validation])
 
-          when :list
-            unless input[key][:list].include?(argument)
-              raise DDLValidationError, "Input #{key} doesn't match list #{input[key][:list].join(', ')} for plugin #{meta[:name]}"
-            end
+        when :list
+          Validator.validate(argument, input[key][:list])
 
-          when :boolean
-            unless [TrueClass, FalseClass].include?(argument.class)
-              raise DDLValidationError, "Input #{key} should be a boolean for plugin #{meta[:name]}"
-            end
-
-          when :integer
-            raise DDLValidationError, "Input #{key} should be a integer for plugin #{meta[:name]}" unless argument.is_a?(Fixnum)
-
-          when :float
-            raise DDLValidationError, "Input #{key} should be a floating point number for plugin #{meta[:name]}" unless argument.is_a?(Float)
-
-          when :number
-            raise DDLValidationError, "Input #{key} should be a number for plugin #{meta[:name]}" unless argument.is_a?(Numeric)
+        else
+          Validator.validate(argument, input[key][:type])
         end
 
         return true
+      rescue => e
+        raise DDLValidationError, "Cannot validate input: %s" % e.to_s
       end
 
-      # Registers an input argument for a given action
+     # Registers an input argument for a given action
       #
       # See the documentation for action for how to use this
       def input(argument, properties)
