@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/07/17|Validate requests against the DDL in the agents prior to authorization or calling actions|15557|
 |2012/07/17|Refactor the single big DDL class into a class per type of plugin|15109|
 |2012/07/16|Default to the configured default in the RPC client when nothing is supplied|15506|
 |2012/07/16|Improve error handling in generate application|15473|
