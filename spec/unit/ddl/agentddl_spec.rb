@@ -6,6 +6,7 @@ module MCollective
   module DDL
     describe AgentDDL do
       before :each do
+        Cache.delete!(:ddl) rescue nil
         @ddl = DDL.new("rspec", :agent, false)
         @ddl.metadata(:name => "name", :description => "description", :author => "author", :license => "license", :version => "version", :url => "url", :timeout => "timeout")
       end

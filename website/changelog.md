@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/07/19|Create a thread safe caching layer and use it to optimize loading of DDL files|15582|
 |2012/07/19|Correctly calculate discovery timeout in all cases and simplify logic around this|15602|
 |2012/07/17|Update the *name* field in the rpcutil DDL for consistency|15558
 |2012/07/17|Validate requests against the DDL in the agents prior to authorization or calling actions|15557|

@@ -11,6 +11,7 @@ require 'rbconfig'
 require 'tempfile'
 require 'tmpdir'
 require 'mcollective/monkey_patches'
+require 'mcollective/cache'
 
 # == The Marionette Collective
 #

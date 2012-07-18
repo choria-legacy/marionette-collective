@@ -63,16 +63,35 @@ module MCollective
     # today.  We did though change DDL to a module to make it possibly a
     # little less suprising, possibly.
     def self.new(*args, &blk)
-      ddl_type = "Agent"
-      ddl_type = args[1].to_s.capitalize if args.size > 1
+      load_and_cache(*args)
+    end
+
+    def self.load_and_cache(*args)
+      Cache.setup(:ddl, 300)
+
+      plugin = args.first
+      args.size > 1 ? type = args[1].to_s : type = "Agent"
+      path = "%s/%s" % [type, plugin]
 
       begin
-        klass = DDL.const_get("%sDDL" % ddl_type)
-      rescue NameError
-        klass = Base
+        ddl = Cache.read(:ddl, path)
+      rescue
+        begin
+          klass = DDL.const_get("%sDDL" % type.capitalize)
+        rescue NameError
+          klass = Base
+        end
+
+        ddl = Cache.write(:ddl, path, klass.new(*args))
       end
 
-      klass.new(*args)
+      return ddl
+    end
+
+    def self.should_reload?(plugin, type)
+      @cache_mutex.synchronize { (Time.now - @cache[type][plugin][:load_time]) > 500 }
+    rescue
+      true
     end
 
     # As we're taking arguments on the command line we need a

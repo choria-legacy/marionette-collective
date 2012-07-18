@@ -4,6 +4,10 @@ require 'spec_helper'
 
 module MCollective
   describe DDL do
+    before do
+      Cache.delete!(:ddl) rescue nil
+    end
+
     describe "#new" do
       it "should default to agent ddls" do
         DDL::AgentDDL.expects(:new).once
@@ -16,6 +20,29 @@ module MCollective
 
       it "should default to base when no specific class exist" do
         DDL.new("rspec", :rspec, false).class.should == DDL::Base
+      end
+    end
+
+    describe "#load_and_cache" do
+      it "should setup the cache" do
+        Cache.setup(:ddl)
+
+        Cache.expects(:setup).once.returns(true)
+        DDL.load_and_cache("rspec", :agent, false)
+      end
+
+      it "should attempt to read from the cache and return found ddl" do
+        Cache.expects(:setup)
+        Cache.expects(:read).with(:ddl, "agent/rspec").returns("rspec")
+        DDL.load_and_cache("rspec", :agent, false).should == "rspec"
+      end
+
+      it "should handle cache misses then create and save a new ddl object" do
+        Cache.expects(:setup)
+        Cache.expects(:read).with(:ddl, "agent/rspec").raises("failed")
+        Cache.expects(:write).with(:ddl, "agent/rspec", kind_of(DDL::AgentDDL)).returns("rspec")
+
+        DDL.load_and_cache("rspec", :agent, false).should == "rspec"
       end
     end
 
