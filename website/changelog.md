@@ -13,7 +13,7 @@ toc: false
 |2012/07/17|Update the *name* field in the rpcutil DDL for consistency|15558
 |2012/07/17|Validate requests against the DDL in the agents prior to authorization or calling actions|15557|
 |2012/07/17|Refactor the single big DDL class into a class per type of plugin|15109|
-|2012/07/16|Default to the configured default in the RPC client when nothing is supplied|15506|
+|2012/07/16|Default to the configured default discovery method in the RPC client when nothing is supplied|15506|
 |2012/07/16|Improve error handling in generate application|15473|
 |*2012/07/12*|*Release 2.1.1*|15379|
 |2012/07/11|Add a --display option to RPC clients that overrides the DDL display mode|15273|
