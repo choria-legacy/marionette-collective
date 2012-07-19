@@ -113,11 +113,6 @@ module MCollective
     # of the discovery being cancelled soon as it reached the
     # requested limit of hosts
     def discover(filter, timeout, limit=0)
-      raise "Limit has to be an integer" unless limit.is_a?(Fixnum)
-
-      compount_timeout = timeout_for_compound_filter(@options[:filter]["compound"])
-      timeout = timeout + compount_timeout
-
       discovered = @discoverer.discover(filter, timeout, limit)
     end
 
@@ -138,10 +133,7 @@ module MCollective
 
       stat = {:starttime => Time.now.to_f, :discoverytime => 0, :blocktime => 0, :totaltime => 0}
 
-      options = @options unless options
-
-      compount_timeout = timeout_for_compound_filter(options[:filter]["compound"])
-      timeout = options[:timeout] + compount_timeout
+      timeout = @discoverer.discovery_timeout(@options[:timeout], @options[:filter])
 
       STDOUT.sync = true
 
@@ -150,7 +142,7 @@ module MCollective
 
       begin
         Timeout.timeout(timeout) do
-          reqid = sendreq(body, agent, options[:filter])
+          reqid = sendreq(body, agent, @options[:filter])
 
           loop do
             resp = receive(reqid)
@@ -180,27 +172,6 @@ module MCollective
 
     def discovered_req(body, agent, options=false)
       raise "Client#discovered_req has been removed, please port your agent and client to the SimpleRPC framework"
-    end
-
-    # if a compound filter is specified and it has any function
-    # then we read the DDL for each of those plugins and sum up
-    # the timeout declared in the DDL
-    def timeout_for_compound_filter(compound_filter)
-      return 0 if compound_filter.nil? || compound_filter.empty?
-
-      timeout = 0
-
-      compound_filter.each do |filter|
-        filter.each do |statement|
-          if statement["fstatement"]
-            pluginname = Data.pluginname(statement["fstatement"]["name"])
-            ddl = DDL.new(pluginname, :data)
-            timeout += ddl.meta[:timeout]
-          end
-        end
-      end
-
-      timeout
     end
 
     # Prints out the stats returns from req and discovered_req in a nice way

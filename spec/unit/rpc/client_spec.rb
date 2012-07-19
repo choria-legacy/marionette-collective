@@ -16,6 +16,7 @@ module MCollective
         @discoverer.stubs(:ddl).returns(ddl)
         @discoverer.stubs(:discovery_method).returns("mc")
         @discoverer.stubs(:force_discovery_method_by_filter).returns(false)
+        @discoverer.stubs(:discovery_timeout).returns(2)
 
         @coreclient.stubs("options=")
         @coreclient.stubs(:collective).returns("mcollective")

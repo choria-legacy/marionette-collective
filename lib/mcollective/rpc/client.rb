@@ -482,6 +482,8 @@ module MCollective
         unless @discovered_agents
           @stats.time_discovery :start
 
+          @client.options = options
+
           # if compound filters are used the only real option is to use the mc
           # discovery plugin since its the only capable of using data queries etc
           # and we do not want to degrade that experience just to allow compounds
@@ -489,23 +491,24 @@ module MCollective
           # of errors etc.
           @client.discoverer.force_discovery_method_by_filter(options[:filter])
 
-          actual_timeout = options[:disctimeout] + @client.timeout_for_compound_filter(options[:filter]["compound"])
-          if actual_timeout > 0
-            @stderr.print("Discovering hosts using the %s method for %d second(s) .... " % [@client.discoverer.discovery_method, actual_timeout]) if verbose
-          else
-            @stderr.print("Discovering hosts using the %s method .... " % [@client.discoverer.discovery_method]) if verbose
-          end
+          if verbose
+            actual_timeout = @client.discoverer.discovery_timeout(discovery_timeout, options[:filter])
 
-          @client.options = options
+            if actual_timeout > 0
+              @stderr.print("Discovering hosts using the %s method for %d second(s) .... " % [@client.discoverer.discovery_method, actual_timeout])
+            else
+              @stderr.print("Discovering hosts using the %s method .... " % [@client.discoverer.discovery_method])
+            end
+          end
 
           # if the requested limit is a pure number and not a percent
           # and if we're configured to use the first found hosts as the
           # limit method then pass in the limit thus minimizing the amount
           # of work we do in the discover phase and speeding it up significantly
           if @limit_method == :first and @limit_targets.is_a?(Fixnum)
-            @discovered_agents = @client.discover(@filter, options[:disctimeout], @limit_targets)
+            @discovered_agents = @client.discover(@filter, discovery_timeout, @limit_targets)
           else
-            @discovered_agents = @client.discover(@filter, options[:disctimeout])
+            @discovered_agents = @client.discover(@filter, discovery_timeout)
           end
 
           @stderr.puts(@discovered_agents.size) if verbose
