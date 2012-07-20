@@ -403,6 +403,34 @@ end
 
 This will search each configured libdir for _libdir/agent/agent_name/script.py_. If you specified a full path it will not try to find the file in libdirs.
 
+## Sharing code between agents
+Sometimes you have code that is needed by multiple agents or shared between the agent and client.  MCollective has
+name space called *MCollective::Util* for this kind of code and the packagers and so forth supports it.
+
+Create a class with your shared code given a name like *MCollective::Util::Yourco* and save this file in the libdir in *util/yourco.rb*
+
+A sample class can be seen here:
+
+{% highlight ruby %}
+module MCollective
+  module Util
+    class Yourco
+      def dosomething
+      end
+    end
+  end
+end
+{% endhighlight %}
+
+You can now use it in your agent or clients by first loading it from the MCollective lib directories:
+
+{% highlight ruby %}
+MCollective::Util.loadclass("MCollective::Util::Yourco")
+
+helpers = MCollective::Util::Yourco.new
+helpers.dosomething
+{% endhighlight %}
+
 ## Authorization
 You can write a fine grained Authorization system to control access to actions and agents, please see [SimpleRPCAuthorization] for full details.
 
@@ -443,7 +471,7 @@ end
 {% endhighlight %}
 
 Here we setup a new cache table called *:customer* if it does not already exist, the cache has a 10 minute validity.
-We then try to read a cached customer record for *request[:customerid]* and if it's not been put in the cache
+We then try to read a cached customer record for *request\[:customerid\]* and if it's not been put in the cache
 before or if it expired I create a new customer record using a method called *get_customer* and then save it
 into the cache.
 
@@ -466,7 +494,7 @@ Here we are using the same Cache that was previously setup and just gaining acce
 cache data.  The code inside the synchronize block will only be run once so you won't get competing updates to
 your customer data.
 
-If the lock is held too by anyone the mcollectived will kill the threads in line with the Agent timeout.
+If the lock is held too long by anyone the mcollectived will kill the threads in line with the Agent timeout.
 
 ## Processing Hooks
 We provide a few hooks into the processing of a message, you've already used this earlier to <a href="#Meta_Data_and_Initialization">set meta data</a>.
