@@ -5,18 +5,33 @@ require 'spec_helper'
 module MCollective
   describe Cache do
     before do
-      Cache.instance_variable_set("@locks_mutex", Mutex.new)
-      Cache.instance_variable_set("@cache_locks", {})
-      Cache.instance_variable_set("@cache", {})
+      @locks_mutex = Cache.instance_variable_set("@locks_mutex", Mutex.new)
+      @cache_locks = Cache.instance_variable_set("@cache_locks", {})
+      @cache = Cache.instance_variable_set("@cache", {})
     end
 
     describe "#setup" do
+      it "should use a mutex to manage access to the cache" do
+        @locks_mutex.expects(:synchronize).yields
+        Cache.setup("x").should == true
+        @cache.should == {"x" => {:max_age => 300.0}}
+      end
+
       it "should correctly setup a new cache" do
+        @locks_mutex.expects(:synchronize).twice.yields
         Cache.setup("rspec1", 300)
-        Cache.instance_variable_get("@cache")["rspec1"].should == {:max_age => 300.0}
+        @cache["rspec1"].should == {:max_age => 300.0}
 
         Cache.setup("rspec2")
-        Cache.instance_variable_get("@cache")["rspec2"].should == {:max_age => 300.0}
+        @cache["rspec2"].should == {:max_age => 300.0}
+      end
+    end
+
+    describe "#has_cache?" do
+      it "should correctly report presense of a cache" do
+        Cache.setup("rspec")
+        Cache.has_cache?("rspec").should == true
+        Cache.has_cache?("fail").should == false
       end
     end
 
@@ -39,9 +54,8 @@ module MCollective
         Cache.setup("rspec")
         Cache.write("rspec", :key, :val).should == :val
 
-        cached = Cache.instance_variable_get("@cache")["rspec"]
-        cached[:key][:value].should == :val
-        cached[:key][:cache_create_time].should == time
+        @cache["rspec"][:key][:value].should == :val
+        @cache["rspec"][:key][:cache_create_time].should == time
       end
     end
 
@@ -84,11 +98,10 @@ module MCollective
       it "should use the correct mutex" do
         Cache.setup("rspec")
 
-        locks = Cache.instance_variable_get("@cache_locks")
-        rspec_lock = locks["rspec"]
+        rspec_lock = @cache_locks["rspec"]
         rspec_lock.expects(:synchronize).yields
 
-        locks.expects("[]").with("rspec").returns(rspec_lock)
+        @cache_locks.expects("[]").with("rspec").returns(rspec_lock)
 
         ran = 0
         Cache.synchronize("rspec") do
