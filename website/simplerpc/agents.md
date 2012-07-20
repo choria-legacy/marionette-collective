@@ -29,11 +29,7 @@ A more complex example might be:
 exim.setsender(:msgid => "1NOTVx-00028U-7G", :sender => "foo@bar.com")
 {% endhighlight %}
 
-Effectively this creates a hash with the members _:msgid_ and _:sender_, you could use strings for the data items too:
-
-{% highlight ruby %}
-exim.setsender("msgid" => "1NOTVx-00028U-7G", "senderid" => "foo@bar.com")
-{% endhighlight %}
+Effectively this creates a hash with the members _:msgid_ and _:sender_.
 
 Your data types should be preserved if your Security plugin supports that - the default one does - so you can pass in Arrays, Hashes, OpenStructs, Hashes of Hashes but you should always pass something in and it should be key/value pairs like a Hash expects.
 
@@ -44,17 +40,18 @@ Here's our sample *Helloworld* agent:
 
 {% highlight ruby linenos %}
 module MCollective
-    module Agent
-        class Helloworld<RPC::Agent
-            # Basic echo server
-            action "echo" do
-                validate :msg, String
+  module Agent
+    class Helloworld<RPC::Agent
+      # Basic echo server
+      action "echo" do
+        validate :msg, String
 
-                reply[:msg] = request[:msg]
-            end
-        end
+        reply[:msg] = request[:msg]
+      end
     end
+  end
 end
+
 {% endhighlight %}
 
 Strictly speaking this Agent will work but isn't considered complete - there's no meta data and no help.
@@ -73,24 +70,24 @@ Simple RPC agents still need meta data like in [WritingAgents], without it you'l
 
 {% highlight ruby linenos %}
 module MCollective
-    module Agent
-        class Helloworld<RPC::Agent
-            metadata :name        => "SimpleRPC Sample Agent",
-                     :description => "Echo service for MCollective",
-                     :author      => "R.I.Pienaar",
-                     :license     => "GPLv2",
-                     :version     => "1.1",
-                     :url         => "http://projects.puppetlabs.com/projects/mcollective-plugins/wiki",
-                     :timeout     => 60
+  module Agent
+    class Helloworld<RPC::Agent
+      metadata :name        => "helloworld",
+               :description => "Echo service for MCollective",
+               :author      => "R.I.Pienaar",
+               :license     => "GPLv2",
+               :version     => "1.1",
+               :url         => "http://projects.puppetlabs.com/projects/mcollective-plugins/wiki",
+               :timeout     => 60
 
-            # Basic echo server
-            action "echo" do
-                validate :msg, String
+      # Basic echo server
+      action "echo" do
+        validate :msg, String
 
-                reply[:msg] = request[:msg]
-            end
-        end
+        reply[:msg] = request[:msg]
+      end
     end
+  end
 end
 {% endhighlight %}
 
@@ -134,14 +131,14 @@ declare their own logic that will get called each time an agent gets loaded from
 
 {% highlight ruby %}
 module MCollective
-    module Agent
-        class Helloworld<RPC::Agent
+  module Agent
+    class Helloworld<RPC::Agent
 
-            activate_when do
-                File.executable?("/usr/bin/puppet")
-            end
-        end
+      activate_when do
+        File.executable?("/usr/bin/puppet")
+      end
     end
+  end
 end
 {% endhighlight %}
 
@@ -157,7 +154,7 @@ We have a separate file that goes together with an agent and is used to describe
 **NOTE**: As of version 2.1.1 the DDL files are required to be on the the nodes before an agent will be activated
 
 {% highlight ruby linenos %}
-metadata :name        => "SimpleRPC Sample Agent",
+metadata :name        => "echo",
          :description => "Echo service for MCollective",
          :author      => "R.I.Pienaar",
          :license     => "GPLv2",
@@ -347,15 +344,16 @@ As pointed out in the [ResultsandExceptions] page results all include status mes
 
 {% highlight ruby %}
 def rmmsg_action
-   validate :msg, String
-   validate :msg, /[a-zA-Z]+-[a-zA-Z]+-[a-zA-Z]+-[a-zA-Z]+/
-   reply.fail "No such message #{request[:msg]}", 1 unless have_msg?(request[:msg])
+  validate :msg, String
+  validate :msg, /[a-zA-Z]+-[a-zA-Z]+-[a-zA-Z]+-[a-zA-Z]+/
+  reply.fail "No such message #{request[:msg]}", 1 unless have_msg?(request[:msg])
 
-   # check all the validation passed before doing any work
-   return unless reply.statuscode == 0
+  # check all the validation passed before doing any work
+  return unless reply.statuscode == 0
 
-   # now remove the message from the queue
+  # now remove the message from the queue
 end
+
 {% endhighlight %}
 
 The number in *reply.fail* corresponds to the codes in [ResultsandExceptions] it would default to *1* so you could just say:
@@ -377,7 +375,7 @@ Actions can be implemented using other programming languages as long as they sup
 
 {% highlight ruby %}
 action "test" do
-    implemented_by "/some/external/script"
+  implemented_by "/some/external/script"
 end
 {% endhighlight %}
 
@@ -399,7 +397,7 @@ These scripts can be placed in a standard location:
 
 {% highlight ruby %}
 action "test" do
-    implemented_by "script.py"
+  implemented_by "script.py"
 end
 {% endhighlight %}
 
@@ -415,10 +413,60 @@ The actions that agents perform can be Audited by code you provide, potentially 
 You can write to the server log file using the normal logger class:
 
 {% highlight ruby %}
-logger.debug ("Hello from your agent")
+Log.debug ("Hello from your agent")
 {% endhighlight %}
 
 You can log at levels *info*, *warn*, *debug*, *fatal* or *error*.
+
+## Data Caching
+As of version 2.2.0 there is a system wide Cache you can use to store data that might be costly to create on each request.
+
+The Cache is thread safe and can be used even with multiple concurrent requests for the same agent.
+
+Imagine your agent interacts with a customer database on the node that is slow to read data from but this data does not
+change often. Using the cache you can arrange for this be read only every 10 minutes:
+
+{% highlight ruby %}
+action "get_customer_data" do
+  # Create a new cache called 'customer' with a 600 second TTL,
+  # noop if it already exist
+  Cache.setup(:customer, 600)
+
+  begin
+    customer = Cache.read(:customer, request[:customerid])
+  rescue
+    customer = Cache.write(:customer, request[:customerid], get_customer(request[:customerid])
+  end
+
+  # do something with the customer data
+end
+{% endhighlight %}
+
+Here we setup a new cache table called *:customer* if it does not already exist, the cache has a 10 minute validity.
+We then try to read a cached customer record for *request[:customerid]* and if it's not been put in the cache
+before or if it expired I create a new customer record using a method called *get_customer* and then save it
+into the cache.
+
+If you have critical code in an agent that can only ever be run once you can use the Mutex from the same cache
+to synchronize the code:
+
+{% highlight ruby %}
+action "get_customer_data" do
+  # Create a new cache called 'customer' with a 600 second TTL,
+  # noop if it already exist
+  Cache.setup(:customer, 600)
+
+  Cache(:customer).synchronize do
+     # Update customer record
+  end
+end
+{% endhighlight %}
+
+Here we are using the same Cache that was previously setup and just gaining access to the Mutex protecting the
+cache data.  The code inside the synchronize block will only be run once so you won't get competing updates to
+your customer data.
+
+If the lock is held too by anyone the mcollectived will kill the threads in line with the Agent timeout.
 
 ## Processing Hooks
 We provide a few hooks into the processing of a message, you've already used this earlier to <a href="#Meta_Data_and_Initialization">set meta data</a>.
