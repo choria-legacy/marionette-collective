@@ -85,7 +85,7 @@ module MCollective
       # hostnames, it will just print the result as if it's one huge result,
       # handy for things like showing a combined mailq.
       def self.rpcresults(result, flags = {})
-        flags = {:verbose => false, :flatten => false, :format => :console}.merge(flags)
+        flags = {:verbose => false, :flatten => false, :format => :console, :force_display_mode => false}.merge(flags)
 
         result_text = ""
         ddl = nil
@@ -109,8 +109,13 @@ module MCollective
                 sender = r[:sender]
                 status = r[:statuscode]
                 message = r[:statusmsg]
-                display = ddl[:display]
                 result = r[:data]
+
+                if flags[:force_display_mode]
+                  display = flags[:force_display_mode]
+                else
+                  display = ddl[:display]
+                end
 
                 # appand the results only according to what the DDL says
                 case display
@@ -312,6 +317,16 @@ module MCollective
         parser.on('--json', '-j', 'Produce JSON output') do |v|
           options[:progress_bar] = false
           options[:output_format] = :json
+        end
+
+        parser.on('--display MODE', 'Influence how results are displayed. One of ok, all or failed') do |v|
+          if v == "all"
+            options[:force_display_mode] = :always
+          else
+            options[:force_display_mode] = v.intern
+          end
+
+          raise "--display has to be one of 'ok', 'all' or 'failed'" unless [:ok, :failed, :always].include?(options[:force_display_mode])
         end
       end
     end

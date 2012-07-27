@@ -2,9 +2,9 @@ module MCollective
   module RPC
     # Simple class to manage compliant requests for MCollective::RPC agents
     class Request
-      attr_accessor :time, :action, :data, :sender, :agent, :uniqid, :caller
+      attr_accessor :time, :action, :data, :sender, :agent, :uniqid, :caller, :ddl
 
-      def initialize(msg)
+      def initialize(msg, ddl)
         @time = msg[:msgtime]
         @action = msg[:body][:action]
         @data = msg[:body][:data]
@@ -12,6 +12,7 @@ module MCollective
         @agent = msg[:body][:agent]
         @uniqid = msg[:requestid]
         @caller = msg[:callerid] || "unknown"
+        @ddl = ddl
       end
 
       # If data is a hash, quick helper to get access to it's include? method
@@ -37,14 +38,19 @@ module MCollective
 
       def to_hash
         return {:agent => @agent,
-          :action => @action,
-          :data => @data}
+                :action => @action,
+                :data => @data}
+      end
+
+      # Validate the request against the DDL
+      def validate!
+        @ddl.validate_rpc_request(@action, @data)
       end
 
       def to_json
         to_hash.merge!({:sender   => @sender,
-                         :callerid => @callerid,
-                         :uniqid   => @uniqid}).to_json
+                        :callerid => @callerid,
+                        :uniqid   => @uniqid}).to_json
       end
     end
   end

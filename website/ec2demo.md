@@ -4,13 +4,13 @@ title: EC2 Demo
 toc: false
 ---
 [Amazon Console]: https://console.aws.amazon.com/ec2/
-[Puppet based Service]: http://code.google.com/p/mcollective-plugins/wiki/AgentService
-[Puppet based Package]: http://code.google.com/p/mcollective-plugins/wiki/AgentPuppetPackage
-[NRPE]: http://code.google.com/p/mcollective-plugins/wiki/AgentNRPE
-[Meta Registration]: http://code.google.com/p/mcollective-plugins/wiki/RegistrationMetaData
-[URL Tester]: http://code.google.com/p/mcollective-plugins/wiki/AgentUrltest
+[Puppet based Service]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/AgentService
+[Puppet based Package]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/AgentPackage
+[NRPE]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/AgentNRPE
+[Meta Registration]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/RegistrationMetaData
+[URL Tester]: https://github.com/ripienaar/mc-plugins/tree/master/agent/urltest
 [Registration]: /mcollective/reference/plugins/registration.html
-[Registration Monitor]: http://code.google.com/p/mcollective-plugins/wiki/AgentRegistrationMonitor
+[Registration Monitor]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/AgentRegistrationMonitor
 
 We've created an Amazon hosted demo of mcollective that can give you a quick feel
 for how things work without all the hassle of setting up from scratch.

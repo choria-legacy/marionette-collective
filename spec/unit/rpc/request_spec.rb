@@ -7,15 +7,24 @@ module MCollective
     describe Request do
       before(:each) do
         @req = {:msgtime        => Time.now,
-          :senderid        => "spec test",
-          :requestid       => "12345",
-          :callerid        => "rip"}
+                :senderid        => "spec test",
+                :requestid       => "12345",
+                :callerid        => "rip"}
 
         @req[:body] = {:action => "test",
-          :data   => {:foo => "bar", :process_results => true},
-          :agent  => "tester"}
+                       :data   => {:foo => "bar", :process_results => true},
+                       :agent  => "tester"}
 
-        @request = Request.new(@req)
+        @ddl = DDL.new("rspec", :agent, false)
+
+        @request = Request.new(@req, @ddl)
+      end
+
+      describe "#validate!" do
+        it "should validate the request using the supplied DDL" do
+          @ddl.expects(:validate_rpc_request).with("test", {:foo => "bar", :process_results => true})
+          @request.validate!
+        end
       end
 
       describe "#initialize" do
@@ -49,7 +58,7 @@ module MCollective
 
         it "should set unknown caller if none is supplied" do
           @req.delete(:callerid)
-          Request.new(@req).caller.should == "unknown"
+          Request.new(@req, @ddl).caller.should == "unknown"
         end
       end
 
@@ -60,26 +69,26 @@ module MCollective
 
         it "should return false for non hash data" do
           @req[:body][:data] = "foo"
-          Request.new(@req).include?(:foo).should == false
+          Request.new(@req, @ddl).include?(:foo).should == false
         end
       end
 
       describe "#should_respond?" do
         it "should return true if the header is absent" do
           @req[:body][:data].delete(:process_results)
-          Request.new(@req).should_respond?.should == true
+          Request.new(@req, @ddl).should_respond?.should == true
         end
 
         it "should return correct value" do
           @req[:body][:data][:process_results] = false
-          Request.new(@req).should_respond?.should == false
+          Request.new(@req, @ddl).should_respond?.should == false
         end
       end
 
       describe "#[]" do
         it "should return nil for non hash data" do
           @req[:body][:data] = "foo"
-          Request.new(@req)["foo"].should == nil
+          Request.new(@req, @ddl)["foo"].should == nil
         end
 
         it "should return correct data" do
@@ -106,7 +115,7 @@ module MCollective
 
         it "should return the correct data" do
           @request.to_hash[:data].should == {:foo => "bar",
-            :process_results => true}
+                                             :process_results => true}
         end
       end
     end

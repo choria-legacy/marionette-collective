@@ -6,6 +6,8 @@ module MCollective
   module RPC
     describe Reply do
       before(:each) do
+        Cache.delete!(:ddl) rescue nil
+
         ddl = stub
         ddl.stubs(:action_interface).returns({:output => {}})
         ddl.stubs(:actions).returns(["rspec"])

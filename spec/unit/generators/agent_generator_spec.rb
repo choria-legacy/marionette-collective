@@ -35,16 +35,10 @@ module MCollective
             AgentGenerator.any_instance.stubs(:create_ddl)
           end
 
-          it "should create the correct plugin file content with no actions if none are specified" do
-            AgentGenerator.any_instance.stubs(:create_metadata_string).returns("meta")
-            result = AgentGenerator.new("foo").content
-            result.should == "%6s%s" % [" ", "meta"]
-          end
-
           it "should create the correct pluginf ile content with actions if they are specified" do
             AgentGenerator.any_instance.stubs(:create_metadata_string).returns("meta\n")
             result = AgentGenerator.new("foo", ["action1", "action2"]).content
-            result.should == "      meta\n      action \"action1\" do\n      end\n\n      action \"action2\" do\n      end\n"
+            result.should == "      action \"action1\" do\n      end\n\n      action \"action2\" do\n      end\n"
           end
         end
 

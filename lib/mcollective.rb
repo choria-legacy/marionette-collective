@@ -11,6 +11,7 @@ require 'rbconfig'
 require 'tempfile'
 require 'tmpdir'
 require 'mcollective/monkey_patches'
+require 'mcollective/cache'
 
 # == The Marionette Collective
 #
@@ -36,6 +37,7 @@ module MCollective
   class UnknownRPCAction<RPCError;end
   class UnknownRPCError<RPCError;end
 
+  autoload :Agent, "mcollective/agent"
   autoload :Agents, "mcollective/agents"
   autoload :Aggregate, "mcollective/aggregate"
   autoload :Application, "mcollective/application"

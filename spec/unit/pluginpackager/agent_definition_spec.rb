@@ -6,7 +6,7 @@ module MCollective
   module PluginPackager
     describe AgentDefinition do
       before :each do
-        PluginPackager.expects(:get_metadata).once.returns({:name => "foo"})
+        PluginPackager.expects(:get_metadata).once.returns({:name => "foo", :version => 1})
       end
 
       describe "#initialize" do
@@ -77,7 +77,7 @@ module MCollective
           Dir.stubs(:glob).returns([])
 
           agent = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
-          agent.packagedata[:agent][:dependencies].should == ["mcollective", "mcollective-foo-common"]
+          agent.packagedata[:agent][:dependencies].should == ["mcollective", ["mcollective-foo-common", 1]]
         end
       end
 
@@ -154,7 +154,7 @@ module MCollective
           Dir.expects(:glob).with("aggregatedir/*").returns(["aggregate.rb"])
 
           client = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
-          client.packagedata[:client][:dependencies].should == ["mcollective-client", "mcollective-foo-common"]
+          client.packagedata[:client][:dependencies].should == ["mcollective-client", ["mcollective-foo-common", 1]]
         end
       end
     end

@@ -98,6 +98,7 @@ module MCollective
         Config.instance.stubs(:libdir).returns([@tmpdir])
         Agents.any_instance.stubs("clear!").returns(true)
         PluginManager.stubs(:loadclass).returns(true)
+        PluginManager.stubs("[]").with("test_agent").returns(true)
         Util.stubs(:make_subscriptions).with("test", :broadcast).returns([{:agent => "test", :type => :broadcast, :collective => "test"}])
         Util.stubs(:subscribe).with([{:agent => "test", :type => :broadcast, :collective => "test"}]).returns(true)
         Agents.stubs(:findagentfile).returns(File.join([@agentsdir, "test.rb"]))
@@ -153,10 +154,24 @@ module MCollective
         Util.stubs(:make_subscriptions).with("foo", :broadcast).returns([{:agent => "foo", :type => :broadcast, :collective => "test"}])
         Util.expects("subscribe").with([{:type => :broadcast, :agent => 'foo', :collective => 'test'}]).returns(true)
         Agents.any_instance.expects(:findagentfile).with("foo").returns(File.join([@agentsdir, "foo.rb"]))
-
         FileUtils.touch(File.join([@agentsdir, "foo.rb"]))
+        Agents.any_instance.expects("activate_agent?").with("foo").returns(true)
+        PluginManager.stubs("[]").with("foo_agent").returns(true)
 
         @a.loadagent("foo")
+      end
+
+      it "should check if an agent is loadable and remove it from the list if not" do
+        PluginManager.expects("<<").with({:type => "foo_agent", :class => "MCollective::Agent::Foo", :single_instance => false})
+        Agents.any_instance.expects(:findagentfile).with("foo").returns(File.join([@agentsdir, "foo.rb"]))
+        FileUtils.touch(File.join([@agentsdir, "foo.rb"]))
+        Agents.any_instance.expects("activate_agent?").with("foo").returns(true)
+        PluginManager.stubs("[]").with("foo_agent").raises("rspec")
+
+        Log.expects(:error).once.with("Loading agent foo failed: rspec")
+
+        @a.loadagent("foo").should == false
+        Agents.agentlist.include?("foo").should == false
       end
 
       it "should add the agent to the agent list" do

@@ -148,8 +148,9 @@ module MCollective
       verbose = flags[:verbose] || verbose
       flatten = flags[:flatten] || false
       format = @options[:output_format]
+      forced_mode = @options[:force_display_mode] || false
 
-      result_text =  Helpers.rpcresults(result, {:verbose => verbose, :flatten => flatten, :format => format})
+      result_text =  Helpers.rpcresults(result, {:verbose => verbose, :flatten => flatten, :format => format, :force_display_mode => forced_mode})
 
       if result.is_a?(Array) && format == :console
         puts "\n%s\n" % [ result_text ]

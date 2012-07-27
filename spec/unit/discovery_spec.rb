@@ -12,6 +12,20 @@ module MCollective
       @discovery = Discovery.new(@client)
     end
 
+    describe "#timeout_for_compound_filter" do
+      it "should return the correct time" do
+        ddl = mock
+        ddl.stubs(:meta).returns({:timeout => 1})
+
+        filter = [Matcher.create_compound_callstack("test().size=1 and rspec().size=1")]
+
+        DDL.expects(:new).with("test_data", :data).returns(ddl)
+        DDL.expects(:new).with("rspec_data", :data).returns(ddl)
+
+        @discovery.timeout_for_compound_filter(filter).should == 2
+      end
+    end
+
     describe "#discover" do
       before do
         ddl = mock
@@ -27,15 +41,6 @@ module MCollective
 
       it "should error for non fixnum limits" do
         expect { @discovery.discover(nil, 0, 1.1) }.to raise_error("Limit has to be an integer")
-      end
-
-      it "should calculate the correct timeout when forcing the method to mc" do
-        @discovery.expects(:force_discovery_method_by_filter).returns(true)
-        @client.expects(:timeout_for_compound_filter).returns(1)
-
-        filter = Util.empty_filter.merge({"compound" => "rspec"})
-        @discovery.discovery_class.expects(:discover).with(filter, 3, 0, @client)
-        @discovery.discover(filter, 1, 0)
       end
 
       it "should use the DDL timeout if none is specified" do

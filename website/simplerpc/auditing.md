@@ -4,7 +4,7 @@ title: SimpleRPC Auditing
 toc: false
 ---
 [SimpleRPCIntroduction]: index.html
-[AuditCentralRPCLog]: http://code.google.com/p/mcollective-plugins/wiki/AuditCentralRPCLog
+[AuditCentralRPCLog]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/AuditCentralRPC
 
 # {{page.title}}
 

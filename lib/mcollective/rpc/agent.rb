@@ -60,15 +60,20 @@ module MCollective
       end
 
       def handlemsg(msg, connection)
-        @request = RPC::Request.new(msg)
+        @request = RPC::Request.new(msg, @ddl)
         @reply = RPC::Reply.new(@request.action, @ddl)
 
         begin
+          # Incoming requests need to be validated against the DDL thus reusing
+          # all the work users put into creating DDLs and creating a consistant
+          # quality of input validation everywhere with the a simple once off
+          # investment of writing a DDL
+          @request.validate!
+
           # Calls the authorization plugin if any is defined
           # if this raises an exception we wil just skip processing this
           # message
           authorization_hook(@request) if respond_to?("authorization_hook")
-
 
           # Audits the request, currently continues processing the message
           # we should make this a configurable so that an audit failure means

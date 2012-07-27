@@ -93,18 +93,45 @@ module MCollective
       return false
     end
 
+    # if a compound filter is specified and it has any function
+    # then we read the DDL for each of those plugins and sum up
+    # the timeout declared in the DDL
+    def timeout_for_compound_filter(compound_filter)
+      return 0 if compound_filter.nil? || compound_filter.empty?
+
+      timeout = 0
+
+      compound_filter.each do |filter|
+        filter.each do |statement|
+          if statement["fstatement"]
+            pluginname = Data.pluginname(statement["fstatement"]["name"])
+            ddl = DDL.new(pluginname, :data)
+            timeout += ddl.meta[:timeout]
+          end
+        end
+      end
+
+      timeout
+    end
+
+    def discovery_timeout(timeout, filter)
+      timeout = ddl.meta[:timeout] unless timeout
+
+      unless (filter["compound"] && filter["compound"].empty?)
+        timeout + timeout_for_compound_filter(filter["compound"])
+      else
+        timeout
+      end
+    end
+
     def discover(filter, timeout, limit)
       raise "Limit has to be an integer" unless limit.is_a?(Fixnum)
 
-      if force_discovery_method_by_filter(filter)
-        timeout = ddl.meta[:timeout] + @client.timeout_for_compound_filter(filter["compound"])
-      else
-        timeout = ddl.meta[:timeout] unless timeout
-      end
+      force_discovery_method_by_filter(filter)
 
       check_capabilities(filter)
 
-      discovered = discovery_class.discover(filter, timeout, limit, @client)
+      discovered = discovery_class.discover(filter, discovery_timeout(timeout, filter), limit, @client)
 
       if limit > 0
         return discovered[0,limit]

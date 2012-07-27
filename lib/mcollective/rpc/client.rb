@@ -53,8 +53,9 @@ module MCollective
         @output_format = initial_options[:output_format] || :console
         @force_direct_request = false
         @reply_to = initial_options[:reply_to]
-        @discovery_method = initial_options[:discovery_method]
+        @discovery_method = initial_options[:discovery_method] || Config.instance.default_discovery_method
         @discovery_options = initial_options[:discovery_options] || []
+        @force_display_mode = initial_options[:force_display_mode] || false
 
         @batch_size = Integer(initial_options[:batch_size] || 0)
         @batch_sleep_time = Float(initial_options[:batch_sleep_time] || 1)
@@ -481,6 +482,8 @@ module MCollective
         unless @discovered_agents
           @stats.time_discovery :start
 
+          @client.options = options
+
           # if compound filters are used the only real option is to use the mc
           # discovery plugin since its the only capable of using data queries etc
           # and we do not want to degrade that experience just to allow compounds
@@ -488,23 +491,24 @@ module MCollective
           # of errors etc.
           @client.discoverer.force_discovery_method_by_filter(options[:filter])
 
-          actual_timeout = options[:disctimeout] + @client.timeout_for_compound_filter(options[:filter]["compound"])
-          if actual_timeout > 0
-            @stderr.print("Discovering hosts using the %s method for %d second(s) .... " % [@client.discoverer.discovery_method, actual_timeout]) if verbose
-          else
-            @stderr.print("Discovering hosts using the %s method .... " % [@client.discoverer.discovery_method]) if verbose
-          end
+          if verbose
+            actual_timeout = @client.discoverer.discovery_timeout(discovery_timeout, options[:filter])
 
-          @client.options = options
+            if actual_timeout > 0
+              @stderr.print("Discovering hosts using the %s method for %d second(s) .... " % [@client.discoverer.discovery_method, actual_timeout])
+            else
+              @stderr.print("Discovering hosts using the %s method .... " % [@client.discoverer.discovery_method])
+            end
+          end
 
           # if the requested limit is a pure number and not a percent
           # and if we're configured to use the first found hosts as the
           # limit method then pass in the limit thus minimizing the amount
           # of work we do in the discover phase and speeding it up significantly
           if @limit_method == :first and @limit_targets.is_a?(Fixnum)
-            @discovered_agents = @client.discover(@filter, options[:disctimeout], @limit_targets)
+            @discovered_agents = @client.discover(@filter, discovery_timeout, @limit_targets)
           else
-            @discovered_agents = @client.discover(@filter, options[:disctimeout])
+            @discovered_agents = @client.discover(@filter, discovery_timeout)
           end
 
           @stderr.puts(@discovered_agents.size) if verbose
@@ -532,6 +536,7 @@ module MCollective
          :ttl => @ttl,
          :discovery_method => @discovery_method,
          :discovery_options => @discovery_options,
+         :force_display_mode => @force_display_mode,
          :config => @config}
       end
 

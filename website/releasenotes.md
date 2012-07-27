@@ -6,6 +6,158 @@ toc: false
 
 This is a list of release notes for various releases, you should review these before upgrading as any potential problems and backward incompatible changes will be highlighted here.
 
+<a name="2_1_1">&nbsp;</a>
+
+## 2.1.1 - 2012/07/12
+
+This release features major new features, enhancements and bug fixes.
+
+This release is for early adopters, production users should consider the 2.0.x
+series.
+
+### Major Enhancements
+
+ * A new discovery source was added capable of querying agent properties
+ * When doing limited discovery you can now supply a random seed for deterministic random selection
+ * A *get_data* action has been added to the *rpcutil* agent to retrieve the result of a data plugin
+ * RPC Agents must have DDLs on the MCollective Servers, agents will not load without them
+ * Output values can now have defaults assigned in the DDL, the server will set those defaults before running an action
+ * A new plugin type used to summarize sets of replies has been added. Summarization is declared in the DDL for an Agent
+
+### Bug Fixes
+
+ * Correctly parse numeric and boolean input arguments in the RPC application
+
+### Deprecations
+
+ * The old *Client#discovered_req* is removed along with the *controller* application that used it
+ * Parsing compound filters were improved wrt complex regular expressions
+ * Metadata sections in agents are not needed anymore and deprecation notices are logged when they are found
+
+### Summarization Plugins
+
+Often custom applications are written just to summarize data like the *facts*
+application or *nrpe* ones.
+
+We have added a new plugin type that allows you to define summarization logic
+and included a few of our own.  These summaries are declared in the DDL, here is
+a section from the new DDL for the *get_fact* action:
+
+{% highlight ruby %}
+action "get_fact", :description => "Retrieve a single fact from the fact store" do
+  output :value,
+          :description => "The value of the fact",
+          :display_as => "Value"
+
+  summarize do
+    aggregate summary(:value)
+  end
+end
+{% endhighlight %}
+
+Here we are using the *summarize* block to say that we wish to summarize the
+output *:value*.  The *summary(:value)* is the call to a custom plugin and you
+can provide your own.
+
+Now when interacting with this action you will see summaries produced
+automatically:
+
+{% highlight ruby %}
+% mco rpc rpcutil get_fact fact=operatingsystemrelease
+.
+.
+dev2
+    Fact: operatingsystemrelease
+   Value: 6.2
+
+
+Summary of Value:
+
+    6.2 = 19
+    6.3 = 7
+
+Finished processing 26 / 26 hosts in 294.97 ms
+{% endhighlight %}
+
+The last section of the rpc output shows the summarization in action.
+
+The NRPE plugin on GitHub shows an example of a Nagios specific aggregation
+function and the plugin packager supports distributing these plugins.
+
+### DDL files on the servers
+
+The DDL files now have to be on the servers and the clients.  On the servers the
+results will be pre-populated with default data for all defined output values of
+a specific action and you can now supply defaults.
+
+An example for a Nagios plugin can be seen below, here we default to *UNKNOWN*
+so that even if the action fails to run we will still see valid data being
+returned thats appropriate for the specific use case.
+
+{% highlight ruby %}
+action "runcommand", :description => "Run a NRPE command" do
+  output :exitcode,
+         :description  => "Exit Code from the Nagios plugin",
+         :display_as   => "Exit Code",
+         :default      => 3
+end
+{% endhighlight %}
+
+As the servers now have the DDL the *metadata* section at the top of agents are
+not needed anymore and deprecations will be logged when the mcollectived starts
+up warning you of this.
+
+### Backwards Compatibility and Upgrading
+
+As this release now requires DDL files to exist before an agent can be loaded in
+the server you might have to adjust your deployment strategy and possibly write
+some DDLs for your custom agents.  The DDL files have to be on both client and
+servers.
+
+The servers will now pre-populate the replies with all output defined in the DDL
+and supply defaults if no default is provided in the DDL it will default to nil.
+This might potentially change the behavior of custom applications that are
+designed around the approach of checking if a field is included in the results
+or not.
+
+When you first start this version of mcollectived you will see warnings logged
+similar to the one below:
+
+{% highlight ruby %}
+puppetd.rb:26: setting meta data in agents have been deprecated, DDL files are now being used for this information.
+{% endhighlight %}
+
+This is only a warning and not a critical problem.  Once 2.2.0 is out we will be
+updating all the agents to remove metadata sections in favour of those in the DDL.
+You should also remove metadata from your own agents.
+
+### Changes since 2.1.0
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2012/07/11|Add a --display option to RPC clients that overrides the DDL display mode|15273|
+|2012/07/10|Do not add a metadata to agents created with the generator as they are now deprecated|15445|
+|2012/07/03|Correctly parse numeric and boolean data on the CLI in the rpc application|15344|
+|2012/07/03|Fix a bug related to parsing regular expressions in compound statements|15323|
+|2012/07/02|Update vim snippets in ext for new DDL features|15273|
+|2012/06/29|Create a common package for agent packages containing the DDL for servers and clients|15268|
+|2012/06/28|Improve parsing of compound filters where the first argument is a class|15271|
+|2012/06/28|Add the ability to declare automatic result summarization in the DDL files for agents|15031|
+|2012/06/26|Surpress subscribing to reply queues when no reply is expected|15226|
+|2012/06/25|Batched RPC requests will now all have the same requestid|15195|
+|2012/06/25|Record the request id on M::Client and in the RPC client stats|15194|
+|2012/06/24|Use UUIDs for the request id rather than our own weak implementation|15191|
+|2012/06/18|The DDL can now define defaults for outputs and the RPC replies are pre-populated|15087|
+|2012/06/18|Remove unused agent help code|15084|
+|2012/06/18|Remove unused code from the *discovery* agent related to inventory and facts|15083|
+|2012/06/18|Nodes will now refuse to load RPC agents without DDL files|15082|
+|2012/06/18|The Plugin Name and Type is now available to DDL objects|15076|
+|2012/06/15|Add a get_data action to the rpcutil agent that can retrieve data from data plugins|15057|
+|2012/06/14|Allow the random selection of nodes to be deterministic|14960|
+|2012/06/12|Remove the Client#discovered_req method and add warnings to the documentation about its use|14777|
+|2012/06/11|Add a discovery source capable of doing introspection on running agents|14945|
+|2012/06/11|Only do identity filter optimisations for the *mc* discovery source|14942|
+
 <a name="2_1_0">&nbsp;</a>
 
 ## 2.1.0 - 2012/06/08
