@@ -17,11 +17,12 @@ module MCollective
     # plugin DDL then add a PlugintypeDDL class here and add your
     # specific behaviors to those.
     class Base
-      attr_reader :meta, :entities, :pluginname, :plugintype
+      attr_reader :meta, :entities, :pluginname, :plugintype, :usage
 
       def initialize(plugin, plugintype=:agent, loadddl=true)
         @entities = {}
         @meta = {}
+        @usage = ""
         @config = Config.instance
         @pluginname = plugin
         @plugintype = plugintype.to_sym
@@ -44,8 +45,19 @@ module MCollective
         meta = @meta
         entities = @entities
 
+        unless template == "metadata-help.erb"
+          metadata_template = File.join(@config.helptemplatedir, "metadata-help.erb")
+          metadata_template = File.read(metadata_template)
+          metastring = ERB.new(metadata_template, 0, '-')
+          metastring = metastring.result(binding)
+        end
+
         erb = ERB.new(template, 0, '%')
         erb.result(binding)
+      end
+
+      def usage(usage_text)
+        @usage = usage_text
       end
 
       def template_for_plugintype

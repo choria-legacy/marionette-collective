@@ -328,5 +328,125 @@ module MCollective
         Util.colorize(:red, "hello world").should == "[31mhello world[0m"
       end
     end
+
+    describe "#align_text" do
+      it "should default to 80 if the terminal dimensions are unknown" do
+        Util.stubs(:terminal_dimensions).returns([0,0])
+
+        rootdir = File.dirname(__FILE__)
+        input = File.read("#{rootdir}/../fixtures/util/4.in")
+        output = File.read("#{rootdir}/../fixtures/util/4.out")
+
+        (Util.align_text(input, nil, 3) + "\n").should == output
+      end
+
+      it "should return the origional string if console lines are 0" do
+        result = Util.align_text("test", 0)
+        result.should == "test"
+      end
+
+      it "should return the origional string if preamble is greater than console lines" do
+        result = Util.align_text("test", 5, 6)
+        result.should == "test"
+      end
+
+      it "should return a string prefixed by the preamble" do
+        result = Util.align_text("test")
+        result.should == "     test"
+      end
+
+      it "should correctly align strings" do
+        rootdir = File.dirname(__FILE__)
+        (1..2).each do |i|
+          input = File.read("#{rootdir}/../fixtures/util/#{i}.in")
+          output = File.read("#{rootdir}/../fixtures/util/#{i}.out")
+
+          (Util.align_text(input, 158 , 5) + "\n").should == output
+        end
+
+        input = File.read("#{rootdir}/../fixtures/util/3.in")
+        output = File.read("#{rootdir}/../fixtures/util/3.out")
+
+        (Util.align_text(input, 30, 0) + "\n").should == output
+      end
+    end
+
+    describe "#terminal_dimensions" do
+      it "should return 0 if there is no tty" do
+        stdout = mock()
+        stdout.expects(:tty?).returns(false)
+        result = Util.terminal_dimensions(stdout)
+        result.should == [0,0]
+      end
+
+      it "should return the default dimensions for a windows terminal" do
+        stdout = mock()
+        stdout.expects(:tty?).returns(true)
+        Util.expects(:windows?).returns(true)
+        result = Util.terminal_dimensions(stdout)
+        result.should == [80, 40]
+      end
+
+      it "should return 0 if an exception was raised" do
+        stdout = mock()
+        stdout.expects(:tty?).raises("error")
+        result = Util.terminal_dimensions(stdout)
+        result.should == [0, 0]
+      end
+
+      it "should return the correct dimensions if ENV columns and lines are set" do
+
+        stdout = mock()
+        stdout.expects(:tty?).returns(true)
+        environment = mock()
+        environment.expects(:[]).with("COLUMNS").returns(5).twice
+        environment.expects(:[]).with("LINES").returns(5).twice
+        result = Util.terminal_dimensions(stdout, environment)
+        result.should == [5,5]
+      end
+
+      it "should return the correct dimensions if ENV term is set and tput is present" do
+        stdout = mock()
+        stdout.expects(:tty?).returns(true)
+        environment = mock()
+        environment.expects(:[]).with("COLUMNS").returns(false)
+        environment.expects(:[]).with("TERM").returns(true)
+
+        Util.expects(:command_in_path?).with("tput").returns(true)
+        Util.stubs(:`).returns("5")
+
+        result = Util.terminal_dimensions(stdout, environment)
+        result.should == [5,5]
+      end
+
+      it "should return the correct dimensions if stty is present" do  
+        stdout = mock()
+        stdout.expects(:tty?).returns(true)
+ 
+        environment = mock()
+        environment.expects(:[]).with("COLUMNS").returns(false)
+        environment.expects(:[]).with("TERM").returns(false)
+
+        Util.expects(:command_in_path?).with("stty").returns(true)
+        Util.stubs(:`).returns("5 5")
+
+        result = Util.terminal_dimensions(stdout, environment)
+        result.should == [5,5]
+      end
+    end
+
+    describe "#command_in_path?" do
+      it "should return true if the command is found" do
+        File.stubs(:exist?).returns(true)
+        result = Util.command_in_path?("test")
+        result.should == true
+      end
+
+      it "should return false if the command cannot be found" do
+        File.stubs(:exist?).returns(false)
+        result = Util.command_in_path?("test")
+        result.should == false
+      end
+    end
   end
 end

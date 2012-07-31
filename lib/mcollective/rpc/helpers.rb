@@ -2,15 +2,6 @@ module MCollective
   module RPC
     # Various utilities for the RPC system
     class Helpers
-      # Checks in PATH returns true if the command is found
-      def self.command_in_path?(command)
-        found = ENV["PATH"].split(File::PATH_SEPARATOR).map do |p|
-          File.exist?(File.join(p, command))
-        end
-
-        found.include?(true)
-      end
-
       # Parse JSON output as produced by printrpc and extract
       # the "sender" of each rpc response
       #
@@ -40,30 +31,6 @@ module MCollective
           raise "#{host} should be a string" unless host.is_a?(String)
           host.chomp
         end
-      end
-
-      # Figures out the columns and liens of the current tty
-      #
-      # Returns [0, 0] if it can't figure it out or if you're
-      # not running on a tty
-      def self.terminal_dimensions
-        return [0, 0] unless STDOUT.tty?
-
-        return [80, 40] if Util.windows?
-
-        if ENV["COLUMNS"] && ENV["LINES"]
-          return [ENV["COLUMNS"].to_i, ENV["LINES"].to_i]
-
-        elsif ENV["TERM"] && command_in_path?("tput")
-          return [`tput cols`.to_i, `tput lines`.to_i]
-
-        elsif command_in_path?('stty')
-          return `stty size`.scan(/\d+/).map {|s| s.to_i }
-        else
-          return [0, 0]
-        end
-      rescue
-        [0, 0]
       end
 
       # Returns a blob of text representing the results in a standard way

@@ -19,7 +19,7 @@ module MCollective
         if size
           @size = size
         else
-          cols = Helpers.terminal_dimensions[0] - 22
+          cols = Util.terminal_dimensions[0] - 22
 
           # Defaults back to old behavior if it
           # couldn't figure out the size or if

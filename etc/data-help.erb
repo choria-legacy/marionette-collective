@@ -1,14 +1,4 @@
-<%= meta[:name] %>
-<% meta[:name].size.times do %>=<% end %>
-
-<%= meta[:description] %>
-
-      Author: <%= meta[:author] %>
-     Version: <%= meta[:version] %>
-     License: <%= meta[:license] %>
-     Timeout: <%= meta[:timeout] %>
-   Home Page: <%= meta[:url] %>
-
+<%= metastring %>
 QUERY FUNCTION INPUT:
 
               Description: <%= entities[:data][:input][:query][:description] %>

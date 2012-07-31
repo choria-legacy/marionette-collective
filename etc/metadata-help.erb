@@ -8,3 +8,7 @@
      License: <%= meta[:license] %>
      Timeout: <%= meta[:timeout] %>
    Home Page: <%= meta[:url] %>
+<% unless @usage == "" -%>
+
+<%= Util.align_text(@usage, nil, 3) if @usage != "" %>
+<% end -%>

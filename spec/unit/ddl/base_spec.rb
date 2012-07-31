@@ -25,16 +25,19 @@ module MCollective
       describe "#help" do
         it "should use conventional template paths when none is provided" do
           File.expects(:read).with("/etc/mcollective/rpc-help.erb").returns("rspec")
+          File.expects(:read).with("/etc/mcollective/metadata-help.erb").returns("rspec")
           @ddl.help.should == "rspec"
         end
 
         it "should use template from help template path when provided template name is not an absolute file path" do
           File.expects(:read).with("/etc/mcollective/foo").returns("rspec")
+          File.expects(:read).with("/etc/mcollective/metadata-help.erb").returns("rspec")
           @ddl.help("foo").should == "rspec"
         end
 
         it "should use supplied template path when one is provided" do
           File.expects(:read).with("/foo").returns("rspec")
+          File.expects(:read).with("/etc/mcollective/metadata-help.erb").returns("rspec")
           @ddl.help("/foo").should == "rspec"
         end
 
@@ -42,6 +45,7 @@ module MCollective
           @ddl.instance_variable_set("@meta", "meta")
           @ddl.instance_variable_set("@entities", "actions")
           File.expects(:read).with("/template").returns("<%= meta %>:<%= entities %>")
+          File.expects(:read).with("/etc/mcollective/metadata-help.erb").returns("rspec")
           @ddl.help("/template").should == "meta:actions"
         end
       end
