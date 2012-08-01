@@ -143,9 +143,15 @@ module MCollective
             display_as = output_item
           end
 
+          aggregate_report = aggregate.to_s
+
           result.puts Util.colorize(:bold, "Summary of %s:" % display_as)
           result.puts
-          result.puts aggregate.to_s
+          unless aggregate_report == ""
+            result.puts aggregate.to_s
+          else
+            result.puts Util.colorize(:yellow, "     No aggregate summary could be computed")
+          end
           result.puts
         end
 

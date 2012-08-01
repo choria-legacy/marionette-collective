@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/08/01|Display an error when no aggregate results could be computed|15793|
 |2012/08/01|Create a plugin system for validators|5078|
 |2012/07/19|Create a thread safe caching layer and use it to optimize loading of DDL files|15582|
 |2012/07/19|Correctly calculate discovery timeout in all cases and simplify logic around this|15602|
