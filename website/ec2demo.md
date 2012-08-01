@@ -29,7 +29,7 @@ to the demo without you being aware of them.
 You'll need to enter the url _http://mcollective-120-demo.s3.amazonaws.com/cloudfront`_`demo.json_ into the
 creation step.
 
-<embed src="http://blip.tv/play/hfMOgqejeAA" type="application/x-shockwave-flash" width="640" height="419" allowscriptaccess="always" allowfullscreen="true" />
+<iframe width="640" height="360" src="http://www.youtube-nocookie.com/embed/Hw0Z1xfg050" frameborder="0" allowfullscreen></iframe>
 
 ## Agents
 The images all have the basic agents going as well as some community ones:
