@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/08/08|Add the ability to store general usage information in the DDL|15633|
 |2012/08/02|Restore the formatting of the progress bar that was broken in 14255|15805|
 |2012/08/01|Display an error when no aggregate results could be computed|15793|
 |2012/08/01|Create a plugin system for validators|5078|
