@@ -228,7 +228,7 @@ mco plugin package [options] <directory>
             end
           end
 
-          abort "Could not find a plugin named %s in any supported plugin type" % plugin_type[1] unless found_plugin_type
+          abort "Could not find a plugin named %s in any supported plugin type" % configuration[:target] unless found_plugin_type
 
           ddl = load_plugin_ddl(configuration[:target], found_plugin_type)
         end
