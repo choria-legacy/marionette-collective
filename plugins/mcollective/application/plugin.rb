@@ -238,16 +238,30 @@ mco plugin package [options] <directory>
         puts "Please specify a plugin. Available plugins are:"
         puts
 
+        load_errors = []
+
         known_plugin_types.each do |plugin_type|
           puts "%s:" % plugin_type[0]
 
           PluginManager.find(plugin_type[1], "ddl").each do |ddl|
-            help = DDL.new(ddl, plugin_type[1])
-            pluginname = ddl.gsub(/_#{plugin_type[1]}$/, "")
-            puts "  %-25s %s" % [pluginname, help.meta[:description]]
+            begin
+              help = DDL.new(ddl, plugin_type[1])
+              pluginname = ddl.gsub(/_#{plugin_type[1]}$/, "")
+              puts "  %-25s %s" % [pluginname, help.meta[:description]]
+            rescue => e
+              load_errors << [plugin_type[1], ddl, e]
+            end
           end
 
           puts
+        end
+
+        unless load_errors.empty?
+          puts "Plugin Load Errors:"
+
+          load_errors.each do |e|
+            puts "  %-25s %s" % ["#{e[0]}/#{e[1]}", Util.colorize(:yellow, e[2])]
+          end
         end
       end
     end

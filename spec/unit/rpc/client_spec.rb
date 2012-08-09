@@ -8,15 +8,18 @@ module MCollective
       before do
         @coreclient = mock
         @discoverer = mock
-        ddl = stub
+
+        ddl = DDL.new("foo", "agent", false)
+        ddl.action("rspec", :description => "mock agent")
 
         ddl.stubs(:meta).returns({:timeout => 2})
+        DDL.stubs(:new).returns(ddl)
 
         @discoverer.stubs(:force_direct_mode?).returns(false)
-        @discoverer.stubs(:ddl).returns(ddl)
         @discoverer.stubs(:discovery_method).returns("mc")
         @discoverer.stubs(:force_discovery_method_by_filter).returns(false)
         @discoverer.stubs(:discovery_timeout).returns(2)
+        @discoverer.stubs(:ddl).returns(ddl)
 
         @coreclient.stubs("options=")
         @coreclient.stubs(:collective).returns("mcollective")
@@ -33,6 +36,20 @@ module MCollective
 
         @client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
         @client.stubs(:ddl).returns(ddl)
+      end
+
+      describe "#initialize" do
+        it "should fail for missing DDLs" do
+          DDL.stubs(:new).raises("DDL failure")
+          expect { Client.new("foo", {:options => {:config => "/nonexisting"}}) }.to raise_error("DDL failure")
+        end
+
+        it "should set a empty filter when none is supplied" do
+          filter = Util.empty_filter
+          Util.expects(:empty_filter).once.returns(filter)
+
+          Client.new("foo", :options => {:config => "/nonexisting"})
+        end
       end
 
       describe "#process_results_with_block" do
@@ -265,7 +282,7 @@ module MCollective
           client.stubs(:call_agent)
 
           Stats.any_instance.expects(:reset).once
-          client.foo
+          client.rspec
         end
 
         it "should validate the request against the ddl" do
@@ -285,9 +302,9 @@ module MCollective
           client.limit_targets = 10
 
           client.expects(:pick_nodes_from_discovered).with(10).returns(["one", "two"])
-          client.expects(:custom_request).with("foo", {}, ["one", "two"], {"identity" => /^(one|two)$/}).once
+          client.expects(:custom_request).with("rspec", {}, ["one", "two"], {"identity" => /^(one|two)$/}).once
 
-          client.foo
+          client.rspec
         end
 
         describe "batch mode" do
@@ -337,9 +354,9 @@ module MCollective
         it "should support normal calls" do
           client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
 
-          client.expects(:call_agent).with("foo", {}, client.options, :auto).once
+          client.expects(:call_agent).with("rspec", {}, client.options, :auto).once
 
-          client.foo
+          client.rspec
         end
       end
 

@@ -255,14 +255,11 @@ module MCollective
         raise(e)
       end
 
+      err_dest.puts "\nThe %s application failed to run, use -v for full error details: %s\n" % [ Util.colorize(:bold, $0), Util.colorize(:red, e.to_s)]
+
       if options.nil? || options[:verbose]
         e.backtrace.first << Util.colorize(:red, "  <----")
         err_dest.puts "\n%s %s" % [ Util.colorize(:red, e.to_s), Util.colorize(:bold, "(#{e.class.to_s})")]
-      else
-        err_dest.puts "\nThe %s application failed to run, use -v for full error details: %s\n" % [ Util.colorize(:bold, $0), Util.colorize(:red, e.to_s)]
-      end
-
-      if options.nil? || options[:verbose]
         e.backtrace.each{|l| err_dest.puts "\tfrom #{l}"}
       end
 
@@ -352,6 +349,7 @@ module MCollective
     # cli options wouldnt take effect which could have a disasterous outcome
     def rpcclient(agent, flags = {})
       flags[:options] = options unless flags.include?(:options)
+      flags[:exit_on_failure] = false
 
       super
     end

@@ -419,10 +419,10 @@ module MCollective
         result.should == [5,5]
       end
 
-      it "should return the correct dimensions if stty is present" do  
+      it "should return the correct dimensions if stty is present" do
         stdout = mock()
         stdout.expects(:tty?).returns(true)
- 
+
         environment = mock()
         environment.expects(:[]).with("COLUMNS").returns(false)
         environment.expects(:[]).with("TERM").returns(false)
@@ -446,6 +446,16 @@ module MCollective
         File.stubs(:exist?).returns(false)
         result = Util.command_in_path?("test")
         result.should == false
+      end
+    end
+
+    describe "#versioncmp" do
+      it "should be able to sort a long set of various unordered versions" do
+        ary = %w{ 1.1.6 2.3 1.1a 3.0 1.5 1 2.4 1.1-4 2.3.1 1.2 2.3.0 1.1-3 2.4b 2.4 2.40.2 2.3a.1 3.1 0002 1.1-5 1.1.a 1.06}
+
+        newary = ary.sort {|a, b| Util.versioncmp(a,b) }
+
+        newary.should == ["0002", "1", "1.06", "1.1-3", "1.1-4", "1.1-5", "1.1.6", "1.1.a", "1.1a", "1.2", "1.5", "2.3", "2.3.0", "2.3.1", "2.3a.1", "2.4", "2.4", "2.4b", "2.40.2", "3.0", "3.1"]
       end
     end
   end

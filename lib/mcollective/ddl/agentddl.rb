@@ -132,8 +132,9 @@ module MCollective
       # with args as a hash.  This will only be active if the @process_aggregate_functions
       # is set to true which only happens in the #summarize block
       def method_missing(name, *args, &block)
-        super unless @process_aggregate_functions
-        super unless is_function?(name)
+        unless @process_aggregate_functions || is_function?(name)
+          raise NoMethodError, "undefined local variable or method `#{name}'", caller
+        end
 
         return {:function => name, :args => args}
       end
@@ -153,7 +154,7 @@ module MCollective
           raise DDLValidationError, "Attempted to call action #{action} for #{@pluginname} but it's not declared in the DDL"
         end
 
-        input = action_interface(action)[:input]
+        input = action_interface(action)[:input] || {}
 
         input.keys.each do |key|
           unless input[key][:optional]

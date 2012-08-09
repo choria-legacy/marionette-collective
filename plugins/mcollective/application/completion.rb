@@ -41,8 +41,11 @@ module MCollective
     def list_agents
       if options[:verbose]
         PluginManager.find(:agent, "ddl").each do |agent|
-          ddl = DDL.new(agent)
-          puts "%s:%s" % [ agent, ddl.meta[:description] ]
+          begin
+            ddl = DDL.new(agent)
+            puts "%s:%s" % [ agent, ddl.meta[:description] ]
+          rescue
+          end
         end
       else
         PluginManager.find(:agent, "ddl").each {|p| puts p}

@@ -279,6 +279,10 @@ module MCollective
       RUBY_VERSION
     end
 
+    def self.mcollective_version
+      MCollective::VERSION
+    end
+
     # Returns an aligned_string of text relative to the size of the terminal
     # window. If a line in the string exceeds the width of the terminal window
     # the line will be chopped off at the whitespace chacter closest to the
@@ -400,6 +404,42 @@ module MCollective
       end
 
       found.include?(true)
+    end
+
+    # compare two software versions as commonly found in
+    # package versions.
+    #
+    # returns 0 if a == b
+    # returns -1 if a < b
+    # returns 1 if a > b
+    #
+    # Code originally from Puppet but refactored to a more
+    # ruby style that fits in better with this code base
+    def self.versioncmp(version_a, version_b)
+      vre = /[-.]|\d+|[^-.\d]+/
+      ax = version_a.scan(vre)
+      bx = version_b.scan(vre)
+
+      until ax.empty? || bx.empty?
+        a = ax.shift
+        b = bx.shift
+
+        next      if a == b
+        next      if a == '-' && b == '-'
+        return -1 if a == '-'
+        return 1  if b == '-'
+        next      if a == '.' && b == '.'
+        return -1 if a == '.'
+        return 1  if b == '.'
+
+        if a =~ /^[^0]\d+$/ && b =~ /^[^0]\d+$/
+          return Integer(a) <=> Integer(b)
+        else
+          return a.upcase <=> b.upcase
+        end
+      end
+
+      version_a <=> version_b
     end
   end
 end

@@ -174,6 +174,42 @@ module MCollective
         end
       end
 
+      describe "#requires" do
+        it "should only accept hashes as arguments" do
+          expect { @ddl.requires(1) }.to raise_error(/should be a hash/)
+        end
+
+        it "should only accept valid requirement types" do
+          expect { @ddl.requires(:rspec => "1") }.to raise_error(/is not a valid requirement/)
+          @ddl.requires(:mcollective => "1.0.0")
+        end
+
+        it "should save the requirement" do
+          @ddl.requires(:mcollective => "1.0.0")
+
+          @ddl.requirements.should == {:mcollective => "1.0.0"}
+        end
+      end
+
+      describe "#validate_requirements" do
+        it "should fail for older versions of mcollective" do
+          Util.stubs(:mcollective_version).returns("0.1")
+          expect { @ddl.requires(:mcollective => "2.0") }.to raise_error(/requires.+version 2.0/)
+        end
+
+        it "should pass for newer versions of mcollective" do
+          Util.stubs(:mcollective_version).returns("2.0")
+          @ddl.requires(:mcollective => "0.1")
+          @ddl.validate_requirements.should == true
+        end
+
+        it "should bypass checks in development" do
+          Util.stubs(:mcollective_version).returns("@DEVELOPMENT_VERSION@")
+          Log.expects(:warn).with(regexp_matches(/skipped in development/))
+          @ddl.requires(:mcollective => "0.1")
+        end
+      end
+
       describe "#loaddlfile" do
         it "should raise the correct error when a ddl isnt present" do
           @ddl.expects(:findddlfile).returns(false)

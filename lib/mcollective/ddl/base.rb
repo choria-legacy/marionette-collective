@@ -17,7 +17,7 @@ module MCollective
     # plugin DDL then add a PlugintypeDDL class here and add your
     # specific behaviors to those.
     class Base
-      attr_reader :meta, :entities, :pluginname, :plugintype, :usage
+      attr_reader :meta, :entities, :pluginname, :plugintype, :usage, :requirements
 
       def initialize(plugin, plugintype=:agent, loadddl=true)
         @entities = {}
@@ -26,6 +26,7 @@ module MCollective
         @config = Config.instance
         @pluginname = plugin
         @plugintype = plugintype.to_sym
+        @requirements = {}
 
         loadddlfile if loadddl
       end
@@ -94,6 +95,21 @@ module MCollective
           end
         end
         return false
+      end
+
+      def validate_requirements
+        if requirement = @requirements[:mcollective]
+          if Util.mcollective_version == "@DEVELOPMENT_VERSION@"
+            Log.warn("DDL requirements validation being skipped in development")
+            return true
+          end
+
+          if Util.versioncmp(Util.mcollective_version, requirement) < 0
+            raise DDLValidationError, "%s plugin '%s' requires MCollective version %s or newer" % [@plugintype.to_s.capitalize, @pluginname, requirement]
+          end
+        end
+
+        true
       end
 
       # validate strings, lists and booleans, we'll add more types of validators when
@@ -175,6 +191,21 @@ module MCollective
                                                 :default     => properties[:default]}
       end
 
+      def requires(requirement)
+        raise "Requirement should be a hash in the form :item => 'requirement'" unless requirement.is_a?(Hash)
+
+        valid_requirements = [:mcollective]
+
+        requirement.keys.each do |key|
+          unless valid_requirements.include?(key)
+            raise "Requirement %s is not a valid requirement, only %s is supported" % [key, valid_requirements.join(", ")]
+          end
+
+          @requirements[key] = requirement[key]
+        end
+
+        validate_requirements
+      end
 
       # Registers meta data for the introspection hash
       def metadata(meta)

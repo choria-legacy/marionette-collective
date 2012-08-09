@@ -43,7 +43,7 @@ module MCollective
         @agent = agent
         @timeout = initial_options[:timeout] || 5
         @verbose = initial_options[:verbose]
-        @filter = initial_options[:filter]
+        @filter = initial_options[:filter] || Util.empty_filter
         @config = initial_options[:config]
         @discovered_agents = nil
         @progress = initial_options[:progress_bar]
@@ -84,14 +84,11 @@ module MCollective
         # We do this only if the timeout is the default 5
         # seconds, so that users cli overrides will still
         # get applied
-        begin
-          @ddl = DDL.new(agent)
-          @stats.ddl = @ddl
-          @timeout = @ddl.meta[:timeout] + @discovery_timeout if @timeout == 5
-        rescue Exception => e
-          Log.debug("Could not find DDL: #{e}")
-          @ddl = nil
-        end
+        #
+        # DDLs are required, failure to find a DDL is fatal
+        @ddl = DDL.new(agent)
+        @stats.ddl = @ddl
+        @timeout = @ddl.meta[:timeout] + @discovery_timeout if @timeout == 5
 
         # allows stderr and stdout to be overridden for testing
         # but also for web apps that might not want a bunch of stuff
@@ -118,11 +115,7 @@ module MCollective
 
       # Returns help for an agent if a DDL was found
       def help(template)
-        if @ddl
-          @ddl.help(template)
-        else
-          return "Can't find DDL for agent '#{@agent}'"
-        end
+        @ddl.help(template)
       end
 
       # Creates a suitable request hash for the SimpleRPC agent.

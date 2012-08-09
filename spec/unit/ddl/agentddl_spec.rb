@@ -92,7 +92,6 @@ module MCollective
 
         it "should return the function hash" do
           Config.instance.mode = :client
-          @ddl.expects(:is_function?).returns(true)
           @ddl.instance_variable_set(:@process_aggregate_functions, true)
           result = @ddl.method_missing(:test_function, :rspec)
           result.should == {:args => [:rspec], :function => :test_function }
