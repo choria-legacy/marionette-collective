@@ -8,7 +8,14 @@ module MCollective
       attr_accessor :current_package_name, :signature
 
       def initialize(plugin, pluginpath = nil, signature = nil, verbose = false)
-        raise RuntimeError, "package 'rpm-build' is not installed" unless PluginPackager.build_tool?("rpmbuild")
+        if(PluginPackager.build_tool?("rpmbuild-md5"))
+          @buildtool = "rpmbuild-md5"
+        elsif(PluginPackager.build_tool?("rpmbuild"))
+          @buildtool = "rpmbuild"
+        else
+          raise RuntimeError, "creating rpms require 'rpmbuild' or 'rpmbuild-md5' to be installed"
+        end
+              
         @plugin = plugin
         @verbose = verbose
         @libdir = pluginpath || "/usr/libexec/mcollective/mcollective/"
@@ -35,13 +42,13 @@ module MCollective
       def create_package(type, data)
         begin
           make_spec_file
-
           PluginPackager.do_quietly?(@verbose) do
-            PluginPackager.safe_system("rpmbuild -bb #{"--quiet" unless verbose} #{"--sign" if @signature} #{File.join(@tmpdir, "SPECS", "#{type}.spec")} --buildroot #{File.join(@tmpdir, "BUILD")}")
+            PluginPackager.safe_system("rpmbuild -ba #{"--quiet" unless verbose} #{"--sign" if @signature} #{File.join(@tmpdir, "SPECS", "#{type}.spec")} --buildroot #{File.join(@tmpdir, "BUILD")}")
           end
 
           FileUtils.cp(File.join(`rpm --eval '%_rpmdir'`.chomp, "noarch", "#{@current_package_name}-#{@plugin.metadata[:version]}-#{@plugin.iteration}.noarch.rpm"), ".")
-          puts "Created package #{@current_package_name}"
+          FileUtils.cp(File.join(`rpm --eval '%_srcrpmdir'`.chomp, "#{@current_package_name}-#{@plugin.metadata[:version]}-#{@plugin.iteration}.src.rpm"), ".")
+          puts "Created RPM and SRPM packages for #{@current_package_name}"
         rescue Exception => e
           raise RuntimeError, "Could not build package. Reason - #{e}"
         end

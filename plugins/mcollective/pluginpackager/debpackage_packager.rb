@@ -34,6 +34,7 @@ module MCollective
 
             prepare_tmpdirs data
             create_package
+            move_packages
           rescue Exception => e
             raise e
           ensure
@@ -65,11 +66,17 @@ module MCollective
             end
           end
 
-          FileUtils.cp(File.join(@tmpdir, "#{@current_package_fullname}_all.deb"), ".")
-
           puts "Created package #{@current_package_fullname}"
         rescue Exception => e
           raise RuntimeError, "Could not build package - #{e}"
+        end
+      end
+
+      def move_packages
+        begin
+          FileUtils.cp(Dir.glob(File.join(@tmpdir, "*.{deb,dsc,diff.gz,orig.tar.gz,changes}")), ".")
+        rescue Exception => e
+          raise RuntimeError, "Could not copy packages to working directory: '#{e}'"
         end
       end
 

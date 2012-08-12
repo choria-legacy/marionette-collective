@@ -16,6 +16,7 @@ module MCollective
       end
 
       before :each do
+        PluginPackager.stubs(:build_tool?).with("rpmbuild-md5").returns(true)
         PluginPackager.stubs(:build_tool?).with("rpmbuild").returns(true)
         @plugin = mock()
         @plugin.stubs(:iteration).returns("1")
@@ -28,11 +29,12 @@ module MCollective
 
       describe "#initialize" do
 
-        it "should raise and exception if rpm-build is not present" do
+        it "should raise and exception if neither rpmbuild or rpmbuild-md5 is installed is not present" do
+          PluginPackager.expects(:build_tool?).with("rpmbuild-md5").returns(false)
           PluginPackager.expects(:build_tool?).with("rpmbuild").returns(false)
           expect{
             RpmpackagePackager.new("plugin")
-          }.to raise_exception(RuntimeError, "package 'rpm-build' is not installed")
+          }.to raise_exception(RuntimeError, "creating rpms require 'rpmbuild' or 'rpmbuild-md5' to be installed")
         end
 
         it "should set the correct libdir" do
@@ -81,25 +83,25 @@ module MCollective
         end
 
         it "should create the package" do
-          PluginPackager.expects(:safe_system).with("rpmbuild -bb   /tmp/SPECS/test.spec --buildroot /tmp/BUILD")
-          FileUtils.expects(:cp)
+          PluginPackager.expects(:safe_system).with("rpmbuild -ba   /tmp/SPECS/test.spec --buildroot /tmp/BUILD")
+          FileUtils.expects(:cp).twice
           @packager.tmpdir = "/tmp"
           @packager.verbose = "true"
           @packager.expects(:make_spec_file)
           @packager.current_package_name = "mcollective-testplugin-test"
-          @packager.expects(:puts).with("Created package mcollective-testplugin-test")
+          @packager.expects(:puts).with('Created RPM and SRPM packages for mcollective-testplugin-test')
           @packager.create_package(:test, {:files => ["foo.rb"]})
         end
 
         it "should sign the package if a signature is given" do
-          PluginPackager.expects(:safe_system).with("rpmbuild -bb  --sign /tmp/SPECS/test.spec --buildroot /tmp/BUILD")
-          FileUtils.expects(:cp)
+          PluginPackager.expects(:safe_system).with("rpmbuild -ba  --sign /tmp/SPECS/test.spec --buildroot /tmp/BUILD")
+          FileUtils.expects(:cp).twice
           @packager.signature = true
           @packager.tmpdir = "/tmp"
           @packager.verbose = "true"
           @packager.expects(:make_spec_file)
           @packager.current_package_name = "mcollective-testplugin-test"
-          @packager.expects(:puts).with("Created package mcollective-testplugin-test")
+          @packager.expects(:puts).with('Created RPM and SRPM packages for mcollective-testplugin-test')
           @packager.create_package(:test, {:files => ["foo.rb"]})
         end
 

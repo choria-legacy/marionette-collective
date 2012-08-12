@@ -49,6 +49,7 @@ module MCollective
           @plugin.stubs(:iteration).returns("1")
           @packager.stubs(:prepare_tmpdirs)
           @packager.stubs(:create_package)
+          @packager.stubs(:move_packages)
           @packager.stubs(:cleanup_tmpdirs)
           Dir.stubs(:mktmpdir).with("mcollective_packager").returns("/tmp")
           Dir.stubs(:mkdir)
@@ -99,7 +100,6 @@ module MCollective
           packager.tmpdir = "/tmp"
           packager.current_package_fullname = "test"
           PluginPackager.expects(:safe_system).with("debuild -i -us -uc")
-          FileUtils.expects(:cp).with(File.join("/tmp", "test_all.deb"), ".")
           packager.expects(:puts).with("Created package test")
 
           packager.create_package
@@ -122,7 +122,6 @@ module MCollective
           packager.tmpdir = "/tmp"
           packager.current_package_fullname = "test"
           PluginPackager.expects(:safe_system).with("debuild -i -ktest")
-          FileUtils.expects(:cp).with(File.join("/tmp", "test_all.deb"), ".")
           packager.expects(:puts).with("Created package test")
 
           packager.create_package
@@ -184,6 +183,28 @@ module MCollective
           @packager.create_install
           install_file = File.read("#{tmpdir}/debian/test.install")
           install_file.should == "/usr/share/mcollective/plugins/mcollective/foo.rb /usr/share/mcollective/plugins/mcollective/.\n"
+        end
+      end
+
+      describe "#move_packages" do
+        before :each do
+          @plugin = mock()
+        end
+
+        it "should move the packages to the working directory" do
+          Dir.expects(:glob)
+          File.expects(:join)
+          FileUtils.expects(:cp)
+          @packager = DebpackagePackager.new(@plugin) 
+          @packager.move_packages
+        end
+
+        it "should raise an error if the packages could not be moved" do
+          @packager = DebpackagePackager.new(@plugin)
+          File.expects(:join).raises("error")
+          expect{
+            @packager.move_packages
+          }.to raise_error RuntimeError, "Could not copy packages to working directory: 'error'"
         end
       end
 
