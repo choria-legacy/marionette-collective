@@ -26,7 +26,7 @@ Requires: <%= dep.is_a?(Array) ? "%s = %s" % [dep[0], dep[1]] : dep%>
 %files
 %defattr(-,root,root,-)
 <% @current_package_data[:files].each do |file| -%>
-  <%= file.gsub("./", @libdir) %>
+<%=@libdir + file.gsub(/#{plugin.path}|\.\//, '')%>
 <% end -%>
 
 <% if @plugin.preinstall -%>

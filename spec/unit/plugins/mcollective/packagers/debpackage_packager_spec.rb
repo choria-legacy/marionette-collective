@@ -165,6 +165,7 @@ module MCollective
       describe "#create_install" do
         before :each do
           @packager = DebpackagePackager.new(@plugin)
+          @plugin.stubs(:path)
         end
 
         it "should raise an exception if the install file can't be created" do

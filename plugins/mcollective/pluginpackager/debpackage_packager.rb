@@ -97,7 +97,7 @@ module MCollective
         begin
           File.open(File.join(@build_dir, "debian", "#{@current_package_shortname}.install"), "w") do |f|
             @current_package_data[:files].each do |filename|
-              f.puts "#{File.join(@libdir, filename).gsub("./", "")} #{File.join(@libdir, File.dirname(filename)).gsub("./","")}"
+              f.puts "#{File.join(@libdir, filename.gsub(/#{plugin.path}|\.\//, ""))} #{File.join(@libdir, File.dirname(filename).gsub(/#{plugin.path}|\.\//,""))}"
             end
           end
         rescue Exception => e
