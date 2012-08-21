@@ -20,6 +20,8 @@ module MCollective
         @verbose = verbose
         @libdir = pluginpath || "/usr/libexec/mcollective/mcollective/"
         @signature = signature
+        @rpmdir = `rpm --eval '%_rpmdir'`.chomp
+        @srpmdir = `rpm --eval '%_srcrpmdir'`.chomp
       end
 
       def create_packages
@@ -41,13 +43,19 @@ module MCollective
 
       def create_package(type, data)
         begin
+          tarfile = "#{@current_package_name}-#{@plugin.metadata[:version]}.tgz"
           make_spec_file
-          PluginPackager.do_quietly?(@verbose) do
-            PluginPackager.safe_system("rpmbuild -ba #{"--quiet" unless verbose} #{"--sign" if @signature} #{File.join(@tmpdir, "SPECS", "#{type}.spec")} --buildroot #{File.join(@tmpdir, "BUILD")}")
+          PluginPackager.do_quietly?(verbose) do
+            Dir.chdir(@tmpdir) do
+              PluginPackager.safe_system("tar -cvzf #{File.join(@tmpdir, tarfile)} #{@current_package_name}-#{@plugin.metadata[:version]}")
+            end
+
+            PluginPackager.safe_system("rpmbuild -ta #{"--quiet" unless verbose} #{"--sign" if @signature} #{File.join(@tmpdir, tarfile)}")
           end
 
-          FileUtils.cp(File.join(`rpm --eval '%_rpmdir'`.chomp, "noarch", "#{@current_package_name}-#{@plugin.metadata[:version]}-#{@plugin.iteration}.noarch.rpm"), ".")
-          FileUtils.cp(File.join(`rpm --eval '%_srcrpmdir'`.chomp, "#{@current_package_name}-#{@plugin.metadata[:version]}-#{@plugin.iteration}.src.rpm"), ".")
+          FileUtils.cp(File.join(@rpmdir, "noarch", "#{@current_package_name}-#{@plugin.metadata[:version]}-#{@plugin.iteration}.noarch.rpm"), ".")
+          FileUtils.cp(File.join(@srpmdir, "#{@current_package_name}-#{@plugin.metadata[:version]}-#{@plugin.iteration}.src.rpm"), ".")
+
           puts "Created RPM and SRPM packages for #{@current_package_name}"
         rescue Exception => e
           raise RuntimeError, "Could not build package. Reason - #{e}"
@@ -57,7 +65,7 @@ module MCollective
       def make_spec_file
         begin
           spec_template = ERB.new(File.read(File.join(File.dirname(__FILE__), "templates", "redhat", "rpm_spec.erb")), nil, "-")
-          File.open(File.join(@tmpdir, "SPECS", "#{@current_package_type}.spec"), "w") do |f|
+          File.open(File.join(@tmpdir, "#{@current_package_name}-#{@plugin.metadata[:version]}" ,"#{@current_package_name}-#{@plugin.metadata[:version]}.spec"), "w") do |f|
             f.puts spec_template.result(binding)
           end
         rescue Exception => e
@@ -66,21 +74,10 @@ module MCollective
       end
 
       def prepare_tmpdirs(data)
-        make_rpm_dirs
         data[:files].each do |file|
-          targetdir = File.join(@tmpdir, "BUILD", @libdir, File.dirname(File.expand_path(file)).gsub(@plugin.target_path, ""))
+          targetdir = File.join(@tmpdir, "#{@current_package_name}-#{@plugin.metadata[:version]}", @libdir, File.dirname(File.expand_path(file)).gsub(@plugin.target_path, ""))
           FileUtils.mkdir_p(targetdir) unless File.directory? targetdir
           FileUtils.cp_r(file, targetdir)
-        end
-      end
-
-      def make_rpm_dirs
-        ["BUILD", "SOURCES", "SPECS", "SRPMS", "RPMS"].each do |dir|
-          begin
-            FileUtils.mkdir(File.join(@tmpdir, dir))
-          rescue Exception => e
-            raise RuntimeError, "Could not create #{dir} directory - #{e}"
-          end
         end
       end
 

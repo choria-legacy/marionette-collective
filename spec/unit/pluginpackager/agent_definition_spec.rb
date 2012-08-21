@@ -56,16 +56,17 @@ module MCollective
           agent.packagedata[:agent].should == nil
         end
 
-        it "should populate the agent files if the agent directory is present and not empty" do
+        it "should add the agent file if the agent directory and implementation file is present" do
           AgentDefinition.any_instance.expects(:common).returns(nil)
-          PluginPackager.expects(:check_dir_present).with("tmpdir/agent").returns(true)
-          File.stubs(:join).returns("tmpdir")
+          PluginPackager.stubs(:check_dir_present).returns(true)
           File.stubs(:join).with(".", "agent").returns("tmpdir/agent")
-          File.stubs(:join).with(".", "aggregate").returns("tmpdir/aggregate")
-          Dir.stubs(:glob).returns(["file.rb", "implementation.rb"])
+          File.stubs(:join).with("tmpdir/agent", "*.ddl").returns("tmpdir/agent/*.ddl")
+          File.stubs(:join).with("tmpdir/agent", "*").returns("tmpdir/agent/*")
+          Dir.stubs(:glob).with("tmpdir/agent/*.ddl").returns([]) 
+          Dir.stubs(:glob).with("tmpdir/agent/*").returns(["implementation.rb"])
 
           agent = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
-          agent.packagedata[:agent][:files].should == ["file.rb", "implementation.rb"]
+          agent.packagedata[:agent][:files].should == ["implementation.rb"]
         end
 
         it "should add common package as dependency if present" do
@@ -82,38 +83,36 @@ module MCollective
       end
 
       describe "#common" do
-        it "should populate the common files with only the ddl if util dir is empty" do
+        it "should populate the common files if there are any" do
           AgentDefinition.any_instance.expects(:agent)
           AgentDefinition.any_instance.expects(:client)
+          File.expects(:join).with(".", "data", "**").returns("datadir")
+          File.expects(:join).with(".", "util", "**", "**").returns("utildir")
+          File.expects(:join).with(".", "agent", "*.ddl").returns("ddldir")
+          File.expects(:join).with(".", "validator", "**").returns("validatordir")
+          Dir.expects(:glob).with("datadir").returns(["data.rb"])
+          Dir.expects(:glob).with("utildir").returns(["util.rb"])
+          Dir.expects(:glob).with("validatordir").returns(["validator.rb"])
+          Dir.expects(:glob).with("ddldir").returns(["agent.ddl"])
 
-          PluginPackager.expects(:check_dir_present).with("./util").returns(false)
-          PluginPackager.expects(:check_dir_present).with("./validator").returns(false)
-          PluginPackager.expects(:check_dir_present).with("./agent").returns(true)
-          Dir.stubs(:glob).returns(["file.rb"])
           common = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
-          common.packagedata[:common][:files].should == ["file.rb"]
-        end
-
-        it "should populate the common files if the common directory is present and not empty" do
-          AgentDefinition.any_instance.expects(:agent)
-          AgentDefinition.any_instance.expects(:client)
-
-          PluginPackager.expects(:check_dir_present).with("./util").returns(true)
-          PluginPackager.expects(:check_dir_present).with("./agent").returns(true)
-          PluginPackager.expects(:check_dir_present).with("./validator").returns(true)
-          Dir.stubs(:glob).with("./util/*").returns(["file.rb"])
-          Dir.stubs(:glob).with("./agent/*.ddl").returns(["ddl.rb"])
-          Dir.stubs(:glob).with("./validator/*").returns(["validator.rb"])
-          common = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
-          common.packagedata[:common][:files].should == ["ddl.rb", "validator.rb", "file.rb"]
+          common.packagedata[:common][:files].should == ["data.rb", "util.rb", "validator.rb", "agent.ddl"]
         end
 
         it "should raise an exception if the ddl file isn't present" do
-          PluginPackager.expects(:check_dir_present).with("./agent").returns(false)
-          PluginPackager.expects(:check_dir_present).with("./validator").returns(false)
+          File.expects(:join).with(".", "data", "**").returns("datadir")
+          File.expects(:join).with(".", "util", "**", "**").returns("utildir")
+          File.expects(:join).with(".", "agent", "*.ddl").returns("ddldir")
+          File.expects(:join).with(".", "agent").returns("ddldir")
+          File.expects(:join).with(".", "validator", "**").returns("validatordir")
+          Dir.expects(:glob).with("datadir").returns(["data.rb"])
+          Dir.expects(:glob).with("utildir").returns(["util.rb"])
+          Dir.expects(:glob).with("validatordir").returns(["validator.rb"])
+          Dir.expects(:glob).with("ddldir").returns([])
+
           expect{
             common = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
-          }.to raise_error RuntimeError, "cannot create package - No ddl file found in ./agent"
+          }.to raise_error RuntimeError, "cannot create package - No ddl file found in ddldir"
         end
       end
 

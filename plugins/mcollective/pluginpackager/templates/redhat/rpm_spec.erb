@@ -9,24 +9,39 @@ Packager: <%= @plugin.metadata[:author] %>
 BuildRoot: %buildroot
 BuildArch: noarch
 Group: System Tools
-
-<% @current_package_data[:dependencies].each do |dep|%>
+Source0: <%= "#{@current_package_name}-#{@plugin.metadata[:version]}.tgz" %>
+<% @current_package_data[:dependencies].each do |dep|-%>
 Requires: <%= dep.is_a?(Array) ? "%s = %s" % [dep[0], dep[1]] : dep%>
-<% end %>
+<% end -%>
 
 %description
-<%= @plugin.metadata[:description] -%>
+<%= @plugin.metadata[:description] %>
 
 %prep
+%setup
 
 %build
 
 %install
+<% @dirs = [] -%>
+<% @package_files = [] -%>
+<% @current_package_data[:files].each do |file| -%>
+<% @dirs << File.dirname(File.join(@libdir, File.expand_path(file).gsub(/#{File.expand_path(plugin.path)}|\.\//, ''))) -%>
+<% @package_files << File.join(@libdir, File.expand_path(file).gsub(/#{File.expand_path(plugin.path)}|\.\//, '')) -%>
+<% end -%>
+rm -rf %{buildroot}
+<% @dirs.uniq.each do |dir| -%>
+%{__install} -d -m0755 %{buildroot}<%= dir%>
+<% end -%>
+<% @package_files -=  @dirs %>
+<% @package_files.each do |package_file| -%>
+%{__install} -m0644 <%= (package_file[0].chr == '/') ? package_file[1..package_file.size-1]: package_file%> %{buildroot}<%=package_file %>
+<% end -%>
 
 %files
 %defattr(-,root,root,-)
-<% @current_package_data[:files].each do |file| -%>
-<%=@libdir + file.gsub(/#{plugin.path}|\.\//, '')%>
+<% @package_files.each do |file| -%>
+<%= file %>
 <% end -%>
 
 <% if @plugin.preinstall -%>
@@ -39,5 +54,5 @@ Requires: <%= dep.is_a?(Array) ? "%s = %s" % [dep[0], dep[1]] : dep%>
 <% end -%>
 
 %changelog
-* <%= Time.now.strftime("%a %b %d %Y") -%> - <%= @plugin.vendor%>
+* <%= Time.now.strftime("%a %b %d %Y") -%> <%= @plugin.metadata[:author]%> - <%= @plugin.metadata[:version]%>-<%= @plugin.iteration%>
 - Built Package <%= @current_package_name-%>

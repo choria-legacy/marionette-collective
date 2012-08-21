@@ -83,8 +83,9 @@ module MCollective
         end
 
         it "should create the package" do
-          PluginPackager.expects(:safe_system).with("rpmbuild -ba   /tmp/SPECS/test.spec --buildroot /tmp/BUILD")
-          FileUtils.expects(:cp).twice
+          Dir.expects(:chdir)
+          PluginPackager.expects(:safe_system).with("rpmbuild -ta   /tmp/mcollective-testplugin-test-1.tgz")
+          FileUtils.expects(:cp).times(2)
           @packager.tmpdir = "/tmp"
           @packager.verbose = "true"
           @packager.expects(:make_spec_file)
@@ -94,8 +95,9 @@ module MCollective
         end
 
         it "should sign the package if a signature is given" do
-          PluginPackager.expects(:safe_system).with("rpmbuild -ba  --sign /tmp/SPECS/test.spec --buildroot /tmp/BUILD")
-          FileUtils.expects(:cp).twice
+          Dir.expects(:chdir)
+          PluginPackager.expects(:safe_system).with("rpmbuild -ta  --sign /tmp/mcollective-testplugin-test-1.tgz")
+          FileUtils.expects(:cp).times(2)
           @packager.signature = true
           @packager.tmpdir = "/tmp"
           @packager.verbose = "true"
@@ -107,6 +109,7 @@ module MCollective
 
         it "should raise an error if the package can't be built" do
           @packager = RpmpackagePackager.new(@plugin)
+          @packager.tmpdir = "/tmp"
           @packager.expects(:make_spec_file)
           PluginPackager.stubs(:do_quietly?).raises("foo")
           expect{
@@ -117,7 +120,8 @@ module MCollective
 
       describe "#make_spec_file" do
         before :each do
-          @packager = RpmpackagePackager.new("package")
+          @plugin = mock
+          @packager = RpmpackagePackager.new(@plugin)
         end
 
         it "should raise an exception if specfile cannot be built" do
@@ -129,11 +133,12 @@ module MCollective
 
         it "should create the specfile from the erb" do
           File.stubs(:read).returns("specfile")
-          @packager.current_package_type = "test"
+          @plugin.stubs(:metadata).returns({:version => 2})
+          @packager.current_package_name = "test"
           @packager.tmpdir = maketmpdir
-          Dir.mkdir(File.join(@packager.tmpdir, "SPECS"))
+          Dir.mkdir(File.join(@packager.tmpdir, "test-2"))
           @packager.make_spec_file
-          File.read(File.join(@packager.tmpdir, "SPECS", "test.spec")).should == "specfile"
+          File.read(File.join(@packager.tmpdir, "test-2", "test-2.spec")).should == "specfile"
         end
       end
 
@@ -141,34 +146,10 @@ module MCollective
         it "should create the tmp dirs and cp the package files" do
           @plugin.stubs(:target_path).returns("")
           packager = RpmpackagePackager.new(@plugin)
-          packager.expects(:make_rpm_dirs)
           FileUtils.expects(:mkdir_p)
           File.stubs(:join).returns("/target")
           FileUtils.expects(:cp_r).with("test.rb", "/target")
           packager.prepare_tmpdirs({:files => ["test.rb"]})
-        end
-      end
-
-      describe "#make_rpm_dirs" do
-        before :each do
-          @packager = RpmpackagePackager.new("package")
-        end
-
-        it "should raise an exception if a directory can't be created" do
-          File.expects(:join).raises("test error")
-          expect{
-            @packager.make_rpm_dirs
-          }.to raise_error(RuntimeError, "Could not create BUILD directory - test error")
-        end
-
-        it "should create the correct RPM build directories" do
-          @packager.tmpdir = maketmpdir
-          @packager.make_rpm_dirs
-          File.directory?(File.join(@packager.tmpdir, "SPECS")).should == true
-          File.directory?(File.join(@packager.tmpdir, "SOURCES")).should == true
-          File.directory?(File.join(@packager.tmpdir, "SRPMS")).should == true
-          File.directory?(File.join(@packager.tmpdir, "BUILD")).should == true
-          File.directory?(File.join(@packager.tmpdir, "RPMS")).should == true
         end
       end
 

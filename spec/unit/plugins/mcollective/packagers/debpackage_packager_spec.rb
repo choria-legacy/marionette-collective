@@ -64,7 +64,7 @@ module MCollective
         end
 
         it "Should create the build dir" do
-          Dir.expects(:mkdir).with("/tmp/mcollective-test_plugin-test_1-1")
+          Dir.expects(:mkdir).with("/tmp/mcollective-test_plugin-test_1")
           @packager.create_packages
         end
 
@@ -165,7 +165,7 @@ module MCollective
       describe "#create_install" do
         before :each do
           @packager = DebpackagePackager.new(@plugin)
-          @plugin.stubs(:path)
+          @plugin.stubs(:path).returns("")
         end
 
         it "should raise an exception if the install file can't be created" do
@@ -183,7 +183,7 @@ module MCollective
           @packager.current_package_data = {:files => ["foo.rb"]}
           @packager.create_install
           install_file = File.read("#{tmpdir}/debian/test.install")
-          install_file.should == "/usr/share/mcollective/plugins/mcollective/foo.rb /usr/share/mcollective/plugins/mcollective/.\n"
+          install_file.should == "/usr/share/mcollective/plugins/mcollective/foo.rb /usr/share/mcollective/plugins/mcollective\n"
         end
       end
 
@@ -228,7 +228,7 @@ module MCollective
           @plugin.stubs(:metadata).returns(@plugin)
           @plugin.stubs(:[]).with(:version).returns("1")
           @plugin.stubs(:iteration).returns("1")
-          PluginPackager.expects(:safe_system).with("tar -Pcvzf /tmp/test_1.orig.tar.gz /build_dir")
+          PluginPackager.expects(:safe_system).with("tar -Pcvzf /tmp/test_1.orig.tar.gz test_1")
           @packager.create_tar
         end
       end

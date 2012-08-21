@@ -15,7 +15,7 @@ module MCollective
         @libdir = pluginpath || "/usr/share/mcollective/plugins/mcollective/"
         @signature = signature
         @tmpdir = ""
-        @builddir = ""
+        @build_dir = ""
         @targetdir = ""
       end
 
@@ -29,7 +29,7 @@ module MCollective
             @current_package_fullname = "mcollective-#{@plugin.metadata[:name]}-#{@current_package_type}" +
                                         "_#{@plugin.metadata[:version]}-#{@plugin.iteration}"
 
-            @build_dir = File.join(@tmpdir, @current_package_fullname)
+            @build_dir = File.join(@tmpdir, "#{@current_package_shortname}_#{@plugin.metadata[:version]}")
             Dir.mkdir @build_dir
 
             prepare_tmpdirs data
@@ -97,7 +97,8 @@ module MCollective
         begin
           File.open(File.join(@build_dir, "debian", "#{@current_package_shortname}.install"), "w") do |f|
             @current_package_data[:files].each do |filename|
-              f.puts "#{File.join(@libdir, filename.gsub(/#{plugin.path}|\.\//, ""))} #{File.join(@libdir, File.dirname(filename).gsub(/#{plugin.path}|\.\//,""))}"
+              extended_filename = File.join(@libdir, File.expand_path(filename).gsub(/#{File.expand_path(plugin.path)}|\.\//, ''))
+              f.puts "#{extended_filename} #{File.dirname(extended_filename)}"
             end
           end
         rescue Exception => e
@@ -108,7 +109,9 @@ module MCollective
       def create_tar
         begin
           PluginPackager.do_quietly?(@verbose) do
-            PluginPackager.safe_system "tar -Pcvzf #{File.join(@tmpdir,"#{@current_package_shortname}_#{@plugin.metadata[:version]}.orig.tar.gz")} #{@build_dir}"
+            Dir.chdir(@tmpdir) do
+              PluginPackager.safe_system "tar -Pcvzf #{File.join(@tmpdir,"#{@current_package_shortname}_#{@plugin.metadata[:version]}.orig.tar.gz")} #{@current_package_shortname}_#{@plugin.metadata[:version]}"
+            end
           end
         rescue Exception => e
           raise "Could not create tarball - #{e}"
