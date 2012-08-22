@@ -105,9 +105,7 @@ fi
 %{_libexecdir}/mcollective/mcollective
 %dir %{_sysconfdir}/mcollective
 %dir %{_sysconfdir}/mcollective/ssl
-%config%{_sysconfdir}/mcollective/rpc-help.erb
-%config%{_sysconfdir}/mcollective/data-help.erb
-%config%{_sysconfdir}/mcollective/discovery-help.erb
+%config %{_sysconfdir}/mcollective/*.erb
 
 %files client
 %attr(0755, root, root)%{_sbindir}/mc-call-agent
