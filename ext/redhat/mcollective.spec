@@ -67,6 +67,7 @@ rm -rf %{buildroot}
 %{__install} -m0444 etc/rpc-help.erb %{buildroot}%{_sysconfdir}/mcollective/rpc-help.erb
 %{__install} -m0444 etc/data-help.erb %{buildroot}%{_sysconfdir}/mcollective/data-help.erb
 %{__install} -m0444 etc/discovery-help.erb %{buildroot}%{_sysconfdir}/mcollective/discovery-help.erb
+%{__install} -m0444 etc/metadata-help.erb %{buildroot}%{_sysconfdir}/mcollective/metadata-help.erb
 %if 0%{?suse_version}
 %{__install} -m0755 mcollective.init %{buildroot}%{_sysconfdir}/init.d/mcollective
 %else

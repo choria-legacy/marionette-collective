@@ -8,6 +8,10 @@
      License: <%= meta[:license] %>
      Timeout: <%= meta[:timeout] %>
    Home Page: <%= meta[:url] %>
+<% if requirement = requirements[:mcollective] -%>
+
+   Requires MCollective <%= requirement %> or newer
+<% end -%>
 <% unless @usage == "" -%>
 
 <%= Util.align_text(@usage, nil, 3) if @usage != "" %>

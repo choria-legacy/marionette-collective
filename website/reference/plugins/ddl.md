@@ -51,6 +51,15 @@ metadata :name        => "SimpleRPC Service Agent",
 
 It's fairly obvious what these all do, *:timeout* is how long the MCollective daemon will let the threads run.
 
+## Required versions
+As of MCollective 2.1.2 you can indicate which is the lowest version of MCollective needed to use a plugin.  Plugins that do not meet the requirement can not be used.
+
+{% highlight ruby linenos %}
+requires :mcollective => "2.0.0"
+{% endhighlight %}
+
+You should add this right after the metadata section in the DDL
+
 ## Actions, Input and Output
 Defining inputs and outputs is the hardest part, below first the *status* action:
 
