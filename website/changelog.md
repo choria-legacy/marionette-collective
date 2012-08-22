@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/08/22|Fix a bug when specifying a custom target directory for packages|15956|
 |2012/08/22|When producing plugin packages keep the source deb and rpm|15917|
 |2012/08/09|Improve error handling in the plugin application|15848|
 |2012/08/08|Add the ability to store general usage information in the DDL|15633|
