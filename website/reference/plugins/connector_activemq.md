@@ -12,7 +12,7 @@ This code will only work with version _1.1.8_ or newer of the Stomp gem.
 
 ## Differences between ActiveMQ connector and Stomp Connector
 
-The ActiveMQ connector requires MCollective 1.3.1 or newer and introduce a new structure to the middleware messsages.
+The ActiveMQ connector requires MCollective 2.0.0 or newer and introduce a new structure to the middleware messsages.
 
  * Replies goes direct to clients using short lived queues
  * Agent topics are called */topic/&lt;collective&gt;.&lt;agent_name&gt;.agent*

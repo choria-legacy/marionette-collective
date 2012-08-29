@@ -27,6 +27,8 @@ Index to basic users documentation.
  1. [ActiveMQ Security](integration/activemq_security.html)
  1. [ActiveMQ SSL](integration/activemq_ssl.html)
  1. [ActiveMQ Clusters](integration/activemq_clusters.html)
+ 1. [ActiveMQ Connector](plugins/connector_activemq.html)
+ 1. [RabbitMQ Connector](plugins/connector_rabbitmq.html)
 
 ### Plugin Types
 
@@ -45,6 +47,7 @@ Index to basic users documentation.
  1. [OpenSSL based Security Plugin](plugins/security_ssl.html)
  1. [Stomp Connector](plugins/connector_stomp.html)
  1. [ActiveMQ Connector](plugins/connector_activemq.html)
+ 1. [RabbitMQ Connector](plugins/connector_rabbitmq.html)
  1. [User Contributed Plugins](http://projects.puppetlabs.com/projects/mcollective-plugins/wiki)
 
 ### Development
