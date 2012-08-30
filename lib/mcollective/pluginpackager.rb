@@ -16,13 +16,15 @@ module MCollective
     # Fetch and return metadata from plugin DDL
     def self.get_metadata(path, type)
       ddl = DDL.new("package", type.to_sym, false)
+
       begin
         ddl_file = File.read(Dir.glob(File.join(path, type, "*.ddl")).first)
       rescue Exception
         raise "failed to load ddl file in plugin directory : #{File.join(path, type)}"
       end
       ddl.instance_eval ddl_file
-      ddl.meta
+
+      return ddl.meta, ddl.requirements[:mcollective]
     end
 
     # Checks if a directory is present and not empty

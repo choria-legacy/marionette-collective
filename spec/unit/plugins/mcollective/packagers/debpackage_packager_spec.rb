@@ -19,6 +19,7 @@ module MCollective
       before :each do
         PluginPackager.stubs(:build_tool?).with("debuild").returns(true)
         @plugin = mock()
+        @plugin.stubs(:mcname).returns("mcollective")
       end
 
       after :all do

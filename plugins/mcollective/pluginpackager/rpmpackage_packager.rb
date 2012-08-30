@@ -15,7 +15,7 @@ module MCollective
         else
           raise RuntimeError, "creating rpms require 'rpmbuild' or 'rpmbuild-md5' to be installed"
         end
-              
+
         @plugin = plugin
         @verbose = verbose
         @libdir = pluginpath || "/usr/libexec/mcollective/mcollective/"
@@ -29,7 +29,7 @@ module MCollective
           begin
             @current_package_type = type
             @current_package_data = data
-            @current_package_name = "mcollective-#{@plugin.metadata[:name]}-#{@current_package_type}"
+            @current_package_name = "#{@plugin.mcname}-#{@plugin.metadata[:name]}-#{@current_package_type}"
             @tmpdir = Dir.mktmpdir("mcollective_packager")
             prepare_tmpdirs data
             create_package type, data

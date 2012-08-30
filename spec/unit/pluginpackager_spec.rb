@@ -42,9 +42,12 @@ module MCollective
         Dir.stubs(:glob).returns(["foo.ddl"])
         File.expects(:read).with("foo.ddl").returns("foo_ddl")
         ddl.expects(:instance_eval).with("foo_ddl")
-        ddl.expects(:meta)
+        ddl.expects(:meta).returns("metadata")
+        ddl.expects(:requirements).returns({:mcollective => 1})
 
-        PluginPackager.get_metadata("/tmp", "foo")
+        meta, requirements = PluginPackager.get_metadata("/tmp", "foo")
+        meta.should == "metadata"
+        requirements.should == 1
       end
     end
 

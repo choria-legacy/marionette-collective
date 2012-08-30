@@ -25,8 +25,8 @@ module MCollective
             @tmpdir = Dir.mktmpdir("mcollective_packager")
             @current_package_type = type
             @current_package_data = data
-            @current_package_shortname = "mcollective-#{@plugin.metadata[:name]}-#{@current_package_type}"
-            @current_package_fullname = "mcollective-#{@plugin.metadata[:name]}-#{@current_package_type}" +
+            @current_package_shortname = "#{@plugin.mcname}-#{@plugin.metadata[:name]}-#{@current_package_type}"
+            @current_package_fullname = "#{@plugin.mcname}-#{@plugin.metadata[:name]}-#{@current_package_type}" +
                                         "_#{@plugin.metadata[:version]}-#{@plugin.iteration}"
 
             @build_dir = File.join(@tmpdir, "#{@current_package_shortname}_#{@plugin.metadata[:version]}")

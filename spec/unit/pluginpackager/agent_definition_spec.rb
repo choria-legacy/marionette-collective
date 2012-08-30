@@ -18,16 +18,15 @@ module MCollective
 
         it "should set dependencies if present" do
           AgentDefinition.any_instance.expects(:common)
-          agent = AgentDefinition.new(".", "test-package", nil, nil, nil, nil, ["foo"], {}, "agent")
-          agent.dependencies.should == ["foo"]
+          agent = AgentDefinition.new(".", "test-package", nil, nil, nil, nil, [:name => "foo", :version => nil], {}, "agent")
+          agent.dependencies.should == [{:name => "foo", :version => nil}, {:name => "mcollective-common", :version => nil}]
         end
 
-        it "should set mc server, client and common dependencies" do
+        it "should set mc name and version" do
           AgentDefinition.any_instance.expects(:common)
-          agent = AgentDefinition.new(".", "test-package", nil, nil, nil, nil, [], {:server => "pe-mcollective"}, "agent")
-          agent.mcserver.should == "pe-mcollective"
-          agent.mcclient.should == "mcollective-client"
-          agent.mccommon.should == "mcollective-common"
+          agent = AgentDefinition.new(".", "test-package", nil, nil, nil, nil, [], {:mcname =>"pe-mcollective-common", :mcversion =>"1.2"}, "agent")
+          agent.mcname.should == "pe-mcollective-common"
+          agent.mcversion.should == "1.2"
         end
       end
 
@@ -62,7 +61,7 @@ module MCollective
           File.stubs(:join).with(".", "agent").returns("tmpdir/agent")
           File.stubs(:join).with("tmpdir/agent", "*.ddl").returns("tmpdir/agent/*.ddl")
           File.stubs(:join).with("tmpdir/agent", "*").returns("tmpdir/agent/*")
-          Dir.stubs(:glob).with("tmpdir/agent/*.ddl").returns([]) 
+          Dir.stubs(:glob).with("tmpdir/agent/*.ddl").returns([])
           Dir.stubs(:glob).with("tmpdir/agent/*").returns(["implementation.rb"])
 
           agent = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
@@ -78,7 +77,8 @@ module MCollective
           Dir.stubs(:glob).returns([])
 
           agent = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
-          agent.packagedata[:agent][:dependencies].should == ["mcollective", ["mcollective-foo-common", 1]]
+          agent.packagedata[:agent][:dependencies].should == [{:name => "mcollective-common", :version => nil},
+                                                              {:name => "mcollective-foo-common", :version =>1}]
         end
       end
 
@@ -157,7 +157,8 @@ module MCollective
           Dir.expects(:glob).with("aggregatedir/*").returns(["aggregate.rb"])
 
           client = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
-          client.packagedata[:client][:dependencies].should == ["mcollective-client", ["mcollective-foo-common", 1]]
+          client.packagedata[:client][:dependencies].should == [{:name => "mcollective-common", :version => nil},
+                                                                {:name => "mcollective-foo-common", :version => 1}]
         end
       end
     end

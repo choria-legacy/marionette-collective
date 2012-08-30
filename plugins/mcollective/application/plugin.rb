@@ -47,20 +47,15 @@ mco plugin package [options] <directory>
            :arguments => ["--pluginpath PATH"],
            :type => String
 
-    option :mccommon,
-           :description => "Set the mcollective common package that the plugin depends on",
-           :arguments => ["--mc-common-pkg PACKAGE"],
+    option :mcname,
+           :description => "MCollective type (mcollective, pe-mcollective) that the packages depend on",
+           :arguments => ["--mcname NAME"],
            :type => String
 
-    option :mcserver,
-           :description => "Set the mcollective server package that the plugin depends on",
-           :arguments => ["--mc-server-pkg PACKAGE"],
+    option :mcversion,
+           :description => "Version of MCollective that the packages depend on",
+           :arguments => "--mcversion MCVERSION",
            :type => String
-
-    option :mcclient,
-           :description => "Set the mcollective client package that the plugin depends on",
-           :arguments => ["--mc-client-pkg PACKAGE"],
-           :type =>String
 
     option :dependency,
            :description => "Adds a dependency to the plugin",
@@ -273,14 +268,13 @@ mco plugin package [options] <directory>
         PluginPackager.load_packagers
         plugin_class = PluginPackager[configuration[:plugintype]]
         configuration[:dependency] = configuration[:dependency][0].split(" ") if configuration[:dependency] && configuration[:dependency].size == 1
-        mcodependency = {:server => configuration[:mcserver],
-                         :client => configuration[:mcclient],
-                         :common => configuration[:mccommon]}
+        configuration[:dependency].map!{|dep| {:name => dep, :version => nil}} if configuration[:dependency]
+        mcdependency = {:mcname => configuration[:mcname], :mcversion => configuration[:mcversion]}
 
         plugin_class.new(configuration[:target], configuration[:pluginname],
                          configuration[:vendor], configuration[:preinstall],
                          configuration[:postinstall], configuration[:iteration],
-                         configuration[:dependency], mcodependency , plugintype)
+                         configuration[:dependency], mcdependency , plugintype)
     end
 
     def directory_for_type(type)

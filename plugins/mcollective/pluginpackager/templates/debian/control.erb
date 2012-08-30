@@ -7,6 +7,6 @@ Standards-Version: 3.8.0
 
 Package: <%= @current_package_shortname %>
 Architecture: all
-<% @current_package_data[:dependencies].map!{|dep| dep.is_a?(Array) ? "#{dep[0]} (= #{dep[1]}-#{@plugin.iteration})" : dep} -%>
+<% @current_package_data[:dependencies].map!{|dep| (dep[:version]) ? "#{dep[:name]}(>= #{dep[:version]})" : dep[:name]}-%>
 Depends: <%= @current_package_data[:dependencies].join(", ")%>
 Description: <%= @plugin.metadata[:description] %>

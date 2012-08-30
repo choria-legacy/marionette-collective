@@ -21,6 +21,7 @@ module MCollective
         @plugin = mock()
         @plugin.stubs(:iteration).returns("1")
         @plugin.stubs(:metadata).returns({:name => "test", :version => "1"})
+        @plugin.stubs(:mcname).returns("mcollective")
       end
 
       after :all do

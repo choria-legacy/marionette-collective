@@ -16,14 +16,15 @@ module MCollective
         end
 
         it "should set dependencies if present" do
-          plugin = StandardDefinition.new(".", "test plugin", nil, nil, nil, nil, ["foo"], {}, "testplugin")
-          plugin.dependencies.should == ["foo"]
+          plugin = StandardDefinition.new(".", "test plugin", nil, nil, nil, nil, [{:name => "foo", :version => nil}], {}, "testplugin")
+          plugin.dependencies.should == [{:name => "foo", :version => nil},
+                                         {:name => "mcollective-common", :version => nil}]
         end
 
-        it "should set mc server, client and common dependencies" do
-          plugin = StandardDefinition.new(".", "test plugin", nil, nil, nil, nil, [], {:server => "pe-mcollective"}, "testplugin")
-          plugin.mcserver.should == "pe-mcollective"
-          plugin.mccommon.should == "mcollective-common"
+        it "should set mc name and version dependencies" do
+          plugin = StandardDefinition.new(".", "test plugin", nil, nil, nil, nil, [], {:mcname => "pe-mcollective", :mcversion => "1"}, "testplugin")
+          plugin.mcname.should == "pe-mcollective"
+          plugin.mcversion.should == "1"
         end
       end
 
@@ -61,7 +62,8 @@ module MCollective
           Dir.expects(:glob).with("./testplugin/*").returns(["file.rb"])
           plugin = StandardDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "testplugin")
           plugin.packagedata["testplugin"][:files].should == ["file.rb"]
-          plugin.packagedata["testplugin"][:dependencies].should == ["mcollective", ["mcollective-foo-common", 1]]
+          plugin.packagedata["testplugin"][:dependencies].should == [{:name => "mcollective-common", :version => nil},
+                                                                     {:name => "mcollective-foo-common", :version => 1}]
         end
       end
 
