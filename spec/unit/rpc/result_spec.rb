@@ -44,6 +44,13 @@ module MCollective
         end
       end
 
+      describe "#fetch" do
+        it "should fetch data with the correct default behavior" do
+          @result.fetch(:foo, "default").should == "bar"
+          @result.fetch(:rspec, "default").should == "default"
+        end
+      end
+
       describe "#each" do
         it "should itterate all the pairs" do
           data = {}

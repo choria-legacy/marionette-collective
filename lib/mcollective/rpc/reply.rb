@@ -69,6 +69,10 @@ module MCollective
         @data[key]
       end
 
+      def fetch(key, default)
+        @data.fetch(key, default)
+      end
+
       # Returns a compliant Hash of the reply that should be sent
       # over the middleware
       def to_hash

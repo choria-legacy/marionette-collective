@@ -24,6 +24,10 @@ module MCollective
         @results[idx] = item
       end
 
+      def fetch(key, default)
+        @results.fetch(key, default)
+      end
+
       def each
         @results.each_pair {|k,v| yield(k,v) }
       end

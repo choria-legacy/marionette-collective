@@ -100,6 +100,18 @@ module MCollective
         end
       end
 
+      describe "#fetch" do
+        it "should return nil for non hash data" do
+          @req[:body][:data] = "foo"
+          Request.new(@req, @ddl)["foo"].should == nil
+        end
+
+        it "should fetch data with the correct default behavior" do
+          @request.fetch(:foo, "default").should == "bar"
+          @request.fetch(:rspec, "default").should == "default"
+        end
+      end
+
       describe "#to_hash" do
         it "should have the correct keys" do
           @request.to_hash.keys.sort.should == [:action, :agent, :data]

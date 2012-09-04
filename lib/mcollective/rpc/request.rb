@@ -36,6 +36,11 @@ module MCollective
         return @data[key]
       end
 
+      def fetch(key, default)
+        return nil unless @data.is_a?(Hash)
+        return @data.fetch(key, default)
+      end
+
       def to_hash
         return {:agent => @agent,
                 :action => @action,
