@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/09/04|Include the required mcollective version in packages that include the requirement|16173|
 |2012/08/29|Add a RabbitMQ specific connector plugin|16168|
 |2012/08/22|DDL files can now specify which is the minimal version of mcollective they require|15850|
 |2012/08/22|Fix a bug when specifying a custom target directory for packages|15956|
