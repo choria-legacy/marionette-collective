@@ -187,7 +187,7 @@ mco plugin package [options] <directory>
       plugin = prepare_plugin
       (configuration[:pluginpath] = configuration[:pluginpath] + "/") if (configuration[:pluginpath] && !configuration[:pluginpath].match(/^.*\/$/))
       packager = PluginPackager["#{configuration[:format].capitalize}Packager"]
-      packager.new(plugin, configuration[:pluginpath], configuration[:sign], configuration[:verbose]).create_packages
+      packager.new(plugin, configuration[:pluginpath], configuration[:sign], options[:verbose]).create_packages
     end
 
     # Agents are just called 'agent' but newer plugin types are
