@@ -81,13 +81,13 @@ module MCollective
         it "should call super if the aggregate plugin isn't present" do
           expect{
             @ddl.test
-          }.to raise_error NoMethodError
+          }.to raise_error(NoMethodError)
         end
 
         it "should call super if @process_aggregate_function is false" do
           expect{
             result = @ddl.test(:value)
-          }.to raise_error NoMethodError
+          }.to raise_error(NoMethodError)
         end
 
         it "should return the function hash" do
@@ -159,26 +159,26 @@ module MCollective
         it "should raise an exception if aggregate format isn't a hash" do
           expect{
             @ddl.aggregate(:foo, :format)
-          }.to raise_error DDLValidationError, "Formats supplied to aggregation functions should be a hash"
+          }.to raise_error(DDLValidationError, "Formats supplied to aggregation functions should be a hash")
         end
 
         it "should raise an exception if format hash does not include a :format key" do
           expect{
             @ddl.aggregate(:foo, {})
-          }.to raise_error DDLValidationError, "Formats supplied to aggregation functions must have a :format key"
+          }.to raise_error(DDLValidationError, "Formats supplied to aggregation functions must have a :format key")
         end
 
         it "should raise an exception if aggregate function is not a hash" do
           expect{
             @ddl.aggregate(:foo)
-          }.to raise_error DDLValidationError, "Functions supplied to aggregate should be a hash"
+          }.to raise_error(DDLValidationError, "Functions supplied to aggregate should be a hash")
         end
 
         it "should raise an exception if function hash does not include a :args key" do
           expect{
             @ddl.stubs(:entities).returns({nil => {:action => :foo}})
             @ddl.aggregate({})
-          }.to raise_error DDLValidationError, "aggregate method for action 'foo' missing a function parameter"
+          }.to raise_error(DDLValidationError, "aggregate method for action 'foo' missing a function parameter")
         end
 
         it "should correctly add an aggregate function to the function array" do

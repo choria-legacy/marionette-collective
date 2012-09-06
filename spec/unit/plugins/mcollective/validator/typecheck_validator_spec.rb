@@ -9,7 +9,7 @@ module MCollective
         [[1, String], ['test', :integer], ['test', :float], ['test', :number], [1, :string], ['test', :boolean]].each do |val|
           expect{
             TypecheckValidator.validate(*val)
-          }.to raise_error ValidatorError, "value should be a #{val[1].to_s}"
+          }.to raise_error(ValidatorError, "value should be a #{val[1].to_s}")
         end
       end
 

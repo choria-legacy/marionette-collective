@@ -36,7 +36,7 @@ module MCollective
           File.expects(:read).raises(Errno::ENOENT)
           expect{
             @base.create_metadata_string
-          }.to raise_error Errno::ENOENT
+          }.to raise_error(Errno::ENOENT)
         end
       end
 
@@ -51,7 +51,7 @@ module MCollective
           File.expects(:read).raises(Errno::ENOENT)
           expect{
             @base.create_plugin_string
-          }.to raise_error Errno::ENOENT
+          }.to raise_error(Errno::ENOENT)
         end
       end
 
@@ -61,7 +61,7 @@ module MCollective
           @base.plugin_name = "foo"
           expect{
             @base.write_plugins
-          }.to raise_error RuntimeError
+          }.to raise_error(RuntimeError)
         end
 
         it "should create the directory and the plugin files if it doesn't exist" do

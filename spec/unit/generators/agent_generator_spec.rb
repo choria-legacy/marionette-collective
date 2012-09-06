@@ -64,7 +64,7 @@ module MCollective
             File.stubs(:read).raises(Errno::ENOENT, "No such file or directory")
             expect{
               AgentGenerator.new("foo", ["action"])
-            }.to raise_error Errno::ENOENT
+            }.to raise_error(Errno::ENOENT)
           end
         end
       end

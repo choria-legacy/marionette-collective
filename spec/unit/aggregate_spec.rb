@@ -42,7 +42,7 @@ module MCollective
       it "should raise an exception if the ddl output does not include the function's input" do
         expect{
           @aggregate.contains_output?(:baz)
-        }.to raise_error "'test_action' action does not contain output 'baz'"
+        }.to raise_error("'test_action' action does not contain output 'baz'")
       end
 
       it "should not raise an exception if the ddl output includes the function's input" do
@@ -103,7 +103,7 @@ module MCollective
         PluginManager.expects(:loadclass).with("MCollective::Aggregate::Test")
         expect {
           function = @aggregate.load_function("test")
-        }.to raise_error "Aggregate function file 'test.rb' cannot be loaded"
+        }.to raise_error("Aggregate function file 'test.rb' cannot be loaded")
       end
     end
   end

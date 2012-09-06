@@ -112,7 +112,7 @@ module MCollective
 
           expect{
             common = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
-          }.to raise_error RuntimeError, "cannot create package - No ddl file found in ddldir"
+          }.to raise_error(RuntimeError, "cannot create package - No ddl file found in ddldir")
         end
       end
 

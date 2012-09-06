@@ -20,7 +20,7 @@ module MCollective
         it "should raise an exception for an unimplemented startup_hook method " do
           expect{
             base = Base.new("value", [], "", "rspec")
-          }.to raise_error RuntimeError, "'startup_hook' method of function class MCollective::Aggregate::Base has not yet been implemented"
+          }.to raise_error(RuntimeError, "'startup_hook' method of function class MCollective::Aggregate::Base has not yet been implemented")
         end
 
         it "should raise an exception for an unimplemented process_result method" do
@@ -28,7 +28,7 @@ module MCollective
           base = Base.new("value", [], "", "rspec")
           expect{
             base.process_result
-          }.to raise_error RuntimeError,"'process_result' method of function class MCollective::Aggregate::Base has not yet been implemented"
+          }.to raise_error(RuntimeError,"'process_result' method of function class MCollective::Aggregate::Base has not yet been implemented")
         end
       end
 
@@ -38,7 +38,7 @@ module MCollective
           base = Base.new("value", [], "", "rspec")
           expect{
             base.summarize
-          }.to raise_error RuntimeError, "Result type is not set while trying to summarize aggregate function results"
+          }.to raise_error(RuntimeError, "Result type is not set while trying to summarize aggregate function results")
         end
 
         it "should return the correct result class if result type has been set" do

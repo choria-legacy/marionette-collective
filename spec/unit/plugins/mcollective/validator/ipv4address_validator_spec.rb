@@ -8,7 +8,7 @@ module MCollective
       it "should raise an exception if the supplied value is not an ipv4 address" do
         expect{
           Ipv4addressValidator.validate("foobar")
-        }.to raise_error ValidatorError, "value should be an ipv4 address"
+        }.to raise_error(ValidatorError, "value should be an ipv4 address")
       end
 
       it "should not raise an exception if the supplied value is an ipv4 address" do

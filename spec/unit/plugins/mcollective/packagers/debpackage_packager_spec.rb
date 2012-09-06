@@ -197,7 +197,7 @@ module MCollective
           Dir.expects(:glob)
           File.expects(:join)
           FileUtils.expects(:cp)
-          @packager = DebpackagePackager.new(@plugin) 
+          @packager = DebpackagePackager.new(@plugin)
           @packager.move_packages
         end
 
@@ -206,7 +206,7 @@ module MCollective
           File.expects(:join).raises("error")
           expect{
             @packager.move_packages
-          }.to raise_error RuntimeError, "Could not copy packages to working directory: 'error'"
+          }.to raise_error(RuntimeError, "Could not copy packages to working directory: 'error'")
         end
       end
 

@@ -21,7 +21,7 @@ module MCollective
       it "should do something else" do
         expect{
           PluginPackager["Bar"]
-        }.to raise_error NameError, 'uninitialized constant MCollective::PluginPackager::Bar'
+        }.to raise_error(NameError, 'uninitialized constant MCollective::PluginPackager::Bar')
       end
     end
 
@@ -32,7 +32,7 @@ module MCollective
         Dir.stubs(:glob).returns('')
         expect{
           PluginPackager.get_metadata("/tmp", "foo")
-        }.to raise_error RuntimeError
+        }.to raise_error(RuntimeError)
       end
 
       it "should load the ddl file and return the metadata" do
@@ -94,7 +94,7 @@ module MCollective
       it "should raise an exception and reset stdout if the block raises an execption" do
         expect{
           PluginPackager.do_quietly?(false) {raise Exception, "exception"}
-        }.to raise_error Exception, "exception"
+        }.to raise_error(Exception, "exception")
       end
     end
 
@@ -124,7 +124,7 @@ module MCollective
         PluginPackager.expects(:system).with("foo").returns(false)
         expect{
           PluginPackager.safe_system("foo")
-        }.to raise_error RuntimeError, "Failed: foo"
+        }.to raise_error(RuntimeError, "Failed: foo")
       end
     end
   end

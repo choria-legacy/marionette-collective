@@ -8,7 +8,7 @@ module MCollective
       it "should raise an exception if the given string does not matches the given regular expression" do
         expect{
           RegexValidator.validate("test", "nottest")
-        }.to raise_error ValidatorError, "value should match nottest"
+        }.to raise_error(ValidatorError, "value should match nottest")
       end
 
       it "should not raise an exception if the given string's length is less than the given value" do

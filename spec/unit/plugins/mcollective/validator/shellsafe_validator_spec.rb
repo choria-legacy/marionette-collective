@@ -9,7 +9,7 @@ module MCollective
         ['`', '$', ';', '|', '&&', '>', '<'].each do |chr|
           expect{
             ShellsafeValidator.validate("#{chr}test")
-          }.to raise_error ValidatorError, "value should not have #{chr} in it"
+          }.to raise_error(ValidatorError, "value should not have #{chr} in it")
         end
       end
 

@@ -10,7 +10,7 @@ module MCollective
           it "should raise an exception if neither the ddl or the aggregate function defines a format" do
             expect{
               base = Base.new(:structure, nil, :action)
-            }.to raise_error RuntimeError, "No aggregate_format defined in ddl or aggregate function"
+            }.to raise_error(RuntimeError, "No aggregate_format defined in ddl or aggregate function")
           end
         end
 
@@ -19,7 +19,7 @@ module MCollective
             base = Base.new(:structure, :aggregate_format, :action)
             expect{
               base.to_s
-            }.to raise_error RuntimeError, "'to_s' method not implemented for result class 'MCollective::Aggregate::Result::Base'"
+            }.to raise_error(RuntimeError, "'to_s' method not implemented for result class 'MCollective::Aggregate::Result::Base'")
           end
         end
       end

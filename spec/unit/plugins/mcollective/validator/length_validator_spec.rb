@@ -8,7 +8,7 @@ module MCollective
       it "should raise an exception if the given string's length is greater than the given value" do
         expect{
           LengthValidator.validate("test", 3)
-        }.to raise_error ValidatorError, "Input string is longer than 3 character(s)"
+        }.to raise_error(ValidatorError, "Input string is longer than 3 character(s)")
       end
 
       it "should not raise an exception if the given string's length is less than the given value" do
