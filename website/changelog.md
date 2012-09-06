@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/09/06|Improve error reporting for empty certificate files|15924|
 |2012/09/05|Restore the verbose behavior while building packages|16216|
 |2012/09/04|Add a fetch method that mimic Hash#fetch to RPC Results and Requests|16222|
 |2012/09/04|Include the required mcollective version in packages that include the requirement|16173|
