@@ -265,7 +265,10 @@ module MCollective
         end
 
         after :each do
-          FileUtils.rm(@tmpfile) if File.exist?(@tmpfile)
+          begin
+            FileUtils.rm(@tmpfile)
+          rescue Exception
+          end
         end
 
         it "should create the correct tmp dirs and copy package contents to correct dir" do
