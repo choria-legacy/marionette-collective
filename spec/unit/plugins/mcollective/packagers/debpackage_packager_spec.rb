@@ -265,7 +265,7 @@ module MCollective
         end
 
         after :each do
-          FileUtils.rm(@tmpfile)
+          FileUtils.rm(@tmpfile) if File.exist?(@tmpfile)
         end
 
         it "should create the correct tmp dirs and copy package contents to correct dir" do
