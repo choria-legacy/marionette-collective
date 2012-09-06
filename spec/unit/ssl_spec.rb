@@ -82,6 +82,14 @@ module MCollective
         }.to raise_error("Could not find key /nonexisting")
       end
 
+      it "should fail on existing, empty files" do
+        File.expects(:exist?).with('key').returns(true)
+        File.expects(:zero?).with('key').returns(true)
+        expect{
+          @ssl.read_key(:public, 'key')
+        }.to raise_error("public key file 'key' is empty")
+      end
+
       it "should fail on unknown key types" do
         expect {
           @ssl.read_key(:unknown, @ssl.public_key_file)

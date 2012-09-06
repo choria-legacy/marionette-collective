@@ -243,6 +243,7 @@ module MCollective
       return key if key.nil?
 
       raise "Could not find key #{key}" unless File.exist?(key)
+      raise "#{type} key file '#{key}' is empty" if File.zero?(key)
 
       if type == :public
         begin
