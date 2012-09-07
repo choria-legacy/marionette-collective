@@ -120,27 +120,24 @@ module MCollective
         before do
           AgentDefinition.any_instance.expects(:agent).returns(nil)
           File.expects(:join).with(".", "application").returns("clientdir")
-          File.expects(:join).with(".", "bin").returns("bindir")
           File.expects(:join).with(".", "aggregate").returns("aggregatedir")
         end
 
         it "should populate client files if all directories are present" do
           AgentDefinition.any_instance.expects(:common).returns(nil)
-          PluginPackager.expects(:check_dir_present).times(3).returns(true)
+          PluginPackager.expects(:check_dir_present).times(2).returns(true)
           File.expects(:join).with("clientdir", "*").returns("clientdir/*")
-          File.expects(:join).with("bindir", "*").returns("bindir/*")
           File.expects(:join).with("aggregatedir", "*").returns("aggregatedir/*")
           Dir.expects(:glob).with("clientdir/*").returns(["client.rb"])
-          Dir.expects(:glob).with("bindir/*").returns(["bin.rb"])
           Dir.expects(:glob).with("aggregatedir/*").returns(["aggregate.rb"])
 
           client = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
-          client.packagedata[:client][:files].should == ["client.rb", "bin.rb", "aggregate.rb"]
+          client.packagedata[:client][:files].should == ["client.rb",  "aggregate.rb"]
         end
 
         it "should not populate client files if directories are not present" do
           AgentDefinition.any_instance.expects(:common).returns(nil)
-          PluginPackager.expects(:check_dir_present).times(3).returns(false)
+          PluginPackager.expects(:check_dir_present).times(2).returns(false)
 
           client = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
           client.packagedata[:client].should == nil
@@ -148,12 +145,10 @@ module MCollective
 
         it "should add common package as dependency if present" do
           AgentDefinition.any_instance.expects(:common).returns("common")
-          PluginPackager.expects(:check_dir_present).times(3).returns(true)
+          PluginPackager.expects(:check_dir_present).times(2).returns(true)
           File.expects(:join).with("clientdir", "*").returns("clientdir/*")
-          File.expects(:join).with("bindir", "*").returns("bindir/*")
           File.expects(:join).with("aggregatedir", "*").returns("aggregatedir/*")
           Dir.expects(:glob).with("clientdir/*").returns(["client.rb"])
-          Dir.expects(:glob).with("bindir/*").returns(["bin.rb"])
           Dir.expects(:glob).with("aggregatedir/*").returns(["aggregate.rb"])
 
           client = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")

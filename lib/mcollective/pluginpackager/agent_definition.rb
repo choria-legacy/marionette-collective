@@ -59,11 +59,9 @@ module MCollective
                   :description => "Client plugin for #{@metadata[:name]}"}
 
         clientdir = File.join(@path, "application")
-        bindir = File.join(@path, "bin")
         aggregatedir = File.join(@path, "aggregate")
 
         client[:files] += Dir.glob(File.join(clientdir, "*")) if PluginPackager.check_dir_present clientdir
-        client[:files] += Dir.glob(File.join(bindir,"*")) if PluginPackager.check_dir_present bindir
         client[:files] += Dir.glob(File.join(aggregatedir, "*")) if PluginPackager.check_dir_present aggregatedir
         client[:dependencies] << {:name => "#{@mcname}-#{@metadata[:name]}-common", :version => @metadata[:version]}
         client[:files].empty? ? nil : client
