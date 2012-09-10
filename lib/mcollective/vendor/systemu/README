@@ -4,7 +4,8 @@ NAME
 
 SYNOPSIS
 
-  univeral capture of stdout and stderr and handling of child process pid for windows, *nix, etc.
+  universal capture of stdout and stderr and handling of child process pid for
+  windows, *nix, etc.
 
 URIS
 
@@ -53,7 +54,7 @@ SAMPLES
 
   ~ > ruby samples/a.rb
 
-    [#<Process::Status: pid 16667 exit 0>, "2011-09-13 20:50:37 -0600\n", "2011-09-13 20:50:37 -0600\n"]
+    [#<Process::Status: pid 50931 exit 0>, "2011-12-11 22:07:30 -0700\n", "2011-12-11 22:07:30 -0700\n"]
 
 
   <========< samples/b.rb >========>
@@ -75,7 +76,7 @@ SAMPLES
 
   ~ > ruby samples/b.rb
 
-    [#<Process::Status: pid 16672 exit 0>, "2011-09-13 20:50:37 -0600\n", "2011-09-13 20:50:37 -0600\n"]
+    [#<Process::Status: pid 50936 exit 0>, "2011-12-11 22:07:30 -0700\n", "2011-12-11 22:07:30 -0700\n"]
 
 
   <========< samples/c.rb >========>
@@ -116,7 +117,7 @@ SAMPLES
 
   ~ > ruby samples/d.rb
 
-    /private/var/folders/nO/nOjBCb30ELegrm98Bhyvbk+++TM/-Tmp-
+    /private/var/folders/sp/nwtflj890qnb6z4b53dqxvlw0000gp/T
 
 
   <========< samples/e.rb >========>
@@ -163,7 +164,7 @@ SAMPLES
 
   ~ > ruby samples/f.rb
 
-    #<Process::Status: pid 16692 SIGKILL (signal 9)>
-    "1315968638\n1315968639\n1315968640\n"
+    #<Process::Status: pid 50956 SIGKILL (signal 9)>
+    "1323666451\n1323666452\n1323666453\n"
 
 

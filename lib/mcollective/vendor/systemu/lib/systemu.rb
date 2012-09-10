@@ -1,4 +1,5 @@
-# vim: ts=2:sw=2:sts=2:et:fdm=marker
+# encoding: utf-8
+
 require 'tmpdir'
 require 'socket'
 require 'fileutils'
@@ -13,7 +14,7 @@ class SystemUniversal
 #
 # constants
 #
-  SystemUniversal::VERSION = '2.4.0' unless SystemUniversal.send(:const_defined?, :VERSION)
+  SystemUniversal::VERSION = '2.5.2' unless SystemUniversal.send(:const_defined?, :VERSION)
   def SystemUniversal.version() SystemUniversal::VERSION end
   def version() SystemUniversal::VERSION end
 #
@@ -76,7 +77,7 @@ class SystemUniversal
             line = pipe.gets
             case line
               when %r/^pid: \d+$/
-                cid = Integer line[%r/\d+/] 
+                cid = Integer line[%r/\d+/]
               else
                 begin
                   buf = pipe.read
@@ -85,7 +86,7 @@ class SystemUniversal
                   raise unless Exception === e
                   raise e
                 rescue
-                  raise "wtf?\n#{ buf }\n"
+                  raise "systemu: Error - process interrupted!\n#{ buf }\n"
                 end
             end
             thread = new_thread cid, @block if @block
@@ -120,12 +121,12 @@ class SystemUniversal
     SystemUniversal.quote(*args, &block)
   end
 
-  def new_thread cid, block 
+  def new_thread cid, block
     q = Queue.new
-    Thread.new(cid) do |cid| 
-      current = Thread.current 
+    Thread.new(cid) do |cid|
+      current = Thread.current
       current.abort_on_exception = true
-      q.push current 
+      q.push current
       block.call cid
     end
     q.pop
@@ -150,10 +151,10 @@ class SystemUniversal
     c['argv'] = @argv
     c['env'] = @env
     c['cwd'] = @cwd
-    c['stdin'] = stdin 
-    c['stdout'] = stdout 
-    c['stderr'] = stderr 
-    c['program'] = program 
+    c['stdin'] = stdin
+    c['stdout'] = stdout
+    c['stderr'] = stderr
+    c['program'] = program
     open(config, 'w'){|f| Marshal.dump(c, f)}
 
     open(program, 'w'){|f| f.write child_program(config)}
@@ -171,6 +172,8 @@ class SystemUniversal
 
   def child_program config
     <<-program
+      # encoding: utf-8
+
       PIPE = STDOUT.dup
       begin
         config = Marshal.load(IO.read('#{ config }'))
@@ -190,7 +193,7 @@ class SystemUniversal
         STDERR.reopen stderr
 
         PIPE.puts "pid: \#{ Process.pid }"
-        PIPE.flush                        ### the process is ready yo! 
+        PIPE.flush                        ### the process is ready yo!
         PIPE.close
 
         exec *argv
@@ -221,9 +224,9 @@ class SystemUniversal
       tmp = File.join d, "systemu_#{ @host }_#{ @ppid }_#{ @pid }_#{ rand }_#{ i += 1 }"
 
       begin
-        Dir.mkdir tmp 
+        Dir.mkdir tmp
       rescue Errno::EEXIST
-        raise if i >= max 
+        raise if i >= max
         next
       end
 
@@ -232,7 +235,7 @@ class SystemUniversal
           begin
             b.call tmp
           ensure
-            FileUtils.rm_rf tmp unless SystemU.turd 
+            FileUtils.rm_rf tmp unless SystemU.turd
           end
         else
           tmp
@@ -259,37 +262,40 @@ end
 # some monkeypatching for JRuby
 if defined? JRUBY_VERSION
   require 'jruby'
-  import org.jruby.RubyProcess
-        
+  java_import org.jruby.RubyProcess
+
   class SystemUniversal
     def systemu
       split_argv = JRuby::PathHelper.smart_split_command @argv
       process = java.lang.Runtime.runtime.exec split_argv.to_java(:string)
-      
+
       stdout, stderr = [process.input_stream, process.error_stream].map do |stream|
         StreamReader.new(stream)
       end
 
       exit_code = process.wait_for
+      field = process.get_class.get_declared_field("pid")
+      field.set_accessible(true)
+      pid = field.get(process)
       [
-        RubyProcess::RubyStatus.new_process_status(JRuby.runtime, exit_code), 
-        stdout.join, 
+        RubyProcess::RubyStatus.new_process_status(JRuby.runtime, exit_code, pid),
+        stdout.join,
         stderr.join
       ]
     end
-    
+
     class StreamReader
       def initialize(stream)
         @data = ""
         @thread = Thread.new do
           reader = java.io.BufferedReader.new java.io.InputStreamReader.new(stream)
-          
+
           while line = reader.read_line
             @data << line << "\n"
           end
         end
       end
-      
+
       def join
         @thread.join
         @data
@@ -297,7 +303,7 @@ if defined? JRUBY_VERSION
     end
   end
 end
-  
+
 
 
 SystemU = SystemUniversal unless defined? SystemU
@@ -333,20 +339,20 @@ if $0 == __FILE__
 # sleep
 #
   sleep = %q( ruby -e"  p(sleep(1))  " )
-  status, stdout, stderr = systemu sleep 
+  status, stdout, stderr = systemu sleep
   p [status, stdout, stderr]
 
   sleep = %q( ruby -e"  p(sleep(42))  " )
   status, stdout, stderr = systemu(sleep){|cid| Process.kill 9, cid}
   p [status, stdout, stderr]
 #
-# env 
+# env
 #
   env = %q( ruby -e"  p ENV['A']  " )
-  status, stdout, stderr = systemu env, :env => {'A' => 42} 
+  status, stdout, stderr = systemu env, :env => {'A' => 42}
   p [status, stdout, stderr]
 #
-# cwd 
+# cwd
 #
   env = %q( ruby -e"  p Dir.pwd  " )
   status, stdout, stderr = systemu env, :cwd => Dir.tmpdir

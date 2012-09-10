@@ -277,7 +277,7 @@ BEGIN {
 
 # discover full path to this ruby executable
 #
-  c = Config::CONFIG
+  c = begin; ::RbConfig::CONFIG; rescue NameError; ::Config::CONFIG; end
   bindir = c["bindir"] || c['BINDIR']
   ruby_install_name = c['ruby_install_name'] || c['RUBY_INSTALL_NAME'] || 'ruby'
   ruby_ext = c['EXEEXT'] || ''
