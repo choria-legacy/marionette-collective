@@ -4,6 +4,12 @@ title: Changelog
 toc: false
 ---
 
+## Version 2.2.0
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|*2012/09/13*|*Release 2.2.0*|16323|
+
 ## Version 2.1.x
 
 |Date|Description|Ticket|

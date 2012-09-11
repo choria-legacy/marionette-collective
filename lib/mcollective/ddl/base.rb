@@ -49,7 +49,7 @@ module MCollective
         unless template == "metadata-help.erb"
           metadata_template = File.join(@config.helptemplatedir, "metadata-help.erb")
           metadata_template = File.read(metadata_template)
-          metastring = ERB.new(metadata_template, 0, '-')
+          metastring = ERB.new(metadata_template, 0, '%')
           metastring = metastring.result(binding)
         end
 

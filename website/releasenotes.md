@@ -4,7 +4,241 @@ title: Release Notes
 toc: false
 ---
 
-This is a list of release notes for various releases, you should review these before upgrading as any potential problems and backward incompatible changes will be highlighted here.
+This is a list of release notes for various releases, you should review these
+before upgrading as any potential problems and backward incompatible changes
+will be highlighted here.
+
+<a name="2_2_0">&nbsp;</a>
+
+## 2.2.0 - 2012/09/13
+
+This is the next production release of MCollective. It brings to an end active
+support for versions 2.1.1 and older.
+
+### Major Enhancements
+
+ * A new plugin type called data plugins were added making network discovery extendible by users
+ * Discovery is now pluggable allowing network based, database based, file based or any other data source to be used as a source of truth
+ * Automatic result summarization methods can be declared in the DDL and users can write their own
+ * A RabbitMQ specific Direct Addressing capable connector was added
+ * Agent DDLs must be present on the servers, input validation is done against the DDL and prior to running user code
+ * DDL files can define default values for returned data - all declared data fields are pre-populated by agents
+ * DDL files can store general usage information that gets rendered via the help application
+ * DDL files can declare the minimum version mcollective they need to be functional and loading plugins on older mcollective versions will fail
+ * New validation logic in DDL files and Agents can now be delivered using plugins
+ * A thread safe caching system was added that users can use in their Agents to store information between invocations
+ * Code generators to assist writing agents
+ * Support deterministic random node selection
+ * Display mode can be overriden on the CLI using the new *--display* option
+ * The plugin packager will now keep source debs and rpms and has had major improvements done
+ * A new application called *completion* was added to assist in writing shell completion systems. ZSH and Bash examples are in *ext/*
+ * Various improvements to documentation was made especially around using the CLI tools and discovery available plugins
+
+### Bug Fixes
+
+ * The vendored systemu gem has been updated to remove a rude error message
+ * Improved error reporting in many areas
+ * Boolean and numeric data is correctly parsed on the RPC application command line
+ * Improved parsing of compound filters
+ * Batched requests will now all have the same request id thus improving consistency of auditing information
+
+### Deprecations
+
+ * Remove the traditional Client#discovered_req method
+ * The metadata section in the agent is being removed as the DDL is now present everywhere
+
+### Data Plugins
+
+A new plugin type called _data plugins_ have been added, these plugins are
+usable in discovery requests and in any agent code.
+
+You can use these plugins to expose any node side data to your client discovery
+command line, an example can be seen below, this will discover all nodes where
+_/etc/syslog.conf_ has a md5 sum matching the regular expression _/19ff4997e/_:
+
+{% highlight console %}
+$ mco rpc rpcutil ping -S "fstat('/etc/rsyslog.conf').md5 = /19ff4997e/"
+{% endhighlight %}
+
+For full information see the plugins documentation on our website. The _fstat_
+plugin seen above is included at the moment, more will be added in due course
+but as always users can also write their own suitable to their needs.
+
+### Custom Discovery Sources
+
+A new type of plugin that can be used as alternative data sources for discovery
+data has been added. The traditional network broadcast mode is supported and
+remains the default but a new flat file one was added.
+
+Custom discovery sources can be made the default for a client using the
+*default_discovery_method* configuration option but can be selected on the
+command line using _--disc-method_.
+
+All applications now have a _--nodes_ option that takes as an argument a flat
+file full of mcollective identity names, one per line.
+
+Users can write their own discovery plugins and distribute it using the normal
+plugin packager. A complex example can be seen in the community plugin site
+for the MongoDB registration plugin.
+
+In the event that the _-S_ filter is used the network discovery mode will be
+forced so that data source plugins in discovery queries will always work as
+expected.
+
+This feature requires Direct Addressing.
+
+### DDL files on the servers
+
+The DDL files now have to be on the servers and the clients. On the servers the
+results will be pre-populated with default data for all defined output values of
+a specific action and you can now supply defaults.
+
+Additionally input will be validated on each node prior to running the agent
+code providing consistent input validation on client and server.  This should
+remove the need to add *validate* statements to agents.
+
+An example for a Nagios plugin can be seen below, here we default to *UNKNOWN*
+so that even if the action fails to run we will still see valid data being
+returned thats appropriate for the specific use case.
+
+{% highlight ruby %}
+action "runcommand", :description => "Run a NRPE command" do
+  output :exitcode,
+         :description  => "Exit Code from the Nagios plugin",
+         :display_as   => "Exit Code",
+         :default      => 3
+end
+{% endhighlight %}
+
+### Summarization Plugins
+
+Often custom applications are written just to summarize data like the *facts*
+application or *nrpe* ones.
+
+We have added a new plugin type that allows you to define summarization logic
+and included a few of our own.  These summaries are declared in the DDL, here is
+a section from the new DDL for the *get_fact* action:
+
+{% highlight ruby %}
+action "get_fact", :description => "Retrieve a single fact from the fact store" do
+  output :value,
+          :description => "The value of the fact",
+          :display_as => "Value"
+
+  summarize do
+    aggregate summary(:value)
+  end
+end
+{% endhighlight %}
+
+Here we are using the *summarize* block to say that we wish to summarize the
+output *:value*.  The *summary(:value)* is the call to a custom plugin and you
+can provide your own.
+
+Now when interacting with this action you will see summaries produced
+automatically:
+
+{% highlight ruby %}
+% mco rpc rpcutil get_fact fact=operatingsystemrelease
+.
+.
+dev2
+    Fact: operatingsystemrelease
+   Value: 6.2
+
+
+Summary of Value:
+
+    6.2 = 19
+    6.3 = 7
+
+Finished processing 26 / 26 hosts in 294.97 ms
+{% endhighlight %}
+
+The last section of the rpc output shows the summarization in action.
+
+The NRPE plugin on GitHub shows an example of a Nagios specific aggregation
+function and the plugin packager supports distributing these plugins.
+
+### Validation Plugins
+
+Users can now write their own plugins to perform input validation, these
+validations are usable in DDL files and agents.
+
+Below is a snippet from a DDL file using a custom *exim_msgid* validation
+plugin:
+
+{% highlight ruby %}
+    input :msgid,
+          :prompt      => "Message ID",
+          :description => "Valid message id currently in the mail queue",
+          :type        => :string,
+          :validation  => :exim_msgid,
+          :optional    => false,
+          :maxlength   => 16
+{% endhighlight %}
+
+And a snippet using the same plugin inside your agent:
+
+{% highlight ruby %}
+action "retrymsg" do
+  validate :msgid, :exim_msgid
+
+  # call out to exim to retry the message
+end
+{% endhighlight %}
+
+The error messages shown when validation fails are more user friendly than
+before, in this example the new error would be *Not a valid Exim Message ID*
+where in the past it would have been *value should match ^(?:[+-]\d{4})?(?:\[\d+\] )?(\w{6}\-\w{6}\-\w{2})/*
+
+### Code generation
+
+Code for agents and data sources can now be generated to assist development, you
+can use the _plugin_ command to create a basic skeleton agent or data source
+including the DDL files.
+
+{% highlight console %}
+$ mco plugin generate agent myagent actions=do_something,do_something_else
+{% endhighlight %}
+
+Defaults used in the metadata templates can be set in the config file:
+
+{% highlight ini %}
+plugin.metadata.url=http://devco.net
+plugin.metadata.author=R.I.Pienaar <rip@devco.net>
+plugin.metadata.license=ASL2.0
+plugin.metadata.version=0.0.1
+{% endhighlight %}
+
+All generator produced output will have these settings set, the other fields are
+constructed using a pattern convenient for using in your editor as a template.
+
+### Backwards Compatibility and Upgrading
+
+As of this version every agent on every node and client must have a DDL file. If
+the DDL file is not present or not valid the agent will not activate.  Further
+input validation is done according to the content of the DDL prior to running
+any actions.  You should therefore prepare for this upgrade by writing and
+deploying DDL files for all your agents.
+
+Version 2.0.0 and 2.2.0 can co-exist on the same network. If a new client uses
+any of the new features added such as data plugins the older clients will simply
+refuse to run the request but requests using features shared between versions
+will continue to work.
+
+When you first start this version of mcollectived you will see warnings logged
+similar to the one below:
+
+{% highlight ruby %}
+puppetd.rb:26: setting meta data in agents have been deprecated, DDL files are now being used for this information.
+{% endhighlight %}
+
+This is only a warning and not a critical problem.  The next major release will
+remove support for metadata in agents.
+
+Upgrading from versions prior to 2.0.0 was not tested, please refer to the
+release notes for 2.0.0.
 
 <a name="2_1_1">&nbsp;</a>
 
@@ -195,7 +429,7 @@ usable in discovery requests and in any agent code.
 
 You can use these plugins to expose any node side data to your client discovery
 command line, an example can be seen below, this will discover all nodes where
-_/etc/syslog.conf_ has a md5 summ matching the regular expression
+_/etc/syslog.conf_ has a md5 sum matching the regular expression
 _/19ff4997e/_:
 
 {% highlight console %}
@@ -220,7 +454,7 @@ a local node cache.
 
 Custom discovery sources can be made the default for a client using the
 *default_discovery_method* configuration option but can be selected on the
-command line using _--discovery-method_.
+command line using _--disc-method_.
 
 All applications now have a _--nodes_ option that takes as an argument a flat
 file full of mcollective identity names, one per line.
@@ -234,8 +468,8 @@ expected.
 
 ### Code generation
 
-A first iteration on generating agents and data sources has been added, you can
-use the _plugin_ command to create a basic skeleton agent or data source
+Code for agents and data sources can now be generated to assist development,
+you can use the _plugin_ command to create a basic skeleton agent or data source
 including the DDL files.
 
 {% highlight console %}

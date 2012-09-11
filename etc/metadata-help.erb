@@ -1,5 +1,5 @@
 <%= meta[:name] %>
-<% meta[:name].size.times do %>=<% end %>
+<%= "=" * meta[:name].size %>
 
 <%= meta[:description] %>
 
@@ -8,11 +8,11 @@
      License: <%= meta[:license] %>
      Timeout: <%= meta[:timeout] %>
    Home Page: <%= meta[:url] %>
-<% if requirement = requirements[:mcollective] -%>
+% if requirements[:mcollective]
 
-   Requires MCollective <%= requirement %> or newer
-<% end -%>
-<% unless @usage == "" -%>
+   Requires MCollective <%= requirements[:mcollective] %> or newer
+% end
+% unless @usage == ""
 
 <%= Util.align_text(@usage, nil, 3) if @usage != "" %>
-<% end -%>
+% end
