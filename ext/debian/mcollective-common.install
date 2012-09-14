@@ -8,3 +8,4 @@ usr/share/mcollective/plugins/mcollective/facts usr/share/mcollective/plugins/mc
 usr/share/mcollective/plugins/mcollective/registration usr/share/mcollective/plugins/mcollective
 usr/share/mcollective/plugins/mcollective/security usr/share/mcollective/plugins/mcollective
 usr/share/mcollective/plugins/mcollective/validator usr/share/mcollective/plugins/mcollective
+usr/share/mcollective/plugins/mcollective/discovery usr/share/mcollective/plugins/mcollective
