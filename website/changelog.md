@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/09/14|Package discovery plugins that was left out for debian|16413|
 |*2012/09/13*|*Release 2.2.0*|16323|
 
 ## Version 2.1.x
