@@ -39,6 +39,16 @@ module MCollective
           sum.result[:value] = {"shrt" => 1, "long key" => 1}
           sum.summarize.aggregate_format.should == "%8s = %s"
         end
+
+        it "should calculate an attractive format when result type is not a string" do
+          sum1 = Summary.new(:test, [], nil, :test_action)
+          sum1.result[:value] = {true => 4, false => 5}
+          sum1.summarize.aggregate_format.should == "%5s = %s"
+
+          sum2 = Summary.new(:test, [], nil, :test_action)
+          sum2.result[:value] = {1 => 1, 10 => 2}
+          sum2.summarize.aggregate_format.should == "%2s = %s"
+        end
       end
     end
   end

@@ -32,7 +32,17 @@ module MCollective
 
       def summarize
         if @aggregate_format == :calculate
-          max_key_length = @result[:value].keys.map{|k| k.length}.max
+          max_key_length = @result[:value].keys.map do |k|
+
+            # Response values retain their types. Here we check
+            # if the response is a string and turn it into a string
+            # if it isn't one.
+            if k.respond_to?(:length)
+              k.length
+            elsif k.respond_to?(:to_s)
+              k.to_s.length
+            end
+          end.max
           @aggregate_format = "%#{max_key_length}s = %s"
         end
 
