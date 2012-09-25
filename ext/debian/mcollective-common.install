@@ -1,4 +1,4 @@
-usr/lib/ruby/1.8/* usr/lib/ruby/1.8/
+usr/lib/ruby/vendor_ruby/* usr/lib/ruby/vendor_ruby/
 etc/mcollective/*.erb etc/mcollective
 usr/share/mcollective/plugins/mcollective/agent usr/share/mcollective/plugins/mcollective
 usr/share/mcollective/plugins/mcollective/audit usr/share/mcollective/plugins/mcollective
