@@ -143,7 +143,7 @@ module MCollective
       reqid = nil
 
       begin
-        Log.warn("Publishing request to agent %s with timeout %d" % [agent, timeout])
+        Log.debug("Publishing request to agent %s with timeout %d" % [agent, timeout])
 
         Timeout.timeout(timeout) do
           reqid = sendreq(body, agent, @options[:filter])
