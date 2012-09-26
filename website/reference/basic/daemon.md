@@ -3,84 +3,154 @@ layout: default
 title: Controlling the Daemon
 ---
 
-The main daemon that runs on nodes keeps internal stats and supports reloading of agents, we provide
-a tool - *mco controller* - to interact with any running daemon from a client.
+The main daemon that runs on nodes keeps internal stats and supports reloading of agents and changing
+logging level without restarting.
 
-If all you want is to reload all the agents without restarting the daemon you can just send it signal
-*USR1* and it will reload its agents.
+If you want to reload all the agents without restarting the daemon you can just send it signal *USR1*
+and it will reload its agents.
 
 You can send *USR2* to cycle the log level through DEBUG to FATAL and back again, just keep sending
 the signal and look at the logs.
 
-## Details
+Reloading agents work in most cases though we recommend a full daemon restart in production use
+due to the nature of the ruby class loading system.  If you are changing agent contents and relying
+on the reload behavior you might end up with agents not being in a consistent state.
 
-The _mco controller_ application allows you to:
+## Obtaining daemon statistics
 
- * Get stats for each mcollectived
- * Reload a specific agent
- * Reload all agents
-
-## Usage
-Usage is like for any other client, you run _mco controller_ from your management station and use filters
-to target just the nodes you need.
-
-## Statistics
-This will show some basic statistics about the daemon:
+The daemon keeps a number of statistics about its operation, you can view these using the _inventory_
+application:
 
 {% highlight console %}
-% mco controller stats
-Determining the amount of hosts matching filter for 2 seconds .... 1
+% mco inventory example.com
+   Server Statistics:
+                      Version: 2.2.0
+                   Start Time: Mon Sep 24 17:37:28 +0100 2012
+                  Config File: /etc/mcollective/server.cfg
+                  Collectives: mcollective, fr_collective
+              Main Collective: mcollective
+                   Process ID: 24473
+               Total Messages: 52339
+      Messages Passed Filters: 44118
+            Messages Filtered: 8221
+             Expired Messages: 0
+                 Replies Sent: 29850
+         Total Processor Time: 527.06 seconds
+                  System Time: 349.32 seconds
 
-                devel.your.com> total=22 replies=17 valid=22 invalid=0 filtered=0 passed=22
-
----- mcollectived controller summary ----
-           Nodes: 1 / 1
-      Start Time: Wed Feb 17 21:06:53 +0000 2010
-  Discovery Time: 2010.40ms
-      Agent Time: 53.13ms
-      Total Time: 2063.53ms
+.
+.
+.
 {% endhighlight %}
 
-Each stat means:
+The statistics mean:
 
 |Statistic   |Meaning                                    |
 |------------|-------------------------------------------|
-|total|Total messages received from the middleware|
-|replies|Replies sent back|
-|valid|Messages that passed validity checks like the PSK|
-|invalid|Messages that could not be validated|
-|filtered|Messages that we received but that we did not reply to due to the filter|
+|Start Time             |Local time on the node when the daemon started|
+|Collectives            |All known collectives this agent responds on|
+|Main Collective        |The primary collective|
+|Process ID             |The process ID of the mcollectived|
+|Total Messages         |Total messages received from the middleware|
+|Messages Passed Filters|Amount of messages that was determined to be applicable to this node based on filters|
+|Messages Filtered      |Messages that did not apply to this node|
+|Expired Messages       |Received messages that had expired their TTL values|
+|Replies Sent           |Not all received messages result in replies, this counts the actual replies sent|
+|Total Processor Time   |Processor time including user and system time consumed since start|
+|System Time            |System Processor time only|
 
-## Reloading an agent
-You can reload a specific agent if you've just copied a new one out and don't want to restart the daemons:
+You can get the raw values using the *rpcutil* agent using the *daemon_stats* action.
 
 {% highlight console %}
-% mco controller reload_agent --arg rpctest
-Determining the amount of hosts matching filter for 2 seconds .... 1
+% mco rpc rpcutil daemon_stats
+Discovering hosts using the mongo method .... 26
 
-                devel.your.com> reloaded rpctest agent
+ * [ ============================================================> ] 26 / 26
 
----- mcollectived controller summary ----
-           Nodes: 1 / 1
-      Start Time: Wed Feb 17 21:10:13 +0000 2010
-  Discovery Time: 2004.02ms
-      Agent Time: 57.65ms
-      Total Time: 2061.67ms
+.
+.
+.
+
+example.com
+               Agents: ["stomputil",
+                        "nrpe",
+                        "package",
+                        "rpcutil",
+                        "rndc",
+                        "urltest",
+                        "iptables",
+                        "puppetd",
+                        "discovery",
+                        "service",
+                        "eximng",
+                        "filemgr",
+                        "process"]
+          Config File: /etc/mcollective/server.cfg
+        Failed Filter: 168432
+        Passed Filter: 91231
+                  PID: 1418
+              Replies: 91127
+           Start Time: 1347545937
+              Threads: ["#<Thread:0x7f44350964f8 sleep>",
+                        "#<Thread:0x7f4434f7f538 sleep>",
+                        "#<Thread:0x7f44390ce368 sleep>",
+                        "#<Thread:0x7f44350981b8 run>"]
+                Times: {:cutime=>1111.13, :utime=>3539.21, :cstime=>1243.64, :stime=>5045.21}
+       Total Messages: 259842
+          TTL Expired: 179
+      Failed Security: 0
+   Security Validated: 259842
+              Version: 2.2.0
+
+
+Summary of Agents:
+
+          package = 26
+          process = 26
+        discovery = 26
+          service = 26
+          puppetd = 26
+          filemgr = 26
+             nrpe = 26
+          rpcutil = 26
+        stomputil = 26
+         iptables = 11
+          urltest = 7
+          libvirt = 4
+           eximng = 4
+     registration = 3
+             rndc = 3
+    angelianotify = 2
+
+Summary of Version:
+
+    2.2.0 = 26
+
+Finished processing 26 / 26 hosts in 289.20 ms
 {% endhighlight %}
 
-## Reloading all agent
-Like the previous command but acts on all agents, this is the same as sending *USR1* signal to the process:
+## Obtaining running configuration settings
+
+All configuration settings of any mcollective daemon can be retrieved using the *get_config_item*
+action of the *rpcutil* agent:
 
 {% highlight console %}
-% mco controller reload_agents
-Determining the amount of hosts matching filter for 2 seconds .... 1
+% mco rpc rpcutil get_config_item item=collectives -I example.com
+Discovering hosts using the mongo method .... 1
 
-                devel.your.com> reloaded all agents
+ * [ ============================================================> ] 1 / 1
 
----- mcollectived controller summary ----
-           Nodes: 1 / 1
-      Start Time: Wed Feb 17 21:10:46 +0000 2010
-  Discovery Time: 2006.71ms
-      Agent Time: 182.45ms
-      Total Time: 2189.16ms
+
+example.com:
+   Property: collectives
+      Value: ["mcollective", "fr_collective"]
+
+
+Summary of Value:
+
+      mcollective = 1
+    fr_collective = 1
+
+
+Finished processing 1 / 1 hosts in 59.05 ms
 {% endhighlight %}
