@@ -89,6 +89,7 @@ module MCollective
         @ddl = DDL.new(agent)
         @stats.ddl = @ddl
         @timeout = @ddl.meta[:timeout] + @discovery_timeout if @timeout == 5
+        @client.options[:timeout] = @timeout
 
         # allows stderr and stdout to be overridden for testing
         # but also for web apps that might not want a bunch of stuff
