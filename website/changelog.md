@@ -8,12 +8,14 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/09/26|Allow BigNum data to be used in data plugin replies|16503|
 |2012/09/26|Support non string data in the summary aggregate function|16410|
 
 ## Version 2.2.x
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/09/26|Allow BigNum data to be used in data plugin replies|16503|
 |2012/09/26|Support non string data in the summary aggregate function|16410|
 |2012/09/14|Package discovery plugins that was left out for debian|16413|
 |*2012/09/13*|*Release 2.2.0*|16323|

@@ -23,6 +23,10 @@ module MCollective
           @result["rspec"] = "rspec value"
           @result.instance_variable_get("@data").should == {:rspec => "rspec value"}
         end
+
+        it "should only allow valid data types" do
+          expect { @result["rspec"] = Time.now }.to raise_error(/Can only store .+ data but got Time for key rspec/)
+        end
       end
 
       describe "#include" do
