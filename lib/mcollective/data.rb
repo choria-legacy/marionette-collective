@@ -44,15 +44,19 @@ module MCollective
 
       raise DDLValidationError, "No dataquery has been defined in the DDL for data plugin #{name}" unless query
 
-      input = query[:input]
-      output = query[:output]
+      input = query.fetch(:input, {})
+      output = query.fetch(:output, {})
 
-      raise DDLValidationError, "No :query input has been defined in the DDL for data plugin #{name}" unless input[:query]
       raise DDLValidationError, "No output has been defined in the DDL for data plugin #{name}" if output.keys.empty?
 
-      return true if argument.nil? && input[:query][:optional]
+      if input[:query]
+        return true if argument.nil? && input[:query][:optional]
 
-      ddl.validate_input_argument(input, :query, argument)
+        ddl.validate_input_argument(input, :query, argument)
+      else
+        raise("No data plugin argument was declared in the %s DDL but an input was supplied" % name) if argument
+        return true
+      end
     end
 
     def self.ddl_has_output?(ddl, output)
