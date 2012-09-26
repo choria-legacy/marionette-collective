@@ -3,12 +3,13 @@ module MCollective
     autoload :Result, 'mcollective/aggregate/result'
     autoload :Base, 'mcollective/aggregate/base'
 
-    attr_accessor :ddl, :functions, :action
+    attr_accessor :ddl, :functions, :action, :failed
 
     def initialize(ddl)
       @functions = []
       @ddl = ddl
       @action = ddl[:action]
+      @failed = []
 
       create_functions
     end
@@ -17,35 +18,49 @@ module MCollective
     # All aggregate call and summarize method calls operate on these function as a batch.
     def create_functions
       @ddl[:aggregate].each_with_index do |agg, i|
-        contains_output?(agg[:args][0])
-
         output = agg[:args][0]
-        arguments = agg[:args][1..(agg[:args].size)]
 
-        @functions << load_function(agg[:function]).new(output, arguments, agg[:format], @action)
+        if contains_output?(output)
+          arguments = agg[:args][1..(agg[:args].size)]
+          @functions << load_function(agg[:function]).new(output, arguments, agg[:format], @action)
+        else
+          Log.error("Cannot create aggregate function '#{output}'. '#{output}' has not been specified as a valid ddl output.")
+          @failed << output
+        end
       end
     end
 
     # Check if the function param is defined as an output for the action in the ddl
     def contains_output?(output)
-      raise "'#{@ddl[:action]}' action does not contain output '#{output}'" unless @ddl[:output].keys.include?(output)
+      @ddl[:output].keys.include?(output)
     end
 
     # Call all the appropriate functions with the reply data received from RPC::Client
     def call_functions(reply)
       @functions.each do |function|
         Log.debug("Calling aggregate function #{function} for result")
-        function.process_result(reply[:data][function.output_name], reply)
+        begin
+          function.process_result(reply[:data][function.output_name], reply)
+        rescue Exception => e
+          Log.error("Could not process aggregate function for '#{function.output_name}'. #{e.to_s}")
+        end
       end
     end
 
     # Finalizes the function returning a result object
     def summarize
       summary = @functions.map do |function|
-        function.summarize
+        begin
+          function.summarize
+        rescue Exception => e
+          Log.error("Could not summarize aggregate result for '#{function.output_name}'. #{e.to_s}")
+          function
+        end
       end
 
-      summary.sort{|x,y| x.result[:output] <=> y.result[:output]}
+      summary.sort do |x,y|
+        x.result[:output] <=> y.result[:output]
+      end
     end
 
     # Loads function from disk for use

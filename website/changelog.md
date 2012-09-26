@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/10/03|Prevent one failing aggregate function from impacting others|16411|
 |2012/10/03|When validation fails indicate which input key has the problem|16617|
 |2012/09/26|Data queries can be written without any input queries meaning they take no input|16424|
 |2012/09/26|Use correct timeout for agent requests when using direct addressing|16569|

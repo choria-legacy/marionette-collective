@@ -4,7 +4,7 @@ module MCollective
     class Stats
       attr_accessor :noresponsefrom, :starttime, :discoverytime, :blocktime, :responses, :totaltime
       attr_accessor :discovered, :discovered_nodes, :okcount, :failcount, :noresponsefrom, :responsesfrom
-      attr_accessor :requestid, :aggregate_summary, :ddl
+      attr_accessor :requestid, :aggregate_summary, :ddl, :aggregate_failures
 
       def initialize
         reset
@@ -26,6 +26,7 @@ module MCollective
         @noresponsefrom = []
         @requestid = nil
         @aggregate_summary = []
+        @aggregate_failures = []
       end
 
       # returns a hash of our stats
@@ -42,7 +43,8 @@ module MCollective
          :okcount           => @okcount,
          :requestid         => @requestid,
          :failcount         => @failcount,
-         :aggregate_summary => @aggregate_summary}
+         :aggregate_summary => @aggregate_summary,
+         :aggregate_failures => @aggregate_failures}
       end
 
       # Fake hash access to keep things backward compatible
@@ -143,7 +145,11 @@ module MCollective
             display_as = output_item
           end
 
-          aggregate_report = aggregate.to_s
+          if aggregate.is_a?(Aggregate::Result::Base)
+            aggregate_report = aggregate.to_s
+          else
+            aggregate_report = ""
+          end
 
           result.puts Util.colorize(:bold, "Summary of %s:" % display_as)
           result.puts
@@ -152,6 +158,13 @@ module MCollective
           else
             result.puts Util.colorize(:yellow, "     No aggregate summary could be computed")
           end
+          result.puts
+        end
+
+        @aggregate_failures.each do |failed|
+          result.puts Util.colorize(:bold, "Summary of %s:" % failed)
+          result.puts
+          result.puts Util.colorize(:yellow, "     No aggregate summary could be computed")
           result.puts
         end
 

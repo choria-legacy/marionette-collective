@@ -6,30 +6,40 @@ module MCollective
   describe Aggregate do
     let(:ddl) do
       {
-        :aggregate => [{:function => :func, :args=>[:value], :format => "%s"}],
+        :aggregate => [{:function => :func, :args=>[:foo], :format => "%s"}],
         :action => "test_action",
         :output => {:foo => nil, :bar => nil}
       }
     end
 
     describe '#create_functions' do
-      before :each do
-        Aggregate.any_instance.stubs(:contains_output?)
-      end
+      let(:function){mock}
 
       it "should load all the functions with a format if defined" do
-        function = mock
-        function.expects(:new).with(:value, [], "%s", 'test_action')
+        function.expects(:new).with(:foo, [], "%s", 'test_action')
         Aggregate.any_instance.expects(:load_function).once.returns(function)
-        @aggregate = Aggregate.new(ddl)
+        Aggregate.new(ddl)
       end
 
       it "should load all the functions without a format if it isn't defined" do
-        function = mock
-        function.expects(:new).with(:value, [], nil, 'test_action')
+        function.expects(:new).with(:foo, [], nil, 'test_action')
         Aggregate.any_instance.expects(:load_function).once.returns(function)
         ddl[:aggregate].first[:format] = nil
-        @aggregate = Aggregate.new(ddl)
+        Aggregate.new(ddl)
+      end
+
+      it "should not load invalid aggregate functions" do
+        invalid_ddl = { :aggregate => [{:function => :func, :args=>[:foo], :format => "%s"}, {:function => :func, :args=>[:fail], :format => "%s"}],
+                        :action => "test_action",
+                        :output => {:foo => nil, :bar => nil}}
+
+        function.stubs(:new).returns("function")
+        Aggregate.any_instance.stubs(:load_function).returns(function)
+
+        Log.expects(:error)
+        @aggregate = Aggregate.new(invalid_ddl)
+        @aggregate.functions.should == ["function"]
+        @aggregate.failed.should == [:fail]
       end
     end
 
@@ -39,31 +49,50 @@ module MCollective
         @aggregate = Aggregate.new(ddl)
       end
 
-      it "should raise an exception if the ddl output does not include the function's input" do
-        expect{
-          @aggregate.contains_output?(:baz)
-        }.to raise_error("'test_action' action does not contain output 'baz'")
+      it "should return false if the ddl output does not include the function's input" do
+        result = @aggregate.contains_output?(:baz)
+        result.should == false
       end
 
-      it "should not raise an exception if the ddl output includes the function's input" do
-        @aggregate.contains_output?(:foo)
+      it "should return true if the ddl output includes the function's input" do
+        result = @aggregate.contains_output?(:foo)
+        result.should == true
       end
     end
 
     describe '#call_functions' do
-      it "should call all of the functions" do
+      let(:aggregate){ Aggregate.new(ddl)}
+      let(:result){ RPC::Result.new("rspec", "rspec", :sender => "rspec", :statuscode => 0, :statusmsg => "rspec", :data => {:test => :result})}
+      let(:function) {mock}
+
+      before :each do
         Aggregate.any_instance.stubs(:create_functions)
-        aggregate = Aggregate.new(ddl)
+      end
 
-        result = RPC::Result.new("rspec", "rspec", :sender => "rspec", :statuscode => 0, :statusmsg => "rspec", :data => {:test => :result})
-
-        function = mock
+      it "should call all of the functions" do
         function.expects(:process_result).with(:result, result).once
         function.expects(:output_name).returns(:test)
-
         aggregate.functions = [function]
 
         aggregate.call_functions(result)
+      end
+
+      it "should not fail if 'process_result' method raises an exception" do
+        aggregate.functions = [function]
+        function.stubs(:output_name).returns(:test)
+        function.stubs(:process_result).raises("Failed")
+
+        Log.expects(:error)
+        aggregate.call_functions(result)
+      end
+
+      it "should not fail if 'summarize' method raises en exception" do
+        function.stubs(:summarize).raises("Failed")
+        function.stubs(:output_name).returns("rspec")
+        aggregate.functions = [function]
+
+        Log.expects(:error)
+        result = aggregate.summarize
       end
     end
 
