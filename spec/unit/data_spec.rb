@@ -132,9 +132,14 @@ module MCollective
         expect { Data.ddl_validate(@ddl, "rspec") }.to raise_error("No dataquery has been defined in the DDL for data plugin rspec test")
       end
 
-      it "should ensure the ddl has an input" do
-        @ddl.expects(:entities).returns({:data => {:input => {}, :output => {}}})
-        expect { Data.ddl_validate(@ddl, "rspec") }.to raise_error("No :query input has been defined in the DDL for data plugin rspec test")
+      it "should allow ddls without any input defined" do
+        @ddl.expects(:entities).returns({:data => {:input => {}, :output => {:x => {}}}})
+        Data.ddl_validate(@ddl, nil)
+      end
+
+      it "should not allow input arguments when no query were defined" do
+        @ddl.expects(:entities).returns({:data => {:input => {}, :output => {:x => {}}}})
+        expect { Data.ddl_validate(@ddl, "rspec") }.to raise_error("No data plugin argument was declared in the rspec test DDL but an input was supplied")
       end
 
       it "should ensure the ddl has output" do
