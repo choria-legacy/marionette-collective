@@ -753,6 +753,7 @@ module MCollective
           end
 
           @stats.aggregate_summary = aggregate.summarize if aggregate
+          @stats.aggregate_failures = aggregate.failed if aggregate
         else
           @stderr.print("\nNo request sent, we did not discover any nodes.")
         end
@@ -833,6 +834,7 @@ module MCollective
           end
 
           @stats.aggregate_summary = aggregate.summarize if aggregate
+          @stats.aggregate_failures = aggregate.failed if aggregate
           @stats.client_stats = @client.stats
         else
           @stderr.print("\nNo request sent, we did not discover any nodes.")
