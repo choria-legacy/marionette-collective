@@ -41,7 +41,7 @@ module MCollective
 
       it "should call super if a validator method is called and the plugin does not exist" do
         expect{
-          Validator.test(1,2,3)
+          Validator.rspec(1,2,3)
         }.to raise_error(ValidatorError)
       end
     end
