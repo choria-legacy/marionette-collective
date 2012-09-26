@@ -58,7 +58,7 @@ module MCollective
         @client.expects(:sendreq).returns("823a3419a0975c3facbde121f72ab61f")
         @client.expects(:receive).returns(reply)
 
-        @discoverer.stubs(:discovery_timeout).returns(0)
+        @discoverer.expects(:discovery_timeout).with(message.options[:timeout], message.options[:filter]).returns(0)
 
         Time.stubs(:now).returns(Time.at(1340621250), Time.at(1340621251))
 

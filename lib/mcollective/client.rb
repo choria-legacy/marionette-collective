@@ -127,9 +127,11 @@ module MCollective
     def req(body, agent=nil, options=false, waitfor=0)
       if body.is_a?(Message)
         agent = body.agent
-        options = body.options
         waitfor = body.discovered_hosts.size || 0
+        @options = body.options
       end
+
+      @options = options if options
 
       stat = {:starttime => Time.now.to_f, :discoverytime => 0, :blocktime => 0, :totaltime => 0}
 
@@ -141,6 +143,8 @@ module MCollective
       reqid = nil
 
       begin
+        Log.warn("Publishing request to agent %s with timeout %d" % [agent, timeout])
+
         Timeout.timeout(timeout) do
           reqid = sendreq(body, agent, @options[:filter])
 

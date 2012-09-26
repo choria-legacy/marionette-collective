@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/09/26|Use correct timeout for agent requests when using direct addressing|16569|
 |2012/09/26|Allow BigNum data to be used in data plugin replies|16503|
 |2012/09/26|Support non string data in the summary aggregate function|16410|
 
@@ -15,6 +16,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/09/26|Use correct timeout for agent requests when using direct addressing|16569|
 |2012/09/26|Allow BigNum data to be used in data plugin replies|16503|
 |2012/09/26|Support non string data in the summary aggregate function|16410|
 |2012/09/14|Package discovery plugins that was left out for debian|16413|
