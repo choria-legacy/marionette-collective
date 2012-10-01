@@ -24,6 +24,7 @@ To create an IPS package, follow the excellent guide at:
 http://www.neuhalfen.name/blog/2011/07/02/Solaris11-Packaging-IPS_simple_packages/
 
 To create a basic IPS repository (and start the associated services):
+
     # zfs create rpool/IPS
     # zfs set atime=off rpool/IPS
     # zfs set mountpoint=/IPS rpool/IPS
@@ -39,6 +40,7 @@ To create a basic IPS repository (and start the associated services):
     # pkg set-publisher -O http://localhost:80 legrand.im
 
 To create and send the package itself, from the guide above:
+
     # mkdir ~/package
     # cd <GITHUB>/marionette-collective
     # cat Makefile | sed 's/DESTDIR=$/DESTDIR=~\/package/' > Makefile.package
@@ -96,8 +98,7 @@ License
 
 http://creativecommons.org/publicdomain/zero/1.0/
 
-To the extent possible under law, Mathieu Legrand has waived all copyright and related or neighboring rights to this work.
-
-This work is published from: Singapore.
+To the extent possible under law, Mathieu Legrand has waived all copyright and related or
+neighboring rights to this work. This work is published from: Singapore.
 
 
