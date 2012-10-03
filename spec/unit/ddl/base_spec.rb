@@ -65,7 +65,7 @@ module MCollective
 
           expect {
             @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, 1)
-          }.to raise_error("Cannot validate input: value should be a string")
+          }.to raise_error("Cannot validate input string: value should be a string")
 
           @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, "1")
         end
@@ -79,7 +79,7 @@ module MCollective
 
           expect {
             @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, "too long")
-          }.to raise_error("Cannot validate input: Input string is longer than 1 character(s)")
+          }.to raise_error("Cannot validate input string: Input string is longer than 1 character(s)")
 
           @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, "1")
         end
@@ -93,7 +93,7 @@ module MCollective
 
           expect {
             @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, "doesnt validate")
-          }.to raise_error("Cannot validate input: value should match ^regex$")
+          }.to raise_error("Cannot validate input string: value should match ^regex$")
 
           @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, "regex")
         end
@@ -106,7 +106,7 @@ module MCollective
 
           expect {
             @ddl.validate_input_argument(@ddl.entities[:list][:input], :list, 3)
-          }.to raise_error("Cannot validate input: value should be one of 1, 2")
+          }.to raise_error("Cannot validate input list: value should be one of 1, 2")
 
           @ddl.validate_input_argument(@ddl.entities[:list][:input], :list, 1)
         end
@@ -119,7 +119,7 @@ module MCollective
 
           expect {
             @ddl.validate_input_argument(@ddl.entities[:bool][:input], :bool, 3)
-          }.to raise_error("Cannot validate input: value should be a boolean")
+          }.to raise_error("Cannot validate input bool: value should be a boolean")
 
           @ddl.validate_input_argument(@ddl.entities[:bool][:input], :bool, true)
           @ddl.validate_input_argument(@ddl.entities[:bool][:input], :bool, false)
@@ -133,11 +133,11 @@ module MCollective
 
           expect {
             @ddl.validate_input_argument(@ddl.entities[:test][:input], :int, "1")
-          }.to raise_error("Cannot validate input: value should be a integer")
+          }.to raise_error("Cannot validate input int: value should be a integer")
 
           expect {
             @ddl.validate_input_argument(@ddl.entities[:test][:input], :int, 1.1)
-          }.to raise_error("Cannot validate input: value should be a integer")
+          }.to raise_error("Cannot validate input int: value should be a integer")
 
           @ddl.validate_input_argument(@ddl.entities[:test][:input], :int, 1)
         end
@@ -150,11 +150,11 @@ module MCollective
 
           expect {
             @ddl.validate_input_argument(@ddl.entities[:test][:input], :float, "1")
-          }.to raise_error("Cannot validate input: value should be a float")
+          }.to raise_error("Cannot validate input float: value should be a float")
 
           expect {
             @ddl.validate_input_argument(@ddl.entities[:test][:input], :float, 1)
-          }.to raise_error("Cannot validate input: value should be a float")
+          }.to raise_error("Cannot validate input float: value should be a float")
 
           @ddl.validate_input_argument(@ddl.entities[:test][:input], :float, 1.1)
         end
@@ -167,7 +167,7 @@ module MCollective
 
           expect {
             @ddl.validate_input_argument(@ddl.entities[:test][:input], :number, "1")
-          }.to raise_error("Cannot validate input: value should be a number")
+          }.to raise_error("Cannot validate input number: value should be a number")
 
           @ddl.validate_input_argument(@ddl.entities[:test][:input], :number, 1)
           @ddl.validate_input_argument(@ddl.entities[:test][:input], :number, 1.1)

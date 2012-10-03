@@ -141,7 +141,7 @@ module MCollective
 
         return true
       rescue => e
-        raise DDLValidationError, "Cannot validate input: %s" % e.to_s
+        raise DDLValidationError, "Cannot validate input %s: %s" % [key, e.to_s]
       end
 
      # Registers an input argument for a given action
