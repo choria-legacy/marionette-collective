@@ -21,8 +21,9 @@ module MCollective
         output = agg[:args][0]
 
         if contains_output?(output)
-          arguments = agg[:args][1..(agg[:args].size)]
-          @functions << load_function(agg[:function]).new(output, arguments, agg[:format], @action)
+          arguments = agg[:args][1]
+          format = (arguments.delete(:format) if arguments) || nil
+          @functions << load_function(agg[:function]).new(output, arguments, format, @action)
         else
           Log.error("Cannot create aggregate function '#{output}'. '#{output}' has not been specified as a valid ddl output.")
           @failed << output
