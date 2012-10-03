@@ -6,7 +6,7 @@ module MCollective
   describe Aggregate do
     let(:ddl) do
       {
-        :aggregate => [{:function => :func, :args=>[:foo], :format => "%s"}],
+        :aggregate => [{:function => :func, :args=>[:foo, {:format => "%s"}]}],
         :action => "test_action",
         :output => {:foo => nil, :bar => nil}
       }
@@ -16,15 +16,16 @@ module MCollective
       let(:function){mock}
 
       it "should load all the functions with a format if defined" do
-        function.expects(:new).with(:foo, [], "%s", 'test_action')
+        function.expects(:new).with(:foo, {}, "%s", 'test_action')
+        Aggregate.any_instance.expects(:contains_output?).returns(true)
         Aggregate.any_instance.expects(:load_function).once.returns(function)
         Aggregate.new(ddl)
       end
 
       it "should load all the functions without a format if it isn't defined" do
-        function.expects(:new).with(:foo, [], nil, 'test_action')
+        function.expects(:new).with(:foo, {}, nil, 'test_action')
         Aggregate.any_instance.expects(:load_function).once.returns(function)
-        ddl[:aggregate].first[:format] = nil
+        ddl[:aggregate].first[:args][1][:format] = nil
         Aggregate.new(ddl)
       end
 
@@ -40,6 +41,13 @@ module MCollective
         @aggregate = Aggregate.new(invalid_ddl)
         @aggregate.functions.should == ["function"]
         @aggregate.failed.should == [:fail]
+      end
+
+      it "should pass aditional arguments if specified in the ddl" do
+        function.expects(:new).with(:foo, {:extra => "extra"}, "%s", 'test_action')
+        Aggregate.any_instance.expects(:load_function).once.returns(function)
+        ddl[:aggregate].first[:args][1][:extra] = "extra"
+        Aggregate.new(ddl)
       end
     end
 
