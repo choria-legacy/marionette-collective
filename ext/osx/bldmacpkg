@@ -1,6 +1,5 @@
 #!/bin/bash
-
-MPATH=''
+MPATH=$1
 BETCDIR='/etc/mcollective'
 BRUBYDIR='/Library/Ruby/Site/1.8'
 BSBINDIR='/usr/sbin'
@@ -8,34 +7,34 @@ BBINDIR='/usr/bin'
 BLIBEXECDIR='/usr/libexec/mcollective'
 BDOCDIR='/usr/share/doc/mcollective'
 BLAUNCHDIR='/Library/LaunchDaemons'
+BLOGDIR='/var/log/mcollective'
+PACKAGEMAKER='/Applications/PackageMaker.app/Contents/MacOS/PackageMaker'
 
-if [ -z $1 ]; then 
-    echo 'Please give the path to the MCollective source directory'
-    exit 1
-else
-    MPATH=$1
+if [ -z $MPATH ]; then
+  echo 'Please give the path to the MCollective source directory'
+  exit 1
 fi
 
-function msg_stomp {
-    echo 'It is recommended to install stomp on this system using ruby gems'
-    exit 2
+msg_stomp() {
+  echo "It is recommended to install stomp on this system using ruby gems"
+  exit 2
 }
 
-function msg_xcode {
-    echo 'It is required to have the latest XCode installed'
-    exit 3
+msg_xcode() {
+  echo 'It is required to have the latest XCode installed'
+  exit 3
 }
 
-#Make sure we have stomp so we can load mcollective
+# Make sure we have stomp so we can load mcollective
 /usr/bin/ruby <<EOF || msg_stomp
 require 'rubygems'
 require 'stomp'
 EOF
 
-#Make sure we have PackageMaker installed
-[ -x /Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker ] || msg_xcode
+# Make sure we have PackageMaker installed
+[ -x $PACKAGEMAKER ] || msg_xcode
 
-#Get the MCollective version
+# Get the MCollective version
 export RUBYLIB=$RUBYLIB:$MPATH/lib
 mcversion=$(/usr/bin/ruby <<EOF
 require 'mcollective'
@@ -43,47 +42,44 @@ puts MCollective.version
 EOF
 )
 
-#Make our tmp directory
+# Make our tmp directory
 tmpbase=`basename $0`
 common_tmpdir=`mktemp -d /tmp/${tmpbase}-common_$mcversion.XXXX` || exit 1
 client_tmpdir=`mktemp -d /tmp/${tmpbase}-client_$mcversion.XXXX` || exit 1
 tmpdir=`mktemp -d /tmp/${tmpbase}_$mcversion.XXXX` || exit 1
 
-#Build the common environment
+# Build the common environment
 mkdir -p "$common_tmpdir/$BRUBYDIR"
 mkdir -p "$common_tmpdir/$BLIBEXECDIR"
 mkdir -p "$common_tmpdir/$BDOCDIR"
+mkdir -p "$common_tmpdir/$BLOGDIR"
 
 cp -r $MPATH/lib/mcollective     $common_tmpdir/$BRUBYDIR/
 cp    $MPATH/lib/mcollective.rb  $common_tmpdir/$BRUBYDIR/
 cp -r $MPATH/plugins/mcollective $common_tmpdir/$BLIBEXECDIR/
 cp    $MPATH/COPYING             $common_tmpdir/$BDOCDIR/
 
-#Build the server environment
+# Build the server environment
 mkdir -p "$tmpdir/$BSBINDIR"
 mkdir -p "$tmpdir/$BETCDIR"
 mkdir -p "$tmpdir/$BETCDIR/ssl/clients"
 mkdir -p "$tmpdir/$BLAUNCHDIR"
 
-cp $MPATH/mcollectived.rb     $tmpdir/$BSBINDIR/mcollectived
+cp $MPATH/bin/mcollectived    $tmpdir/$BSBINDIR/mcollectived
 cp $MPATH/etc/facts.yaml.dist $tmpdir/$BETCDIR/facts.yaml
 cp $MPATH/etc/server.cfg.dist $tmpdir/$BETCDIR/server.cfg
-#This is needed for macs since launchd will handle the daemonizing
+
+# This is needed for macs since launcd will handle daemonizing
 perl -i -pe 's/daemonize = 1/daemonize = 0/' $tmpdir/$BETCDIR/server.cfg
 
-#Build the client environment
+# Build the client environment
 mkdir -p "$client_tmpdir/$BETCDIR"
 mkdir -p "$client_tmpdir/$BSBINDIR"
 
 cp $MPATH/etc/client.cfg.dist $client_tmpdir/$BETCDIR/client.cfg
 cp $MPATH/etc/rpc-help.erb    $client_tmpdir/$BETCDIR/
-cp $MPATH/mc-call-agent       $client_tmpdir/$BSBINDIR/
-cp $MPATH/mc-controller       $client_tmpdir/$BSBINDIR/
-cp $MPATH/mc-facts            $client_tmpdir/$BSBINDIR/
-cp $MPATH/mc-find-hosts       $client_tmpdir/$BSBINDIR/
-cp $MPATH/mc-inventory        $client_tmpdir/$BSBINDIR/
-cp $MPATH/mc-ping             $client_tmpdir/$BSBINDIR/
-cp $MPATH/mc-rpc              $client_tmpdir/$BSBINDIR/
+cp $MPATH/bin/mc-call-agent   $client_tmpdir/$BSBINDIR/
+cp $MPATH/bin/mco             $client_tmpdir/$BSBINDIR/
 
 #Build our launchd property list file
 cat - > $tmpdir/$BLAUNCHDIR/org.marionette-collective.mcollective.plist <<EOF
@@ -119,13 +115,26 @@ cat - > $tmpdir/$BLAUNCHDIR/org.marionette-collective.mcollective.plist <<EOF
 </plist>
 EOF
 
-#launchd complains if the permissions aren't right
-chmod 644 $tmpdir/$BLAUNCHDIR/org.marionette-collective.mcollective.plist
 
 #Make our Packages.  This requires XCode be installed
-/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker -r $tmpdir --version $mcversion --title "MCollective" -l / -o MCollective_$mcversion.pkg -i org.marionette-collective.mcollective
-/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker -r $common_tmpdir --version $mcversion --title "MCollective Common" -l / -o MCollective-Common_$mcversion.pkg -i org.marionette-collective.mcollective-common
-/Developer/Applications/Utilities/PackageMaker.app/Contents/MacOS/PackageMaker -r $client_tmpdir --version $mcversion --title "MCollective Client" -l / -o MCollective-Client_$mcversion.pkg -i org.marionette-collective.mcollective-client
+$PACKAGEMAKER -r $tmpdir --version $mcversion --title "MCollective" -l / -o MCollective_$mcversion.pkg -i org.marionette-collective.mcollective
+$PACKAGEMAKER -r $common_tmpdir --version $mcversion --title "MCollective Common" -l / -o MCollective-Common_$mcversion.pkg -i org.marionette-collective.mcollective-common
+$PACKAGEMAKER -r $client_tmpdir --version $mcversion --title "MCollective Client" -l / -o MCollective-Client_$mcversion.pkg -i org.marionette-collective.mcollective-client
+
+# Make sure that we install the stomp gem, this is ugly and should be part of the package
+cat - > ./MCollective-Common_$mcversion.pkg/Contents/Resources/postflight <<EOF
+#!/bin/bash
+/usr/bin/gem install --no-ri --no-rdoc stomp
+EOF
+chmod +x ./MCollective-Common_$mcversion.pkg/Contents/Resources/postflight
+
+# launchd complains if the permissions aren't right, this is a dumb hack that
+# I needed since PackageMaker doesn't seem to respect permissions (originally had chmod 644 in the tmpdir)
+cat - > ./MCollective_$mcversion.pkg/Contents/Resources/postflight <<EOF
+#!/bin/bash
+chmod 644 /Library/LaunchDaemons/org.marionette-collective.mcollective.plist
+EOF
+chmod +x ./MCollective_$mcversion.pkg/Contents/Resources/postflight
 
 #Clean up
 rm -rf $tmpdir
