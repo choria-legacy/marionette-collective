@@ -47,6 +47,7 @@ tmpbase=`basename $0`
 common_tmpdir=`mktemp -d /tmp/${tmpbase}-common_$mcversion.XXXX` || exit 1
 client_tmpdir=`mktemp -d /tmp/${tmpbase}-client_$mcversion.XXXX` || exit 1
 tmpdir=`mktemp -d /tmp/${tmpbase}_$mcversion.XXXX` || exit 1
+pkgdir=`mktemp -d /tmp/${tmpbase}_${mcversion}_packages.XXXX` || exit 1
 
 # Build the common environment
 mkdir -p "$common_tmpdir/$BRUBYDIR"
@@ -117,26 +118,30 @@ EOF
 
 
 #Make our Packages.  This requires XCode be installed
-$PACKAGEMAKER -r $tmpdir --version $mcversion --title "MCollective" -l / -o MCollective_$mcversion.pkg -i org.marionette-collective.mcollective
-$PACKAGEMAKER -r $common_tmpdir --version $mcversion --title "MCollective Common" -l / -o MCollective-Common_$mcversion.pkg -i org.marionette-collective.mcollective-common
-$PACKAGEMAKER -r $client_tmpdir --version $mcversion --title "MCollective Client" -l / -o MCollective-Client_$mcversion.pkg -i org.marionette-collective.mcollective-client
+$PACKAGEMAKER -r $tmpdir --version $mcversion --title "MCollective" -l / -o $pkgdir/MCollective_$mcversion.pkg -i org.marionette-collective.mcollective
+$PACKAGEMAKER -r $common_tmpdir --version $mcversion --title "MCollective Common" -l / -o $pkgdir/MCollective-Common_$mcversion.pkg -i org.marionette-collective.mcollective-common
+$PACKAGEMAKER -r $client_tmpdir --version $mcversion --title "MCollective Client" -l / -o $pkgdir/MCollective-Client_$mcversion.pkg -i org.marionette-collective.mcollective-client
 
 # Make sure that we install the stomp gem, this is ugly and should be part of the package
-cat - > ./MCollective-Common_$mcversion.pkg/Contents/Resources/postflight <<EOF
+cat - > $pkgdir/MCollective-Common_$mcversion.pkg/Contents/Resources/postflight <<EOF
 #!/bin/bash
 /usr/bin/gem install --no-ri --no-rdoc stomp
 EOF
-chmod +x ./MCollective-Common_$mcversion.pkg/Contents/Resources/postflight
+chmod +x $pkgdir/MCollective-Common_$mcversion.pkg/Contents/Resources/postflight
 
 # launchd complains if the permissions aren't right, this is a dumb hack that
 # I needed since PackageMaker doesn't seem to respect permissions (originally had chmod 644 in the tmpdir)
-cat - > ./MCollective_$mcversion.pkg/Contents/Resources/postflight <<EOF
+cat - > $pkgdir/MCollective_$mcversion.pkg/Contents/Resources/postflight <<EOF
 #!/bin/bash
 chmod 644 /Library/LaunchDaemons/org.marionette-collective.mcollective.plist
 EOF
-chmod +x ./MCollective_$mcversion.pkg/Contents/Resources/postflight
+chmod +x $pkgdir/MCollective_$mcversion.pkg/Contents/Resources/postflight
+
+# Create a r/o compressed dmg from our pkgs
+hdiutil create -srcfolder $pkgdir -format UDZO -scrub -imagekey zlib-level=9 -volname "mcollective-$mcversion" mcollective-$mcversion.dmg
 
 #Clean up
 rm -rf $tmpdir
 rm -rf $common_tmpdir
 rm -rf $client_tmpdir
+rm -rf $pkgdir
