@@ -1,5 +1,5 @@
 #!/bin/bash
-MPATH=$1
+MPATH="$1"
 BETCDIR='/etc/mcollective'
 BRUBYDIR='/Library/Ruby/Site/1.8'
 BSBINDIR='/usr/sbin'
