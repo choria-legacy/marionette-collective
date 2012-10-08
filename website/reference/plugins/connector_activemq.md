@@ -133,3 +133,12 @@ ActiveMQ messages support priorities, you can pass in the needed priority header
 {% highlight ini %}
 plugin.activemq.priority = 4
 {% endhighlight %}
+
+### Message Reply Prefix
+
+The prefix for temporary reply queues can be specified:
+
+{% highlight ini %}
+plugin.activemq.temp_queue_prefix = /queue/
+{% endhighlight %}
+

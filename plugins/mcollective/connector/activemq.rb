@@ -66,6 +66,10 @@ module MCollective
     #     plugin.activemq.randomize = false
     #     plugin.activemq.timeout = -1
     #
+    # The prefix of the temporary reply queue can be set
+    #
+    #     plugin.activemq.temp_queue_prefix = /queue/
+    #
     # You can set the initial connetion timeout - this is when your stomp server is simply
     # unreachable - after which it would failover to the next in the pool:
     #
@@ -153,6 +157,7 @@ module MCollective
         begin
           @base64 = get_bool_option("activemq.base64", false)
           @msgpriority = get_option("activemq.priority", 0).to_i
+          @tempqueueprefix = get_option("activemq.temp_queue_prefix", "/queue/")
 
           pools = @config.pluginconf["activemq.pool.size"].to_i
           hosts = []
@@ -336,7 +341,7 @@ module MCollective
 
         case type
           when :reply
-            target[:name] = ["/queue/" + collective, :reply, "#{Config.instance.identity}_#{$$}"].join(".")
+            target[:name] = ["#{@tempqueueprefix}" + collective, :reply, "#{Config.instance.identity}_#{$$}"].join(".")
 
           when :broadcast
             target[:name] = ["/topic/" + collective, agent, :agent].join(".")
