@@ -24,7 +24,6 @@ Configuration is a simple *key = val* style configuration file.
 |---|------|-----------|
 |topicprefix|/topic/|Prefix that gets used for all messages.|
 |queueprefix|/queue/|Prefix that gets used for all queued messages.|
-|tempqueueprefix|/queue|Prefix that gets used for all tempory distination queued messages.|
 |topicsep|.|The seperator to use between parts of the topic path|
 |collectives|mcollective,subcollective|A list of [Subcollectives] to join - 1.1.3 and newer only|
 |main_collective|mcollective|The main collective to target - 1.1.3 and newer only|

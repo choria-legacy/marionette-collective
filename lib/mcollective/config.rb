@@ -5,7 +5,7 @@ module MCollective
 
     attr_accessor :mode
 
-    attr_reader :topicprefix, :daemonize, :pluginconf, :libdir, :configured, :tempqueueprefix
+    attr_reader :topicprefix, :daemonize, :pluginconf, :libdir, :configured
     attr_reader :logfile, :keeplogs, :max_log_size, :loglevel, :logfacility
     attr_reader :identity, :daemonize, :connector, :securityprovider, :factsource
     attr_reader :registration, :registerinterval, :topicsep, :classesfile
@@ -51,8 +51,6 @@ module MCollective
                   @topicprefix = val
                 when "queueprefix"
                   @queueprefix = val
-                when "tempqueueprefix"
-                  @tempqueueprefix = val
                 when "logfile"
                   @logfile = val
                 when "keeplogs"
@@ -161,7 +159,6 @@ module MCollective
       @topicsep = "."
       @topicprefix = "/topic/"
       @queueprefix = "/queue/"
-      @tempqueueprefix = "/queue/"
       @classesfile = "/var/lib/puppet/state/classes.txt"
       @rpcaudit = false
       @rpcauditprovider = ""
