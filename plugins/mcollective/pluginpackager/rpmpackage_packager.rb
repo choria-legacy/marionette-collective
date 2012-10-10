@@ -20,8 +20,16 @@ module MCollective
         @verbose = verbose
         @libdir = pluginpath || "/usr/libexec/mcollective/mcollective/"
         @signature = signature
-        @rpmdir = `rpm --eval '%_rpmdir'`.chomp
-        @srpmdir = `rpm --eval '%_srcrpmdir'`.chomp
+        @rpmdir = rpmdir
+        @srpmdir = srpmdir
+      end
+
+      def rpmdir
+        `rpm --eval '%_rpmdir'`.chomp
+      end
+
+      def srpmdir
+        `rpm --eval '%_srcrpmdir'`.chomp
       end
 
       def create_packages

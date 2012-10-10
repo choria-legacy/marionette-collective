@@ -22,6 +22,8 @@ module MCollective
         @plugin.stubs(:iteration).returns("1")
         @plugin.stubs(:metadata).returns({:name => "test", :version => "1"})
         @plugin.stubs(:mcname).returns("mcollective")
+        @plugin.stubs(:rpmdir)
+        @plugin.stubs(:srpmdir)
       end
 
       after :all do
