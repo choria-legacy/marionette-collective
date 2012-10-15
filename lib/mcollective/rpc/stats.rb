@@ -148,13 +148,13 @@ module MCollective
           if aggregate.is_a?(Aggregate::Result::Base)
             aggregate_report = aggregate.to_s
           else
-            aggregate_report = ""
+            next
           end
 
           result.puts Util.colorize(:bold, "Summary of %s:" % display_as)
           result.puts
           unless aggregate_report == ""
-            result.puts aggregate.to_s.split("\n").map{|x| "   " + x}.join("\n")
+            result.puts aggregate.to_s
           else
             result.puts Util.colorize(:yellow, "     No aggregate summary could be computed")
           end
@@ -162,9 +162,20 @@ module MCollective
         end
 
         @aggregate_failures.each do |failed|
-          result.puts Util.colorize(:bold, "Summary of %s:" % failed)
+          case(failed[:type])
+          when :startup
+            message = "exception raised while processing startup hook"
+          when :create
+            message = "unspecified output '#{failed[:name]}' for the action"
+          when :process_result
+            message = "exception raised while processing result data"
+          when :summarize
+            message = "exception raised while summarizing"
+          end
+
+          result.puts Util.colorize(:bold, "Summary of %s:" % failed[:name])
           result.puts
-          result.puts Util.colorize(:yellow, "     No aggregate summary could be computed")
+          result.puts Util.colorize(:yellow, "     Could not compute summary - %s" % message)
           result.puts
         end
 
@@ -203,7 +214,7 @@ module MCollective
           if @discovered
             @responses < @discovered ? color = :red : color = :green
 
-            if @aggregate_summary.size > 0 && summarize
+            if @aggregate_summary.size + @aggregate_failures.size > 0 && summarize
               result_text << text_for_aggregates
             else
               result_text << ""

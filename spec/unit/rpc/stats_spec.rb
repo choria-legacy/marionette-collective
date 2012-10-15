@@ -299,15 +299,24 @@ module MCollective
           @stats.text_for_aggregates.should =~ /Summary of.*/
         end
 
-        it "should display an error message if the aggregate object is not a result" do
-          @stats.aggregate_summary = [aggregate]
-          aggregate.stubs(:is_a?).returns(false)
-          @stats.text_for_aggregates.should =~ /No aggregate summary could be computed.*/
+        it "should display an error message for a failed statup hook" do
+          @stats.aggregate_failures = [{:name => "rspec", :type => :startup}]
+          @stats.text_for_aggregates.should =~  /exception raised while processing startup hook/
         end
 
-        it "should display an error message for each failed aggregate function" do
-          @stats.aggregate_failures = ["rspec"]
-          @stats.text_for_aggregates.should =~  /No aggregate summary could be computed.*/
+        it "should display an error message for an unspecified output" do
+          @stats.aggregate_failures = [{:name => "rspec", :type => :create}]
+          @stats.text_for_aggregates.should =~  /unspecified output 'rspec' for the action/
+        end
+
+        it "should display an error message for a failed process_result" do
+          @stats.aggregate_failures = [{:name => "rspec", :type => :process_result}]
+          @stats.text_for_aggregates.should =~  /exception raised while processing result data/
+        end
+
+        it "should display an error message for a failed summarize" do
+          @stats.aggregate_failures = [{:name => "rspec", :type => :summarize}]
+          @stats.text_for_aggregates.should =~  /exception raised while summarizing/
         end
       end
     end

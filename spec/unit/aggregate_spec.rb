@@ -6,7 +6,7 @@ module MCollective
   describe Aggregate do
     let(:ddl) do
       {
-        :aggregate => [{:function => :func, :args=>[:foo, {:format => "%s"}]}],
+        :aggregate => [{:function => :func, :args=>[:foo], :format => "%s"}],
         :action => "test_action",
         :output => {:foo => nil, :bar => nil}
       }
@@ -16,20 +16,19 @@ module MCollective
       let(:function){mock}
 
       it "should load all the functions with a format if defined" do
-        function.expects(:new).with(:foo, {}, "%s", 'test_action')
-        Aggregate.any_instance.expects(:contains_output?).returns(true)
+        function.expects(:new).with(:foo, [], "%s", 'test_action')
         Aggregate.any_instance.expects(:load_function).once.returns(function)
         Aggregate.new(ddl)
       end
 
       it "should load all the functions without a format if it isn't defined" do
-        function.expects(:new).with(:foo, {}, nil, 'test_action')
+        function.expects(:new).with(:foo, [], nil, 'test_action')
         Aggregate.any_instance.expects(:load_function).once.returns(function)
-        ddl[:aggregate].first[:args][1][:format] = nil
+        ddl[:aggregate].first[:format] = nil
         Aggregate.new(ddl)
       end
 
-      it "should not load invalid aggregate functions" do
+      it "should not summarize functions where the output is not specified in the ddl" do
         invalid_ddl = { :aggregate => [{:function => :func, :args=>[:foo], :format => "%s"}, {:function => :func, :args=>[:fail], :format => "%s"}],
                         :action => "test_action",
                         :output => {:foo => nil, :bar => nil}}
@@ -38,16 +37,18 @@ module MCollective
         Aggregate.any_instance.stubs(:load_function).returns(function)
 
         Log.expects(:error)
-        @aggregate = Aggregate.new(invalid_ddl)
-        @aggregate.functions.should == ["function"]
-        @aggregate.failed.should == [:fail]
+        aggregate = Aggregate.new(invalid_ddl)
+        aggregate.functions.should == ["function"]
+        aggregate.failed.should == [{:type=>:create, :name=>:fail}]
       end
 
-      it "should pass aditional arguments if specified in the ddl" do
-        function.expects(:new).with(:foo, {:extra => "extra"}, "%s", 'test_action')
-        Aggregate.any_instance.expects(:load_function).once.returns(function)
-        ddl[:aggregate].first[:args][1][:extra] = "extra"
-        Aggregate.new(ddl)
+      it "should not summarize functions if the startup hook raises an exception" do
+        function.stubs(:new).raises("rspec")
+        Aggregate.any_instance.expects(:load_function).returns(function)
+
+        Log.expects(:error)
+        aggregate = Aggregate.new(ddl)
+        aggregate.failed.should == [{:type=>:startup, :name =>:foo }]
       end
     end
 
@@ -92,6 +93,7 @@ module MCollective
 
         Log.expects(:error)
         aggregate.call_functions(result)
+        aggregate.failed.should == [:name => :test, :type => :process_result]
       end
 
       it "should not fail if 'summarize' method raises en exception" do
@@ -121,6 +123,19 @@ module MCollective
 
         result = aggregate.summarize
         result.should == [func2, func1]
+      end
+
+      it "should not summarise data that raises an exception" do
+        Aggregate.any_instance.stubs(:create_functions)
+        aggregate = Aggregate.new(ddl)
+        func = mock
+        func.stubs(:summarize).raises("rspec")
+        func.stubs(:output_name).returns("rspec")
+        aggregate.functions = [func]
+        Log.expects(:error)
+
+        aggregate.summarize
+        aggregate.failed.should == [{:name => "rspec", :type => :summarize}]
       end
     end
 
