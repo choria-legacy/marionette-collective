@@ -21,12 +21,16 @@ module MCollective
         output = agg[:args][0]
 
         if contains_output?(output)
-          arguments = agg[:args][1]
-          format = (arguments.delete(:format) if arguments) || nil
-          @functions << load_function(agg[:function]).new(output, arguments, format, @action)
+          arguments = agg[:args][1..(agg[:args].size)]
+          begin
+            @functions << load_function(agg[:function]).new(output, arguments, agg[:format], @action)
+          rescue Exception => e
+            Log.error("Cannot create aggregate function '#{output}'. #{e.to_s}")
+            @failed << {:name => output, :type => :startup}
+          end
         else
           Log.error("Cannot create aggregate function '#{output}'. '#{output}' has not been specified as a valid ddl output.")
-          @failed << output
+          @failed << {:name => output, :type => :create}
         end
       end
     end
@@ -44,6 +48,8 @@ module MCollective
           function.process_result(reply[:data][function.output_name], reply)
         rescue Exception => e
           Log.error("Could not process aggregate function for '#{function.output_name}'. #{e.to_s}")
+          @failed << {:name => function.output_name, :type => :process_result}
+          @functions.delete(function)
         end
       end
     end
@@ -55,11 +61,12 @@ module MCollective
           function.summarize
         rescue Exception => e
           Log.error("Could not summarize aggregate result for '#{function.output_name}'. #{e.to_s}")
-          function
+          @failed << {:name => function.output_name, :type => :summarize}
+          nil
         end
       end
 
-      summary.sort do |x,y|
+      summary.reject{|x| x.nil?}.sort do |x,y|
         x.result[:output] <=> y.result[:output]
       end
     end
