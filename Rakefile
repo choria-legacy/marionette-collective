@@ -12,8 +12,8 @@ require 'find'
 require 'rake/gempackagetask'
 
 PROJ_DOC_TITLE = "The Marionette Collective"
-PROJ_VERSION = "2.2.0"
-PROJ_RELEASE = "2"
+PROJ_VERSION = "2.2.1"
+PROJ_RELEASE = "1"
 PROJ_NAME = "mcollective"
 PROJ_RPM_NAMES = [PROJ_NAME]
 PROJ_FILES = ["#{PROJ_NAME}.init", "COPYING", "doc", "etc", "lib", "plugins", "ext", "bin"]

@@ -8,6 +8,41 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_2_1">&nbsp;</a>
+
+## 2.2.1 - 2012/10/17
+
+This is a maintenance release to the current production version of MCollective.
+This release is a bug fix only release.
+
+### Bug Fixes
+
+ * Various display and stability improvements with aggregate plugins
+ * Improve error messages
+ * Data queries that does not take an input still had to provide a bogus query input, now not needed
+ * When using direct addressing and identity filter the client timeout was incorrect
+ * BigNum type data can now be used in data plugin replies
+
+### Backwards Compatibility and Upgrading
+
+This release should be 100% backwards compatible with 2.2.0, when upgrading from earlier releases
+pleas reivew the Release notes for 2.0.0.
+
+### Changes since 2.1.0
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|*2012/10/17*|*Release 2.2.1*|16965|
+|2012/10/03|Improve text output when providing custom formats for aggregations|16735|
+|2012/10/03|Correctly process supplied formats when displaying aggregate results|16415|
+|2012/10/03|Prevent one failing aggregate function from impacting others|16411|
+|2012/10/03|When validation fails indicate which input key has the problem|16617|
+|2012/09/26|Data queries can be written without any input queries meaning they take no input|16424|
+|2012/09/26|Use correct timeout for agent requests when using direct addressing|16569|
+|2012/09/26|Allow BigNum data to be used in data plugin replies|16503|
+|2012/09/26|Support non string data in the summary aggregate function|16410|
+|2012/09/14|Package discovery plugins that was left out for debian|16413|
+
 <a name="2_2_0">&nbsp;</a>
 
 ## 2.2.0 - 2012/09/13
