@@ -21,9 +21,10 @@ module MCollective
         output = agg[:args][0]
 
         if contains_output?(output)
-          arguments = agg[:args][1..(agg[:args].size)]
+          arguments = agg[:args][1]
+          format = (arguments.delete(:format) if arguments) || nil
           begin
-            @functions << load_function(agg[:function]).new(output, arguments, agg[:format], @action)
+            @functions << load_function(agg[:function]).new(output, arguments, format, @action)
           rescue Exception => e
             Log.error("Cannot create aggregate function '#{output}'. #{e.to_s}")
             @failed << {:name => output, :type => :startup}
