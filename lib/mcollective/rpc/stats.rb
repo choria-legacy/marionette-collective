@@ -154,7 +154,7 @@ module MCollective
           result.puts Util.colorize(:bold, "Summary of %s:" % display_as)
           result.puts
           unless aggregate_report == ""
-            result.puts aggregate.to_s
+            result.puts aggregate.to_s.split("\n").map{|x| "   " + x}.join("\n")
           else
             result.puts Util.colorize(:yellow, "     No aggregate summary could be computed")
           end
