@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/10/22|Allow the rpcutil#get_data action to work with data queries that takes no input|17138|
 |2012/10/03|Improve text output when providing custom formats for aggregations|16735|
 |2012/10/03|Correctly process supplied formats when displaying aggregate results|16415|
 |2012/10/03|Prevent one failing aggregate function from impacting others|16411|
@@ -21,6 +22,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/10/22|Allow the rpcutil#get_data action to work with data queries that takes no input|17138|
 |*2012/10/17*|*Release 2.2.1*|16965|
 |2012/10/03|Improve text output when providing custom formats for aggregations|16735|
 |2012/10/03|Correctly process supplied formats when displaying aggregate results|16415|
