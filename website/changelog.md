@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/10/22|Correctly show help for data plugins without any input queries|17137|
 |2012/10/22|Allow the rpcutil#get_data action to work with data queries that takes no input|17138|
 |*2012/10/17*|*Release 2.2.1*|16965|
 |2012/10/03|Improve text output when providing custom formats for aggregations|16735|
