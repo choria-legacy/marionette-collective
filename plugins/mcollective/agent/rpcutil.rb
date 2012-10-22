@@ -19,8 +19,6 @@ module MCollective
 
       # Retrieve a single fact from the node
       action "get_fact" do
-        validate :fact, String
-
         reply[:fact] = request[:fact]
         reply[:value] = Facts[request[:fact]]
       end
@@ -65,8 +63,6 @@ module MCollective
 
       # Retrieves a single config property that is in effect
       action "get_config_item" do
-        validate :item, String
-
         reply.fail! "Unknown config property #{request[:item]}" unless config.respond_to?(request[:item])
 
         reply[:item] = request[:item]
@@ -86,9 +82,11 @@ module MCollective
       end
 
       action "get_data" do
-        validate :source, String
-
-        query = Data.ddl_transform_input(Data.ddl(request[:source]), request[:query].to_s)
+        if request[:query]
+          query = Data.ddl_transform_input(Data.ddl(request[:source]), request[:query].to_s)
+        else
+          query = nil
+        end
 
         data = Data[ request[:source] ].lookup(query)
 
