@@ -305,8 +305,7 @@ mco plugin package [options] <directory>
       raise RuntimeError, "more than one plugin type detected in directory" if plugintype.size > 1
       raise RuntimeError, "no plugins detected in directory" if plugintype.size < 1
 
-      stripdir = configuration[:target] == "." ? "" : configuration[:target]
-      plugintype.first.gsub(/\.|\/|#{stripdir}/, "")
+      File.basename(plugintype[0])
     end
 
     # Load preset metadata values from config if they are present
