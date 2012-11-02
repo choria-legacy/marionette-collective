@@ -269,6 +269,7 @@ module MCollective
       def disconnect
         Log.debug("Disconnecting from Stomp")
         @connection.disconnect
+        @connection = nil
       end
 
       def msgheaders

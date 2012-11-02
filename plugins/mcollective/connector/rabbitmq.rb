@@ -260,6 +260,7 @@ module MCollective
       def disconnect
         Log.debug("Disconnecting from RabbitMQ")
         @connection.disconnect
+        @connection = nil
       end
 
       # looks in the environment first then in the config file

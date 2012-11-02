@@ -307,6 +307,7 @@ module MCollective
       def disconnect
         Log.debug("Disconnecting from ActiveMQ")
         @connection.disconnect
+        @connection = nil
       end
 
       def headers_for(msg, identity=nil)
