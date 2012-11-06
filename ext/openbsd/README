@@ -1,4 +1,4 @@
-These files are meant to be places in /usr/port/mystuff/sysutils and then follow
+These files are meant to be places in /usr/ports/mystuff/sysutils/ and then follow
 the OpenBSD guidelines for "custom" ports.
 
 Happy hacking
