@@ -1,7 +1,7 @@
 PKG_ARCH=	*
 COMMENT=	The Marionette Collective	
 
-DISTNAME=	mcollective-2.1.0
+DISTNAME=	mcollective-2.2.1
 
 CATEGORIES=	sysutils
 
