@@ -81,5 +81,5 @@ plugin.rabbitmq.back_off_multiplier = 2
 plugin.rabbitmq.max_reconnect_attempts = 0
 plugin.rabbitmq.randomize = false
 plugin.rabbitmq.timeout = -1
-plugin.rabbitmq.vhost = /mcollective
+plugin.rabbitmq.vhost = /
 {% endhighlight %}
