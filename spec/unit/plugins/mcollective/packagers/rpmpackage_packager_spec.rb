@@ -85,7 +85,7 @@ module MCollective
 
         it "should create the package" do
           Dir.expects(:chdir)
-          PluginPackager.expects(:safe_system).with("rpmbuild -ta   /tmp/mcollective-testplugin-test-1.tgz")
+          PluginPackager.expects(:safe_system).with("rpmbuild-md5 -ta   /tmp/mcollective-testplugin-test-1.tgz")
           FileUtils.expects(:cp).times(2)
           @packager.tmpdir = "/tmp"
           @packager.verbose = "true"
@@ -97,7 +97,7 @@ module MCollective
 
         it "should sign the package if a signature is given" do
           Dir.expects(:chdir)
-          PluginPackager.expects(:safe_system).with("rpmbuild -ta  --sign /tmp/mcollective-testplugin-test-1.tgz")
+          PluginPackager.expects(:safe_system).with("rpmbuild-md5 -ta  --sign /tmp/mcollective-testplugin-test-1.tgz")
           FileUtils.expects(:cp).times(2)
           @packager.signature = true
           @packager.tmpdir = "/tmp"
