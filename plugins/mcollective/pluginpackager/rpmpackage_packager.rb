@@ -50,7 +50,7 @@ module MCollective
               PluginPackager.safe_system("tar -cvzf #{File.join(@tmpdir, tarfile)} #{@current_package_name}-#{@plugin.metadata[:version]}")
             end
 
-            PluginPackager.safe_system("rpmbuild -ta #{"--quiet" unless verbose} #{"--sign" if @signature} #{File.join(@tmpdir, tarfile)}")
+            PluginPackager.safe_system("#{@buildtool} -ta #{"--quiet" unless verbose} #{"--sign" if @signature} #{File.join(@tmpdir, tarfile)}")
           end
 
           FileUtils.cp(File.join(@rpmdir, "noarch", "#{@current_package_name}-#{@plugin.metadata[:version]}-#{@plugin.iteration}.noarch.rpm"), ".")
