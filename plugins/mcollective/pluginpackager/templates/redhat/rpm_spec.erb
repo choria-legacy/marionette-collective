@@ -6,7 +6,7 @@ License: <%= @plugin.metadata[:license] %>
 URL: <%= @plugin.metadata[:url] %>
 Vendor: <%= @plugin.vendor %>
 Packager: <%= @plugin.metadata[:author] %>
-BuildRoot: %buildroot
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 Group: System Tools
 Source0: <%= "#{@current_package_name}-#{@plugin.metadata[:version]}.tgz" %>
