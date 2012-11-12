@@ -326,6 +326,7 @@ module MCollective
         it "should disconnect from the stomp connection" do
           @connection.expects(:disconnect)
           @c.disconnect
+          @c.connection.should == nil
         end
       end
 
