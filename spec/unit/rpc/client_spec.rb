@@ -52,6 +52,19 @@ module MCollective
         end
       end
 
+      describe "#validate_request" do
+        it "should fail when a DDL isn't present" do
+          @client.instance_variable_set("@ddl", nil)
+          expect { @client.validate_request("rspec", {}) }.to raise_error("No DDL found for agent foo cannot validate inputs")
+        end
+
+        it "should validate the input arguments" do
+          @client.ddl.expects(:set_default_input_arguments).with("rspec", {})
+          @client.ddl.expects(:validate_rpc_request).with("rspec", {})
+          @client.validate_request("rspec", {})
+        end
+      end
+
       describe "#process_results_with_block" do
         it "should inform the stats object correctly for passed requests" do
           response = {:senderid => "rspec", :body => {:statuscode => 0}}
@@ -290,9 +303,7 @@ module MCollective
 
           client.stubs(:call_agent)
 
-          ddl = mock
-          ddl.expects(:validate_rpc_request).with("rspec", {:arg => :val}).raises("validation failed")
-          client.instance_variable_set("@ddl", ddl)
+          client.expects(:validate_request).with("rspec", {:arg => :val}).raises("validation failed")
 
           expect { client.rspec(:arg => :val) }.to raise_error("validation failed")
         end

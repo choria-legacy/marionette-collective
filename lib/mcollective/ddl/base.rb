@@ -144,7 +144,7 @@ module MCollective
         raise DDLValidationError, "Cannot validate input %s: %s" % [key, e.to_s]
       end
 
-     # Registers an input argument for a given action
+      # Registers an input argument for a given action
       #
       # See the documentation for action for how to use this
       def input(argument, properties)
@@ -159,6 +159,7 @@ module MCollective
         @entities[entity][:input][argument] = {:prompt => properties[:prompt],
                                                :description => properties[:description],
                                                :type => properties[:type],
+                                               :default => properties[:default],
                                                :optional => properties[:optional]}
 
         case properties[:type]

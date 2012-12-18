@@ -146,6 +146,28 @@ module MCollective
         PluginManager.find("aggregate").include?(method_name.to_s)
       end
 
+      # For a given action and arguments look up the DDL interface to that action
+      # and if any arguments in the DDL have a :default value assign that to any
+      # input that does not have an argument in the input arguments
+      #
+      # This is intended to only be called on clients and not on servers as the
+      # clients should never be able to publish non compliant requests and the
+      # servers should really not tamper with incoming requests since doing so
+      # might raise validation errors that were not raised on the client breaking
+      # our fail-fast approach to input validation
+      def set_default_input_arguments(action, arguments)
+        input = action_interface(action)[:input]
+
+        return unless input
+
+        input.keys.each do |key|
+          if !arguments.include?(key) && !input[key][:default].nil? && !input[key][:optional]
+            Log.debug("Setting default value for input '%s' to '%s'" % [key, input[key][:default]])
+            arguments[key] = input[key][:default]
+          end
+        end
+      end
+
       # Helper to use the DDL to figure out if the remote call to an
       # agent should be allowed based on action name and inputs.
       def validate_rpc_request(action, arguments)

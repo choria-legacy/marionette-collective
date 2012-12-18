@@ -148,6 +148,18 @@ module MCollective
          :data   => data}
       end
 
+      # For the provided arguments and action the input arguments get
+      # modified by supplying any defaults provided in the DDL for arguments
+      # that were not supplied in the request
+      #
+      # We then pass the modified arguments to the DDL for validation
+      def validate_request(action, args)
+        raise "No DDL found for agent %s cannot validate inputs" % @agent unless @ddl
+
+        @ddl.set_default_input_arguments(action, args)
+        @ddl.validate_rpc_request(action, args)
+      end
+
       # Magic handler to invoke remote methods
       #
       # Once the stub is created using the constructor or the RPC#rpcclient helper you can
@@ -216,7 +228,7 @@ module MCollective
 
         @stats.reset
 
-        @ddl.validate_rpc_request(action, args) if @ddl
+        validate_request(action, args)
 
         # if a global batch size is set just use that else set it
         # in the case that it was passed as an argument
@@ -273,7 +285,7 @@ module MCollective
       # request which technically does not need filters.  If you try to use this
       # mode with direct addressing disabled an exception will be raise
       def custom_request(action, args, expected_agents, filter = {}, &block)
-        @ddl.validate_rpc_request(action, args) if @ddl
+        validate_request(action, args)
 
         if filter == {} && !Config.instance.direct_addressing
           raise "Attempted to do a filterless custom_request without direct_addressing enabled, preventing unexpected call to all nodes"
@@ -672,7 +684,7 @@ module MCollective
       #
       # Should only be called via method_missing
       def fire_and_forget_request(action, args, filter=nil)
-        @ddl.validate_rpc_request(action, args) if @ddl
+        validate_request(action, args)
 
         req = new_request(action.to_s, args)
 

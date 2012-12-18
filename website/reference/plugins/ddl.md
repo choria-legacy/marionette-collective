@@ -73,6 +73,7 @@ action "status", :description => "Gets the status of a service" do
           :type        => :string,
           :validation  => '^[a-zA-Z\-_\d]+$',
           :optional    => false,
+          :default     => "mcollective",
           :maxlength   => 30
 
     output :status,
@@ -85,6 +86,8 @@ end
 As you see we can define all the major components of input and output parameters.  *:type* can be one of various values and each will have different parameters, more on that later.
 
 As of version 2.1.1 the outputs can define a default value.  For agents the reply structures are pre-populated with all the defined outputs, if no default is supplied a default of nil will be set.
+
+As of version 2.3.1 the inputs can also define default values, this is only processed and applied for non optional inputs.
 
 By default mcollective only show data from actions that failed, the *display* line above tells it to always show the results.  Possible values are *:ok*, *:failed* (the default behavior) and *:always*.
 

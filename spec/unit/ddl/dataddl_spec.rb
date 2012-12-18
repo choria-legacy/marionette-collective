@@ -34,7 +34,7 @@ module MCollective
           end
 
           @ddl.dataquery_interface.should == {:description => "rspec",
-                                              :input => {:query => input.merge(:optional => nil)},
+                                              :input => {:query => input.merge(:optional => nil, :default => nil)},
                                               :output => {:rspec => output}}
         end
       end

@@ -17,6 +17,36 @@ module MCollective
         end
       end
 
+      describe "#set_default_input_arguments" do
+        before do
+          @ddl.action(:test, :description => "rspec")
+          @ddl.instance_variable_set("@current_entity", :test)
+
+          @ddl.input(:optional, :prompt => "prompt", :description => "descr",
+                     :type => :string, :optional => true, :validation => "",
+                     :maxlength => 1, :default => "default")
+          @ddl.input(:required, :prompt => "prompt", :description => "descr",
+                     :type => :string, :optional => false, :validation => "",
+                     :maxlength => 1, :default => "default")
+        end
+
+        it "should correctly add default arguments to required inputs" do
+          args = {}
+
+          @ddl.set_default_input_arguments(:test, args)
+
+          args.should == {:required => "default"}
+        end
+
+        it "should not override any existing arguments" do
+          args = {:required => "specified"}
+
+          @ddl.set_default_input_arguments(:test, args)
+
+          args.should == {:required => "specified"}
+        end
+      end
+
       describe "#validate_rpc_request" do
         it "should ensure the action is known" do
           @ddl.action(:test, :description => "rspec")
@@ -37,6 +67,8 @@ module MCollective
           @ddl.input(:required, :prompt => "prompt", :description => "descr",
                      :type => :string, :optional => false, :validation => "",
                      :maxlength => 1)
+
+          @ddl.stubs(:validate_input_argument).returns(true)
 
           expect {
             @ddl.validate_rpc_request(:test, {})
