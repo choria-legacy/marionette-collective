@@ -8,8 +8,9 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
-|2012/10/08|Define a specific buildroot to support RHEL5 systems correctly|17516|
-|2012/10/08|Use the correct rpmbuild commands on systems with rpmbuild-md5|17515|
+|2012/12/19|Do not fail when packaging non-agent packages using custom paths|17281|
+|2012/11/08|Define a specific buildroot to support RHEL5 systems correctly|17516|
+|2012/11/08|Use the correct rpmbuild commands on systems with rpmbuild-md5|17515|
 |2012/10/22|Correctly show help for data plugins without any input queries|17137|
 |2012/10/22|Allow the rpcutil#get_data action to work with data queries that takes no input|17138|
 |*2012/10/17*|*Release 2.2.1*|16965|
