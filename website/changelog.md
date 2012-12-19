@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/12/19|Require Ruby > 1.8 in the RPM specs for Ruby 1.9|17149|
 |2012/12/18|Allow non optional inputs to specify default data in DDLs|17615|
 |2012/11/12|When disconnecting set the connection to nil|17384|
 |2012/11/08|Define a specific buildroot to support RHEL5 systems correctly|17516|
