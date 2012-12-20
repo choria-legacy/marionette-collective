@@ -96,13 +96,17 @@ module MCollective
         rescue MissingRPCData => e
           @reply.fail e.to_s, 3
 
-        rescue InvalidRPCData => e
+        rescue InvalidRPCData, DDLValidationError => e
           @reply.fail e.to_s, 4
 
         rescue UnknownRPCError => e
+          Log.error("%s#%s failed: %s: %s" % [@agent_name, @request.action, e.class, e.to_s])
+          Log.error(e.backtrace.join("\n\t"))
           @reply.fail e.to_s, 5
 
         rescue Exception => e
+          Log.error("%s#%s failed: %s: %s" % [@agent_name, @request.action, e.class, e.to_s])
+          Log.error(e.backtrace.join("\n\t"))
           @reply.fail e.to_s, 5
 
         end
