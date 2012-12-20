@@ -192,7 +192,7 @@ action "get_data", :description => "Get data from a data plugin" do
           :type        => :string,
           :validation  => '^.+$',
           :optional    => true,
-          :maxlength   => 50
+          :maxlength   => 200
 end
 
 action "ping", :description => "Responds to requests for PING with PONG" do
