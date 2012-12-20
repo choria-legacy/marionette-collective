@@ -21,7 +21,8 @@ module MCollective
     #            :type        => :string,
     #            :validation  => '^[\w\-\.]+$',
     #            :optional    => false,
-    #            :maxlength   => 40
+    #            :maxlength   => 40,
+    #            :default     => "fqdn"
     #
     #      output :fact,
     #             :description => "The name of the fact being returned",

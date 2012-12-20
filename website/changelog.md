@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/12/20|Display the values of :optional and :default in DDL generated help|16616|
 |2012/12/20|Allow the query string for the get_data action in rpcutil to be 200 chars|18200|
 |2012/12/19|Do not fail when packaging non-agent packages using custom paths|17281|
 |2012/12/19|Require Ruby > 1.8 in the RPM specs for Ruby 1.9|17149|

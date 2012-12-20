@@ -9,25 +9,36 @@ ACTIONS:
        <%= entities[action][:description] %>
 
        INPUT:
+%  if entities[action][:input].size > 0
 %    entities[action][:input].keys.sort.each do |input|
            <%= input %>:
               Description: <%= entities[action][:input][input][:description] %>
                    Prompt: <%= entities[action][:input][input][:prompt] %>
                      Type: <%= entities[action][:input][input][:type] %>
+                 Optional: <%= !!entities[action][:input][input][:optional] %>
 %        if entities[action][:input][input][:type] == :string
                Validation: <%= entities[action][:input][input][:validation] %>
                    Length: <%= entities[action][:input][input][:maxlength] %>
 %        elsif entities[action][:input][input][:type] == :list
              Valid Values: <%= entities[action][:input][input][:list].join(", ") %>
 %        end
+%        if entities[action][:input][input][:default]
+            Default Value: <%= entities[action][:input][input][:default] %>
+%        end
 
 %    end
+%  else
+          This action does not have any inputs
+%  end
 
        OUTPUT:
 %    entities[action][:output].keys.sort.each do |output|
            <%= output %>:
               Description: <%= entities[action][:output][output][:description] %>
                Display As: <%= entities[action][:output][output][:display_as] %>
+%        if entities[action][:output][output][:default]
+            Default Value: <%= entities[action][:output][output][:default] %>
+%        end
 
 %    end
 % end
