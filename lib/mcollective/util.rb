@@ -441,5 +441,17 @@ module MCollective
 
       version_a <=> version_b
     end
+
+    # we should really use Pathname#absolute? but it's not in all the
+    # ruby versions we support and it comes down to roughly this
+    def self.absolute_path?(path, separator=File::SEPARATOR, alt_separator=File::ALT_SEPARATOR)
+      if alt_separator
+        path_matcher = /^[#{Regexp.quote alt_separator}#{Regexp.quote separator}]/
+      else
+        path_matcher = /^#{Regexp.quote separator}/
+      end
+
+      !!path.match(path_matcher)
+    end
   end
 end

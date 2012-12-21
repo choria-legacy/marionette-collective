@@ -64,6 +64,8 @@ module MCollective
                 when "libdir"
                   paths = val.split(File::PATH_SEPARATOR)
                   paths.each do |path|
+                    raise("libdir paths should be absolute paths but '%s' is relative" % path) unless Util.absolute_path?(path)
+
                     @libdir << path
                     unless $LOAD_PATH.include?(path)
                       $LOAD_PATH << path

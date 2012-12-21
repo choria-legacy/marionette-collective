@@ -5,6 +5,28 @@ require 'spec_helper'
 module MCollective
   describe Config do
     describe "#loadconfig" do
+      it "should only test that libdirs are absolute paths" do
+        Util.expects(:absolute_path?).with("/one").returns(true)
+        Util.expects(:absolute_path?).with("/two").returns(true)
+        Util.expects(:absolute_path?).with("/three").returns(true)
+        Util.expects(:absolute_path?).with("four").returns(false)
+
+        File.stubs(:exists?).with("/nonexisting").returns(true)
+        File.stubs(:exists?).with(File.join(File.dirname("/nonexisting"), "rpc-help.erb")).returns(true)
+
+        ["/one:/two", "/three"].each do |path|
+          File.stubs(:open).with("/nonexisting", "r").returns(StringIO.new("libdir = #{path}"))
+
+          Config.instance.loadconfig("/nonexisting")
+
+          PluginManager.clear
+        end
+
+        File.stubs(:open).with("/nonexisting", "r").returns(StringIO.new("libdir = four"))
+
+        expect { Config.instance.loadconfig("/nonexisting") }.to raise_error(/should be absolute paths/)
+      end
+
       it "should not allow any path like construct for identities" do
         # Taken from puppet test cases
         ['../foo', '..\\foo', './../foo', '.\\..\\foo',

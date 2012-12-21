@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/12/21|The libdirs supplied in the config file now has to be absolute paths to avoid issues when daemonising|16018|
 |2012/12/20|Logs the error and backtrace when an action fails|16414|
 |2012/12/20|Display the values of :optional and :default in DDL generated help|16616|
 |2012/12/20|Allow the query string for the get_data action in rpcutil to be 200 chars|18200|

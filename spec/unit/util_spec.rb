@@ -395,7 +395,6 @@ module MCollective
       end
 
       it "should return the correct dimensions if ENV columns and lines are set" do
-
         stdout = mock()
         stdout.expects(:tty?).returns(true)
         environment = mock()
@@ -446,6 +445,30 @@ module MCollective
         File.stubs(:exist?).returns(false)
         result = Util.command_in_path?("test")
         result.should == false
+      end
+    end
+
+    describe "#absolute_path?" do
+      it "should work correctly validate the path" do
+        Util.absolute_path?('.', '/', '\\').should == false
+        Util.absolute_path?('foo/foo', '/', '\\').should == false
+        Util.absolute_path?('foo\\bar', '/', '\\').should == false
+        Util.absolute_path?('../foo/bar', '/', '\\').should == false
+
+        Util.absolute_path?('\\foo/foo', '/', '\\').should == true
+        Util.absolute_path?('\\', '/', '\\').should == true
+        Util.absolute_path?('/foo', '/', '\\').should == true
+        Util.absolute_path?('/foo/foo', '/', '\\').should == true
+
+        Util.absolute_path?('.', '/', nil).should == false
+        Util.absolute_path?('foo/foo', '/', nil).should == false
+        Util.absolute_path?('foo\\bar', '/', nil).should == false
+        Util.absolute_path?('../foo/bar', '/', nil).should == false
+
+        Util.absolute_path?('\\foo/foo', '/', nil).should == false
+        Util.absolute_path?('\\', '/', nil).should == false
+        Util.absolute_path?('/foo', '/', nil).should == true
+        Util.absolute_path?('/foo/foo', '/', nil).should == true
       end
     end
 
