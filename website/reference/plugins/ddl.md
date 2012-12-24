@@ -203,7 +203,9 @@ The value input should be an integer or a floating point number. This feature wa
 
 #### :any type
 
-The value input can be any type, this allows you to send rich objects like arrays of hashes around, it effectively disables validation of the type of input
+The value input can be any type, this allows you to send rich objects like arrays of hashes around, it effectively disables validation of the type of input.
+
+The :any type is deprecated and will be removed after version 2.2.x.
 
 ### Accessing the DDL
 While programming client applications or web apps you can gain access to the DDL for any agent in several ways:
