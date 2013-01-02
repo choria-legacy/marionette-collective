@@ -78,7 +78,7 @@ module MCollective
 
           agent = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
           agent.packagedata[:agent][:dependencies].should == [{:name => "mcollective-common", :version => nil},
-                                                              {:name => "mcollective-foo-common", :version =>1}]
+                                                              {:name => "mcollective-foo-common", :version =>1, :iteration => 1}]
         end
       end
 
@@ -153,7 +153,7 @@ module MCollective
 
           client = AgentDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "agent")
           client.packagedata[:client][:dependencies].should == [{:name => "mcollective-common", :version => nil},
-                                                                {:name => "mcollective-foo-common", :version => 1}]
+                                                                {:name => "mcollective-foo-common", :version => 1, :iteration => 1}]
         end
       end
     end

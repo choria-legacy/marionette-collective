@@ -63,7 +63,7 @@ module MCollective
           plugin = StandardDefinition.new(".", nil, nil, nil, nil, nil, [], {}, "testplugin")
           plugin.packagedata["testplugin"][:files].should == ["file.rb"]
           plugin.packagedata["testplugin"][:dependencies].should == [{:name => "mcollective-common", :version => nil},
-                                                                     {:name => "mcollective-foo-common", :version => 1}]
+                                                                     {:name => "mcollective-foo-common", :version => 1, :iteration => 1}]
         end
       end
 
