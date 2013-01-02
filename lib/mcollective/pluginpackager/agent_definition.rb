@@ -48,7 +48,7 @@ module MCollective
         else
           return nil
         end
-        agent[:dependencies] << {:name => "#{@mcname}-#{@metadata[:name]}-common", :version => @metadata[:version]}
+        agent[:dependencies] << {:name => "#{@mcname}-#{@metadata[:name]}-common", :version => @metadata[:version], :iteration => @iteration}
         agent
       end
 
@@ -63,7 +63,7 @@ module MCollective
 
         client[:files] += Dir.glob(File.join(clientdir, "*")) if PluginPackager.check_dir_present clientdir
         client[:files] += Dir.glob(File.join(aggregatedir, "*")) if PluginPackager.check_dir_present aggregatedir
-        client[:dependencies] << {:name => "#{@mcname}-#{@metadata[:name]}-common", :version => @metadata[:version]}
+        client[:dependencies] << {:name => "#{@mcname}-#{@metadata[:name]}-common", :version => @metadata[:version], :iteration => @iteration}
         client[:files].empty? ? nil : client
       end
 

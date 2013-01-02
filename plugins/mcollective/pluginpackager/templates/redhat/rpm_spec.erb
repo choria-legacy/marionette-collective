@@ -11,7 +11,7 @@ BuildArch: noarch
 Group: System Tools
 Source0: <%= "#{@current_package_name}-#{@plugin.metadata[:version]}.tgz" %>
 <% @current_package_data[:dependencies].each do |dep|-%>
-Requires: <%= dep[:name] -%> <%= ">= #{dep[:version]}" if dep[:version]%>
+Requires: <%= dep[:name] -%> <%= ">= #{dep[:version]}" if dep[:version]%><%="-#{dep[:iteration]}" if dep[:iteration]%>
 <% end -%>
 
 %description
