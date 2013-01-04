@@ -18,6 +18,7 @@ module MCollective
 
         it "should return correct new path for other ddls" do
           @ddl.instance_variable_set("@plugintype", :data)
+          File.expects(:exists?).with("/etc/mcollective/data-help.erb").returns(true)
           @ddl.template_for_plugintype.should == "data-help.erb"
         end
       end
