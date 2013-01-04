@@ -8,6 +8,116 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_3_0">&nbsp;</a>
+## 2.3.0 - 2012/01/10
+
+This is the first release in the new development series of MCollective.  This
+release features small enhancements and bug fixes.
+
+This release is for early adopters, production users should consider the 2.2.x
+series.
+
+### Enhancements and behaviour changes
+
+ * Data queries can be written without any input queries
+ * Required inputs can now supply default values in their DDLs
+ * Support for Ruby 1.9 was improved in the packages
+ * The generated plugin documentation has been updated to show defaults and optional items
+ * Errors in agents will now log backtraces on the servers to assist with debugging
+ * libdirs will now be expanded to absolute paths and using relative ones will raise an error
+ * Various error and logging improvements
+ * Various improvements to the plugin packager
+
+### Bug fixes
+
+ * Packaging non-agent plugins with custom paths caused an unexpected failure
+ * The plugin packager works correctly on RHEL5 now after previously using an incorrect buildroot
+ * Correctly handle custom formats passed to the aggregation plugins from the DDL
+ * Failure in one aggregate plugin does not impact other aggregate functions
+ * The chosen timeout for agents when using direct addressing could be wrong in some cases
+ * Data plugins can now return BigNum data like those found in timestamps
+ * Aggregate functions support non string data
+ * Boolean flags in applications can now support --noop and --no-noop style flags
+ * Data results were not raising the correct exception, this was not causing problems in practice but caused the mcollective-test gem to fail
+
+### Input defaults in the DDL
+
+You can now provide input defaults for required inputs in the DDL meaning if not
+supplied they will default to the supplied format.
+
+{% highlight ruby %}
+action "get_fact", :description => "Retrieve a single fact from the fact store" do
+     input :fact,
+           :prompt      => "The name of the fact",
+           :description => "The fact to retrieve",
+           :type        => :string,
+           :validation  => '^[\w\-\.]+$',
+           :optional    => false,
+           :maxlength   => 40,
+           :default     => "operatingsystems"
+end
+{% endhighlight %}
+
+The DDL file above defines a input *fact* that is required and sets a default value to
+*operatingsystem*.
+
+Previously the following command would have failed stating the input is required, now it
+will default to the supplied value and continue without error:
+
+{% highlight ruby %}
+$ mco rpc rpcutil get_fact
+{% endhighlight %}
+
+The defaults processing is done on the client side and not on the servers meaning at no
+point does a non compliant request get published by the clients and older MCollective servers
+will process these requests correctly.
+
+### Backwards Compatibility and Upgrading
+
+This release can cohabit with older versions with the only potential upgrade problem being
+the changes to how the libdir variable is handled.
+
+In the past a libdir could be:
+
+{% highlight ini %}
+libdir = /usr/libexec/mcollective:.mcollective.d
+{% endhighlight %}
+
+This would have the effect of looking for *.mcollective.d* in the current directory.
+
+This represented a security risk and would fail on the server side when daemonizing.
+We now force all libdir paths to be fully qualified and raises an error at start should
+you have relative paths.
+
+### Changes since 2.2.1
+|Date|Description|Ticket|
+|----|-----------|------|
+|2012/01/10|Raise the correct exception when trying to access unknown data items in a Data results|18466|
+|2013/01/10|Fix failing documentation generation for data plugins|18437|
+|2013/01/09|Correctly support negative boolean flags declared as --[no]-foo|18438|
+|2013/01/03|Add the package iteration number as a dependency for the common packages|18273|
+|2012/12/21|The libdirs supplied in the config file now has to be absolute paths to avoid issues when daemonising|16018|
+|2012/12/20|Logs the error and backtrace when an action fails|16414|
+|2012/12/20|Display the values of :optional and :default in DDL generated help|16616|
+|2012/12/20|Allow the query string for the get_data action in rpcutil to be 200 chars|18200|
+|2012/12/19|Do not fail when packaging non-agent packages using custom paths|17281|
+|2012/12/19|Require Ruby > 1.8 in the RPM specs for Ruby 1.9|17149|
+|2012/12/18|Allow required inputs to specify default data in DDLs|17615|
+|2012/11/12|When disconnecting set the connection to nil|17384|
+|2012/11/08|Define a specific buildroot to support RHEL5 systems correctly|17516|
+|2012/11/08|Use the correct rpmbuild commands on systems with rpmbuild-md5|17515|
+|2012/10/22|Correctly show help for data plugins without any input queries|17137|
+|2012/10/22|Allow the rpcutil#get_data action to work with data queries that takes no input|17138|
+|2012/10/03|Improve text output when providing custom formats for aggregations|16735|
+|2012/10/03|Correctly process supplied formats when displaying aggregate results|16415|
+|2012/10/03|Prevent one failing aggregate function from impacting others|16411|
+|2012/10/03|When validation fails indicate which input key has the problem|16617|
+|2012/09/26|Data queries can be written without any input queries meaning they take no input|16424|
+|2012/09/26|Use correct timeout for agent requests when using direct addressing|16569|
+|2012/09/26|Allow BigNum data to be used in data plugin replies|16503|
+|2012/09/26|Support non string data in the summary aggregate function|16410|
+
+
 <a name="2_2_1">&nbsp;</a>
 
 ## 2.2.1 - 2012/10/17
