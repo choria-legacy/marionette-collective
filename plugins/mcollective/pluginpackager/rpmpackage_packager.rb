@@ -24,6 +24,14 @@ module MCollective
         @srpmdir = `rpm --eval '%_srcrpmdir'`.chomp
       end
 
+      def rpmdir
+        `rpm --eval '%_rpmdir'`.chomp
+      end
+
+      def srpmdir
+        `rpm --eval '%_srcrpmdir'`.chomp
+      end
+
       def create_packages
         @plugin.packagedata.each do |type, data|
           begin
