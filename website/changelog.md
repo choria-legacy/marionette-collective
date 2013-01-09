@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/01/09|Correctly support negative boolean flags declared as --[no]-foo|18438|
 |2013/01/03|Add the package itteration number as a dependency for the common packages|18273|
 |2012/12/21|The libdirs supplied in the config file now has to be absolute paths to avoid issues when daemonising|16018|
 |2012/12/20|Logs the error and backtrace when an action fails|16414|
@@ -34,6 +35,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/01/09|Correctly support negative boolean flags declared as --[no]-foo|18438|
 |2013/01/03|Add the package itteration number as a dependency for the common packages|18273|
 |2012/12/19|Do not fail when packaging non-agent packages using custom paths|17281|
 |2012/11/08|Define a specific buildroot to support RHEL5 systems correctly|17516|
