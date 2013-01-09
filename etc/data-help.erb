@@ -11,8 +11,8 @@ QUERY FUNCTION INPUT:
 %        elsif entities[:data][:input][:query][:type] == :list
              Valid Values: <%= entities[:data][:input][:query][:list].join(", ") %>
 %        end
-%        if entities[action][:input][input][:default]
-            Default Value: <%= entities[action][:input][input][:default] %>
+%        if entities[:data][:input][:query][:default]
+            Default Value: <%= entities[:data][:input][:query][:default] %>
 %        end
 % else
     This plugin does not take any input
