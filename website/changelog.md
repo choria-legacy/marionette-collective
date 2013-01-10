@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/01/10|Raise the correct exception when trying to access unknown data items in a Data results|18466|
 |2013/01/10|Fix failing documentation generation for data plugins|18437|
 |2013/01/09|Correctly support negative boolean flags declared as --[no]-foo|18438|
 |2013/01/03|Add the package itteration number as a dependency for the common packages|18273|
@@ -36,6 +37,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/01/10|Raise the correct exception when trying to access unknown data items in a Data results|18466|
 |2013/01/09|Correctly support negative boolean flags declared as --[no]-foo|18438|
 |2013/01/03|Add the package itteration number as a dependency for the common packages|18273|
 |2012/12/19|Do not fail when packaging non-agent packages using custom paths|17281|

@@ -58,6 +58,10 @@ module MCollective
       end
 
       describe "#method_missing" do
+        it "should raise the correct exception for unknown keys" do
+          expect { @result.nosuchdata }.to raise_error(NoMethodError)
+        end
+
         it "should retrieve the correct data" do
           @result["rspec"] = "rspec value"
           @result.rspec.should == "rspec value"

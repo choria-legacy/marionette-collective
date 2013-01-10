@@ -31,7 +31,7 @@ module MCollective
       def method_missing(method, *args)
         key = method.to_sym
 
-        raise NameError, "undefined local variable or method `%s'" % key unless include?(key)
+        raise NoMethodError, "undefined local variable or method `%s'" % key unless include?(key)
 
         @data[key]
       end
