@@ -9,6 +9,7 @@ before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
 <a name="2_3_0">&nbsp;</a>
+
 ## 2.3.0 - 2012/01/10
 
 This is the first release in the new development series of MCollective.  This
@@ -90,6 +91,7 @@ We now force all libdir paths to be fully qualified and raises an error at start
 you have relative paths.
 
 ### Changes since 2.2.1
+
 |Date|Description|Ticket|
 |----|-----------|------|
 |2012/01/10|Raise the correct exception when trying to access unknown data items in a Data results|18466|
