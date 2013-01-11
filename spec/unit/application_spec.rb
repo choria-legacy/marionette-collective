@@ -174,25 +174,6 @@ module MCollective
         @argv_backup.each{|a| ARGV << a}
       end
 
-      it "should support unsetting boolean options" do
-        Application.any_instance.stubs("main").returns(true)
-
-        Application.option :foo,
-                           :description => "meh",
-                           :arguments => "--[no-]foo",
-                           :type => :boolean
-
-        ARGV.clear
-        ARGV << "--no-foo"
-
-        a = Application.new
-        a.run
-        a.configuration.should == {:foo=>false}
-
-        ARGV.clear
-        @argv_backup.each{|a| ARGV << a}
-      end
-
       it "should set the application description as head" do
         OptionParser.any_instance.stubs(:define_head).with("meh")
 

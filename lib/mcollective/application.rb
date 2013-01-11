@@ -180,7 +180,7 @@ module MCollective
             parser.send(*opts_array) do |v|
               validate_option(carg[:validate], carg[:name], v)
 
-              configuration[carg[:name]] = v
+              configuration[carg[:name]] = true
             end
 
           elsif carg[:type] == :array

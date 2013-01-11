@@ -8,7 +8,6 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
-|2013/01/09|Correctly support negative boolean flags declared as --[no]-foo|18438|
 |2013/01/03|Add the package itteration number as a dependency for the common packages|18273|
 |2012/12/24|Restore the :any validator|18265|
 |2012/12/19|Do not fail when packaging non-agent packages using custom paths|17281|
