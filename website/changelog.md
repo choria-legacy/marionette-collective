@@ -8,7 +8,8 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
-|2013/01/03|Add the package itteration number as a dependency for the common packages|18273|
+|*2013/02/17*|*Release 2.2.2*|18258|
+|2013/01/03|Add the package iteration number as a dependency for the common packages|18273|
 |2012/12/24|Restore the :any validator|18265|
 |2012/12/19|Do not fail when packaging non-agent packages using custom paths|17281|
 |2012/12/19|Require Ruby > 1.8 in the RPM specs for Ruby 1.9|17149|
