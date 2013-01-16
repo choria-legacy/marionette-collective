@@ -11,6 +11,7 @@ toc: false
 |2013/01/03|Add the package itteration number as a dependency for the common packages|18273|
 |2012/12/24|Restore the :any validator|18265|
 |2012/12/19|Do not fail when packaging non-agent packages using custom paths|17281|
+|2012/12/19|Require Ruby > 1.8 in the RPM specs for Ruby 1.9|17149|
 |2012/11/08|Define a specific buildroot to support RHEL5 systems correctly|17516|
 |2012/11/08|Use the correct rpmbuild commands on systems with rpmbuild-md5|17515|
 |2012/10/22|Correctly show help for data plugins without any input queries|17137|
