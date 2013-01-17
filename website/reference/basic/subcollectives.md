@@ -114,7 +114,7 @@ your network.
 
 By creating a subcollective of just their nodes and restricting them on the
 middleware level to just that collective you can effectively and completely
-create a secure isolated zone that overlays your exiting networok.
+create a secure isolated zone that overlays your exiting network.
 
 # Testing
 
