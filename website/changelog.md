@@ -37,10 +37,11 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
-|2012/01/10|Raise the correct exception when trying to access unknown data items in a Data results|18466|
-|2013/01/09|Correctly support negative boolean flags declared as --[no]-foo|18438|
+|*2013/02/17*|*Release 2.2.2*|18258|
 |2013/01/03|Add the package iteration number as a dependency for the common packages|18273|
+|2012/12/24|Restore the :any validator|18265|
 |2012/12/19|Do not fail when packaging non-agent packages using custom paths|17281|
+|2012/12/19|Require Ruby > 1.8 in the RPM specs for Ruby 1.9|17149|
 |2012/11/08|Define a specific buildroot to support RHEL5 systems correctly|17516|
 |2012/11/08|Use the correct rpmbuild commands on systems with rpmbuild-md5|17515|
 |2012/10/22|Correctly show help for data plugins without any input queries|17137|

@@ -8,6 +8,43 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_2_2">&nbsp;</a>
+
+## 2.2.2 - 2013/01/17
+
+This is a maintenance release to the current production version of MCollective.
+This release is a bug fix only release.
+
+### Bug Fixes
+
+ * Add the package iteration number as dependency for common packages
+ * The :any validator has been restored
+ * Packaging non-agent plugins failed when providing custom paths
+ * Packaging on RHEL5 systems failed due to an undefined buildroot
+ * When available packages will be built using rpmbuild-md5
+ * Help for data plugins with no input queries are now rendered correctly
+ * The rpcutil#get_data action now supports data plugins without input queries
+ * The RPM packages will now require Ruby > 1.8 to improve packaging for 1.9.x
+
+### Backwards Compatibility and Upgrading
+
+This release should be 100% backwards compatible with 2.2.0 and 2.2.1, when upgrading
+from earlier releases please review the Release notes for 2.0.0.
+
+### Changes since 2.2.0
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|*2013/02/17*|*Release 2.2.2*|18258|
+|2013/01/03|Add the package iteration number as a dependency for the common packages|18273|
+|2012/12/24|Restore the :any validator|18265|
+|2012/12/19|Do not fail when packaging non-agent packages using custom paths|17281|
+|2012/12/19|Require Ruby > 1.8 in the RPM specs for Ruby 1.9|17149|
+|2012/11/08|Define a specific buildroot to support RHEL5 systems correctly|17516|
+|2012/11/08|Use the correct rpmbuild commands on systems with rpmbuild-md5|17515|
+|2012/10/22|Correctly show help for data plugins without any input queries|17137|
+|2012/10/22|Allow the rpcutil#get_data action to work with data queries that takes no input|17138|
+
 <a name="2_3_0">&nbsp;</a>
 
 ## 2.3.0 - 2012/01/10
