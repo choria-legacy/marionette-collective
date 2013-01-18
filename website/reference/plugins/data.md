@@ -3,6 +3,7 @@ layout: default
 title: Data Plugins
 ---
 [DDL]: /mcollective/reference/plugins/ddl.html
+[DiscoveryPlugins]: /mcollective/reference/plugins/discovery.html
 
 ## Overview
 Up to MCollective 2.0 the discovery system could only discover against
@@ -36,9 +37,12 @@ action "query" do
 end
 {% endhighlight %}
 
+*NOTE:* As opposed to the [DiscoveryPlugins] which are used by the client to communicate to the nodes using direct addressing, data plugins on the other hand refer to data that the nodes can provide, and hence this uses the normal broadcast paradigm. 
+
 These new data sources are plugins so you can provide via the plugin
 system and they require DDL documents.  The DDL will be used on both the
 client and the server to provide strict validation and configuration.
+
 
 The DDL for these plugins will affect the client libraries in the
 following ways:
