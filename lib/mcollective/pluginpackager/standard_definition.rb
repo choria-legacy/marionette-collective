@@ -44,7 +44,7 @@ module MCollective
           return nil
         end
 
-        plugindata[:dependencies] << {:name => "#{@mcname}-#{@metadata[:name]}-common",
+        plugindata[:plugindependency] = {:name => "#{@mcname}-#{@metadata[:name]}-common",
                                       :version => @metadata[:version],
                                       :iteration => @iteration} if @packagedata[:common]
         plugindata
