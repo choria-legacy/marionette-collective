@@ -13,6 +13,9 @@ Source0: <%= "#{@current_package_name}-#{@plugin.metadata[:version]}.tgz" %>
 <% @current_package_data[:dependencies].each do |dep|-%>
 Requires: <%= dep[:name] -%> <%= ">= #{dep[:version]}" if dep[:version]%><%="-#{dep[:iteration]}" if dep[:iteration]%>
 <% end -%>
+<% if @current_package_data[:plugindependency] %>
+Requires: <%= @current_package_data[:plugindependency][:name] -%> = <%= @current_package_data[:plugindependency][:version]%>-<%= @current_package_data[:plugindependency][:iteration]%>
+<% end %>
 
 %description
 <%= @plugin.metadata[:description] %>
