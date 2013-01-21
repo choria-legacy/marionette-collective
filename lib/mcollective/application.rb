@@ -149,6 +149,8 @@ module MCollective
           parser.separator ""
         end
 
+        parser.separator "Application Options" unless application_cli_arguments.empty?
+
         parser.define_tail ""
         parser.define_tail "The Marionette Collective #{MCollective.version}"
 
