@@ -128,7 +128,7 @@ module MCollective
         result_text << "   %s\n" % [Util.colorize(:yellow, msg)] unless msg == "OK"
 
         # only print good data, ignore data that results from failure
-        if [0, 1].include?(status)
+        if status == 0
           if result.is_a?(Hash)
             # figure out the lengths of the display as strings, we'll use
             # it later to correctly justify the output
@@ -172,6 +172,10 @@ module MCollective
                 result_text << " " << result[k].pretty_inspect.split("\n").join("\n" << padding) << "\n"
               end
             end
+          elsif status == 1
+            # for status 1 we dont want to show half baked
+            # data by default since the DDL will supply all the defaults
+            # it just doesnt look right
           else
             result_text << "\n\t" + result.pretty_inspect.split("\n").join("\n\t")
           end
