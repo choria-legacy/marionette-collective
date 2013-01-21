@@ -37,7 +37,10 @@ action "query" do
 end
 {% endhighlight %}
 
-*NOTE:* As opposed to the [DiscoveryPlugins] which are used by the client to communicate to the nodes using direct addressing, data plugins on the other hand refer to data that the nodes can provide, and hence this uses the normal broadcast paradigm. 
+*NOTE:* As opposed to the [DiscoveryPlugins] which are used by the client   
+to communicate to the nodes using direct addressing, data plugins on the other   
+hand refer to data that the nodes can provide, and hence this uses the normal  
+broadcast discovery paradigm.   
 
 These new data sources are plugins so you can provide via the plugin
 system and they require DDL documents.  The DDL will be used on both the
