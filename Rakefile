@@ -13,7 +13,7 @@ require 'rake/gempackagetask'
 
 PROJ_DOC_TITLE = "The Marionette Collective"
 PROJ_VERSION = "2.3.0"
-PROJ_RELEASE = "1"
+PROJ_RELEASE = "16"
 PROJ_NAME = "mcollective"
 PROJ_RPM_NAMES = [PROJ_NAME]
 PROJ_FILES = ["#{PROJ_NAME}.init", "COPYING", "doc", "etc", "lib", "plugins", "ext", "bin"]
@@ -57,8 +57,9 @@ spec = Gem::Specification.new do |s|
   s.add_dependency "systemu"
   s.add_dependency "json"
   s.add_dependency "stomp"
+  s.add_dependency "i18n"
 
-  excluded_files = ["bin/mcollectived", "lib/mcollective/runner.rb", "lib/mcollective/vendor/json", "lib/mcollective/vendor/systemu", "lib/mcollective/vendor/load"]
+  excluded_files = ["bin/mcollectived", "lib/mcollective/runner.rb", "lib/mcollective/vendor/json", "lib/mcollective/vendor/systemu", "lib/mcollective/vendor/i18n", "lib/mcollective/vendor/load"]
 
   excluded_files.each do |file|
     s.files.delete_if {|f| f.match(/^#{file}/)}
