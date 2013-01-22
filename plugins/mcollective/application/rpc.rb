@@ -4,10 +4,10 @@ class MCollective::Application::Rpc<MCollective::Application
   usage "mco rpc [options] [filters] --agent <agent> --action <action> [--argument <key=val> --argument ...]"
   usage "mco rpc [options] [filters] <agent> <action> [<key=val> <key=val> ...]"
 
-  option :no_results,
+  option :show_results,
          :description    => "Do not process results, just send request",
          :arguments      => ["--no-results", "--nr"],
-         :default        => false,
+         :default        => true,
          :type           => :bool
 
   option :agent,
@@ -45,7 +45,7 @@ class MCollective::Application::Rpc<MCollective::Application
         end
       else
         STDERR.puts("No agent, action and arguments specified")
-        exit!
+        exit(1)
       end
     end
 
@@ -87,7 +87,7 @@ class MCollective::Application::Rpc<MCollective::Application
       configuration[:arguments][:process_results] = true
 
       puts "Request sent with id: " + mc.send(configuration[:action], configuration[:arguments]) + " replies to #{mc.reply_to}"
-    elsif configuration[:no_results]
+    elsif !configuration[:show_results]
       configuration[:arguments][:process_results] = false
 
       puts "Request sent with id: " + mc.send(configuration[:action], configuration[:arguments])
