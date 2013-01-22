@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/01/22|When an argument fails to parse in the rpc application fail rather than continue with unintended consequences|18773|
 |2012/01/22|The fix the *--no-response* argument to the rpc application that broke due to 18438|18513|
 |2012/01/22|Set *=* dependencies on the various packages that form a plugin rather than *>=*|18758|
 |2012/01/21|Improve presentation of the --help output for applications|18447|

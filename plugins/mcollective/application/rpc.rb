@@ -41,6 +41,7 @@ class MCollective::Application::Rpc<MCollective::Application
             configuration[:arguments] << v
           else
             STDERR.puts("Could not parse --arg #{v}")
+            exit(1)
           end
         end
       else
