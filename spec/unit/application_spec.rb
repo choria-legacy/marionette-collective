@@ -592,8 +592,8 @@ module MCollective
         e.stubs(:backtrace).returns(["rspec"])
         e.stubs(:to_s).returns("rspec")
 
-        @app.expects(:options).returns({:verbose => true}).twice
-        out.expects(:puts).with(regexp_matches(/ application failed to run, use -v for full error details/))
+        @app.expects(:options).returns({:verbose => true}).times(3)
+        out.expects(:puts).with(regexp_matches(/ application failed to run/))
         out.expects(:puts).with(regexp_matches(/from rspec  <---/))
         out.expects(:puts).with(regexp_matches(/rspec.+Mocha::Mock/))
 

@@ -129,7 +129,7 @@ module MCollective
 
       it "should ensure the ddl has a dataquery" do
         @ddl.expects(:entities).returns({})
-        expect { Data.ddl_validate(@ddl, "rspec") }.to raise_error("No dataquery has been defined in the DDL for data plugin rspec test")
+        expect { Data.ddl_validate(@ddl, "rspec") }.to raise_code(:PLMC31, :plugin => "rspec test")
       end
 
       it "should allow ddls without any input defined" do
@@ -139,12 +139,12 @@ module MCollective
 
       it "should not allow input arguments when no query were defined" do
         @ddl.expects(:entities).returns({:data => {:input => {}, :output => {:x => {}}}})
-        expect { Data.ddl_validate(@ddl, "rspec") }.to raise_error("No data plugin argument was declared in the rspec test DDL but an input was supplied")
+        expect { Data.ddl_validate(@ddl, "rspec") }.to raise_code(:PLMC33, :plugin => "rspec test")
       end
 
       it "should ensure the ddl has output" do
         @ddl.expects(:entities).returns({:data => {:input => {:query => {}}, :output => {}}})
-        expect { Data.ddl_validate(@ddl, "rspec") }.to raise_error("No output has been defined in the DDL for data plugin rspec test")
+        expect { Data.ddl_validate(@ddl, "rspec") }.to raise_code(:PLMC32, :plugin => "rspec test")
       end
 
       it "should skip optional arguments that were not supplied" do

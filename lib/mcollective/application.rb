@@ -257,7 +257,22 @@ module MCollective
         raise(e)
       end
 
-      err_dest.puts "\nThe %s application failed to run, use -v for full error details: %s\n" % [ Util.colorize(:bold, $0), Util.colorize(:red, e.to_s)]
+      if e.is_a?(CodedError)
+        err_dest.puts "\nThe %s application failed to run: %s: %s\n" % [ Util.colorize(:bold, $0), Util.colorize(:bold, e.code), Util.colorize(:red, e.to_s)]
+
+        err_dest.puts
+        if options[:verbose]
+          err_dest.puts "Use the 'mco doc %s' command for details about this error" % e.code
+        else
+          err_dest.puts "Use the 'mco doc %s' command for details about this error, use -v for full error backtrace details" % e.code
+        end
+      else
+        if options[:verbose]
+          err_dest.puts "\nThe %s application failed to run: %s\n" % [ Util.colorize(:bold, $0), Util.colorize(:red, e.to_s)]
+        else
+          err_dest.puts "\nThe %s application failed to run, use -v for full error backtrace details: %s\n" % [ Util.colorize(:bold, $0), Util.colorize(:red, e.to_s)]
+        end
+      end
 
       if options.nil? || options[:verbose]
         e.backtrace.first << Util.colorize(:red, "  <----")

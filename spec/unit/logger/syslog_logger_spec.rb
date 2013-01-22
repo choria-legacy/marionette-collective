@@ -59,13 +59,6 @@ module MCollective
             logger.log(:error, "rspec", "rspec")
           end
 
-          it "should not log lower than configured levels" do
-            logger = Syslog_logger.new
-            logger.set_level(:fatal)
-            Syslog.expects(:debug).never
-            logger.log(:debug, "rspec", "rspec")
-          end
-
           it "should log using the correctly mapped level" do
             logger = Syslog_logger.new
             Syslog.expects(:err).with("rspec rspec").once

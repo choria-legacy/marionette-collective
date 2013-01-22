@@ -124,6 +124,9 @@ module MCollective
           end
         end
 
+        I18n.load_path = Dir[File.expand_path(File.join(File.dirname(__FILE__), "locales", "*.yml"))]
+        I18n.locale = :en
+
         read_plugin_config_dir("#{@configdir}/plugin.d")
 
         raise 'Identities can only match /\w\.\-/' unless @identity.match(/^[\w\.\-]+$/)
@@ -142,6 +145,8 @@ module MCollective
         PluginManager.loadclass("Mcollective::Registration::#{@registration}")
         PluginManager.loadclass("Mcollective::Audit::#{@rpcauditprovider}") if @rpcaudit
         PluginManager << {:type => "global_stats", :class => RunnerStats.new}
+
+        Log.logmsg(:PLMC1, "The Marionette Collective version %{version} started by %{name} using config file %{config}", :info, :version => MCollective::VERSION, :name => $0, :config => configfile)
       else
         raise("Cannot find config file '#{configfile}'")
       end

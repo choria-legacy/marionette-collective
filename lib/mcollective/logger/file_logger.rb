@@ -28,10 +28,10 @@ module MCollective
 
       def valid_levels
         {:info  => ::Logger::INFO,
-          :warn  => ::Logger::WARN,
-          :debug => ::Logger::DEBUG,
-          :fatal => ::Logger::FATAL,
-          :error => ::Logger::ERROR}
+         :warn  => ::Logger::WARN,
+         :debug => ::Logger::DEBUG,
+         :fatal => ::Logger::FATAL,
+         :error => ::Logger::ERROR}
       end
 
       def log(level, from, msg)

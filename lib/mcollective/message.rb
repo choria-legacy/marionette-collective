@@ -204,7 +204,7 @@ module MCollective
         if msg_age > ttl
           PluginManager["global_stats"].ttlexpired
 
-          raise(MsgTTLExpired, "Message #{requestid} from #{cid} created at #{msgtime} is #{msg_age} seconds old, TTL is #{ttl}")
+          raise(MsgTTLExpired, "message #{requestid} from #{cid} created at #{msgtime} is #{msg_age} seconds old, TTL is #{ttl}")
         end
       end
 

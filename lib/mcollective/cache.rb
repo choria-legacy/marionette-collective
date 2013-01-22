@@ -42,6 +42,8 @@ module MCollective
   #    end
   #
   module Cache
+    extend Translatable
+
     # protects access to @cache_locks and top level @cache
     @locks_mutex = Mutex.new
 
@@ -65,6 +67,10 @@ module MCollective
       true
     end
 
+    def self.check_cache!(cache_name)
+      raise_code(:PLMC13, "Could not find a cache called '%{cache_name}'", :debug, :cache_name => cache_name) unless has_cache?(cache_name)
+    end
+
     def self.has_cache?(cache_name)
       @locks_mutex.synchronize do
         @cache.include?(cache_name)
@@ -72,9 +78,9 @@ module MCollective
     end
 
     def self.delete!(cache_name)
-      @locks_mutex.synchronize do
-        raise("No cache called '%s'" % cache_name) unless @cache_locks.include?(cache_name)
+      check_cache!(cache_name)
 
+      @locks_mutex.synchronize do
         @cache_locks.delete(cache_name)
         @cache.delete(cache_name)
       end
@@ -83,7 +89,7 @@ module MCollective
     end
 
     def self.write(cache_name, key, value)
-      raise("No cache called '%s'" % cache_name) unless @cache.include?(cache_name)
+      check_cache!(cache_name)
 
       @cache_locks[cache_name].synchronize do
         @cache[cache_name][key] ||= {}
@@ -95,14 +101,13 @@ module MCollective
     end
 
     def self.read(cache_name, key)
-      raise("No cache called '%s'" % cache_name) unless @cache.include?(cache_name)
+      check_cache!(cache_name)
 
       unless ttl(cache_name, key) > 0
-        Log.debug("Cache expired on '%s' key '%s'" % [cache_name, key])
-        raise("Cache for item '%s' on cache '%s' has expired" % [key, cache_name])
+        raise_code(:PLMC11, "Cache expired on '%{cache_name}' key '%{item}'", :debug, :cache_name => cache_name, :item => key)
       end
 
-      Log.debug("Cache hit on '%s' key '%s'" % [cache_name, key])
+      log_code(:PLMC12, "Cache hit on '%{cache_name}' key '%{item}'", :debug, :cache_name => cache_name, :item => key)
 
       @cache_locks[cache_name].synchronize do
         @cache[cache_name][key][:value]
@@ -110,12 +115,11 @@ module MCollective
     end
 
     def self.ttl(cache_name, key)
-      raise("No cache called '%s'" % cache_name) unless @cache.include?(cache_name)
+      check_cache!(cache_name)
 
       @cache_locks[cache_name].synchronize do
         unless @cache[cache_name].include?(key)
-          Log.debug("Cache miss on '%s' key '%s'" % [cache_name, key])
-          raise("No item called '%s' for cache '%s'" % [key, cache_name])
+          raise_code(:PLMC15, "No item called '%{item}' for cache '%{cache_name}'", :debug, :cache_name => cache_name, :item => key)
         end
 
         @cache[cache_name][:max_age] - (Time.now - @cache[cache_name][key][:cache_create_time])
@@ -123,9 +127,9 @@ module MCollective
     end
 
     def self.synchronize(cache_name)
-      raise("No cache called '%s'" % cache_name) unless @cache.include?(cache_name)
+      check_cache!(cache_name)
 
-      raise ("No block supplied to synchronize") unless block_given?
+      raise_code(:PLMC14, "No block supplied to synchronize on cache '%{cache_name}'", :debug, :cache_name => cache_name) unless block_given?
 
       @cache_locks[cache_name].synchronize do
         yield
@@ -133,7 +137,7 @@ module MCollective
     end
 
     def self.invalidate!(cache_name, key)
-      raise("No cache called '%s'" % cache_name) unless @cache.include?(cache_name)
+      check_cache!(cache_name)
 
       @cache_locks[cache_name].synchronize do
         return false unless @cache[cache_name].include?(key)

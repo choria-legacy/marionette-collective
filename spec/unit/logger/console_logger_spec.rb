@@ -50,15 +50,6 @@ module MCollective
           logger.log(:error, "rspec", "message", io)
         end
 
-        it "should not log lower than configured levels" do
-          io = StringIO.new
-          io.expects(:puts).never
-
-          logger = Console_logger.new
-          logger.set_level(:warn)
-          logger.log(:debug, "rspec", "message", io)
-        end
-
         it "should resort to STDERR output if all else fails" do
           io = StringIO.new
           io.expects(:puts).raises

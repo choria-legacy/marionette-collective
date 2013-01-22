@@ -7,3 +7,4 @@ etc/ssl/clients/*pem
 plugins/mcollective/security/none.rb
 tags
 pkg
+.localeapp

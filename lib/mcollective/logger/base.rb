@@ -20,6 +20,10 @@ module MCollective
         end
       end
 
+      def should_log?(level)
+        @known_levels.index(level) >= @known_levels.index(@active_level)
+      end
+
       # Figures out the next level and sets it
       def cycle_level
         lvl = get_next_level

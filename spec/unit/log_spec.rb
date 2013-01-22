@@ -6,13 +6,106 @@ module MCollective
   describe Log do
     before do
       @logger = mock("logger provider")
-      @logger.stubs(:log)
       @logger.stubs(:start)
       @logger.stubs(:set_logging_level)
       @logger.stubs(:valid_levels)
+      @logger.stubs(:should_log?).returns(true)
+      @logger.stubs(:new).returns(@logger)
+
+      # we stub it out at the top of the test suite
+      Log.unstub(:log)
+      Log.unstub(:logexception)
+      Log.unstub(:logmsg)
+
+      Log.unconfigure
+      Log.set_logger(@logger)
     end
 
-    describe "#cofigure" do
+    describe "#config_and_check_level" do
+      it "should configure then not already configured" do
+        Log.expects(:configure)
+        Log.config_and_check_level(:debug)
+      end
+
+      it "should not reconfigure the logger" do
+        Log.configure(@logger)
+        Log.expects(:configure).never
+        Log.config_and_check_level(:debug)
+      end
+
+      it "should check the level is valid" do
+        Log.configure(@logger)
+        Log.expects(:check_level).with(:debug)
+        Log.config_and_check_level(:debug)
+      end
+
+      it "should respect the loggers decision about levels" do
+        Log.configure(@logger)
+        @logger.expects(:should_log?).returns(false)
+        Log.config_and_check_level(:debug).should == false
+      end
+    end
+
+    describe "#valid_level?" do
+      it "should correctly report for valid levels" do
+        [:error, :fatal, :debug, :warn, :info].each {|level| Log.valid_level?(level).should == true }
+        Log.valid_level?(:rspec).should == false
+      end
+    end
+
+    describe "#message_for" do
+      it "should return the code and retrieved message" do
+        Util.expects(:t).with(:PLMC1, {:rspec => true}).returns("this is PLMC1")
+        Log.message_for(:PLMC1, {:rspec => true}).should == "PLMC1: this is PLMC1"
+      end
+    end
+
+    describe "#logexception" do
+      it "should short circuit messages below current level" do
+        Log.expects(:config_and_check_level).with(:debug).returns(false)
+        Log.expects(:log).never
+        Log.logexception(:PLMC1, :debug, Exception.new, {})
+      end
+
+      it "should request the message including the exception string and log it" do
+        Log.stubs(:config_and_check_level).returns(true)
+        Log.expects(:message_for).with(:PLMC1, {:rspec => "test", :error => "Exception: this is a test"}).returns("This is a test")
+        Log.expects(:log).with(:debug, "This is a test", "test:2")
+
+        e = Exception.new("this is a test")
+        e.set_backtrace ["/some/dir/test:1", "/some/dir/test:2"]
+
+        Log.logexception(:PLMC1, :debug, e, false, {:rspec => "test"})
+      end
+    end
+
+    describe "#logmsg" do
+      it "should short circuit messages below current level" do
+        Log.expects(:config_and_check_level).with(:debug).returns(false)
+        Log.expects(:log).never
+        Log.logmsg(:PLMC1, "", :debug, {})
+      end
+
+      it "should request the message and log it" do
+        Log.stubs(:config_and_check_level).returns(true)
+        Log.expects(:message_for).with(:PLMC1, {:rspec => "test", :default => "default"}).returns("This is a test")
+        Log.expects(:log).with(:debug, "This is a test")
+        Log.logmsg(:PLMC1, "default", :debug, :rspec => "test")
+      end
+    end
+
+    describe "#check_level" do
+      it "should check for valid levels" do
+        Log.expects(:valid_level?).with(:debug).returns(true)
+        Log.check_level(:debug)
+      end
+
+      it "should raise for invalid levels" do
+        expect { Log.check_level(:rspec) }.to raise_error("Unknown log level")
+      end
+    end
+
+    describe "#configure" do
       it "should default to console logging if called prior to configuration" do
         Config.instance.instance_variable_set("@configured", false)
         Log.configure
@@ -28,34 +121,14 @@ module MCollective
     end
 
     describe "#log" do
-      it "should log at debug level" do
-        @logger.expects(:log).with(:debug, anything, regexp_matches(/debug test/))
+      it "should log at the right levels" do
         Log.configure(@logger)
-        Log.debug("debug test")
-      end
 
-      it "should log at info level" do
-        @logger.expects(:log).with(:info, anything, regexp_matches(/info test/))
-        Log.configure(@logger)
-        Log.info("info test")
-      end
-
-      it "should log at fatal level" do
-        @logger.expects(:log).with(:fatal, anything, regexp_matches(/fatal test/))
-        Log.configure(@logger)
-        Log.fatal("fatal test")
-      end
-
-      it "should log at error level" do
-        @logger.expects(:log).with(:error, anything, regexp_matches(/error test/))
-        Log.configure(@logger)
-        Log.error("error test")
-      end
-
-      it "should log at warning level" do
-        @logger.expects(:log).with(:warn, anything, regexp_matches(/warn test/))
-        Log.configure(@logger)
-        Log.warn("warn test")
+        [:debug, :info, :fatal, :error, :warn].each do |level|
+          @logger.expects(:log).with(level, anything, regexp_matches(/#{level} test/))
+          @logger.expects(:should_log?).with(level).returns(true)
+          Log.send(level, "#{level} test")
+        end
       end
     end
 

@@ -22,11 +22,9 @@ module MCollective
       end
 
       def log(level, from, msg, normal_output=STDERR, last_resort_output=STDERR)
-        if @known_levels.index(level) >= @known_levels.index(@active_level)
-          time = Time.new.strftime("%Y/%m/%d %H:%M:%S")
+        time = Time.new.strftime("%Y/%m/%d %H:%M:%S")
 
-          normal_output.puts("%s %s: %s %s" % [colorize(level, level), time, from, msg])
-        end
+        normal_output.puts("%s %s: %s %s" % [colorize(level, level), time, from, msg])
       rescue
         # if this fails we probably cant show the user output at all,
         # STDERR it as last resort

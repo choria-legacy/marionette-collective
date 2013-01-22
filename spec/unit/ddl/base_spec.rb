@@ -66,7 +66,7 @@ module MCollective
 
           expect {
             @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, 1)
-          }.to raise_error("Cannot validate input string: value should be a string")
+          }.to raise_code(:PLMC21, :input => :string, :error => "value should be a string")
 
           @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, "1")
         end
@@ -80,7 +80,7 @@ module MCollective
 
           expect {
             @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, "too long")
-          }.to raise_error("Cannot validate input string: Input string is longer than 1 character(s)")
+          }.to raise_code(:PLMC21, :input => :string, :error => "Input string is longer than 1 character(s)")
 
           @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, "1")
         end
@@ -94,7 +94,7 @@ module MCollective
 
           expect {
             @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, "doesnt validate")
-          }.to raise_error("Cannot validate input string: value should match ^regex$")
+          }.to raise_code(:PLMC21, :input => :string, :error => "value should match ^regex$")
 
           @ddl.validate_input_argument(@ddl.entities[:string][:input], :string, "regex")
         end
@@ -107,7 +107,7 @@ module MCollective
 
           expect {
             @ddl.validate_input_argument(@ddl.entities[:list][:input], :list, 3)
-          }.to raise_error("Cannot validate input list: value should be one of 1, 2")
+          }.to raise_code(:PLMC21, :input => :list, :error => "value should be one of 1, 2")
 
           @ddl.validate_input_argument(@ddl.entities[:list][:input], :list, 1)
         end
@@ -120,7 +120,7 @@ module MCollective
 
           expect {
             @ddl.validate_input_argument(@ddl.entities[:bool][:input], :bool, 3)
-          }.to raise_error("Cannot validate input bool: value should be a boolean")
+          }.to raise_code(:PLMC21, :input => :bool, :error => "value should be a boolean")
 
           @ddl.validate_input_argument(@ddl.entities[:bool][:input], :bool, true)
           @ddl.validate_input_argument(@ddl.entities[:bool][:input], :bool, false)
@@ -134,11 +134,11 @@ module MCollective
 
           expect {
             @ddl.validate_input_argument(@ddl.entities[:test][:input], :int, "1")
-          }.to raise_error("Cannot validate input int: value should be a integer")
+          }.to raise_code(:PLMC21, :input => :int, :error => "value should be a integer")
 
           expect {
             @ddl.validate_input_argument(@ddl.entities[:test][:input], :int, 1.1)
-          }.to raise_error("Cannot validate input int: value should be a integer")
+          }.to raise_code(:PLMC21, :input => :int, :error => "value should be a integer")
 
           @ddl.validate_input_argument(@ddl.entities[:test][:input], :int, 1)
         end
@@ -151,11 +151,11 @@ module MCollective
 
           expect {
             @ddl.validate_input_argument(@ddl.entities[:test][:input], :float, "1")
-          }.to raise_error("Cannot validate input float: value should be a float")
+          }.to raise_code(:PLMC21, :input => :float, :error => "value should be a float")
 
           expect {
             @ddl.validate_input_argument(@ddl.entities[:test][:input], :float, 1)
-          }.to raise_error("Cannot validate input float: value should be a float")
+          }.to raise_code(:PLMC21, :input => :float, :error => "value should be a float")
 
           @ddl.validate_input_argument(@ddl.entities[:test][:input], :float, 1.1)
         end
@@ -168,7 +168,7 @@ module MCollective
 
           expect {
             @ddl.validate_input_argument(@ddl.entities[:test][:input], :number, "1")
-          }.to raise_error("Cannot validate input number: value should be a number")
+          }.to raise_code(:PLMC21, :input => :number, :error => "value should be a number")
 
           @ddl.validate_input_argument(@ddl.entities[:test][:input], :number, 1)
           @ddl.validate_input_argument(@ddl.entities[:test][:input], :number, 1.1)
@@ -206,7 +206,7 @@ module MCollective
 
         it "should bypass checks in development" do
           Util.stubs(:mcollective_version).returns("@DEVELOPMENT_VERSION@")
-          Log.expects(:warn).with(regexp_matches(/skipped in development/))
+          @ddl.expects(:log_code).with(:PLMC19, anything, :warn)
           @ddl.requires(:mcollective => "0.1")
         end
       end
@@ -237,7 +237,7 @@ module MCollective
         it "should return the ddl file path if found" do
           Config.instance.expects(:libdir).returns(["/nonexisting"])
           File.expects("exist?").with("/nonexisting/mcollective/agent/foo.ddl").returns(true)
-          Log.expects(:debug).with("Found foo ddl at /nonexisting/mcollective/agent/foo.ddl")
+          @ddl.expects(:log_code).with(:PLMC18, anything, :debug, :ddlname => "foo", :ddlfile => "/nonexisting/mcollective/agent/foo.ddl")
 
           @ddl.findddlfile("foo").should == "/nonexisting/mcollective/agent/foo.ddl"
         end

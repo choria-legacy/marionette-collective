@@ -9,11 +9,11 @@ end
 require 'rake/packagetask'
 require 'rake/clean'
 require 'find'
-require 'rake/gempackagetask'
+require 'rubygems/package_task'
 
 PROJ_DOC_TITLE = "The Marionette Collective"
 PROJ_VERSION = "2.3.0"
-PROJ_RELEASE = "16"
+PROJ_RELEASE = "21"
 PROJ_NAME = "mcollective"
 PROJ_RPM_NAMES = [PROJ_NAME]
 PROJ_FILES = ["#{PROJ_NAME}.init", "COPYING", "doc", "etc", "lib", "plugins", "ext", "bin"]
@@ -66,7 +66,7 @@ spec = Gem::Specification.new do |s|
   end
 end
 
-Rake::GemPackageTask.new(spec) do |pkg|
+Gem::PackageTask.new(spec) do |pkg|
   pkg.need_tar = false
   pkg.need_zip = false
   pkg.package_dir = "build"
@@ -194,5 +194,48 @@ task :deb => [:clean, :doc, :package] do
     end
 
     safe_system %{cp *.deb *.dsc *.diff.gz *.orig.tar.gz *.changes ..}
+  end
+end
+
+desc "Update the website error code reference based on current local"
+task :update_msgweb do
+  mcollective_dir = File.join(File.dirname(__FILE__))
+
+  $:.insert(0, File.join(mcollective_dir, "lib"))
+
+  require 'mcollective'
+
+  messages = YAML.load_file(File.join(mcollective_dir, "lib", "mcollective", "locales", "en.yml"))
+
+  webdir = File.join(mcollective_dir, "website", "messages")
+
+  I18n.load_path = Dir[File.join(mcollective_dir, "lib", "mcollective", "locales", "*.yml")]
+  I18n.locale = :en
+
+  messages["en"].keys.each do |msg_code|
+    md_file = File.join(webdir, "#{msg_code}.md")
+
+    puts "....writing %s" % md_file
+
+    File.open(md_file, "w") do |md|
+      md.puts "---"
+      md.puts "layout: default"
+      md.puts "title: Message detail for %s" % msg_code
+      md.puts "toc: false"
+      md.puts "---"
+      md.puts
+      md.puts "Detail for Marionette Collective message %s" % msg_code
+      md.puts "==========================================="
+      md.puts
+      md.puts "Example Message"
+      md.puts "---------------"
+      md.puts
+      md.puts "    %s" % (MCollective::Util.t("%s.example" % msg_code, :raise => true) rescue MCollective::Util.t("%s.pattern" % msg_code))
+      md.puts
+      md.puts "Additional Information"
+      md.puts "----------------------"
+      md.puts
+      md.puts MCollective::Util.t("%s.expanded" % msg_code, :raise => true)
+    end
   end
 end

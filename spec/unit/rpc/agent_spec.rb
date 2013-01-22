@@ -35,7 +35,8 @@ module MCollective
         end
 
         it "should or validate the incoming request" do
-          Request.any_instance.expects(:validate!).raises(DDLValidationError, "Failed to validate")
+          exception = DDLValidationError.new(:RSPEC, "Failed to validate", :error)
+          Request.any_instance.expects(:validate!).raises(exception)
 
           reply = @agent.handlemsg(@msg, DDL.new)
 
@@ -146,7 +147,7 @@ module MCollective
 
       describe "#meta" do
         it "should be deprecated" do
-          Log.expects(:warn).with(regexp_matches(/setting meta data in agents have been deprecated/))
+          Agent.expects(:log_code).with(:PLMC34, is_a(String), :warn, has_value(regexp_matches(/agent_spec.rb/)))
           Agent.metadata("foo")
         end
       end
@@ -163,8 +164,7 @@ module MCollective
 
         it "should fail if the DDL isn't loaded" do
           DDL.expects(:new).raises("failed to load")
-          Log.expects(:error).once
-          expect { Agent.new }.to raise_error(DDLValidationError)
+          expect { Agent.new }.to raise_code(:PLMC24)
         end
 
         it "should default to 10 second timeout" do

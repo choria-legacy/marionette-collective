@@ -40,9 +40,7 @@ module MCollective
       end
 
       def log(level, from, msg)
-        if @known_levels.index(level) >= @known_levels.index(@active_level)
-          Syslog.send(map_level(level), "#{from} #{msg}")
-        end
+        Syslog.send(map_level(level), "#{from} #{msg}")
       rescue
         # if this fails we probably cant show the user output at all,
         # STDERR it as last resort

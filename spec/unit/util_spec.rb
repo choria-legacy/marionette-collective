@@ -11,6 +11,15 @@ module MCollective
       PluginManager << {:type => "connector_plugin", :class => MCollective::Connector::Stomp.new}
     end
 
+    describe "#t" do
+      it "should correctly translate the message" do
+        I18n.expects(:t).with("PLMC1.pattern", {:rspec => "test"})
+        I18n.expects(:t).with("PLMC1.expanded", {:rspec => "test"})
+        Util.t(:PLMC1, :rspec => "test")
+        Util.t("PLMC1.expanded", :rspec => "test")
+      end
+    end
+
     describe "#windows?" do
       it "should correctly detect windows on unix platforms" do
         RbConfig::CONFIG.expects("[]").returns("linux")

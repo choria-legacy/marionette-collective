@@ -453,5 +453,14 @@ module MCollective
 
       !!path.match(path_matcher)
     end
+
+    # Looks up and interprolate the hash values into a i18n string
+    def self.t(msgid, args={})
+      if msgid.is_a?(Symbol)
+        I18n.t("%s.pattern" % msgid, args)
+      else
+        I18n.t(msgid, args)
+      end
+    end
   end
 end
