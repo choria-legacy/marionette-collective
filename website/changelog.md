@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/01/22|Set *=* dependencies on the various packages that form a plugin rather than *>=*|18758|
 |2012/01/21|Improve presentation of the --help output for applications|18447|
 |2012/01/21|When a request failed via *reply.fail*, only show the message and not the half built data|18434|
 |*2013/01/10*|*Release 2.3.0*|18259|
