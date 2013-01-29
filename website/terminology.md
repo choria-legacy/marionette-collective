@@ -26,7 +26,7 @@ The Computer or Operating System that the Server runs on.
 ## Agent
 A block of Ruby code that performs a specific role, the main reason for
 mcollective's existence is to host agents.  Agents can perform tasks like
-manipulate firewalls, services, packages etc. See [Wikpedia][Software_agent].
+manipulate firewalls, services, packages etc. See [Wikipedia][Software_agent].
 
 Docs to write your own can be seen in [SimpleRPCAgents]
 
