@@ -50,7 +50,7 @@ end
 
 The call extra _authorized`_`by :authorize`_`it_ line tells your agent to use the _MCollective::Util::AuthorizeIt_ class for authorization.
 
-## Enabling RPC auditing globally
+## Enabling RPC authorization globally
 You can enable a specific plugin on all RPC agents in the server config file.  If you do this and an agent also specify it's own authorization the agent will take priority.
 
 {% highlight ini %}
