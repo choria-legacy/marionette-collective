@@ -109,7 +109,7 @@ to.
 Another possible advantage from subcollectives is security.  While the SimpleRPC
 framework has a security model that is aware of the topology the core network
 layer does not.  Even if you only give someone access to run SimpleRPC requests
-against some machines they can still use _mc ping_ to discover other nodes on
+against some machines they can still use _mco ping_ to discover other nodes on
 your network.
 
 By creating a subcollective of just their nodes and restricting them on the
@@ -126,10 +126,10 @@ collectives = mcollective,uk_collective,us_collective,de_collective,eu_collectiv
 main_collective = mcollective
 {% endhighlight %}
 
-You can now test with _mc ping_:
+You can now test with _mco ping_:
 
 {% highlight console %}
-$ mc ping -T us_collective
+$ mco ping -T us_collective
 host1.us.my.net         time=200.67 ms
 host2.us.my.net         time=241.30 ms
 host3.us.my.net         time=245.24 ms
@@ -153,7 +153,7 @@ You can discover the list of known collectives and how many nodes are in each
 using the _inventory_ application:
 
 {% highlight console %}
-$ mc inventory --list-collectives
+$ mco inventory --list-collectives
 
  * [ ==================================== ] 52 / 52
 
