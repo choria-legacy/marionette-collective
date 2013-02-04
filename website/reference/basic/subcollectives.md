@@ -196,6 +196,11 @@ should never transmit _us`_`collective_ traffic, so lets restrict that:
 {% highlight xml %}
 <networkConnectors>
   <networkConnector
+     name="us-uk"
+     uri="static:(tcp://stomp1.uk.my.net:6166)"
+     userName="amq"
+     password="secret"
+     duplex="true">
      <excludedDestinations>
        <topic physicalName="us_collective.>" />
        <topic physicalName="uk_collective.>" />
@@ -203,10 +208,6 @@ should never transmit _us`_`collective_ traffic, so lets restrict that:
        <topic physicalName="za_collective.>" />
        <topic physicalName="eu_collective.>" />
      </excludedDestinations>
-     name="us-uk"
-     uri="static:(tcp://stomp1.uk.my.net:6166)"
-     userName="amq"
-     password="secret"
-     duplex="true" />
+  </networkConnector>
 </networkConnectors>
 {% endhighlight %}
