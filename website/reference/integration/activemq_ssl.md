@@ -232,6 +232,7 @@ sun.security.validator.ValidatorException: PKIX path building failed: sun.securi
 {% endhighlight %}
 
 ## Basic anonymous TLS between Stomp and ActiveMQ
+
 ### Create a keystore with existing certs
 If you have an exiting PKI deployment, you can probably reuse Puppet ones too the main
 point is that you already have a key and signed cert signed by some CA and you
