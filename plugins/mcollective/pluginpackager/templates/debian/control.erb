@@ -1,3 +1,19 @@
+<%
+  @current_package_data[:dependencies].map! do |dep|
+      if dep[:version] && dep[:iteration]
+        dep[:name] + '(>=' + dep[:version] + '-' + dep[:iteration].to_s + ')'
+      elsif dep[:version]
+        dep[:name] + '(>=' + dep[:version] + ')'
+      else
+        dep[:name]
+      end
+    end
+
+  if @current_package_data[:plugindependency]
+    @current_package_data[:plugindependency] = "#{@current_package_data[:plugindependency][:name]} (= #{current_package_data[:plugindependency][:version]}-#{@current_package_data[:plugindependency][:iteration]})"
+    @current_package_data[:dependencies].push(@current_package_data[:plugindependency])
+  end
+-%>
 Source: <%= @current_package_shortname %>
 Homepage: <%= @plugin.metadata[:url]%>
 Section: utils
@@ -7,10 +23,5 @@ Standards-Version: 3.8.0
 
 Package: <%= @current_package_shortname %>
 Architecture: all
-<% @current_package_data[:dependencies].map!{|dep| (dep[:version]) ? "#{dep[:name]}(>= #{dep[:version] + (dep[:iteration] ? "-#{dep[:iteration]}" : nil)})" : dep[:name]} -%>
-<% if @current_package_data[:plugindependency] -%>
-<% @current_package_data[:plugindependency] = "#{@current_package_data[:plugindependency][:name]} (= #{current_package_data[:plugindependency][:version]}-#{@current_package_data[:plugindependency][:iteration]})"-%>
-<% @current_package_data[:dependencies].push(@current_package_data[:plugindependency]) -%>
-<% end -%>
 Depends: <%= @current_package_data[:dependencies].join(", ") %>
 Description: <%= @plugin.metadata[:description] %>
