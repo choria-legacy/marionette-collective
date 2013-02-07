@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/02/07|Read the client config before trying to use any configuration options|19105|
 |2012/01/22|When an argument fails to parse in the rpc application fail rather than continue with unintended consequences|18773|
 |2012/01/22|The fix the *--no-response* argument to the rpc application that broke due to 18438|18513|
 |2012/01/22|Set *=* dependencies on the various packages that form a plugin rather than *>=*|18758|
@@ -43,6 +44,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/02/07|Read the client config before trying to use any configuration options|19105|
 |*2013/01/17*|*Release 2.2.2*|18258|
 |2013/01/03|Add the package iteration number as a dependency for the common packages|18273|
 |2012/12/24|Restore the :any validator|18265|
