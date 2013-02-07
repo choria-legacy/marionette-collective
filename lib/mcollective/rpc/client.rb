@@ -39,12 +39,16 @@ module MCollective
         end
 
         @initial_options = initial_options
+
+        @config = initial_options[:config]
+        @client = MCollective::Client.new(@config)
+        @client.options = initial_options
+
         @stats = Stats.new
         @agent = agent
         @timeout = initial_options[:timeout] || 5
         @verbose = initial_options[:verbose]
         @filter = initial_options[:filter] || Util.empty_filter
-        @config = initial_options[:config]
         @discovered_agents = nil
         @progress = initial_options[:progress_bar]
         @limit_targets = initial_options[:mcollective_limit_targets]
@@ -62,9 +66,6 @@ module MCollective
         @batch_mode = @batch_size > 0
 
         agent_filter agent
-
-        @client = MCollective::Client.new(@config)
-        @client.options = initial_options
 
         @discovery_timeout = discovery_timeout
 
