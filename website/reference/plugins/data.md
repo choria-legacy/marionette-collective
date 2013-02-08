@@ -46,7 +46,6 @@ These new data sources are plugins so you can provide via the plugin
 system and they require DDL documents.  The DDL will be used on both the
 client and the server to provide strict validation and configuration.
 
-
 The DDL for these plugins will affect the client libraries in the
 following ways:
 
