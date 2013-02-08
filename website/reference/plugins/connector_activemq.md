@@ -8,7 +8,7 @@ toc: false
 The ActiveMQ connector uses the [STOMP] rubygem to connect to ActiveMQ servers.  It is specifically optimiszed for ActiveMQ
 and uses features in ActiveMQ 5.5.0 and later.
 
-This code will only work with version _1.1.8_ or newer of the Stomp gem.
+This plugin requires version _1.2.2_ or newer of the Stomp gem. (Older versions don't properly support SSL. If you aren't securing traffic, you can use versions as old as 1.1.8, but no earlier.)
 
 ## Differences between ActiveMQ connector and Stomp Connector
 
@@ -114,7 +114,7 @@ with the environment variables STOMP_USER, STOMP_PASSWORD.
 
 If you do not specify a port it will default to _61613_
 
-You can also specify the following options for the Stomp gem, these are the defaults in the Stomp 1.1.6 gem:
+You can also specify the following options for the Stomp gem, these are the defaults in the Stomp gem: <!-- last checked: v. 1.1.6 of the gem -->
 
 {% highlight ini %}
 plugin.activemq.initial_reconnect_delay = 0.01
