@@ -10,23 +10,35 @@ module MCollective
       end
 
       describe "#initialize" do
-        it "should replace spaces in the package name with dashes" do
+
+        before do
           AgentDefinition.any_instance.expects(:common)
+        end
+
+        it "should replace spaces in the package name with dashes" do
           agent = AgentDefinition.new(".", "test package", nil, nil, nil, nil, [], {}, "agent")
           agent.metadata[:name].should == "test-package"
         end
 
         it "should set dependencies if present" do
-          AgentDefinition.any_instance.expects(:common)
           agent = AgentDefinition.new(".", "test-package", nil, nil, nil, nil, [:name => "foo", :version => nil], {}, "agent")
           agent.dependencies.should == [{:name => "foo", :version => nil}, {:name => "mcollective-common", :version => nil}]
         end
 
         it "should set mc name and version" do
-          AgentDefinition.any_instance.expects(:common)
           agent = AgentDefinition.new(".", "test-package", nil, nil, nil, nil, [], {:mcname =>"pe-mcollective-common", :mcversion =>"1.2"}, "agent")
           agent.mcname.should == "pe-mcollective-common"
           agent.mcversion.should == "1.2"
+        end
+
+        it "should replace underscored with dashes in the name" do
+          agent = AgentDefinition.new(".", "test_package", nil, nil, nil, nil, [], {:mcname =>"pe-mcollective-common", :mcversion =>"1.2"}, "agent")
+          agent.metadata[:name].should == "test-package"
+        end
+
+        it "should replace whitespaces with a single dash in the name" do
+          agent = AgentDefinition.new(".", "test    package", nil, nil, nil, nil, [], {:mcname =>"pe-mcollective-common", :mcversion =>"1.2"}, "agent")
+          agent.metadata[:name].should == "test-package"
         end
       end
 
