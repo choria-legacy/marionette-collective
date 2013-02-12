@@ -121,6 +121,8 @@ module MCollective
       attr_reader :connection
 
       def initialize
+        Log.info("MCollective 2.2.x will be the last to fully support the 'stomp' connector, please migrate to the 'activemq' or 'rabbitmq' connector")
+
         @config = Config.instance
         @subscriptions = []
       end

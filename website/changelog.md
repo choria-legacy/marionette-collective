@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/02/12|Deprecate the stomp connector|19146|
 |2012/02/07|Read the client config before trying to use any configuration options|19105|
 |*2013/01/17*|*Release 2.2.2*|18258|
 |2013/01/03|Add the package iteration number as a dependency for the common packages|18273|

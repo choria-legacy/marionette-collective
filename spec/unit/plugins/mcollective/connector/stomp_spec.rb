@@ -50,6 +50,11 @@ module MCollective
       end
 
       describe "#initialize" do
+        it "should be deprecated" do
+          Log.expects(:info).with(regexp_matches(/please migrate to the/))
+          Stomp.new
+        end
+
         it "should set the @config variable" do
           c = Stomp.new
           c.instance_variable_get("@config").should == @config
