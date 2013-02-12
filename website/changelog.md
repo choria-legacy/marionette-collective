@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/02/12|Fix package building on certain Debian systems|19141|
 |2012/02/12|Deprecate the stomp connector|19146|
 |2012/02/07|Read the client config before trying to use any configuration options|19105|
 |2012/01/22|Set *=* dependencies on the various packages that form a plugin rather than *>=*|18758|
