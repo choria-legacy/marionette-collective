@@ -132,6 +132,8 @@ module MCollective
               yield(replies)
             end
           end
+        rescue MessagePublishTimeout => e
+          Log.warn("Timeout while publishing message for #{request.agent}: #{e}")
         rescue Timeout::Error => e
           Log.warn("Timeout while handling message for #{request.agent}")
         rescue Exception => e
