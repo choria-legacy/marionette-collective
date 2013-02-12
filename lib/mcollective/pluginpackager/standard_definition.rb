@@ -19,7 +19,7 @@ module MCollective
         @mcname = mcdependency[:mcname] || "mcollective"
         @mcversion = mcdependency[:mcversion] || mcversion
         @dependencies << {:name => "#{mcname}-common", :version => @mcversion}
-        @metadata[:name] = (name || @metadata[:name]).downcase.gsub(" ", "-")
+        @metadata[:name] = (name || @metadata[:name]).downcase.gsub(/\s+|_/, "-")
         identify_packages
       end
 

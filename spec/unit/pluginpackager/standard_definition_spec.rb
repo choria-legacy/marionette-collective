@@ -26,6 +26,16 @@ module MCollective
           plugin.mcname.should == "pe-mcollective"
           plugin.mcversion.should == "1"
         end
+
+        it "should replace underscores with dashes in the name" do
+          plugin = StandardDefinition.new(".", "test_plugin", nil, nil, nil, nil, [], {:mcname => "pe-mcollective", :mcversion => "1"}, "testplugin")
+          plugin.metadata[:name].should == "test-plugin"
+        end
+
+        it "should replace whitespaces with a single dash in the name" do
+          plugin = StandardDefinition.new(".", "test  plugin", nil, nil, nil, nil, [], {:mcname => "pe-mcollective", :mcversion => "1"}, "testplugin")
+          plugin.metadata[:name].should == "test-plugin"
+        end
       end
 
       describe "#identify_packages" do
