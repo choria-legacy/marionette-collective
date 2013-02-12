@@ -151,7 +151,7 @@ module MCollective
       @stomp = Hash.new
       @subscribe = Array.new
       @pluginconf = Hash.new
-      @connector = "Stomp"
+      @connector = "activemq"
       @securityprovider = "Psk"
       @factsource = "Yaml"
       @identity = Socket.gethostname
