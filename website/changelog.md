@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/02/12|Replace underscores in plugin names with dashes to keep Debian happy|19200|
 |2012/02/12|Fix package building on certain Debian systems|19141|
 |2012/02/12|Remove the stomp connector|19146|
 |2012/02/07|Read the client config before trying to use any configuration options|19105|
@@ -46,6 +47,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/02/12|Replace underscores in plugin names with dashes to keep Debian happy|19200|
 |2012/02/12|Fix package building on certain Debian systems|19141|
 |2012/02/12|Deprecate the stomp connector|19146|
 |2012/02/07|Read the client config before trying to use any configuration options|19105|
