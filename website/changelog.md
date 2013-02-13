@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/02/13|Restore the ability to set a discovery timeout on a RPC client|19238|
 |2012/02/12|Replace underscores in plugin names with dashes to keep Debian happy|19200|
 |2012/02/12|Fix package building on certain Debian systems|19141|
 |2012/02/12|Remove the stomp connector|19146|
@@ -47,6 +48,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/02/13|Restore the ability to set a discovery timeout on a RPC client|19238|
 |2012/02/12|Replace underscores in plugin names with dashes to keep Debian happy|19200|
 |2012/02/12|Fix package building on certain Debian systems|19141|
 |2012/02/12|Deprecate the stomp connector|19146|
