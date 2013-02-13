@@ -67,7 +67,7 @@ module MCollective
 
         agent_filter agent
 
-        @discovery_timeout = discovery_timeout
+        @discovery_timeout = @initial_options.fetch(:disctimeout, nil)
 
         @collective = @client.collective
         @ttl = initial_options[:ttl] || Config.instance.ttl
@@ -89,7 +89,7 @@ module MCollective
         # DDLs are required, failure to find a DDL is fatal
         @ddl = DDL.new(agent)
         @stats.ddl = @ddl
-        @timeout = @ddl.meta[:timeout] + @discovery_timeout if @timeout == 5
+        @timeout = @ddl.meta[:timeout] + discovery_timeout if @timeout == 5
 
         # allows stderr and stdout to be overridden for testing
         # but also for web apps that might not want a bunch of stuff
@@ -322,10 +322,38 @@ module MCollective
       end
 
       def discovery_timeout
-        return @initial_options[:disctimeout] if @initial_options[:disctimeout]
+        return @discovery_timeout if @discovery_timeout
         return @client.discoverer.ddl.meta[:timeout]
       end
 
+      def discovery_timeout=(timeout)
+        @discovery_timeout = Float(timeout)
+
+        # we calculate the overall timeout from the DDL of the agent and
+        # the supplied discovery timeout unless someone specifically
+        # specifies a timeout to the constructor
+        #
+        # But if we also then specifically set a discovery_timeout on the
+        # agent that has to override the supplied timeout so we then
+        # calculate a correct timeout based on DDL timeout and the
+        # supplied discovery timeout
+        @timeout = @ddl.meta[:timeout] + discovery_timeout
+      end
+
+      # Sets the discovery method.  If we change the method there are a
+      # number of steps to take:
+      #
+      #  - set the new method
+      #  - if discovery options were provided, re-set those to initially
+      #    provided ones else clear them as they might now apply to a
+      #    different provider
+      #  - update the client options so it knows there is a new discovery
+      #    method in force
+      #  - reset discovery data forcing a discover on the next request
+      #
+      # The remaining item is the discovery timeout, we leave that as is
+      # since that is the user supplied timeout either via initial options
+      # or via specifically setting it on the client.
       def discovery_method=(method)
         @discovery_method = method
 
@@ -336,7 +364,7 @@ module MCollective
         end
 
         @client.options = options
-        @discovery_timeout = discovery_timeout
+
         reset
       end
 
@@ -521,7 +549,7 @@ module MCollective
       # Provides a normal options hash like you would get from
       # Optionparser
       def options
-        {:disctimeout => @discovery_timeout,
+        {:disctimeout => discovery_timeout,
          :timeout => @timeout,
          :verbose => @verbose,
          :filter => @filter,

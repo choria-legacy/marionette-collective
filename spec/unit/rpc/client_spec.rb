@@ -50,6 +50,16 @@ module MCollective
 
           Client.new("foo", :options => {:config => "/nonexisting"})
         end
+
+        it "should default the discovery_timeout to nil" do
+          c = Client.new("rspec", :options => {:config => "/nonexisting"})
+          c.instance_variable_get("@discovery_timeout").should == nil
+        end
+
+        it "should accept a supplied discovery_timeout" do
+          c = Client.new("rspec", :options => {:config => "/nonexisting", :disctimeout => 10})
+          c.instance_variable_get("@discovery_timeout").should == 10
+        end
       end
 
       describe "#process_results_with_block" do
@@ -228,10 +238,16 @@ module MCollective
           @client.discovery_method = "rspec"
         end
 
-        it "should adjust discovery timeout for the new method" do
+        it "should adjust timeout for the new method" do
           @client.expects(:discovery_timeout).once.returns(1)
           @client.discovery_method = "rspec"
-          @client.instance_variable_get("@discovery_timeout").should == 1
+          @client.instance_variable_get("@timeout").should == 4
+        end
+
+        it "should preserve any user supplied discovery timeout" do
+          @client.discovery_timeout = 10
+          @client.discovery_method = "rspec"
+          @client.discovery_timeout.should == 10
         end
 
         it "should reset the rpc client" do
@@ -256,6 +272,21 @@ module MCollective
         it "should return the DDL data if no specific options are supplied" do
           client = Client.new("rspec", {:options => {:disctimeout => nil, :filter => Util.empty_filter, :config => "/nonexisting"}})
           client.discovery_timeout.should == 2
+        end
+      end
+
+      describe "#discovery_timeout=" do
+        it "should store the discovery timeout" do
+          @client.discovery_timeout = 10
+          @client.discovery_timeout.should == 10
+        end
+
+        it "should update the overall timeout with the new discovery timeout" do
+          @client.instance_variable_get("@timeout").should == 4
+
+          @client.discovery_timeout = 10
+
+          @client.instance_variable_get("@timeout").should == 12
         end
       end
 
