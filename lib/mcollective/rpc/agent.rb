@@ -88,7 +88,7 @@ module MCollective
             send("#{@request.action}_action")
           else
             log_code(:PLMC36, "Unknown action '%{action}' for agent '%{agent}'", :warn, :action => @request.action, :agent => @request.agent)
-            raise UnknownRPCAction, "Unknown action '#{@request.action}' for agent '%{@request.agent}'"
+            raise UnknownRPCAction, "Unknown action '#{@request.action}' for agent '#{@request.agent}'"
           end
         rescue RPCAborted => e
           @reply.fail e.to_s, 1

@@ -92,7 +92,7 @@ module MCollective
           @agent.stubs(:respond_to?).with("rspec_action_action").returns(false)
           reply = @agent.handlemsg(@msg, DDL.new)
           reply[:statuscode].should == 2
-          reply[:statusmsg].should == "Unknown action: rspec_action"
+          reply[:statusmsg].should == "Unknown action 'rspec_action' for agent 'rspec_agent'"
         end
 
         it "should handle Missing Data errors" do
