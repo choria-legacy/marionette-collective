@@ -1,6 +1,6 @@
 /*
  * This code is copyrighted work by Daniel Luz <dev at mernen dot com>.
- * 
+ *
  * Distributed under the Ruby and GPLv2 licenses; see COPYING and GPL files
  * for details.
  */
@@ -85,11 +85,11 @@ public final class Generator {
     /**
      * A class that concentrates all the information that is shared by
      * generators working on a single session.
-     * 
+     *
      * <p>A session is defined as the process of serializing a single root
      * object; any handler directly called by container handlers (arrays and
      * hashes/objects) shares this object with its caller.
-     * 
+     *
      * <p>Note that anything called indirectly (via {@link GENERIC_HANDLER})
      * won't be part of the session.
      */
@@ -354,11 +354,7 @@ public final class Generator {
                 state.decreaseDepth();
                 if (objectNl.length() != 0) {
                     buffer.append(objectNl);
-                    if (indent.length != 0) {
-                        for (int i = 0; i < state.getDepth(); i++) {
-                            buffer.append(indent);
-                        }
-                    }
+                    buffer.append(Utils.repeat(state.getIndent(), state.getDepth()));
                 }
                 buffer.append((byte)'}');
             }
@@ -380,9 +376,9 @@ public final class Generator {
                 RubyString src;
 
                 if (info.encodingsSupported() &&
-                        object.encoding(session.getContext()) != info.utf8) {
+                        object.encoding(session.getContext()) != info.utf8.get()) {
                     src = (RubyString)object.encode(session.getContext(),
-                                                    info.utf8);
+                                                    info.utf8.get());
                 } else {
                     src = object;
                 }

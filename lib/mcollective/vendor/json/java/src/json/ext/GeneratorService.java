@@ -1,12 +1,13 @@
 /*
  * This code is copyrighted work by Daniel Luz <dev at mernen dot com>.
- * 
+ *
  * Distributed under the Ruby and GPLv2 licenses; see COPYING and GPL files
  * for details.
  */
 package json.ext;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 import org.jruby.Ruby;
 import org.jruby.RubyClass;
@@ -23,15 +24,15 @@ public class GeneratorService implements BasicLibraryService {
         runtime.getLoadService().require("json/common");
         RuntimeInfo info = RuntimeInfo.initRuntime(runtime);
 
-        info.jsonModule = runtime.defineModule("JSON");
-        RubyModule jsonExtModule = info.jsonModule.defineModuleUnder("Ext");
+        info.jsonModule = new WeakReference<RubyModule>(runtime.defineModule("JSON"));
+        RubyModule jsonExtModule = info.jsonModule.get().defineModuleUnder("Ext");
         RubyModule generatorModule = jsonExtModule.defineModuleUnder("Generator");
 
         RubyClass stateClass =
             generatorModule.defineClassUnder("State", runtime.getObject(),
                                              GeneratorState.ALLOCATOR);
         stateClass.defineAnnotatedMethods(GeneratorState.class);
-        info.generatorStateClass = stateClass;
+        info.generatorStateClass = new WeakReference<RubyClass>(stateClass);
 
         RubyModule generatorMethods =
             generatorModule.defineModuleUnder("GeneratorMethods");

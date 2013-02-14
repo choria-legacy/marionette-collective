@@ -11,6 +11,8 @@ title: Changelog
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|*2013/03/14*|*Release 2.0.1*|19265|
+|2013/02/14|Update vendored JSON gem for CVE-2013-0269|19265|
 |2012/05/04|Improve version dependencies and upgrade experience of debian packages|14277|
 |*2012/04/30*|*Release 2.0.0*|13900|
 
