@@ -50,10 +50,12 @@ EOT
     parsed_json = parse(json)
     assert_equal({"1"=>2}, parsed_json)
     assert_raise(GeneratorError) { generate(666) }
+    assert_equal '666', generate(666, :quirks_mode => true)
   end
 
   def test_generate_pretty
     json = pretty_generate(@hash)
+    # hashes aren't (insertion) ordered on every ruby implementation assert_equal(@json3, json)
     assert_equal(JSON.parse(@json3), JSON.parse(json))
     parsed_json = parse(json)
     assert_equal(@hash, parsed_json)
@@ -66,6 +68,7 @@ EOT
     parsed_json = parse(json)
     assert_equal({"1"=>2}, parsed_json)
     assert_raise(GeneratorError) { pretty_generate(666) }
+    assert_equal '666', pretty_generate(666, :quirks_mode => true)
   end
 
   def test_fast_generate
@@ -78,9 +81,24 @@ EOT
     parsed_json = parse(json)
     assert_equal({"1"=>2}, parsed_json)
     assert_raise(GeneratorError) { fast_generate(666) }
+    assert_equal '666', fast_generate(666, :quirks_mode => true)
   end
 
-
+  def test_own_state
+    state = State.new
+    json = generate(@hash, state)
+    assert_equal(JSON.parse(@json2), JSON.parse(json))
+    parsed_json = parse(json)
+    assert_equal(@hash, parsed_json)
+    json = generate({1=>2}, state)
+    assert_equal('{"1":2}', json)
+    parsed_json = parse(json)
+    assert_equal({"1"=>2}, parsed_json)
+    assert_raise(GeneratorError) { generate(666, state) }
+    state.quirks_mode = true
+    assert state.quirks_mode?
+    assert_equal '666', generate(666, state)
+  end
 
   def test_states
     json = generate({1=>2}, nil)
@@ -103,46 +121,49 @@ EOT
   def test_pretty_state
     state = PRETTY_STATE_PROTOTYPE.dup
     assert_equal({
-                   :allow_nan    => false,
-                   :array_nl     => "\n",
-                   :ascii_only   => false,
-                   :depth        => 0,
-                   :indent       => "  ",
-                   :max_nesting  => 19,
-                   :object_nl    => "\n",
-                   :space        => " ",
-                   :space_before => "",
-                 }.sort_by { |n,| n.to_s }, state.to_h.sort_by { |n,| n.to_s })
+      :allow_nan    => false,
+      :array_nl     => "\n",
+      :ascii_only   => false,
+      :quirks_mode  => false,
+      :depth        => 0,
+      :indent       => "  ",
+      :max_nesting  => 19,
+      :object_nl    => "\n",
+      :space        => " ",
+      :space_before => "",
+    }.sort_by { |n,| n.to_s }, state.to_h.sort_by { |n,| n.to_s })
   end
 
   def test_safe_state
     state = SAFE_STATE_PROTOTYPE.dup
     assert_equal({
-                   :allow_nan    => false,
-                   :array_nl     => "",
-                   :ascii_only   => false,
-                   :depth        => 0,
-                   :indent       => "",
-                   :max_nesting  => 19,
-                   :object_nl    => "",
-                   :space        => "",
-                   :space_before => "",
-                 }.sort_by { |n,| n.to_s }, state.to_h.sort_by { |n,| n.to_s })
+      :allow_nan    => false,
+      :array_nl     => "",
+      :ascii_only   => false,
+      :quirks_mode  => false,
+      :depth        => 0,
+      :indent       => "",
+      :max_nesting  => 19,
+      :object_nl    => "",
+      :space        => "",
+      :space_before => "",
+    }.sort_by { |n,| n.to_s }, state.to_h.sort_by { |n,| n.to_s })
   end
 
   def test_fast_state
     state = FAST_STATE_PROTOTYPE.dup
     assert_equal({
-                   :allow_nan    => false,
-                   :array_nl     => "",
-                   :ascii_only   => false,
-                   :depth        => 0,
-                   :indent       => "",
-                   :max_nesting  => 0,
-                   :object_nl    => "",
-                   :space        => "",
-                   :space_before => "",
-                 }.sort_by { |n,| n.to_s }, state.to_h.sort_by { |n,| n.to_s })
+      :allow_nan    => false,
+      :array_nl     => "",
+      :ascii_only   => false,
+      :quirks_mode  => false,
+      :depth        => 0,
+      :indent       => "",
+      :max_nesting  => 0,
+      :object_nl    => "",
+      :space        => "",
+      :space_before => "",
+    }.sort_by { |n,| n.to_s }, state.to_h.sort_by { |n,| n.to_s })
   end
 
   def test_allow_nan
@@ -176,4 +197,17 @@ EOT
     assert_raises(JSON::NestingError) { ary.to_json(s) }
     assert_equal 19, s.depth
   end
+
+  def test_gc
+    bignum_too_long_to_embed_as_string = 1234567890123456789012345
+    expect = bignum_too_long_to_embed_as_string.to_s
+    stress, GC.stress = GC.stress, true
+
+    10.times do |i|
+      tmp = bignum_too_long_to_embed_as_string.to_json
+      assert_equal expect, tmp
+    end
+  ensure
+    GC.stress = stress
+  end if GC.respond_to?(:stress=)
 end

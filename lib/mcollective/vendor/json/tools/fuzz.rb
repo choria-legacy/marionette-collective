@@ -60,21 +60,21 @@ class Fuzzer
         while @n > 0
           @n -= 1
           current << case p = make_pick
-                     when Array, Hash
-                       fuzz(p)
-                     else
-                       p
-                     end
+          when Array, Hash
+            fuzz(p)
+          else
+            p
+          end
         end
       when Hash
         while @n > 0
           @n -= 1
           current[random_string] = case p = make_pick
-                                   when Array, Hash
-                                     fuzz(p)
-                                   else
-                                     p
-                                   end
+          when Array, Hash
+            fuzz(p)
+          else
+            p
+          end
         end
       end
     end
@@ -93,7 +93,7 @@ class MyState < JSON.state
           :object_nl    => make_spaces,
           :array_nl     => make_spaces,
           :max_nesting  => false
-          )
+         )
   end
 
   def make_spaces
@@ -114,13 +114,13 @@ loop do
                       nil => 5,
                       true => 5,
                       false => 5
-                      )
+                     )
   o1 = fuzzer.fuzz
   json = JSON.generate o1, MyState.new
   if $DEBUG
     puts "-" * 80
     puts json, json.size
-  else 
+  else
     puts json.size
   end
   begin
@@ -133,7 +133,7 @@ loop do
   end
   if o1 != o2
     puts "mismatch", "o1 = #{o1.inspect}", "o2 = #{o2.inspect}",
-    "json = #{json}", "json_str = #{json.inspect}"
+      "json = #{json}", "json_str = #{json.inspect}"
     puts "locals = #{local_variables.inspect}"
   end
 end
