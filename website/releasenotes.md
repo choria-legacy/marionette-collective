@@ -8,6 +8,132 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_3_1">&nbsp;</a>
+
+## 2.3.1 - 2012/02/14
+
+This is the second release in the new development series of MCollective.  This
+release features enhancements and bug fixes.
+
+This release is for early adopters, production users should consider the 2.2.x
+series.
+
+### New Features and Improvements
+
+ * Initial work towards online help, improved logging and internationalization
+ * The output from *--help* has been made clearer
+ * The output of a failed reply in the default *printrpc* method has been improved
+
+### Bug Fixes
+
+ * The vendored JSON gem was updated to version 1.5.5 due to CVE-2013-0269
+ * The RPC client inadvertently lost the ability to set discovery_timeout, this has been restored
+ * Plugins with underscores in their name were not packagable on Debian, we now change underscores to dashes
+ * The STOMP connector will not be maintained further and has been removed
+ * A config file reading race condition were fixed, we no longer attempt to use config details before parsing the config file thus always using defaults.
+ * Dependencies on packaged plugins have been made more specific to ensure updates work correctly
+ * When an argument to the rpc application fails to parse the command will fail instead of continue with unexpected side effects
+ * Processing of *--no-response* was broken in 2.3.0, this has been fixed
+
+### Removed Functionality
+
+ * The STOMP adapter has been deprecated and removed
+
+### Online Help and Internationalization
+
+Starting in this release a number of errors and messages will start showing error codes along
+with the error text and we have a method for obtaining detailed information about each coded
+message.
+
+An example log line can be seen here:
+
+{% highlight console %}
+puppetd.rb:26 PLMC34: setting meta data in agents have been deprecated, DDL files are now being used for this information. Please update the 'puppetd.rb' agent
+{% endhighlight %}
+
+And an example CLI error string:
+
+{% highlight console %}
+% mco rpc rpcutil get_fact
+
+The rpc application failed to run: PLMC30: Action 'get_fact' needs a 'fact' argument
+
+Use the 'mco doc PLMC30' command for details about this error, use -v for full error backtrace details
+{% endhighlight %}
+
+You can now use the *mco doc PLMC30* command to get additional information about this error
+and any other error code you might see.
+
+Only a small number of errors and log lines have been updated for the new system and
+we will soon publish web versions of these help documents too which should help when
+searching for resolution to common errors.
+
+### Changes since 2.3.0
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|*2013/02/14*|*Release 2.3.1*|19265|
+|2012/02/14|Initial work towards internationalization and online help|18663|
+|2013/02/14|Update vendored JSON gem for CVE-2013-0269|19265|
+|2012/02/13|Restore the ability to set a discovery timeout on a RPC client|19238|
+|2012/02/12|Replace underscores in plugin names with dashes to keep Debian happy|19200|
+|2012/02/12|Fix package building on certain Debian systems|19141|
+|2012/02/12|Remove the stomp connector|19146|
+|2012/02/07|Read the client config before trying to use any configuration options|19105|
+|2012/01/22|When an argument fails to parse in the rpc application fail rather than continue with unintended consequences|18773|
+|2012/01/22|The fix the *--no-response* argument to the rpc application that broke due to 18438|18513|
+|2012/01/22|Set *=* dependencies on the various packages that form a plugin rather than *>=*|18758|
+|2012/01/21|Improve presentation of the --help output for applications|18447|
+|2012/01/21|When a request failed via *reply.fail*, only show the message and not the half built data|18434|
+
+<a name="2_2_3">&nbsp;</a>
+
+## 2.2.3 - 2012/02/14
+
+This is a maintenance release to the current production version of MCollective.
+This release is a bug fix only release.
+
+### Bug Fixes
+
+ * The vendored JSON gem was updated to version 1.5.5 due to CVE-2013-0269
+ * The RPC client inadvertently lost the ability to set discovery_timeout, this has been restored
+ * Plugins with underscores in their name were not packagable on Debian, we now change underscores to dashes
+ * The STOMP adapter will not be maintained past this release series, we now issue deprecation warnigns
+ * A config file reading race condition were fixed, we no longer attempt to use config details before parsing the config file thus always using defaults.
+ * Dependencies on packaged plugins have been made more specific to ensure updates work correctly
+
+### Backwards Compatibility and Upgrading
+
+This release should be 100% backwards compatible with 2.2.0, 2.2.1 and 2.2.2, when upgrading
+from earlier releases please review the Release notes for 2.0.0.
+
+If you packaged any plugins with a underscore in their name, future packages will have a dash
+instead, this might cause upgrade problems.
+
+We are deprecating the STOMP connector, if you are using this connector please consider moving to the
+ActiveMQ or RabbitMQ specific ones.
+
+### Changes since 2.2.2
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|*2013/02/14*|*Release 2.2.3*|19265|
+|2013/02/14|Update vendored JSON gem for CVE-2013-0269|19265|
+|2012/02/13|Restore the ability to set a discovery timeout on a RPC client|19238|
+|2012/02/12|Replace underscores in plugin names with dashes to keep Debian happy|19200|
+|2012/02/12|Fix package building on certain Debian systems|19141|
+|2012/02/12|Deprecate the stomp connector|19146|
+|2012/02/07|Read the client config before trying to use any configuration options|19105|
+|2012/01/22|Set *=* dependencies on the various packages that form a plugin rather than *>=*|18758|
+
+<a name="2_0_1">&nbsp;</a>
+
+## 2.0.1 - 2012/02/14
+
+This is a maintenance release against our unsupported past production release, it brings no
+visible changes or bug fixes we only updated the vendored JSON gem to version 1.5.5 due to
+CVE-2013-0269
+
 <a name="2_2_2">&nbsp;</a>
 
 ## 2.2.2 - 2013/01/17
@@ -31,7 +157,7 @@ This release is a bug fix only release.
 This release should be 100% backwards compatible with 2.2.0 and 2.2.1, when upgrading
 from earlier releases please review the Release notes for 2.0.0.
 
-### Changes since 2.2.0
+### Changes since 2.2.1
 
 |Date|Description|Ticket|
 |----|-----------|------|
