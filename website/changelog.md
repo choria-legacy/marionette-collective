@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/02/14|Update vendored JSON gem for CVE-2013-0269|19265|
 |2012/02/13|Restore the ability to set a discovery timeout on a RPC client|19238|
 |2012/02/12|Replace underscores in plugin names with dashes to keep Debian happy|19200|
 |2012/02/12|Fix package building on certain Debian systems|19141|
@@ -48,6 +49,8 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|*2013/02/14*|*Release 2.2.3*|19265|
+|2013/02/14|Update vendored JSON gem for CVE-2013-0269|19265|
 |2012/02/13|Restore the ability to set a discovery timeout on a RPC client|19238|
 |2012/02/12|Replace underscores in plugin names with dashes to keep Debian happy|19200|
 |2012/02/12|Fix package building on certain Debian systems|19141|
@@ -142,6 +145,8 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|*2013/02/14*|*Release 2.0.1*|19265|
+|2013/02/14|Update vendored JSON gem for CVE-2013-0269|19265|
 |2012/05/04|Improve version dependencies and upgrade experience of debian packages|14277|
 |*2012/04/30*|*Release 2.0.0*|13900|
 
