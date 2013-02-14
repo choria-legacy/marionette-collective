@@ -126,8 +126,8 @@ And we need to tell ActiveMQ to only accept fully verified connections:
 
 {% highlight xml %}
 <transportConnectors>
-    <transportConnector name="openwire" uri="tcp://0.0.0.0:6166"/>
-    <transportConnector name="stompssl" uri="stomp+ssl://0.0.0.0:6164?needClientAuth=true"/>
+    <transportConnector name="openwire" uri="tcp://0.0.0.0:61616"/>
+    <transportConnector name="stompssl" uri="stomp+ssl://0.0.0.0:61614?needClientAuth=true"/>
 </transportConnectors>
 {% endhighlight %}
 
@@ -144,7 +144,7 @@ connector = activemq
 plugin.activemq.base64 = yes
 plugin.activemq.pool.size = 2
 plugin.activemq.pool.1.host = stomp.my.net
-plugin.activemq.pool.1.port = 6164
+plugin.activemq.pool.1.port = 61614
 plugin.activemq.pool.1.user = mcollective
 plugin.activemq.pool.1.password = secret
 plugin.activemq.pool.1.ssl = 1
@@ -186,7 +186,7 @@ connector = activemq
 plugin.activemq.base64 = yes
 plugin.activemq.pool.size = 2
 plugin.activemq.pool.1.host = stomp.my.net
-plugin.activemq.pool.1.port = 6164
+plugin.activemq.pool.1.port = 61614
 plugin.activemq.pool.1.user = ripienaar
 plugin.activemq.pool.1.password = secret
 plugin.activemq.pool.1.ssl = 1
@@ -259,13 +259,13 @@ _activemq.xml_ file:
 </sslContext>
 {% endhighlight %}
 
-And you should add a SSL stomp listener, you should get port 6164 opened:
+And you should add a SSL stomp listener, you should get port 61614 opened:
 
 {% highlight xml %}
 <transportConnectors>
-    <transportConnector name="openwire" uri="tcp://0.0.0.0:6166"/>
-    <transportConnector name="stomp" uri="stomp://0.0.0.0:6163"/>
-    <transportConnector name="stompssl" uri="stomp+ssl://0.0.0.0:6164"/>
+    <transportConnector name="openwire" uri="tcp://0.0.0.0:61616"/>
+    <transportConnector name="stomp" uri="stomp://0.0.0.0:61613"/>
+    <transportConnector name="stompssl" uri="stomp+ssl://0.0.0.0:61614"/>
 </transportConnectors>
 {% endhighlight %}
 
@@ -278,7 +278,7 @@ in your pool:
 {% highlight ini %}
 plugin.stomp.pool.size = 1
 plugin.stomp.pool.host1 = stomp.your.com
-plugin.stomp.pool.port1 = 6164
+plugin.stomp.pool.port1 = 61614
 plugin.stomp.pool.user1 = mcollective
 plugin.stomp.pool.password1 = secret
 plugin.stomp.pool.ssl1 = true

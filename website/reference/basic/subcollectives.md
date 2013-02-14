@@ -183,7 +183,7 @@ network connections, something like:
 <networkConnectors>
   <networkConnector
      name="us-uk"
-     uri="static:(tcp://stomp1.uk.my.net:6166)"
+     uri="static:(tcp://stomp1.uk.my.net:61616)"
      userName="amq"
      password="secret"
      duplex="true" />
@@ -197,7 +197,7 @@ should never transmit _us`_`collective_ traffic, so lets restrict that:
 <networkConnectors>
   <networkConnector
      name="us-uk"
-     uri="static:(tcp://stomp1.uk.my.net:6166)"
+     uri="static:(tcp://stomp1.uk.my.net:61616)"
      userName="amq"
      password="secret"
      duplex="true">

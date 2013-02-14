@@ -55,7 +55,7 @@ we dedicate a bi-directional connection for these queues leaving the other just 
 <networkConnectors>
   <networkConnector
         name="stomp1-stomp2-topics"
-        uri="static:(tcp://stomp2.xx.net:6166)"
+        uri="static:(tcp://stomp2.xx.net:61616)"
         userName="amq"
         password="secret"
         duplex="true"
@@ -68,7 +68,7 @@ we dedicate a bi-directional connection for these queues leaving the other just 
   </networkConnector>
   <networkConnector
         name="stomp1-stomp2-queues"
-        uri="static:(tcp://stomp2.xx.net:6166)"
+        uri="static:(tcp://stomp2.xx.net:61616)"
         userName="amq"
         password="secret"
         duplex="true"
@@ -99,12 +99,12 @@ A sample configuration can be seen below.  Note this plugin does not support the
 connector = activemq
 plugin.activemq.pool.size = 2
 plugin.activemq.pool.1.host = stomp1
-plugin.activemq.pool.1.port = 6163
+plugin.activemq.pool.1.port = 61613
 plugin.activemq.pool.1.user = me
 plugin.activemq.pool.1.password = secret
 
 plugin.activemq.pool.2.host = stomp2
-plugin.activemq.pool.2.port = 6163
+plugin.activemq.pool.2.port = 61613
 plugin.activemq.pool.2.user = me
 plugin.activemq.pool.2.password = secret
 {% endhighlight %}

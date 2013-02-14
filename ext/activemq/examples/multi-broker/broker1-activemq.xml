@@ -30,7 +30,7 @@
           <!-- broker1 -> broker2 -->
           <networkConnector
                 name="broker1-broker2-topics"
-                uri="static:(tcp://broker2:6166)"
+                uri="static:(tcp://broker2:61616)"
                 userName="amq"
                 password="secret"
                 duplex="true"
@@ -43,7 +43,7 @@
           </networkConnector>
           <networkConnector
                 name="broker1-broker2-queues"
-                uri="static:(tcp://broker2:6166)"
+                uri="static:(tcp://broker2:61616)"
                 userName="amq"
                 password="secret"
                 duplex="true"
@@ -59,7 +59,7 @@
           <!-- broker1 -> broker3 -->
           <networkConnector
                 name="broker1-broker3-topics"
-                uri="static:(tcp://broker3:6166)"
+                uri="static:(tcp://broker3:61616)"
                 userName="amq"
                 password="secret"
                 duplex="true"
@@ -72,7 +72,7 @@
           </networkConnector>
           <networkConnector
                 name="broker1-broker3-queues"
-                uri="static:(tcp://broker3:6166)"
+                uri="static:(tcp://broker3:61616)"
                 userName="amq"
                 password="secret"
                 duplex="true"
@@ -125,8 +125,8 @@
         </systemUsage>
 
         <transportConnectors>
-            <transportConnector name="openwire" uri="tcp://0.0.0.0:6166"/>
-            <transportConnector name="stomp" uri="stomp://0.0.0.0:6163"/>
+            <transportConnector name="openwire" uri="tcp://0.0.0.0:61616"/>
+            <transportConnector name="stomp" uri="stomp://0.0.0.0:61613"/>
         </transportConnectors>
     </broker>
     <import resource="jetty.xml"/>

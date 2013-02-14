@@ -56,12 +56,12 @@ connector = rabbitmq
 plugin.rabbitmq.vhost = /mcollective
 plugin.rabbitmq.pool.size = 2
 plugin.rabbitmq.pool.1.host = rabbit1
-plugin.rabbitmq.pool.1.port = 6163
+plugin.rabbitmq.pool.1.port = 61613
 plugin.rabbitmq.pool.1.user = mcollective
 plugin.rabbitmq.pool.1.password = changeme
 
 plugin.rabbitmq.pool.2.host = rabbit2
-plugin.rabbitmq.pool.2.port = 6163
+plugin.rabbitmq.pool.2.port = 61613
 plugin.rabbitmq.pool.2.user = mcollective
 plugin.rabbitmq.pool.2.password = changeme
 {% endhighlight %}

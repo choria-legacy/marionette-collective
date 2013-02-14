@@ -34,7 +34,7 @@ The most basic configuration method is supported in all versions of the gem:
 connector = stomp
 plugin.stomp.base64 = false
 plugin.stomp.host = stomp.my.net
-plugin.stomp.port = 6163
+plugin.stomp.port = 61613
 plugin.stomp.user = me
 plugin.stomp.password = secret
 {% endhighlight %}
@@ -53,12 +53,12 @@ logging about connections, failures and other significant events.
 connector = stomp
 plugin.stomp.pool.size = 2
 plugin.stomp.pool.host1 = stomp1
-plugin.stomp.pool.port1 = 6163
+plugin.stomp.pool.port1 = 61613
 plugin.stomp.pool.user1 = me
 plugin.stomp.pool.password1 = secret
 
 plugin.stomp.pool.host2 = stomp2
-plugin.stomp.pool.port2 = 6163
+plugin.stomp.pool.port2 = 61613
 plugin.stomp.pool.user2 = me
 plugin.stomp.pool.password2 = secret
 {% endhighlight %}

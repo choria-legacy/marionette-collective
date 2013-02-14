@@ -129,7 +129,7 @@ And then you should add a user or two, to keep it simple we'll just add one user
         </systemUsage>
 
         <transportConnectors>
-            <transportConnector name="openwire" uri="tcp://0.0.0.0:6166"/>
+            <transportConnector name="openwire" uri="tcp://0.0.0.0:61616"/>
             <transportConnector name="stomp" uri="stomp://0.0.0.0:61613"/>
         </transportConnectors>
     </broker>

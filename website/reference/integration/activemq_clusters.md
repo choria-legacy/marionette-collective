@@ -63,8 +63,8 @@ First you should configure transport for that each ActiveMQ will listen on, this
       dataDirectory="${activemq.base}/data">
 
       <transportConnectors>
-         <transportConnector name="openwire" uri="tcp://0.0.0.0:6166"/>
-         <transportConnector name="stomp"   uri="stomp://0.0.0.0:6163"/>
+         <transportConnector name="openwire" uri="tcp://0.0.0.0:61616"/>
+         <transportConnector name="stomp"   uri="stomp://0.0.0.0:61613"/>
       </transportConnectors>
 {% endhighlight %}
 
@@ -77,7 +77,7 @@ Next up you should configure the _networkConnectors_:
 
 {%highlight xml linenos %}
     <networkConnectors>
-       <networkConnector name="noc1-dc1amq1" uri="static:(tcp://192.168.1.10:6166)" userName="amq" password="Afuphohxoh" duplex="true"/>
+       <networkConnector name="noc1-dc1amq1" uri="static:(tcp://192.168.1.10:61616)" userName="amq" password="Afuphohxoh" duplex="true"/>
     </networkConnectors>
 {% endhighlight %}
 
