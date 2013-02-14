@@ -9,11 +9,12 @@ loglevel = warn
 securityprovider = psk
 plugin.psk = unset
 
-connector = stomp
-plugin.stomp.host = localhost
-plugin.stomp.port = 61613
-plugin.stomp.user = mcollective
-plugin.stomp.password = secret
+connector = activemq
+plugin.activemq.pool.size = 1
+plugin.activemq.pool.1.host = stomp1
+plugin.activemq.pool.1.port = 6163
+plugin.activemq.pool.1.user = mcollective
+plugin.activemq.pool.1.password = marionette
 
 # Facts
 factsource = yaml

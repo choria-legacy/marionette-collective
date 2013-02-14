@@ -18,11 +18,12 @@ diff -urNad mcollective-0.4.1~/etc/client.cfg mcollective-0.4.1/etc/client.cfg
 +securityprovider = psk
 +plugin.psk = unset
 +
-+connector = stomp
-+plugin.stomp.host = stomp.example.com
-+plugin.stomp.port = 6163
-+plugin.stomp.user = mcollective
-+plugin.stomp.password = marionette
++connector = activemq
++plugin.activemq.pool.size = 1
++plugin.activemq.pool.1.host = stomp1
++plugin.activemq.pool.1.port = 6163
++plugin.activemq.pool.1.user = mcollective
++plugin.activemq.pool.1.password = marionette
 +
 +# Facts
 +factsource = yaml
@@ -77,11 +78,12 @@ diff -urNad mcollective-0.4.1~/etc/server.cfg mcollective-0.4.1/etc/server.cfg
 +securityprovider = psk
 +plugin.psk = unset
 +
-+connector = stomp
-+plugin.stomp.host = stomp.example.com
-+plugin.stomp.port = 6163
-+plugin.stomp.user = mcollective
-+plugin.stomp.password = marionette
++connector = activemq
++plugin.activemq.pool.size = 1
++plugin.activemq.pool.1.host = stomp1
++plugin.activemq.pool.1.port = 6163
++plugin.activemq.pool.1.user = mcollective
++plugin.activemq.pool.1.password = marionette
 +
 +# Facts
 +factsource = yaml

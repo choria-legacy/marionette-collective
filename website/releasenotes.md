@@ -68,6 +68,12 @@ Only a small number of errors and log lines have been updated for the new system
 we will soon publish web versions of these help documents too which should help when
 searching for resolution to common errors.
 
+### Backwards Compatibility and Upgrading
+
+The STOMP connector has been removed, if you are using it please move to the RabbitMQ
+or ActiveMQ one before upgrading.  Especially if you use Debian which would avoid the
+package upgrading from failing
+
 ### Changes since 2.3.0
 
 |Date|Description|Ticket|
