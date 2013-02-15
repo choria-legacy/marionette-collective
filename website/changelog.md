@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2012/02/15|Validate arguments supplied to the RPC application and raise errors sooner|19181|
 |*2013/02/14*|*Release 2.3.1*|19265|
 |2012/02/14|Initial work towards internationalization and online help|18663|
 |2013/02/14|Update vendored JSON gem for CVE-2013-0269|19265|

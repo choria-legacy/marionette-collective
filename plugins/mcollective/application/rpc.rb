@@ -84,6 +84,8 @@ class MCollective::Application::Rpc<MCollective::Application
 
     string_to_ddl_type(configuration[:arguments], mc.ddl.action_interface(configuration[:action])) if mc.ddl
 
+    mc.validate_request(configuration[:action], configuration[:arguments])
+
     if mc.reply_to
       configuration[:arguments][:process_results] = true
 
