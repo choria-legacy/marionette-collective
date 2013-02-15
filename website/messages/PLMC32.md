@@ -4,9 +4,6 @@ title: Message detail for PLMC32
 toc: false
 ---
 
-Detail for Marionette Collective message PLMC32
-===========================================
-
 Example Message
 ---------------
 

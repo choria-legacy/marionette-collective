@@ -6,7 +6,7 @@ title: Node Reports
 
 As we have all facts, classes and agents for nodes we can do some custom reporting on all of these.
 
-The _mc inventory_ tool is a generic node and network reporting tool, it has basic scripting abilities.
+The _mco inventory_ tool is a generic node and network reporting tool, it has basic scripting abilities.
 
 **Note: This is an emerging feature, the scripting language is likely to change**
 
@@ -55,7 +55,7 @@ We have a concept of [Subcollectives] and you can use the inventory application 
 report on all known collectives:
 
 {% highlight console %}
-$ mc inventory --list-collectives
+$ mco inventory --list-collectives
 
  * [ ===================================== ] 52 / 52
 
@@ -77,7 +77,7 @@ $ mc inventory --list-collectives
 You can also create a DOT format graph of your collective:
 
 {% highlight console %}
-$ mc inventory --collective-graph collective.dot
+$ mco inventory --collective-graph collective.dot
 
 Retrieving collective info....
 Graph of 52 nodes has been written to collective.dot

@@ -4,9 +4,6 @@ title: Message detail for PLMC24
 toc: false
 ---
 
-Detail for Marionette Collective message PLMC24
-===========================================
-
 Example Message
 ---------------
 

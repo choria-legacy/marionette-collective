@@ -224,9 +224,6 @@ task :update_msgweb do
       md.puts "toc: false"
       md.puts "---"
       md.puts
-      md.puts "Detail for Marionette Collective message %s" % msg_code
-      md.puts "==========================================="
-      md.puts
       md.puts "Example Message"
       md.puts "---------------"
       md.puts
