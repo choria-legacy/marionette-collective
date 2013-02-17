@@ -10,7 +10,7 @@ will be highlighted here.
 
 <a name="2_3_1">&nbsp;</a>
 
-## 2.3.1 - 2012/02/14
+## 2.3.1 - 2013/02/14
 
 This is the second release in the new development series of MCollective.  This
 release features enhancements and bug fixes.
@@ -79,22 +79,22 @@ package upgrading from failing
 |Date|Description|Ticket|
 |----|-----------|------|
 |*2013/02/14*|*Release 2.3.1*|19265|
-|2012/02/14|Initial work towards internationalization and online help|18663|
+|2013/02/14|Initial work towards internationalization and online help|18663|
 |2013/02/14|Update vendored JSON gem for CVE-2013-0269|19265|
-|2012/02/13|Restore the ability to set a discovery timeout on a RPC client|19238|
-|2012/02/12|Replace underscores in plugin names with dashes to keep Debian happy|19200|
-|2012/02/12|Fix package building on certain Debian systems|19141|
-|2012/02/12|Remove the stomp connector|19146|
-|2012/02/07|Read the client config before trying to use any configuration options|19105|
-|2012/01/22|When an argument fails to parse in the rpc application fail rather than continue with unintended consequences|18773|
-|2012/01/22|The fix the *--no-response* argument to the rpc application that broke due to 18438|18513|
-|2012/01/22|Set *=* dependencies on the various packages that form a plugin rather than *>=*|18758|
-|2012/01/21|Improve presentation of the --help output for applications|18447|
-|2012/01/21|When a request failed via *reply.fail*, only show the message and not the half built data|18434|
+|2013/02/13|Restore the ability to set a discovery timeout on a RPC client|19238|
+|2013/02/12|Replace underscores in plugin names with dashes to keep Debian happy|19200|
+|2013/02/12|Fix package building on certain Debian systems|19141|
+|2013/02/12|Remove the stomp connector|19146|
+|2013/02/07|Read the client config before trying to use any configuration options|19105|
+|2013/01/22|When an argument fails to parse in the rpc application fail rather than continue with unintended consequences|18773|
+|2013/01/22|The fix the *--no-response* argument to the rpc application that broke due to 18438|18513|
+|2013/01/22|Set *=* dependencies on the various packages that form a plugin rather than *>=*|18758|
+|2013/01/21|Improve presentation of the --help output for applications|18447|
+|2013/01/21|When a request failed via *reply.fail*, only show the message and not the half built data|18434|
 
 <a name="2_2_3">&nbsp;</a>
 
-## 2.2.3 - 2012/02/14
+## 2.2.3 - 2013/02/14
 
 This is a maintenance release to the current production version of MCollective.
 This release is a bug fix only release.
@@ -125,16 +125,16 @@ ActiveMQ or RabbitMQ specific ones.
 |----|-----------|------|
 |*2013/02/14*|*Release 2.2.3*|19265|
 |2013/02/14|Update vendored JSON gem for CVE-2013-0269|19265|
-|2012/02/13|Restore the ability to set a discovery timeout on a RPC client|19238|
-|2012/02/12|Replace underscores in plugin names with dashes to keep Debian happy|19200|
-|2012/02/12|Fix package building on certain Debian systems|19141|
-|2012/02/12|Deprecate the stomp connector|19146|
-|2012/02/07|Read the client config before trying to use any configuration options|19105|
-|2012/01/22|Set *=* dependencies on the various packages that form a plugin rather than *>=*|18758|
+|2013/02/13|Restore the ability to set a discovery timeout on a RPC client|19238|
+|2013/02/12|Replace underscores in plugin names with dashes to keep Debian happy|19200|
+|2013/02/12|Fix package building on certain Debian systems|19141|
+|2013/02/12|Deprecate the stomp connector|19146|
+|2013/02/07|Read the client config before trying to use any configuration options|19105|
+|2013/01/22|Set *=* dependencies on the various packages that form a plugin rather than *>=*|18758|
 
 <a name="2_0_1">&nbsp;</a>
 
-## 2.0.1 - 2012/02/14
+## 2.0.1 - 2013/02/14
 
 This is a maintenance release against our unsupported past production release, it brings no
 visible changes or bug fixes we only updated the vendored JSON gem to version 1.5.5 due to
