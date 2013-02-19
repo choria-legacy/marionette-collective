@@ -18,15 +18,14 @@ title: Getting Started
 [ControllingTheDaemon]: /mcollective/reference/basic/daemon.html
 [SSLSecurityPlugin]: /mcollective/reference/plugins/security_ssl.html
 [AESSecurityPlugin]: /mcollective/reference/plugins/security_aes.html
-[ConnectorStomp]: /mcollective/reference/plugins/connector_stomp.html
+[ConnectorActiveMQ]: /mcollective/reference/plugins/connector_activemq.html
+[ConnectorRabbitMQ]: /mcollective/reference/plugins/connector_rabbitmq.html
 [MessageFlowCast]: /mcollective/screencasts.html#message_flow
 [Plugins]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki
 [MCDownloads]: http://www.puppetlabs.com/downloads/mcollective/
 [EPEL]: http://fedoraproject.org/wiki/EPEL
 
 Getting started using Red Hat based distribution like Red Hat Enterprise Linux and CentOS is easy as RPMs are available for all the required components.  This guide walks you through the process.
-
-If you just want to experiment with the system please try our [EC2 based demo][EC2Demo].  You should be familiar with the architecture and terminology of Marionette Collective, please review the [basic architecture, terminology and message flow][MessageFlowCast] screencast first.
 
 ## Requirements
 We try to keep the requirements on external Gems to a minimum, you only need:
@@ -190,11 +189,12 @@ We're assuming you called the machine running ActiveMQ *stomp.example.net* pleas
   loglevel = error
 
   # connector plugin config
-  connector = stomp
-  plugin.stomp.host = stomp.example.net
-  plugin.stomp.port = 61613
-  plugin.stomp.user = mcollective
-  plugin.stomp.password = marionette
+  connector = activemq
+  plugin.activemq.pool.size = 1
+  plugin.activemq.1.host = stomp.example.net
+  plugin.activemq.1.port = 61613
+  plugin.activemq.1.user = mcollective
+  plugin.activemq.1.password = marionette
 
   # security plugin config
   securityprovider = psk
@@ -211,11 +211,12 @@ You should also create _/etc/mcollective/server.cfg_ here's a sample, , a full r
   loglevel = info
 
   # connector plugin config
-  connector = stomp
-  plugin.stomp.host = stomp.example.net
-  plugin.stomp.port = 61613
-  plugin.stomp.user = mcollective
-  plugin.stomp.password = marionette
+  connector = activemq
+  plugin.activemq.pool.size = 1
+  plugin.activemq.1.host = stomp.example.net
+  plugin.activemq.1.port = 61613
+  plugin.activemq.1.user = mcollective
+  plugin.activemq.1.password = marionette
 
   # facts
   factsource = yaml
@@ -305,4 +306,3 @@ From here you should look at the rest of the wiki pages some key pages are:
  * [ControllingTheDaemon] - Controlling a running daemon
  * [AESSecurityPlugin] - Using AES+RSA for secure message encryption and authentication of clients
  * [SSLSecurityPlugin] - Using SSL for secure message signing and authentication of clients
- * [ConnectorStomp] - Full details on the Stomp adapter including failover pools

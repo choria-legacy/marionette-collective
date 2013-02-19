@@ -88,10 +88,6 @@ Common plugin options are:
 
 |Key|Sample|Description|
 |---|------|-----------|
-|plugin.stomp.host|stomp.your.com|Host to connect too|
-|plugin.stomp.port|6163|Port to connecto too|
-|plugin.stomp.user|mcollective|User to connect as|
-|plugin.stomp.password|password|Password to use|
 |plugin.yaml|/etc/mcollective/facts.yaml:/other/facts.yaml|Where the yaml fact source finds facts from, multiples get merged|
 |plugin.psk|123456789|The pre-shared key to use for the Psk security provider|
 |plugin.psk.callertype|group|What to base the callerid on for the PSK plugin, uid, gid, user, group or identity|
@@ -106,7 +102,6 @@ You can set various Environment variables per user to supply these values:
 {% highlight bash %}
 export STOMP_USER=user
 export STOMP_PASSWORD=password
-export STOMP_SERVER=stomp.your.com
 export MCOLLECTIVE_PSK=123456789
 {% endhighlight %}
 

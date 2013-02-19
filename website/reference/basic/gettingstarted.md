@@ -4,6 +4,7 @@ title: Getting Started
 ---
 [Screencasts]: /mcollective/screencasts.html
 [ActiveMQ]: http://activemq.apache.org/
+[RabbitMQ]: http://www.rabbitmq.com/
 [EC2Demo]: /mcollective/ec2demo.html
 [Stomp]: http://stomp.codehaus.org/Ruby+Client
 [DepRPMs]: http://www.marionette-collective.org/activemq/
@@ -17,7 +18,8 @@ title: Getting Started
 [ControllingTheDaemon]: /mcollective/reference/basic/daemon.html
 [SSLSecurityPlugin]: /mcollective/reference/plugins/security_ssl.html
 [AESSecurityPlugin]: /mcollective/reference/plugins/security_aes.html
-[ConnectorStomp]: /mcollective/reference/plugins/connector_stomp.html
+[ConnectorActiveMQ]: /mcollective/reference/plugins/connector_activemq.html
+[ConnectorRabbitMQ]: /mcollective/reference/plugins/connector_rabbitmq.html
 [MessageFlowCast]: /mcollective/screencasts.html#message_flow
 [Plugins]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki
 [RedHatGuide]: gettingstarted_redhat.html
@@ -27,14 +29,12 @@ title: Getting Started
 
 Below find a rough guide to get you going, this assumes the client and server is on the same node, but servers don't need the client code installed.
 
-For an even quicker intro to how it all works you can try our [EC2 based demo][EC2Demo]
-
 Look at the [Screencasts] page, there are [some screencasts dealing with basic architecture, terminology and so forth][MessageFlowCast] that you might find helpful before getting started.
 
 ## Requirements
 We try to keep the requirements on external Gems to a minimum, you only need:
 
- * A Stomp server, tested against [ActiveMQ]
+ * A Stomp server, tested against [ActiveMQ] and [RabbitMQ]
  * Ruby
  * Rubygems
  * [Ruby Stomp Client][Stomp]
@@ -42,9 +42,9 @@ We try to keep the requirements on external Gems to a minimum, you only need:
 RPMs for these are available [here][DepRPMs].
 
 ## ActiveMQ
-I've developed this against ActiveMQ.  It should work against other Stomp servers but I suspect if you choose
-one without username and password support you might have problems, please let me know if that's the case
-and I'll refactor the code around that.
+ActiveMQ is currently the most used middleware for MCollective, it would be our recommended choice and one
+that the community has most experience supporting.  There is a specific connector for RabbitMQ if you wish
+to go that route though - see [ConnectorRabbitMQ] for details.  This guide will focus on ActiveMQ.
 
 Full details on setting up and configuring ActiveMQ is out of scope for this, but you can follow these simple
 setup instructions for initial testing (make sure JDK is installed, see below for Debian specific issue regarding JDK):
@@ -130,7 +130,7 @@ And then you should add a user or two, to keep it simple we'll just add one user
 
         <transportConnectors>
             <transportConnector name="openwire" uri="tcp://0.0.0.0:6166"/>
-            <transportConnector name="stomp" uri="stomp://0.0.0.0:6163"/>
+            <transportConnector name="stomp" uri="stomp://0.0.0.0:61613"/>
         </transportConnectors>
     </broker>
 </beans>
@@ -143,7 +143,7 @@ Save the above code as activemq.xml and run activemq as - if installing from a p
 Else your package would have a RC script:
 
 {% highlight console %}
-  # /etc/init.d/activemq start
+# /etc/init.d/activemq start
 {% endhighlight %}
 
 For further info about ActiveMQ settings you might need see [SecurityWithActiveMQ] and [ActiveMQClustering].
@@ -161,7 +161,7 @@ locations.  If you use the tarball you'll need to double check all the paths in 
 You'll need to tweak some configs in */etc/mcollective/client.cfg*, a full reference of config settings can be
 found [here][ConfigurationReference]:
 
-Mostly what you'll need to change is the *identity*, *plugin.stomp.`*`* and the *plugin.psk*:
+Mostly what you'll need to change is the *identity*, *plugin.activemq.1.`*`* and the *plugin.psk*:
 
 {% highlight ini %}
   # main config
@@ -171,11 +171,12 @@ Mostly what you'll need to change is the *identity*, *plugin.stomp.`*`* and the 
   identity = fqdn
 
   # connector plugin config
-  connector = stomp
-  plugin.stomp.host = stomp.your.net
-  plugin.stomp.port = 6163
-  plugin.stomp.user = unset
-  plugin.stomp.password = unset
+  connector = activemq
+  plugin.activemq.pool.size = 1
+  plugin.activemq.1.host = stomp.your.net
+  plugin.activemq.1.port = 61613
+  plugin.activemq.1.user = unset
+  plugin.activemq.1.password = unset
 
   # security plugin config
   securityprovider = psk
@@ -196,11 +197,12 @@ You should also create _/etc/mcollective/server.cfg_ here's a sample, , a full r
   registerinterval = 300
 
   # connector plugin config
-  connector = stomp
-  plugin.stomp.host = stomp.your.net
-  plugin.stomp.port = 6163
-  plugin.stomp.user = mcollective
-  plugin.stomp.password = password
+  connector = activemq
+  plugin.activemq.pool.size = 1
+  plugin.activemq.1.host = stomp.your.net
+  plugin.activemq.1.port = 61613
+  plugin.activemq.1.user = mcollective
+  plugin.activemq.1.password = password
 
   # facts
   factsource = yaml
@@ -211,12 +213,12 @@ You should also create _/etc/mcollective/server.cfg_ here's a sample, , a full r
   plugin.psk = abcdefghj
 {% endhighlight %}
 
-Replace the *plugin.stomp.host* with your server running ActiveMQ and replace the *plugin.psk* with a Pre-Shared Key of your own.
+Replace the *plugin.activemq.1.host* with your server running ActiveMQ and replace the *plugin.psk* with a Pre-Shared Key of your own.
 
-The STOMP connector supports other options like failover pools, see [ConnectorStomp] for full details.
+The ActiveMQ connector supports other options like failover pools, see [ConnectorActiveMQ] for full details.
 
 ### Create Facts
-By default - and for this setup - we'll use a simple YAML file for a fact source, later on you can use Reductive Labs Facter or something else.
+By default - and for this setup - we'll use a simple YAML file for a fact source, later on you can use Puppet Labs Facter or something else.
 
 Create */etc/mcollective/facts.yaml* along these lines:
 
@@ -252,7 +254,7 @@ your.domain.com
 
 This searches all systems currently active for ones with a fact *country=uk*, it got the data from the yaml file you made earlier.
 
-If you use confiuration management tools like puppet and the nodes are setup with classes with *classes.txt* in */var/lib/puppet* then you
+If you use configuration management tools like puppet and the nodes are setup with classes with *classes.txt* in */var/lib/puppet* then you
 can search for nodes with a specific class on them - the locations will configurable soon:
 
 {% highlight console %}
@@ -280,4 +282,3 @@ From here you should look at the rest of the wiki pages some key pages are:
  * [ControllingTheDaemon] - Controlling a running daemon
  * [AESSecurityPlugin] - Using AES+RSA for secure message encryption and authentication of clients
  * [SSLSecurityPlugin] - Using SSL for secure message signing and authentication of clients
- * [ConnectorStomp] - Full details on the Stomp adapter including failover pools
