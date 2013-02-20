@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/02/20|Fix error code collision on PLMC18|19366|
 |2013/02/15|Validate arguments supplied to the RPC application and raise errors sooner|19181|
 |*2013/02/14*|*Release 2.3.1*|19265|
 |2013/02/14|Initial work towards internationalization and online help|18663|

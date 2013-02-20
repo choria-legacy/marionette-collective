@@ -278,6 +278,13 @@ en:
         
         This message indicate that on first start this plugin failed to run, it will show the exception class, line and exception message to assist with debugging
     pattern: "Failed to start registration plugin: %{error}"
+  PLMC40: 
+    example: "Can't find DDL for agent plugin 'puppet'"
+    expanded: |-
+        MCollective plugins come with DDL files that describe their behaviours, versions, capabilities and requirements.
+        
+        This error indicate that a DDL file for the plugin mentioned could not be found - it could be that you have a typing error in your command line or an installation error.
+    pattern: "Can't find DDL for %{type} plugin '%{name}'"
   PLMC5: 
     expanded: |-
         In previous versions of MCollective a application called 'controller' were included that had the ability to request agent reloads and other commands that would control the runner.

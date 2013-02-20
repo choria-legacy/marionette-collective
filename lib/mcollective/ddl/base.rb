@@ -81,7 +81,7 @@ module MCollective
         if ddlfile = findddlfile
           instance_eval(File.read(ddlfile), ddlfile, 1)
         else
-          raise_code(:PLMC18, "Can't find DDL for %{type} plugin '%{name}'", :debug, :type => @plugintype, :name => @pluginname)
+          raise_code(:PLMC40, "Can't find DDL for %{type} plugin '%{name}'", :debug, :type => @plugintype, :name => @pluginname)
         end
       end
 
