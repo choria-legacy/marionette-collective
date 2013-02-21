@@ -45,7 +45,7 @@ We strongly recommend you set up a local Apt repository that will host all the p
  * Ruby - included with your distribution
  * [RubyGems]
  * Stomp Ruby Gem
- * [MCollective][MCDownloads] - mcollective-1.x.x-1_all.deb, mcollective-common-1.x.x-1_all.deb, mcollective-client-1.x.x-1_all.deb
+ * [MCollective][MCDownloads] - mcollective-2.2.x-1_all.deb, mcollective-common-2.2.x-1_all.deb, mcollective-client-2.2.x-1_all.deb
 
 The rest of this guide will assume you set up a Apt repository.  Puppet Labs hosts a Apt repository with all these dependencies at _apt.puppetlabs.com_.
 
@@ -155,7 +155,7 @@ Start the ActiveMQ service:
 You should see it running in the process list:
 
 {% highlight console %}
- # ps -auxw|grep java
+ # ps auxw|grep java
  activemq  3012  0.1 14.5 1155112 152180 ?      Sl   Dec28   2:02 java -Dactivemq.home=/usr/share/activemq -Dactivemq.base=/usr/share/activemq -Dcom.sun.management.jmxremote -Dorg.apache.activemq.UseDedicatedTaskRunner=true -Xmx512m -Djava.library.path=/usr/lib:/usr/lib64 -classpath /usr/share/java/tanukiwrapper.jar:/usr/share/activemq/bin/run.jar -Dwrapper.key=eg4_VvENzCmvtAKg -Dwrapper.port=32000 -Dwrapper.jvm.port.min=31000 -Dwrapper.jvm.port.max=31999 -Dwrapper.pid=3000 -Dwrapper.version=3.2.3 -Dwrapper.native_library=wrapper -Dwrapper.service=TRUE -Dwrapper.cpu.timeout=10 -Dwrapper.jvmid=1 org.tanukisoftware.wrapper.WrapperSimpleApp org.apache.activemq.console.Main start
 {% endhighlight %}
 
@@ -195,10 +195,10 @@ We're assuming you called the machine running ActiveMQ *stomp.example.net* pleas
   # connector plugin config
   connector = activemq
   plugin.activemq.pool.size = 1
-  plugin.activemq.1.host = stomp.example.net
-  plugin.activemq.1.port = 61613
-  plugin.activemq.1.user = mcollective
-  plugin.activemq.1.password = marionette
+  plugin.activemq.pool.1.host = stomp.example.net
+  plugin.activemq.pool.1.port = 61613
+  plugin.activemq.pool.1.user = mcollective
+  plugin.activemq.pool.1.password = marionette
 
   # security plugin config
   securityprovider = psk
@@ -217,10 +217,10 @@ You should also create _/etc/mcollective/server.cfg_ here's a sample, , a full r
   # connector plugin config
   connector = activemq
   plugin.activemq.pool.size = 1
-  plugin.activemq.1.host = stomp.example.net
-  plugin.activemq.1.port = 61613
-  plugin.activemq.1.user = mcollective
-  plugin.activemq.1.password = marionette
+  plugin.activemq.pool.1.host = stomp.example.net
+  plugin.activemq.pool.1.port = 61613
+  plugin.activemq.pool.1.user = mcollective
+  plugin.activemq.pool.1.password = marionette
 
 
   # facts

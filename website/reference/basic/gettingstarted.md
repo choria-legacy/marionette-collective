@@ -173,10 +173,10 @@ Mostly what you'll need to change is the *identity*, *plugin.activemq.1.`*`* and
   # connector plugin config
   connector = activemq
   plugin.activemq.pool.size = 1
-  plugin.activemq.1.host = stomp.your.net
-  plugin.activemq.1.port = 61613
-  plugin.activemq.1.user = unset
-  plugin.activemq.1.password = unset
+  plugin.activemq.pool.1.host = stomp.your.net
+  plugin.activemq.pool.1.port = 61613
+  plugin.activemq.pool.1.user = unset
+  plugin.activemq.pool.1.password = unset
 
   # security plugin config
   securityprovider = psk
@@ -199,10 +199,10 @@ You should also create _/etc/mcollective/server.cfg_ here's a sample, , a full r
   # connector plugin config
   connector = activemq
   plugin.activemq.pool.size = 1
-  plugin.activemq.1.host = stomp.your.net
-  plugin.activemq.1.port = 61613
-  plugin.activemq.1.user = mcollective
-  plugin.activemq.1.password = password
+  plugin.activemq.pool.1.host = stomp.your.net
+  plugin.activemq.pool.1.port = 61613
+  plugin.activemq.pool.1.user = mcollective
+  plugin.activemq.pool.1.password = password
 
   # facts
   factsource = yaml
@@ -213,7 +213,7 @@ You should also create _/etc/mcollective/server.cfg_ here's a sample, , a full r
   plugin.psk = abcdefghj
 {% endhighlight %}
 
-Replace the *plugin.activemq.1.host* with your server running ActiveMQ and replace the *plugin.psk* with a Pre-Shared Key of your own.
+Replace the *plugin.activemq.pool.1.host* with your server running ActiveMQ and replace the *plugin.psk* with a Pre-Shared Key of your own.
 
 The ActiveMQ connector supports other options like failover pools, see [ConnectorActiveMQ] for full details.
 
