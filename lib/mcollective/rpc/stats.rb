@@ -1,5 +1,3 @@
-require 'stringio'
-
 module MCollective
   module RPC
     # Class to wrap all the stats and to keep track of some timings
