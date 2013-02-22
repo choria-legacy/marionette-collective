@@ -34,7 +34,7 @@ The nodes only need read access to the command topics and only need write access
 
 There's one special case and that's the registration topic, if you want to enable the [registration feature][Registration] you should give the nodes access to write on the command channel for the registration agent. Nothing should reply on the registration topic so you can limit that in the ActiveMQ config.
 
-We'll let mcollective log in as the mcollective user, create a group called mcollectiveusers, we'll then give the mcollectiveusers group access to run as a typical registration enabled mcollective node.
+We'll let mcollective log in as the mcollective user, create a group called mcollectiveservers, we'll then give the mcollectiveservers group access to run as a typical registration enabled mcollective node.
 
 The rip user is a mcollective admin and can create commands and receive replies.
 
@@ -43,7 +43,7 @@ First we'll create users and the groups.
 {% highlight xml %}
     <simpleAuthenticationPlugin>
      <users>
-      <authenticationUser username="mcollective" password="pI1SkjRi" groups="mcollectiveusers,everyone"/>
+      <authenticationUser username="mcollective" password="pI1SkjRi" groups="mcollectiveservers,everyone"/>
       <authenticationUser username="rip" password="foobarbaz" groups="admins,everyone"/>
      </users>
     </simpleAuthenticationPlugin>
@@ -58,9 +58,10 @@ Now we'll create the access rights:
           <authorizationEntries>
             <authorizationEntry queue="mcollective.>" write="admins" read="admins" admin="admins" />
             <authorizationEntry topic="mcollective.>" write="admins" read="admins" admin="admins" />
-            <authorizationEntry topic="mcollective.*.reply" write="mcollectiveusers" admin="mcollectiveusers" />
-            <authorizationEntry topic="mcollective.registration.command" write="mcollectiveusers" read="mcollectiveusers" admin="mcollectiveusers" />
-            <authorizationEntry topic="mcollective.*.command" read="mcollectiveusers" admin="mcollectiveusers" />
+            <authorizationEntry queue="mcollective.reply.>" write="mcollectiveservers" admin="mcollectiveservers" />
+            <authorizationEntry queue="mcollective.nodes.>" read="mcollectiveservers" admin="mcollectiveservers" />
+            <authorizationEntry topic="mcollective.*.agent" read="mcollectiveservers" admin="mcollectiveservers" />
+            <authorizationEntry topic="mcollective.registration.agent" write="mcollectiveservers" read="mcollectiveservers" admin="mcollectiveservers" />
             <authorizationEntry topic="ActiveMQ.Advisory.>" read="everyone,all" write="everyone,all" admin="everyone,all"/>
           </authorizationEntries>
         </authorizationMap>
@@ -68,7 +69,11 @@ Now we'll create the access rights:
     </authorizationPlugin>
 {% endhighlight %}
 
-You could give just the specific node that runs the registration agent access to mcollective.registration.command to ensure the secrecy of your node registration.
+Notes:
+
+* These rights are meant for the current ActiveMQ connector plugin, which uses a different addressing structure from the older, deprecated generic Stomp plugin.
+* You can also restrict read access to `mcollective.registration.command` to just the specific node that runs the registration agent, in order to ensure secrecy of your node registration. However, this requires that you create a separate ActiveMQ user and group for just that node.
+* The same goes for restricting write access to specific commands: you can get as detailed as you want, but will pay a price of increased complexity. You may get more convenient results with a combination of the MCollective actionpolicy plugin and a security plugin (like the SSL one) that provides strong caller identification.
 
 Finally the nodes need to be configured, the server.cfg should have the following at least:
 
