@@ -194,20 +194,6 @@ module MCollective
     def validate
       raise "Can only validate request messages" unless type == :request
 
-      msg_age = Time.now.utc.to_i - msgtime
-
-      if msg_age > ttl
-        cid = ""
-        cid += payload[:callerid] + "@" if payload.include?(:callerid)
-        cid += payload[:senderid]
-
-        if msg_age > ttl
-          PluginManager["global_stats"].ttlexpired
-
-          raise(MsgTTLExpired, "message #{requestid} from #{cid} created at #{msgtime} is #{msg_age} seconds old, TTL is #{ttl}")
-        end
-      end
-
       raise(NotTargettedAtUs, "Received message is not targetted to us") unless PluginManager["security_plugin"].validate_filter?(payload[:filter])
 
       @validated = true
