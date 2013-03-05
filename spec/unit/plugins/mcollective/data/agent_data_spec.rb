@@ -10,6 +10,7 @@ module MCollective
       describe "#query_data" do
         before do
           @ddl = mock
+          @ddl.stubs(:dataquery_interface).returns({:output => {}})
           @ddl.stubs(:meta).returns({:timeout => 1})
           DDL.stubs(:new).returns(@ddl)
           @plugin = Agent_data.new

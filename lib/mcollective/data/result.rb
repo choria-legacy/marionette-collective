@@ -6,8 +6,12 @@ module MCollective
       # method_missing lookup strategy
       undef :type if method_defined?(:type)
 
-      def initialize
+      def initialize(outputs)
         @data = {}
+
+        outputs.keys.each do |output|
+          @data[output] = outputs[output].fetch(:default, nil)
+        end
       end
 
       def include?(key)

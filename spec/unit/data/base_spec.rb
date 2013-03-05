@@ -7,6 +7,7 @@ module MCollective
     describe Base do
       before do
         @ddl = mock
+        @ddl.stubs(:dataquery_interface).returns({:output => {'rspec' => {}}})
         @ddl.stubs(:meta).returns({:timeout => 1})
       end
 

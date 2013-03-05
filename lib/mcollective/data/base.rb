@@ -13,7 +13,7 @@ module MCollective
       def initialize
         @name = self.class.to_s.split("::").last.downcase
         @ddl = DDL.new(@name, :data)
-        @result = Result.new
+        @result = Result.new(@ddl.dataquery_interface[:output])
         @timeout = @ddl.meta[:timeout] || 1
 
         startup_hook

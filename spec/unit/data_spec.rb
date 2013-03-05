@@ -17,6 +17,8 @@ module MCollective
 
         ddl = mock
         ddl.stubs(:meta).returns({:timeout => 1})
+        ddl.stubs(:dataquery_interface).returns({:rspec => nil})
+        ddl.stubs(:dataquery_interface).returns({:output => {}})
         DDL.stubs(:new).returns(ddl)
         Data::Base.expects(:activate?).returns(false)
         PluginManager.expects("[]").with("rspec_data").returns(Data::Base.new)
@@ -30,6 +32,7 @@ module MCollective
 
         ddl = mock
         ddl.stubs(:meta).returns({:timeout => 1})
+        ddl.stubs(:dataquery_interface).returns({:output => {}})
         DDL.stubs(:new).returns(ddl)
         Data::Base.expects(:activate?).raises("rspec failure")
         Log.expects(:debug).once.with("Disabling data plugin rspec_data due to exception RuntimeError: rspec failure")

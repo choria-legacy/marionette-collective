@@ -6,7 +6,21 @@ module MCollective
   module Data
     describe Result do
       before(:each) do
-        @result = Result.new
+        @result = Result.new({})
+      end
+
+      describe "#initialize" do
+        it "should initialize empty values for all output fields" do
+          result = Result.new({:rspec1 => {}, :rspec2 => {}})
+          result[:rspec1].should == nil
+          result[:rspec2].should == nil
+        end
+
+        it "should set default values for all output fields" do
+          result = Result.new({:rspec1 => {:default => 1}, :rspec2 => {}})
+          result[:rspec1].should == 1
+          result[:rspec2].should == nil
+        end
       end
 
       describe "#[]=" do

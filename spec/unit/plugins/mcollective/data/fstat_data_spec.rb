@@ -11,6 +11,7 @@ module MCollective
         before do
           @ddl = mock
           @ddl.stubs(:meta).returns({:timeout => 1})
+          @ddl.stubs(:dataquery_interface).returns({:output => {}})
           DDL.stubs(:new).returns(@ddl)
           @plugin = Fstat_data.new
 
