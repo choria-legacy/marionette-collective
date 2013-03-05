@@ -17,7 +17,7 @@ layout: default
 Summary
 -----
 
-Apache ActiveMQ is the primary middleware we recommend with MCollective. It's good software, but is configured with a very large and unwieldy XML file, which you may need to edit many sections of. This reference attempts to describe all of the major ActiveMQ settings that MCollective is likely to care about. 
+Apache ActiveMQ is the primary middleware we recommend with MCollective. It's good software, but its XML config file is large and unwieldy, and you may need to edit many sections of it in a complex MCollective deployment. This reference guide attempts to describe every major ActiveMQ setting that matters to MCollective.
 
 ### How to Use This Page
 
@@ -51,8 +51,9 @@ This document is about the "new" MCollective/ActiveMQ interface, which means it 
 * MCollective 2.0.0 or newer
 * ActiveMQ 5.5.0 or newer
 * Stomp gem 1.2.2 or newer
-* The [activemq connector][activemq_connector] plugin
+* The [activemq connector][activemq_connector] plugin (included with MCollective 2.0.0 and newer)
 
+([↑ Back to top](#content))
 
 How MCollective Uses ActiveMQ
 -----
@@ -88,11 +89,14 @@ Queues:
 > 
 > Subcollectives must also be configured in the MCollective client and server config files. ActiveMQ must allow traffic on any subcollective that MCollective servers and clients expect to use.
 
+([↑ Back to top](#content))
 
-The ActiveMQ Config File
+Config File Location and Format
 -----
 
-ActiveMQ's config is usually called activemq.xml, and is kept in ActiveMQ's configuration directory; other files it refers to will generally be looked for in that directory. Note that all of the settings relevant to MCollective are located inside activemq.xml's `<broker>` element. 
+ActiveMQ's config is usually called activemq.xml, and is kept in ActiveMQ's configuration directory (`/etc/activemq` with Puppet Labs's Red Hat-like packages, or a subdirectory of `/etc/activemq/instances-enabled` with the standard Debian or Ubuntu packages). Any other files referenced in activemq.xml will be looked for in the same directory.
+
+The config file is in Java's Beans XML format. Note that all of the settings relevant to MCollective are located inside activemq.xml's `<broker>` element. 
 
 This document won't describe the complete format of the activemq.xml config file, and will sometimes use incomplete shorthand to describe elements of it. You should definitely [refer to an example config file](#example-config-files) while reading, so you can see each element's full syntax in context.
 
@@ -102,7 +106,7 @@ You can also read external documentation for a more complete understanding.
 
 ### External ActiveMQ Documentation
 
-The Apache ActiveMQ documentation makes a good effort, but it is often incomplete, badly organized, and confusing. The Fuse documentation (a commercially supported release of ActiveMQ) is significantly better written and better organized, although it requires signing up for an email newsletter.
+The Apache ActiveMQ documentation contains important information, but it is often incomplete, badly organized, and confusing. The Fuse documentation (a commercially supported release of ActiveMQ) is significantly better written and better organized, although it requires signing up for an email newsletter, but it may be out of sync with the most recent ActiveMQ releases.
 
 * [Apache ActiveMQ Documentation][apache_activemq_config_docs]
 * [Fuse Documentation](http://fusesource.com/documentation/fuse-message-broker-documentation/)
@@ -116,6 +120,8 @@ You'll see a lot of [ActiveMQ destination wildcards][wildcard] below. In short:
 * A `>` represents _the whole rest of the name_ after a prefix
 
 [Wildcard]: http://activemq.apache.org/wildcards.html
+
+([↑ Back to top](#content))
 
 Required Settings
 -----
@@ -180,8 +186,6 @@ Alas, there aren't any; just a rough consensus.
 All of our documentation assumes these ports.
 
 
-* * * 
-
 ### Reply Queue Pruning
 
 MCollective sends replies on uniquely-named, single-use queues with names like `mcollective.reply.<UNIQUE ID>`. These have to be deleted after about five minutes, lest they clog up ActiveMQ's available memory. By default, queues live forever, so you have to configure this.
@@ -204,7 +208,7 @@ Use a `<policyEntry>` element for `*.reply.>` queues, with `gcInactiveDestinatio
 In the example above, you can also see that `producerFlowControl` is set to false for all topics. This is highly recommended; setting it to true can cause MCollective servers to appear blocked when there's heavy traffic.
 
 
-* * * 
+([↑ Back to top](#content))
 
 Recommended Settings
 -----
@@ -232,7 +236,6 @@ ActiveMQ will expect to find these files in the same directory as activemq.xml.
 
 [activemq_keystores]: ./activemq_keystores.html
 
-* * *
 
 ### Authentication (Users and Groups)
 
@@ -240,10 +243,10 @@ When they connect, MCollective clients and servers provide a username, password,
 
 By default, ActiveMQ ignores all of these and has no particular concept of "users." Enabling authentication means ActiveMQ will only allow users with proper credentials to connect. It also gives you the option of setting up per-destination authorization (see below). 
 
-You set up authentication by adding the appropriate element to the `<plugins>` element. [The Fuse documentation has a more complete description of ActiveMQ's authentication capabilities;][fuse_security] the [ActiveMQ docs version][activemq_security] is somewhat less organized. In summary:
+You set up authentication by adding the appropriate element to the `<plugins>` element. [The Fuse documentation has a more complete description of ActiveMQ's authentication capabilities;][fuse_security] the [ActiveMQ docs version][activemq_security] is less organized and less complete. In summary:
 
-- `simpleAuthenticationPlugin` defines users directly in activemq.xml. It's well-tested and easy. It also requires you to edit activemq.xml and restart the broker every time you add a new user. Using this means activemq.xml contains sensitive passwords, and must be protected.
-- `jaasAuthenticationPlugin` lets you use external text files (or even an LDAP database) to define users and groups. You need to make a `login.config` file in the ActiveMQ config directory, and possibly several other files, so that's more complicated. But you can add users and groups without restarting. The external users file contains sensitive passwords and must be protected, but you're probably using TLS anyway and should therefore protect activemq.xml as well. 
+- `simpleAuthenticationPlugin` defines users directly in activemq.xml. It's well-tested and easy. It also requires you to edit activemq.xml and restart the broker every time you add a new user. The activemq.xml file will contain sensitive passwords and must be protected.
+- `jaasAuthenticationPlugin` lets you use external text files (or even an LDAP database) to define users and groups. You need to make a `login.config` file in the ActiveMQ config directory, and possibly two more files. You can add users and groups without restarting the broker. The external users file will contain sensitive passwords and must be protected.
 - `jaasCertificateAuthenticationPlugin` ignores the username and password that MCollective presents; instead, it reads the distinguished name of the certificate and maps that to a username. It requires TLS, a `login.config` file, and two other external files. It is also impractical unless your servers are all using the same SSL certificate to connect to ActiveMQ; the currently recommended approach of re-using Puppet certificates makes this problematic, but you can probably ship credentials around and figure out a way to make it work. This is not currently well-tested with MCollective.
 
 [fuse_security]: http://fusesource.com/docs/broker/5.5/security/front.html
@@ -272,7 +275,6 @@ Note that unless you set up authorization (see below), these users have the exac
 > MCollective servers and clients both need a username and password to use when connecting. That user **must** have appropriate permissions (see "Authorization," directly below) for that server or client's role. 
 
 
-* * * 
 
 ### Authorization (Group Permissions)
 
@@ -281,7 +283,7 @@ By default, ActiveMQ allows everyone to **read** from any topic or queue, **writ
 By setting rules in an `<authorizationPlugin>` element, you can regulate things a bit. Some notes:
 
 * Authorization is done **by group.**
-* The exact behavior of authorization doesn't seem to be documented. Going by observation, it appears that ActiveMQ first tries the most specific rule available, then retreats to less specific rules. This means if a given group is denied an action by a more specific rule but allowed it by a more general rule, it still gets authorized to take that action. <!-- TODO nail this down a bit. -->
+* The exact behavior of authorization doesn't seem to be documented anywhere. Going by observation, it appears that ActiveMQ first tries the most specific rule available, then retreats to less specific rules. This means if a given group isn't allowed an action by a more specific rule but is allowed it by a more general rule, it still gets authorized to take that action. If you have any solid information about how this works, please email us at <faq@puppetlabs.com>.
 * MCollective creates subscriptions before it knows whether there will be any content coming. That means any role able to **read** from or **write** to a destination must also be able to **admin** that destination. Think of "admin" as a superset of both read and write.
 
 #### Simple Restrictions
@@ -376,10 +378,10 @@ Both of the above examples assume only a single `mcollective` collective. If you
 
 This example divides your users into several groups:
 
-* `admins` is the "super-admins" group, who can command all servers (and write messages to bizarre unknown topics, although you probably don't care about that since no one's listening).
-* `servers` is the "super-servers" group, who can read and respond to commands on any collective they happen to be listening to.
-* `COLLECTIVE-admins` can only command servers on their specific collective. (So `mcollective-admins` is the "sub-super-admins" group: they can command the default collective that all servers are _probably_ subscribed to, but can't just spray messages everywhere the way `admins` can.)
-* `COLLECTIVE-servers` can only read and respond to commands on their specific collective.
+* `admins` is the "super-admins" group, who can command all servers.
+* `servers` is the "super-servers" group, who can receive and respond to commands on any collective they believe themselves to be members of.
+* `COLLECTIVE-admins` can only command servers on their specific collective. (Since all servers are probably members of the default `mcollective` collective, the `mcollective-admins` group are sort of the "almost-super-admins.")
+* `COLLECTIVE-servers` can only receive and respond to commands on their specific collective.
 
 Thus, when you define your users in the [authentication setup](#authentication-users-and-groups), you could allow a certain user to command both the EU and UK collectives (but not the US collective) with `groups="eu-collective-admins,uk-collective-admins"`. You would probably want most servers to be "super-servers," since each server already gets to choose which collectives to ignore.
 
@@ -404,7 +406,7 @@ Queues:
 > Subcollectives must also be configured in the MCollective client and server config files. If you're setting up authorization per-subcollective, ActiveMQ must allow traffic on any subcollective that MCollective servers and clients expect to use.
 
 
-* * *
+([↑ Back to top](#content))
 
 Settings for Networks of Brokers
 -----
@@ -430,6 +432,8 @@ Designing your broker network's topology is beyond the scope of this documentati
 
 ### Broker Name
 
+_Required._
+
 The main `<broker>` element has a `brokerName` attribute. In single-broker deployments, this can be anything and defaults to `localhost`. In a network of brokers, each broker's name must be globally unique across the deployment; duplicates can cause message loops.
 
 {% highlight xml %}
@@ -438,6 +442,8 @@ The main `<broker>` element has a `brokerName` attribute. In single-broker deplo
 
 
 ### Network Connectors
+
+_Required._
 
 If you are using a network of brokers, you need to configure which brokers can talk to each other. 
 
@@ -481,15 +487,16 @@ Notes:
 
 * Both brokers involved need to have [OpenWire transports enabled](#transport-connectors). If you're using TLS for OpenWire, you'll need to change the URIs to `static:(ssl://stomp2.example.com:61617)` (note the change of both protocol and port). 
 * You will need to adjust the TTL for your network's conditions.
-* The connecting broker authenticates to the other with a username and password. This user should have **full rights** on **all** queues and topics, unless you really know what you're doing. (See [authentication](#authentication-users-and-groups) and [authorization](#authorization-group-permissions) above.)
-* The _name_ on each connector should be globally unique. Easiest way to do that is to combine the pair of hostnames involved with the word "queues" or "topics."
+* A username and password are required. The broker with the `<networkConnector>` connects to the other broker as this user. This user should have **full rights** on **all** queues and topics, unless you really know what you're doing. (See [authentication](#authentication-users-and-groups) and [authorization](#authorization-group-permissions) above.)
+* The `name` attribute on each connector must be globally unique. Easiest way to do that is to combine the pair of hostnames involved with the word "queues" or "topics."
 * Alternately, you can set up two uni-directional connectors on both brokers; see the Fuse or ActiveMQ documentation linked above for more details. 
 
-* * *
 
 ### Destination Filtering
 
 [fuse_filtering]: http://fusesource.com/docs/broker/5.5/clustering/Networks-Filtering.html
+
+_Optional._
 
 Relevant external docs:
 
@@ -498,6 +505,8 @@ Relevant external docs:
 If you want to prevent certain traffic from leaving a given datacenter, you can do so with `<excludedDestinations>` or `<dynamicallyIncludedDestinations>` elements **inside each `<networkConnector>` element.** This is mostly useful for noise reduction, by blocking traffic that other datacenters don't care about, but it can also serve security purposes. Generally, you'll be filtering on [subcollectives][], which, as described above, begin their destination names with the name of the collective.
 
 Both types of filter element can contain `<queue>` and `<topic>` elements, with their `physicalName` attributes defining a destination name with the normal wildcards.
+
+**Remember to retain the all-queues/all-topics exclusions as [shown above](#network-connectors).**
 
 #### Examples
 
@@ -529,22 +538,18 @@ Alternately, if your UK broker is connecting to your central broker and you want
 
 In this case, admin users connected to the central broker **cannot** command nodes on the `uk-collective`; it's expected that they'll be issuing commands to the main `mcollective` collective if they need to (and are authorized to) cross outside their borders. 
 
-<!-- TODO verify this description of effects -->
-
-* * *
+([↑ Back to top](#content))
 
 Tuning
 -----
 
-In general, don't bother to tune until you need to.
-
-We suggest turning off the dedicated task runner and, if necessary, increasing the amount of JVM heap memory. This will usually get you to about 800 MCollective nodes connected to a single ActiveMQ server, depending on traffic and usage patterns, number of topics and queues, etc. Additional tuning is beyond the scope of this reference.
+The minor adjustments listed below (turn off dedicated task runner, increase heap, and increase memory and temp usage in activemq.xml) will generally let you reach about 800 MCollective nodes connected to a single ActiveMQ server, depending on traffic and usage patterns, number of topics and queues, etc. Any more detailed tuning is beyond the scope of this reference, and is likely to be unnecessary for your deployment. 
 
 ### Don't Use Dedicated Task Runner
 
 Set `-Dorg.apache.activemq.UseDedicatedTaskRunner=false` when starting ActiveMQ. MCollective creates a lot of queues and topics, so _not_ using a thread per destination will save you a lot of memory usage.
 
-This setting is **not** configured in activemq.xml; it's an extra argument to the JVM, which should be provided when ActiveMQ starts up. The place to put this varies, depending on the package you installed ActiveMQ with; it usually goes in the wrapper config file. Check your init script for clues about this file's location. With the standard TanukiWrapper scripts, it would look something like this:
+This setting is **not** configured in activemq.xml; it's an extra argument to the JVM, which should be provided when ActiveMQ starts up. The place to put this varies, depending on the package you installed ActiveMQ with; it usually goes in the wrapper config file. Check your init script for clues about this file's location. With the common TanukiWrapper scripts, it would look something like this:
 
     wrapper.java.additional.4=-Dorg.apache.activemq.UseDedicatedTaskRunner=false
 
@@ -552,7 +557,55 @@ This setting is **not** configured in activemq.xml; it's an extra argument to th
 
 Likewise, the max heap is usually configured in the wrapper config file (`wrapper.java.maxmemory=512`) or on the command line (`-Xmx512m`).
 
-* * *
+### Memory and Temp Usage for Messages (`systamUsage`)
+
+Since ActiveMQ expects to be embedded in another JVM application, it won't automatically fill up the heap with messages; it has extra limitations on how much space to take up with message contents. 
+
+As your deployment gets bigger, you may need to increase the `<memaryUsage>` and `<tempUsage>` elements in the `<systemUsage>` element. Unfortunately, we lack a lot of solid data for what to actually set these to. Most users leave the defaults for memory and temp until they have problems, then double the defaults and see whether their problems go away. This isn't perfectly effecient, but anecdotally it appears to work.
+
+The many redundant nested elements are not a typo; for some reason, ActiveMQ seems to require this.
+
+{% highlight xml %}
+    <!--
+      The systemUsage controls the maximum amount of space the broker will 
+      use for messages.
+
+      - memoryUsage is the amount of memory ActiveMQ will take up with
+        *actual messages;* it doesn't include things like thread management.
+      - tempUsage is the amount of disk space it will use for stashing
+        non-persisted messages if the memoryUsage is exceeded (e.g. in the
+        event of a sudden flood of messages).
+      - storeUsage is the amount of disk space dedicated to persistent
+        messages (which MCollective doesn't use directly, but which may be
+        used in networks of brokers to avoid duplicates).           
+
+      If producer flow control is on, ActiveMQ will slow down producers
+      when any limits are reached; otherwise, it will use up the
+      memoryUsage, overflow into tempUsage (assuming the default cursor
+      settings aren't changed), and start failing message deliveries after
+      tempUsage is spent. In MCollective, the latter behavior is generally
+      preferable. For more information, see:
+
+      http://activemq.apache.org/producer-flow-control.html
+      http://activemq.apache.org/javalangoutofmemory.html
+    -->
+    <systemUsage>
+        <systemUsage>
+            <memoryUsage>
+                <memoryUsage limit="20 mb"/>
+            </memoryUsage>
+            <storeUsage>
+                <storeUsage limit="1 gb"/>
+            </storeUsage>
+            <tempUsage>
+                <tempUsage limit="100 mb"/>
+            </tempUsage>
+        </systemUsage>
+    </systemUsage>
+{% endhighlight %}
+
+
+([↑ Back to top](#content))
 
 Boilerplate
 -----
@@ -561,7 +614,7 @@ There's little reason to care about these settings in most conditions, but they'
 
 ### Persistence
 
-MCollective doesn't really use persistence, but the example config files have kahaDB persistence enabled because there's no harm in it, and it's often required if you're using your broker for something other than MCollective. The one case where it's required is if your network of brokers uses a ring topology, since ActiveMQ uses persistence to avoid routing loops.
+MCollective rarely uses this. It's only necessary in networks of brokers, where it is used to prevent routing loops. Leave it enabled; it has no notable performance penalty and its disk usage is limited by the `<storeUsage>` element described above.
 
 {% highlight xml %}
     <persistenceAdapter>
@@ -587,32 +640,6 @@ This is for monitoring. MCollective doesn't use this and the examples have it tu
     </managementContext>
 {% endhighlight %}
 
-### System Usage
-
-This is only consulted if producer flow control is turned on, and MCollective expects it to be turned off.
-
-{% highlight xml %}
-    <!--
-      The systemUsage controls the maximum amount of space the broker will 
-      use before slowing down producers. For more information, see:
-  
-      http://activemq.apache.org/producer-flow-control.html
-    -->
-    <systemUsage>
-        <systemUsage>
-            <memoryUsage>
-                <memoryUsage limit="20 mb"/>
-            </memoryUsage>
-            <storeUsage>
-                <storeUsage limit="1 gb"/>
-            </storeUsage>
-            <tempUsage>
-                <tempUsage limit="100 mb"/>
-            </tempUsage>
-        </systemUsage>
-    </systemUsage>
-{% endhighlight %}
-
 ### Statistics Broker
 
 MCollective doesn't use this.
@@ -629,11 +656,11 @@ MCollective doesn't use this.
 {% endhighlight %}
 
 
-### Web Consoles, APIs, etc.
+### Jetty (Web Consoles, APIs, etc.)
 
-MCollective doesn't use this. If you're not using it to manage ActiveMQ, leaving it enabled may be a security risk. Note that this configuration is **outside** the `<broker>` element. 
+The activemq.xml file will often either contain Jetty settings or import them from another file. MCollective doesn't use this. If you're not using it to manage ActiveMQ, leaving it enabled may be a security risk. Note that this configuration is **outside** the `<broker>` element. 
 
-{% highlight ruby %}
+{% highlight xml %}
     <!-- 
       Enable web consoles, REST and Ajax APIs and demos
       It also includes Camel (with its web console), see ${ACTIVEMQ_HOME}/conf/camel.xml for more info
@@ -643,3 +670,4 @@ MCollective doesn't use this. If you're not using it to manage ActiveMQ, leaving
     <import resource="jetty.xml"/>
 {% endhighlight %}
 
+([↑ Back to top](#content))
