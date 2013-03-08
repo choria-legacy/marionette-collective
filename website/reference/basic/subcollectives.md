@@ -2,10 +2,15 @@
 layout: default
 title: Subcollectives
 ---
-[ActiveMQClustering]: /mcollective/reference/integration/activemq_clusters.html
-[MessageFlow]: messageflow.html
 
-# Overview
+[ActiveMQClustering]: /mcollective/reference/integration/activemq_clusters.html
+[activemq_authorization]: /mcollective/deploy/middleware/activemq.html#authorization-group-permissions
+[activemq_detailed]: /mcollective/deploy/middleware/activemq.html#detailed-restrictions
+[activemq_subcollectives]: /mcollective/deploy/middleware/activemq.html#detailed-restrictions-with-multiple-subcollectives
+[activemq_filtering]: /mcollective/deploy/middleware/activemq.html#destination-filtering
+[activemq_authentication]: /mcollective/deploy/middleware/activemq.html#authentication-users-and-groups
+
+## Overview
 
 By default all servers are part of a single broadcast domain, if you have an
 agent on all machines in your network and you send a message directed to
@@ -30,7 +35,7 @@ following scenarios:
 We've introduced the concept of sub collectives that lets you define broadcast
 domains and configure a mcollective server to belong to one or many of these domains.
 
-# Partitionion Approaches
+## Partitioning Approaches
 
 Determining how to partition your nework can be a very complex subject and
 requires an understanding of your message flow, where requestors sit and also
@@ -90,7 +95,7 @@ network this can have a big impact.
 
 ![Subcollectives](../../images/subcollectives-impact.png)
 
-# Configuring MCollective
+## Configuring MCollective
 
 Configuring the partitioned collective above is fairly simple.  We'll look at
 one of the DE nodes for reference:
@@ -104,19 +109,7 @@ The _collectives_ directive tells the node all the collectives it should belong
 to and the _main`_`collective_ instructs Registration where to direct messages
 to.
 
-# Partitioning for Security
-
-Another possible advantage from subcollectives is security.  While the SimpleRPC
-framework has a security model that is aware of the topology the core network
-layer does not.  Even if you only give someone access to run SimpleRPC requests
-against some machines they can still use _mco ping_ to discover other nodes on
-your network.
-
-By creating a subcollective of just their nodes and restricting them on the
-middleware level to just that collective you can effectively and completely
-create a secure isolated zone that overlays your exiting network.
-
-# Testing
+## Testing
 
 Testing that it works is pretty simple, first we need a _client.cfg_ that
 configures your client to talk to all the sub collectives:
@@ -170,44 +163,39 @@ $ mco inventory --list-collectives
 
 {% endhighlight %}
 
-# ActiveMQ Filters
+## Partitioning for Security
 
-The above setup should just work in most cases but you might want to go one step
-further and actively prevent propagation across the network of sub collective
-traffic.
+Another possible advantage from subcollectives is security.  While the SimpleRPC
+framework has a security model that is aware of the topology the core network
+layer does not.  Even if you only give someone access to run SimpleRPC requests
+against some machines they can still use _mco ping_ to discover other nodes on
+your network.
 
-In your ActiveMQ broker setup you will already have a section defining your
-network connections, something like:
+By creating a subcollective of just their nodes and restricting them on the
+middleware level to just that collective you can effectively and completely
+create a secure isolated zone that overlays your exiting network.
 
-{% highlight xml %}
-<networkConnectors>
-  <networkConnector
-     name="us-uk"
-     uri="static:(tcp://stomp1.uk.my.net:6166)"
-     userName="amq"
-     password="secret"
-     duplex="true" />
-</networkConnectors>
-{% endhighlight %}
+These restrictions have to be configured on the middleware server, outside of MCollective itself. The method will vary based on the middleware you use; the suggestions below are for ActiveMQ, the main recommended middleware.
 
-You can add filters here restricting traffic in this case the US<->UK connection
-should never transmit _us`_`collective_ traffic, so lets restrict that:
+### Identifying Subcollectives on ActiveMQ
 
-{% highlight xml %}
-<networkConnectors>
-  <networkConnector
-     name="us-uk"
-     uri="static:(tcp://stomp1.uk.my.net:6166)"
-     userName="amq"
-     password="secret"
-     duplex="true">
-     <excludedDestinations>
-       <topic physicalName="us_collective.>" />
-       <topic physicalName="uk_collective.>" />
-       <topic physicalName="de_collective.>" />
-       <topic physicalName="za_collective.>" />
-       <topic physicalName="eu_collective.>" />
-     </excludedDestinations>
-  </networkConnector>
-</networkConnectors>
-{% endhighlight %}
+The ActiveMQ connector plugin identifies subcollectives with the **first segment** of every destination (topic or queue) name.
+
+So for direct node addressing, for example, the default `mcollective` collective would use the `mcollective.nodes` queue, and `uk_collective` would use the `uk_collective.nodes` queue. For the package agent, they would use the `mcollective.package.agent` and `uk_collective.package.agent` topics, respectively.
+
+This makes it easy to use ActiveMQ destination wildcards to control access to a given collective. 
+
+### Per-Subcollective Authorization
+
+To control subcollective access, identify the set of topics and queues that collective will use, then use ActiveMQ's authorization rules to secure them.
+
+* [See the "Authorization" section of the ActiveMQ config reference][activemq_authorization] for details.
+* The ["Detailed Restrictions"][activemq_detailed] example shows all of the topics and queues used by the default collective; you can copy/paste/modify these for a small number of collectives.
+* The ["Detailed Restrictions with Multiple Subcollectives"][activemq_subcollectives] example uses a snippet of ERB template to manage any number of collectives. 
+
+You must then [configure multiple ActiveMQ user accounts][activemq_authentication] for your site's admins. Give each user membership in the groups they'll need to manage their collectives.
+
+### Destination Filters in a Network of Brokers
+
+In a [network of brokers][ActiveMQClustering], you can also prevent propagation across the network of sub collective
+traffic. See the ["Destination Filtering"][activemq_filtering] section of the ActiveMQ config reference for details.
