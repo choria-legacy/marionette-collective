@@ -12,7 +12,27 @@
         </property>
     </bean>
 
+    <!--
+      For more information about what MCollective requires in this file,
+      see http://docs.puppetlabs.com/mcollective/deploy/middleware/activemq.html
+    -->
+
+    <!--
+      WARNING: The elements that are direct children of <broker> MUST BE IN
+      ALPHABETICAL ORDER. This is fixed in ActiveMQ 5.6.0, but affects
+      previous versions back to 5.4.
+      https://issues.apache.org/jira/browse/AMQ-3570
+    -->
     <broker xmlns="http://activemq.apache.org/schema/core" brokerName="localhost" useJmx="true" schedulePeriodForDestinationPurge="60000">
+        <!--
+          MCollective generally expects producer flow control to be turned off.
+          It will also generate a limitless number of single-use reply queues,
+          which should be garbage-collected after about five minutes to conserve
+          memory.
+
+          For more information, see:
+          http://activemq.apache.org/producer-flow-control.html
+        -->
         <destinationPolicy>
           <policyMap>
             <policyEntries>
@@ -28,12 +48,30 @@
 
         <plugins>
           <statisticsBrokerPlugin/>
+
+          <!--
+            This configures the users and groups used by this broker. Groups
+            are referenced below, in the write/read/admin attributes
+            of each authorizationEntry element.
+          -->
           <simpleAuthenticationPlugin>
             <users>
               <authenticationUser username="mcollective" password="marionette" groups="mcollective,everyone"/>
               <authenticationUser username="admin" password="secret" groups="mcollective,admins,everyone"/>
             </users>
           </simpleAuthenticationPlugin>
+
+          <!--
+            Configure which users are allowed to read and write where. Permissions
+            are organized by group; groups are configured above, in the
+            authentication plugin.
+
+            With the rules below, both servers and admin users belong to group
+            mcollective, which can both issue and respond to commands. For an
+            example that splits permissions and doesn't allow servers to issue
+            commands, see:
+            http://docs.puppetlabs.com/mcollective/deploy/middleware/activemq.html#detailed-restrictions
+          -->
           <authorizationPlugin>
             <map>
               <authorizationMap>
@@ -42,6 +80,10 @@
                   <authorizationEntry topic=">" write="admins" read="admins" admin="admins" />
                   <authorizationEntry topic="mcollective.>" write="mcollective" read="mcollective" admin="mcollective" />
                   <authorizationEntry queue="mcollective.>" write="mcollective" read="mcollective" admin="mcollective" />
+                  <!--
+                    The advisory topics are part of ActiveMQ, and all users need access to them.
+                    The "everyone" group is not special; you need to ensure every user is a member.
+                  -->
                   <authorizationEntry topic="ActiveMQ.Advisory.>" read="everyone" write="everyone" admin="everyone"/>
                 </authorizationEntries>
               </authorizationMap>
@@ -49,6 +91,11 @@
           </authorizationPlugin>
         </plugins>
 
+        <!--
+          The systemUsage controls the maximum amount of space the broker will
+          use for messages. For more information, see:
+          http://docs.puppetlabs.com/mcollective/deploy/middleware/activemq.html#memory-and-temp-usage-for-messages-systemusage
+        -->
         <systemUsage>
             <systemUsage>
                 <memoryUsage>
@@ -63,10 +110,25 @@
             </systemUsage>
         </systemUsage>
 
+        <!--
+          The transport connectors allow ActiveMQ to listen for connections over
+          a given protocol. MCollective uses Stomp, and other ActiveMQ brokers
+          use OpenWire. You'll need different URLs depending on whether you are
+          using TLS. For more information, see:
+
+          http://docs.puppetlabs.com/mcollective/deploy/middleware/activemq.html#transport-connectors
+        -->
         <transportConnectors>
             <transportConnector name="openwire" uri="tcp://0.0.0.0:61616"/>
             <transportConnector name="stomp" uri="stomp://0.0.0.0:61613"/>
         </transportConnectors>
     </broker>
+
+    <!--
+      Enable web consoles, REST and Ajax APIs and demos.
+      It also includes Camel (with its web console); see ${ACTIVEMQ_HOME}/conf/camel.xml for more info.
+
+      See ${ACTIVEMQ_HOME}/conf/jetty.xml for more details.
+    -->
     <import resource="jetty.xml"/>
 </beans>
