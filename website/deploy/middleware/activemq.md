@@ -1,17 +1,18 @@
 ---
-title: "MCollective » Deployment » Middleware » ActiveMQ"
-subtitle: "Configuring ActiveMQ for Use With MCollective"
+title: "MCollective » Deploy » Middleware » ActiveMQ Config"
+subtitle: "ActiveMQ Config Reference for MCollective Users"
 layout: default
 ---
 
-[activemq_connector]: /reference/plugins/connector_activemq.html
-[stomp_connector]: /reference/plugins/connector_stomp.html
-[subcollectives]: /reference/basic/subcollectives.html
-[minimal_example]: TODO
-[maximal_example]: TODO
+[Wildcard]: http://activemq.apache.org/wildcards.html
+[minimal_example]: http://github.com/puppetlabs/marionette-collective/raw/master/ext/activemq/examples/single-broker/activemq.xml
+[maximal_example]: https://github.com/puppetlabs/marionette-collective/tree/master/ext/activemq/examples/multi-broker
 [template_example]: TODO
 [apache_activemq_config_docs]: http://activemq.apache.org/version-5-xml-configuration.html
-[mcollective_connector_tls]: TODO
+
+[subcollectives]: /reference/basic/subcollectives.html
+[activemq_connector]: /reference/plugins/connector_activemq.html
+[mcollective_connector_tls]: /mcollective/reference/integration/activemq_ssl.html
 
 
 Summary
@@ -37,9 +38,12 @@ Apache ActiveMQ is the primary middleware we recommend with MCollective. It's go
 
 We have several. 
 
-* [Minimal config example][minimal_example] --- single broker, minimal authorization.
-* [Maximal config example][maximal_example] --- multi-broker with extensive authorization.
+* [Minimal config example][minimal_example] --- single broker <!-- , minimal authorization. -->
+* [Maximal config example][maximal_example] --- multi-broker <!--  with extensive authorization. -->
+
+<!-- 
 * [Template-based example][template_example] --- reduces configuration down to a handful of variables; shows how those few decisions ramify into many config edits.
+ -->
 
 
 > **Note:** Some config data needs to be set in both MCollective and ActiveMQ; your configuration of one will affect the other. In this page, we call out that information with headers labeled "Shared Configuration."
@@ -119,7 +123,6 @@ You'll see a lot of [ActiveMQ destination wildcards][wildcard] below. In short:
 * A `*` represents _one segment_ (i.e. any sequence of non-dot characters)
 * A `>` represents _the whole rest of the name_ after a prefix
 
-[Wildcard]: http://activemq.apache.org/wildcards.html
 
 ([↑ Back to top](#content))
 
@@ -346,7 +349,7 @@ Admins, of course, can also read commands and reply, since they have power over 
 
 #### Detailed Restrictions with Multiple Subcollectives
 
-Both of the above examples assume only a single `mcollective` collective. If you are using additional [subcollectives][] (e.g. `uk-collective`, `us-collective`, etc.), their destinations will start with their name instead of `mcollective`. If you need to separately control authorization for each collective, it's best to use a template to do so, so you can avoid repeating yourself. 
+Both of the above examples assume only a single `mcollective` collective. If you are using additional [subcollectives][] (e.g. `uk_collective`, `us_collective`, etc.), their destinations will start with their name instead of `mcollective`. If you need to separately control authorization for each collective, it's best to use a template to do so, so you can avoid repeating yourself. 
 
 {% highlight xml %}
     <plugins>
@@ -383,7 +386,7 @@ This example divides your users into several groups:
 * `COLLECTIVE-admins` can only command servers on their specific collective. (Since all servers are probably members of the default `mcollective` collective, the `mcollective-admins` group are sort of the "almost-super-admins.")
 * `COLLECTIVE-servers` can only receive and respond to commands on their specific collective.
 
-Thus, when you define your users in the [authentication setup](#authentication-users-and-groups), you could allow a certain user to command both the EU and UK collectives (but not the US collective) with `groups="eu-collective-admins,uk-collective-admins"`. You would probably want most servers to be "super-servers," since each server already gets to choose which collectives to ignore.
+Thus, when you define your users in the [authentication setup](#authentication-users-and-groups), you could allow a certain user to command both the EU and UK collectives (but not the US collective) with `groups="eu_collective-admins,uk_collective-admins"`. You would probably want most servers to be "super-servers," since each server already gets to choose which collectives to ignore.
 
 #### MCollective's Exact Authorization Requirements
 
@@ -421,7 +424,7 @@ You can group multiple ActiveMQ servers into networks of brokers, and they can r
 
 This is naturally more complicated than configuring a single broker.
 
-Designing your broker network's topology is beyond the scope of this documentation (exception: we note that you should [turn on persistence](#persistence) if it's a ring). See [the ActiveMQ docs][NetworksOfBrokers] or [the Fuse docs][fuse_cluster] for more info. For our purposes, we assume you have already decided:
+Designing your broker network's topology is beyond the scope of this reference. The [ActiveMQ Clusters guide](/mcollective/reference/integration/activemq_clusters.html) has a brief description of an example network; see [the ActiveMQ docs][NetworksOfBrokers] or [the Fuse docs][fuse_cluster] for more detailed info. For our purposes, we assume you have already decided:
 
 * Which ActiveMQ brokers can communicate with each other.
 * What kinds of traffic should be excluded from other brokers.
@@ -440,6 +443,11 @@ The main `<broker>` element has a `brokerName` attribute. In single-broker deplo
     <broker xmlns="http://activemq.apache.org/schema/core" brokerName="uk-datacenter-broker" dataDirectory="${activemq.base}/data" destroyApplicationContextOnStop="true">
 {% endhighlight %}
 
+### OpenWire Transports
+
+_Required._
+
+All participants in a network of brokers need OpenWire network transports enabled. [See "Transport Connectors" above](#transport-connectors) for details.
 
 ### Network Connectors
 
@@ -485,7 +493,7 @@ This is done with a pair of `<networkConnector>` elements inside the `<networkCo
 
 Notes: 
 
-* Both brokers involved need to have [OpenWire transports enabled](#transport-connectors). If you're using TLS for OpenWire, you'll need to change the URIs to `static:(ssl://stomp2.example.com:61617)` (note the change of both protocol and port). 
+* If you're using TLS for OpenWire, you'll need to change the URIs to something like `static:(ssl://stomp2.example.com:61617)` --- note the change of both protocol and port. 
 * You will need to adjust the TTL for your network's conditions.
 * A username and password are required. The broker with the `<networkConnector>` connects to the other broker as this user. This user should have **full rights** on **all** queues and topics, unless you really know what you're doing. (See [authentication](#authentication-users-and-groups) and [authorization](#authorization-group-permissions) above.)
 * The `name` attribute on each connector must be globally unique. Easiest way to do that is to combine the pair of hostnames involved with the word "queues" or "topics."
@@ -514,29 +522,29 @@ Assume a star network topology.
 
 This topology can be achieved by either having each edge broker connect to the central broker, or having the central broker connect to each edge broker. You can achieve the same filtering in both situations, but with slightly different configuration. The two examples below have similar but not identical effects; the ramifications are subtle, and we _really_ recommend reading the external ActiveMQ and Fuse documentation if you've come this far in your deployment scale.
 
-If your central broker is connecting to the UK broker, and you want it to only pass on traffic for the global `mcollective` collective and the UK-specific `uk-collective` collective:
+If your central broker is connecting to the UK broker, and you want it to only pass on traffic for the global `mcollective` collective and the UK-specific `uk_collective` collective:
 
 {% highlight xml %}
     <dynamicallyIncludedDestinations>
       <topic physicalName="mcollective.>" />
       <queue physicalName="mcollective.>" />
-      <topic physicalName="uk-collective.>" />
-      <queue physicalName="uk-collective.>" />
+      <topic physicalName="uk_collective.>" />
+      <queue physicalName="uk_collective.>" />
     </dynamicallyIncludedDestinations>
 {% endhighlight %}
 
-In this case, admin users connected to the central broker can command nodes on the `uk-collective`, but admin users connected to the UK broker can't command nodes on the `us-collective`, etc. 
+In this case, admin users connected to the central broker can command nodes on the `uk_collective`, but admin users connected to the UK broker can't command nodes on the `us_collective`, etc. 
 
 Alternately, if your UK broker is connecting to your central broker and you want it to refrain from passing on UK-specific traffic that no one outside that datacenter cares about:
 
 {% highlight xml %}
     <excludedDestinations>
-       <topic physicalName="uk-collective.>" />
-       <queue physicalName="uk-collective.>" />
+       <topic physicalName="uk_collective.>" />
+       <queue physicalName="uk_collective.>" />
     </excludedDestinations>
 {% endhighlight %}
 
-In this case, admin users connected to the central broker **cannot** command nodes on the `uk-collective`; it's expected that they'll be issuing commands to the main `mcollective` collective if they need to (and are authorized to) cross outside their borders. 
+In this case, admin users connected to the central broker **cannot** command nodes on the `uk_collective`; it's expected that they'll be issuing commands to the main `mcollective` collective if they need to (and are authorized to) cross outside their borders. 
 
 ([↑ Back to top](#content))
 
@@ -557,7 +565,7 @@ This setting is **not** configured in activemq.xml; it's an extra argument to th
 
 Likewise, the max heap is usually configured in the wrapper config file (`wrapper.java.maxmemory=512`) or on the command line (`-Xmx512m`).
 
-### Memory and Temp Usage for Messages (`systamUsage`)
+### Memory and Temp Usage for Messages (`systemUsage`)
 
 Since ActiveMQ expects to be embedded in another JVM application, it won't automatically fill up the heap with messages; it has extra limitations on how much space to take up with message contents. 
 
