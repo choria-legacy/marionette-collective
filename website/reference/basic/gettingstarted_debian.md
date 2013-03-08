@@ -50,10 +50,11 @@ We strongly recommend you set up a local Apt repository that will host all the p
 The rest of this guide will assume you set up a Apt repository.  Puppet Labs hosts a Apt repository with all these dependencies at _apt.puppetlabs.com_.
 
 ## ActiveMQ
+
 ActiveMQ is currently the most used and tested middleware for use with MCollective.
 
 You need at least one ActiveMQ server on your network, all the nodes you wish to manage will connect to the central ActiveMQ server.
-Later on your can [cluster the ActiveMQ servers for availability and scale][ActiveMQClustering].
+Later on you can [cluster the ActiveMQ servers for availability and scale][ActiveMQClustering].
 
 ### Install
 
@@ -67,82 +68,17 @@ ActiveMQ installation instructions can be found [here][ActiveMQ Getting Started]
 
 ### Configuring
 
-Initially you'll just keep it simple with a single ActiveMQ broker and a basic user setup, further security information for ActiveMQ
-can be found [here][SecurityWithActiveMQ]
+[The ActiveMQ config reference][activemq_config] describes all of the ActiveMQ settings that MCollective cares about. For best use, skim the sections you care about while comparing it to an example activemq.xml file.
 
-Place the following in your ActiveMQ configuration path as *activemq.xml*. You can download this file from [GitHub][ActiveMQSingleBrokerSample]
+[activemq_config]: /mcollective/deploy/middleware/activemq.html
 
-Other examples are also available from [GitHub][ActiveMQSamples]
+We recommend that new users:
 
-{% highlight xml %}
-<beans
-  xmlns="http://www.springframework.org/schema/beans"
-  xmlns:amq="http://activemq.apache.org/schema/core"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd
-  http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
+* Start with the [single-broker example config][ActiveMQSingleBrokerSample].
+* Change the [user account passwords](/mcollective/deploy/middleware/activemq.html#authentication-users-and-groups).
+* [Set up TLS](/mcollective/deploy/middleware/activemq.html#tls-credentials) and [use a TLS Stomp transport connector](/mcollective/deploy/middleware/activemq.html#transport-connectors).
 
-    <broker xmlns="http://activemq.apache.org/schema/core" brokerName="localhost" useJmx="true">
-        <destinationPolicy>
-          <policyMap>
-            <policyEntries>
-              <policyEntry topic=">" producerFlowControl="false"/>
-              <policyEntry queue="*.reply.>" gcInactiveDestinations="true" inactiveTimoutBeforeGC="300000" />
-            </policyEntries>
-          </policyMap>
-        </destinationPolicy>
-
-        <managementContext>
-            <managementContext createConnector="false"/>
-        </managementContext>
-
-        <plugins>
-          <statisticsBrokerPlugin/>
-          <simpleAuthenticationPlugin>
-            <users>
-              <authenticationUser username="mcollective" password="marionette" groups="mcollective,everyone"/>
-              <authenticationUser username="admin" password="secret" groups="mcollective,admin,everyone"/>
-            </users>
-          </simpleAuthenticationPlugin>
-          <authorizationPlugin>
-            <map>
-              <authorizationMap>
-                <authorizationEntries>
-                  <authorizationEntry queue=">" write="admins" read="admins" admin="admins" />
-                  <authorizationEntry topic=">" write="admins" read="admins" admin="admins" />
-                  <authorizationEntry topic="mcollective.>" write="mcollective" read="mcollective" admin="mcollective" />
-                  <authorizationEntry queue="mcollective.>" write="mcollective" read="mcollective" admin="mcollective" />
-                  <authorizationEntry topic="ActiveMQ.Advisory.>" read="everyone" write="everyone" admin="everyone"/>
-                </authorizationEntries>
-              </authorizationMap>
-            </map>
-          </authorizationPlugin>
-        </plugins>
-
-        <systemUsage>
-            <systemUsage>
-                <memoryUsage>
-                    <memoryUsage limit="20 mb"/>
-                </memoryUsage>
-                <storeUsage>
-                    <storeUsage limit="1 gb" name="foo"/>
-                </storeUsage>
-                <tempUsage>
-                    <tempUsage limit="100 mb"/>
-                </tempUsage>
-            </systemUsage>
-        </systemUsage>
-
-        <transportConnectors>
-            <transportConnector name="openwire" uri="tcp://0.0.0.0:61616"/>
-            <transportConnector name="stomp" uri="stomp://0.0.0.0:61613"/>
-        </transportConnectors>
-    </broker>
-</beans>
-{% endhighlight %}
-
-This creates a user *mcollective* with the password *marionette* and give it access to read/write/admin */topic/mcollective.`*`*.  You should change this passsword.
+Other example config files are also available from [GitHub][ActiveMQSamples].
 
 ### Starting
 
@@ -159,9 +95,9 @@ You should see it running in the process list:
  activemq  3012  0.1 14.5 1155112 152180 ?      Sl   Dec28   2:02 java -Dactivemq.home=/usr/share/activemq -Dactivemq.base=/usr/share/activemq -Dcom.sun.management.jmxremote -Dorg.apache.activemq.UseDedicatedTaskRunner=true -Xmx512m -Djava.library.path=/usr/lib:/usr/lib64 -classpath /usr/share/java/tanukiwrapper.jar:/usr/share/activemq/bin/run.jar -Dwrapper.key=eg4_VvENzCmvtAKg -Dwrapper.port=32000 -Dwrapper.jvm.port.min=31000 -Dwrapper.jvm.port.max=31999 -Dwrapper.pid=3000 -Dwrapper.version=3.2.3 -Dwrapper.native_library=wrapper -Dwrapper.service=TRUE -Dwrapper.cpu.timeout=10 -Dwrapper.jvmid=1 org.tanukisoftware.wrapper.WrapperSimpleApp org.apache.activemq.console.Main start
 {% endhighlight %}
 
-You should also see it listening on port 61613 in your network stack
+You should also see it listening on port 61613 or 61614 in your network stack, depending on whether you turned on TLS.
 
-You should open port 61613 for all your nodes to connect to.
+You should open port 61613 or 61614 for all your nodes to connect to.
 
 ## Marionette Collective
 
@@ -184,7 +120,7 @@ A machine can be both at once, in which case you need to install all 3 packages.
 You'll need to tweak some configs in */etc/mcollective/client.cfg*, a full reference of config settings can be
 found [here][ConfigurationReference]:
 
-We're assuming you called the machine running ActiveMQ *stomp.example.net* please change as appropriate
+We're assuming you called the machine running ActiveMQ *stomp.example.net*; please change as appropriate. Also note that the port should be 61614 if you turned on TLS.
 
 {% highlight ini %}
   # main config
@@ -205,7 +141,7 @@ We're assuming you called the machine running ActiveMQ *stomp.example.net* pleas
   plugin.psk = abcdefghj
 {% endhighlight %}
 
-You should also create _/etc/mcollective/server.cfg_ here's a sample, , a full reference of config settings can be found here [ConfigurationReference]:
+You should also create _/etc/mcollective/server.cfg_ here's a sample, a full reference of config settings can be found here [ConfigurationReference][]:
 
 {% highlight ini %}
   # main config

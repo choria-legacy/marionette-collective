@@ -25,7 +25,7 @@ title: Getting Started
 [RedHatGuide]: gettingstarted_redhat.html
 [DebianGuide]: gettingstarted_debian.html
 
-*NOTE:* We are currently improving the Getting Started documentation.  Red Hat and CentOS users can refer to [our Redhat guide][RedHatGuide]. Debian users can refer to [our Debian guide][DebianGuide].
+*NOTE:* This is an older, deprecated version of the Getting Started documentation.  Red Hat and CentOS users can refer to [our Redhat guide][RedHatGuide]. Debian users can refer to [our Debian guide][DebianGuide]. Users on less common platforms should adapt one of those two instead of continuing to read this page.
 
 Below find a rough guide to get you going, this assumes the client and server is on the same node, but servers don't need the client code installed.
 
