@@ -9,22 +9,41 @@ toc: false
 [transport]: /mcollective/deploy/middleware/activemq.html#transport-connectors
 
 [activemq_connector]: /mcollective/reference/plugins/connector_activemq.html
-[stomp_connector]: /mcollective/reference/plugins/connector_stomp.html
+[ssl_security]: /mcollective/reference/plugins/security_ssl.html
+[aes_security]: /mcollective/reference/plugins/security_aes.html
 
-In order to achieve end to end encryption, we use TLS encryption between
-ActiveMQ, the nodes, and the client.
+You can configure MCollective and ActiveMQ to do end-to-end encryption over TLS. This allows you to use MCollective's fast and efficient [SSL security plugin][ssl_security] instead of the slow and hard to configure [AES security plugin][aes_security]. 
 
-## Full CA-Verified TLS (Recommended)
+There are two main approaches:
 
-As of MCollective 2.0.0 and Stomp 1.2.2, it's possible to configure MCollective and ActiveMQ to only accept connections to peers with certificates signed by a shared CA. This requires:
+* [CA-verified TLS](#ca-verified-tls) encrypts traffic, and also lets you restrict middleware connections --- only nodes with valid certificates from the site's CA can connect.
+* [Anonymous TLS](#anonymous-tls) encrypts messages to prevent casual traffic sniffing, and will prevent the passwords MCollective uses to connect to ActiveMQ from being stolen. However, it doesn't check whether nodes are allowed to connect, so you have to trust your username and password security.
+
+This feature requires:
 
 * MCollective 2.0.0 or newer
 * ActiveMQ 5.5.0 or newer
 * Stomp gem 1.2.2 or newer
 * The [activemq connector][activemq_connector] plugin (included with MCollective 2.0.0 and newer)
 
+## CA-Verified TLS
 
-### Configure ActiveMQ to Use TLS
+**(Recommended For Most Users)**
+
+### Summary
+
+This approach configures MCollective and ActiveMQ to only accept connections when the peer has a certificate signed by the site's CA. 
+
+**Benefits:**
+
+This approach gives extra security, and your MCollective servers will generally already have the credentials they need since you can re-use Puppet certificates.
+
+**Drawbacks:**
+
+You will need to go out of your way to issue keys and certificates to your admin users, which is an extra step when onboarding a new admin.
+
+
+### Step 1: Configure ActiveMQ to Use TLS
 
 Do the following steps to get ActiveMQ configured:
 
@@ -35,27 +54,30 @@ Do the following steps to get ActiveMQ configured:
 
 At this point, MCollective servers and clients should be unable to connect to ActiveMQ, since they do not yet have credentials configured.
 
-### Configuring MCollective Servers
+### Step 2: Configure MCollective Servers
 
-For the MCollective daemon you can use your existing Puppet certificates by editing the _server.cfg_
+For the MCollective daemon you can use your existing Puppet certificates by editing the _server.cfg_ file:
 
 {% highlight ini %}
 connector = activemq
-plugin.activemq.base64 = yes
-plugin.activemq.pool.size = 2
-plugin.activemq.pool.1.host = stomp.my.net
+# Optional:
+# plugin.activemq.base64 = yes
+plugin.activemq.pool.size = 1
+plugin.activemq.pool.1.host = stomp.example.com
 plugin.activemq.pool.1.port = 61614
 plugin.activemq.pool.1.user = mcollective
 plugin.activemq.pool.1.password = secret
-plugin.activemq.pool.1.ssl = 1
+plugin.activemq.pool.1.ssl = true
 plugin.activemq.pool.1.ssl.ca = /var/lib/puppet/ssl/ca/ca_crt.pem
-plugin.activemq.pool.1.ssl.key = /var/lib/puppet/ssl/private_keys/fqdn.pem
-plugin.activemq.pool.1.ssl.cert = /var/lib/puppet/ssl/certs/fqdn.pem
+plugin.activemq.pool.1.ssl.key = /var/lib/puppet/ssl/private_keys/<NAME>.pem
+plugin.activemq.pool.1.ssl.cert = /var/lib/puppet/ssl/certs/<NAME>.pem
 {% endhighlight %}
 
-Fix the paths to the private key and certificate; they will be named after each machine's Puppet certname. You can discover a node's certname by running `sudo puppet agent --configprint certname`.
+* Set the correct paths to each node's private key and certificate; they will be named after the node's Puppet certname and located in the ssldir.
+    * You can locate a node's private key by running `sudo puppet agent --configprint hostprivkey`, the certificate with `sudo puppet agent --configprint hostcert`, and the CA certificate with `sudo puppet agent --configprint localcacert`.
+* Set the correct username and password.
 
-### Configuring MCollective Clients
+### Step 3: Configure MCollective Clients
 
 Each client will now need a TLS certificate issued by the Puppet CA in order to be able to
 connect to the ActiveMQ:
@@ -83,20 +105,25 @@ You can now configure the mcollective client config in _/home/rip/.mcollective_ 
 
 {% highlight ini %}
 connector = activemq
-plugin.activemq.base64 = yes
-plugin.activemq.pool.size = 2
-plugin.activemq.pool.1.host = stomp.my.net
+# Optional:
+# plugin.activemq.base64 = yes
+plugin.activemq.pool.size = 1
+plugin.activemq.pool.1.host = stomp.example.com
 plugin.activemq.pool.1.port = 61614
 plugin.activemq.pool.1.user = ripienaar
 plugin.activemq.pool.1.password = secret
-plugin.activemq.pool.1.ssl = 1
+plugin.activemq.pool.1.ssl = true
 plugin.activemq.pool.1.ssl.ca = /home/rip/.mcollective.d/ca_crt.pem
 plugin.activemq.pool.1.ssl.key = /home/rip/.mcollective.d/ripienaar-private.pem
 plugin.activemq.pool.1.ssl.cert = /home/rip/.mcollective.d/ripienaar-cert.pem
 {% endhighlight %}
 
-If you are using the SSL or AES security plugins you can use these same files using the _/home/rip/.mcollective.d/ripienaar.pem_
-as the public key for those plugins.
+If you are using the SSL security plugin, you can use these same files by setting `/home/rip/.mcollective.d/ripienaar.pem` as the public key.
+
+### Finish: Verify Encryption
+
+If you want to be sure of this, you should now verify with tcpdump or wireshark that the connection and traffic
+really is all encrypted.
 
 ### Troubleshooting Common Errors
 
@@ -134,32 +161,64 @@ And in the ActiveMQ log:
 sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
 {% endhighlight %}
 
-## Anonymous TLS (Deprecated)
 
-This configuration only works with the now-deprecated [stomp connector][stomp_connector]. New users should avoid it. 
 
-### Configure ActiveMQ to Use Anonymous TLS
 
-* Follow [the ActiveMQ keystores guide][keystores] to create a Java keystore for ActiveMQ. You can skip the truststore. 
-* [Configure activemq.xml's `<sslContext>` element to point at the keystore.][sslcontext] You can skip the `trustStore` and `trustStorePassword` attributes.
-* [Configure the proper URIs in the broker's transport connectors][transport], but leave off the `?needClientAuth=true` portion.
+
+## Anonymous TLS
+
+**(Less Recommended)**
+
+### Summary
+
+This approach configures MCollective and ActiveMQ to encrypt traffic via TLS, but accept connections from anyone.
+
+**Benefits:**
+
+This approach requires less configuration, especially when adding new admin users.
+
+**Drawbacks:**
+
+This approach has some relative security drawbacks. Depending on your site's security needs, these may not concern you --- since MCollective's application-level security plugins will prevent an attacker from issuing agent commands and owning your servers, attacks like those below would only result in denial of service plus some leakage of inventory data via lower-level discovery protocols.
+
+* Although attackers can't sniff MCollective's ActiveMQ passwords, there's nothing to prevent them from logging in if they steal a password through some other means. (With CA-verified TLS, on the other hand, they would also require a private key and certificate, which provides some additional security depth.)
+* An attacker able to run a man-in-the-middle attack at your site could fool your MCollective servers into trusting a malicious ActiveMQ server. 
+
+
+### Step 1: Configure ActiveMQ to Use Anonymous TLS
+
+* Follow [the ActiveMQ keystores guide][keystores] to create a Java keystore for ActiveMQ. _You can skip the truststore._ 
+* [Configure activemq.xml's `<sslContext>` element to point at the keystore.][sslcontext] _You can skip the `trustStore` and `trustStorePassword` attributes._
+* [Configure the proper URIs in the broker's transport connectors][transport], but _leave off the `?needClientAuth=true` portion._
 * Restart ActiveMQ.
 
 
-### Configure MCollective Servers and Clients
+### Step 2: Configure MCollective Servers and Clients
 
-The last step is to tell MCollective to use the SSL connection, to do this you
-need to use the pool-style stomp settings, even if you just have 1 ActiveMQ
-in your pool:
+Set the following settings in the `server.cfg` and `client.cfg` (or `~/.mcollective`) files:
 
 {% highlight ini %}
-plugin.stomp.pool.size = 1
-plugin.stomp.pool.host1 = stomp.your.com
-plugin.stomp.pool.port1 = 61614
-plugin.stomp.pool.user1 = mcollective
-plugin.stomp.pool.password1 = secret
-plugin.stomp.pool.ssl1 = true
+connector = activemq
+# Optional:
+# plugin.activemq.base64 = yes
+plugin.activemq.pool.size = 1
+plugin.activemq.pool.1.host = stomp.example.com
+plugin.activemq.pool.1.port = 61614
+plugin.activemq.pool.1.user = mcollective
+plugin.activemq.pool.1.password = secret
+plugin.activemq.pool.1.ssl = true
+plugin.activemq.pool.1.ssl.fallback = true
 {% endhighlight %}
 
-You should now verify with tcpdump or wireshark that the connection and traffic
+The `plugin.activemq.pool.1.ssl.fallback` setting tells the plugin that it is allowed to:
+
+* Connect to an unverified server
+* Connect without presenting its own SSL credentials
+
+...if it is missing any of the `.ca` `.cert` or `.key` settings or cannot find the files they reference. If the settings _are_ present (and point to correct files), MCollective will try to do a verified connection.
+
+
+### Finish: Verify Encryption
+
+If you want to be sure of this, you should now verify with tcpdump or wireshark that the connection and traffic
 really is all encrypted.

@@ -63,6 +63,8 @@ Remember the password(s) for later, because it needs to [go in the activemq.xml 
 
 ### Step 1: Truststore
 
+> **Note:** The truststore is only required for CA-verified TLS. If you are using anonymous TLS, you may skip it.
+
 The truststore determines which certificates are allowed to connect to ActiveMQ. If you import a CA cert into it, ActiveMQ will trust any certificate signed by that CA.
 
 > You could also _not_ import a CA, and instead import every individual certificate you want to allow. If you do that, you're on your own, but the commands should be similar.

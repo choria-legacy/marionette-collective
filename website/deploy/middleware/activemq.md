@@ -133,6 +133,12 @@ One way or another, you must set all of the following.
 
 ### Transport Connector(s)
 
+It's generally best to only enable the transport connectors you need. For example, if you're using Stomp over TLS, don't leave a bare Stomp transport open. If you're not using a network of brokers, close the OpenWire transport.
+
+The `name` attribute of a transport connector doesn't seem to matter as long as it's locally unique.
+
+#### Stomp
+
 ActiveMQ must listen over the network for Stomp connections; otherwise, MCollective can't reach it. Enable this with a `<transportConnector>` element inside the `<transportConnectors>` element. We generally recommend using TLS.
 
 {% highlight xml %}
@@ -141,15 +147,18 @@ ActiveMQ must listen over the network for Stomp connections; otherwise, MCollect
     </transportConnectors>
 {% endhighlight %}
 
-* The `name` attribute doesn't seem to matter as long as it's locally unique.
-* For unencrypted Stomp, use a URI of `stomp+nio://0.0.0.0:61613`.
-* For Stomp over TLS, use a URI of `stomp+ssl://0.0.0.0:61614?needClientAuth=true`.
-* You can also restrict the interface/hostname to use instead of listening on `0.0.0.0`.
+* Note that the protocol/port/arguments for Stomp URIs can differ:
+    * Unencrypted: `stomp+nio://0.0.0.0:61613`
+    * CA-verified TLS: `stomp+ssl://0.0.0.0:61614?needClientAuth=true`
+    * Anonymous TLS: `stomp+ssl://0.0.0.0:61614`
+* You can choose to restrict the interface/hostname to use instead of listening on `0.0.0.0`.
 
 > **If you are using TLS,** note that you must also:
 > 
 > * [Configure ActiveMQ's TLS credentials](#tls-credentials) (see below)
 > * [Configure MCollective to use TLS credentials][mcollective_connector_tls]
+
+#### OpenWire
 
 If you are using a network of brokers instead of just one ActiveMQ server, they talk to each other over OpenWire, and will all need a transport connector for that protocol too:
 
@@ -157,10 +166,24 @@ If you are using a network of brokers instead of just one ActiveMQ server, they 
     <transportConnector name="openwire+ssl" uri="ssl://0.0.0.0:61617?needClientAuth=true"/>
 {% endhighlight %}
 
-* For unencrypted OpenWire, use a URI of `tcp://0.0.0.0:61616`.
-* For OpenWire over TLS, use a URI of `ssl://0.0.0.0:61617?needClientAuth=true`.
+* Note that the protocol/port/arguments for OpenWire URIs can differ:
+    * Unencrypted: `tcp://0.0.0.0:61616`
+    * CA-verified TLS: `ssl://0.0.0.0:61617?needClientAuth=true`
+    * Anonymous TLS: `ssl://0.0.0.0:61617`
+* You can choose to restrict the interface/hostname to use instead of listening on `0.0.0.0`.
 
-It's generally best to only enable the transport connectors you need. If you're using Stomp over TLS, don't leave a bare Stomp transport open.
+
+
+#### Standard Ports for Stomp and OpenWire
+
+Alas, there aren't any; just a rough consensus.
+
+* 61613 for unencrypted Stomp
+* 61614 for Stomp with TLS
+* 61616 for unencrypted OpenWire
+* 61617 for OpenWire with TLS
+
+All of our documentation assumes these ports.
 
 > #### Shared Configuration
 > 
@@ -175,18 +198,6 @@ It's generally best to only enable the transport connectors you need. If you're 
 > * The port to use for OpenWire traffic
 > * The hostname or IP address to reach peer ActiveMQ servers at
 > * Whether to use TLS
-
-
-#### Standard Ports for Stomp and OpenWire
-
-Alas, there aren't any; just a rough consensus.
-
-* 61613 for unencrypted Stomp
-* 61614 for Stomp with TLS
-* 61616 for unencrypted OpenWire
-* 61617 for OpenWire with TLS
-
-All of our documentation assumes these ports.
 
 
 ### Reply Queue Pruning
@@ -228,6 +239,8 @@ If you are using TLS in either your Stomp or OpenWire [transport connectors](#tr
       />
     </sslContext>
 {% endhighlight %}
+
+**Note:** This example is for CA-verified TLS. If you are using anonymous TLS, you may optionally skip the truststore attributes.
 
 The redundant nested `<sslContext>` elements are not a typo; for some reason ActiveMQ actually needs this.
 
