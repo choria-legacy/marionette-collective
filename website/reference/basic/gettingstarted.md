@@ -24,6 +24,7 @@ title: Getting Started
 [Plugins]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki
 [RedHatGuide]: gettingstarted_redhat.html
 [DebianGuide]: gettingstarted_debian.html
+[server_config]: /mcollective/configure/server.html
 
 *NOTE:* This is an older, deprecated version of the Getting Started documentation.  Red Hat and CentOS users can refer to [our Redhat guide][RedHatGuide]. Debian users can refer to [our Debian guide][DebianGuide]. Users on less common platforms should adapt one of those two instead of continuing to read this page.
 
@@ -183,7 +184,7 @@ Mostly what you'll need to change is the *identity*, *plugin.activemq.1.`*`* and
   plugin.psk = abcdefghj
 {% endhighlight %}
 
-You should also create _/etc/mcollective/server.cfg_ here's a sample, , a full reference of config settings can be found here [ConfigurationReference]:
+You should also create _/etc/mcollective/server.cfg_ here's a sample, a full reference of config settings can be found on the [Server Configuration Reference][server_config]:
 
 {% highlight ini %}
   # main config

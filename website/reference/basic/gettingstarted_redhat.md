@@ -24,6 +24,7 @@ title: Getting Started
 [Plugins]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki
 [MCDownloads]: http://www.puppetlabs.com/downloads/mcollective/
 [EPEL]: http://fedoraproject.org/wiki/EPEL
+[server_config]: /mcollective/configure/server.html
 
 Getting started using Red Hat based distribution like Red Hat Enterprise Linux and CentOS is easy as RPMs are available for all the required components.  This guide walks you through the process.
 
@@ -137,7 +138,7 @@ We're assuming you called the machine running ActiveMQ *stomp.example.net* pleas
   plugin.psk = abcdefghj
 {% endhighlight %}
 
-You should also create _/etc/mcollective/server.cfg_ here's a sample, , a full reference of config settings can be found here [ConfigurationReference]:
+You should also create _/etc/mcollective/server.cfg_ here's a sample, a full reference of config settings can be found on the [Server Configuration Reference][server_config]:
 
 {% highlight ini %}
   # main config

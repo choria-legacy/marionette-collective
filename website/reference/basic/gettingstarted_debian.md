@@ -25,6 +25,7 @@ title: Getting Started
 [Plugins]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki
 [MCDownloads]: http://www.puppetlabs.com/downloads/mcollective/
 [RubyGems]: http://packages.debian.org/search?suite=default&section=all&arch=any&searchon=names&keywords=rubygems
+[server_config]: /mcollective/configure/server.html
 
 Getting started using Debian based distribution like Debian squeeze and Ubuntu is easy as DEBs are available for most the required components.  This guide walks you through the process.
 
@@ -141,7 +142,7 @@ We're assuming you called the machine running ActiveMQ *stomp.example.net*; plea
   plugin.psk = abcdefghj
 {% endhighlight %}
 
-You should also create _/etc/mcollective/server.cfg_ here's a sample, a full reference of config settings can be found here [ConfigurationReference][]:
+You should also create _/etc/mcollective/server.cfg_ here's a sample, a full reference of config settings can be found on the [Server Configuration Reference][server_config]:
 
 {% highlight ini %}
   # main config

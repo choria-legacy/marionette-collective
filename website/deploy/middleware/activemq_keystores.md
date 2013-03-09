@@ -113,7 +113,7 @@ These commands use both an "export/source" password and a "destination" password
 
 {% highlight console %}
 $ sudo cat activemq_private.pem activemq_cert.pem > temp.pem
-$ sudo openssl pkcs12 -export -in temp.pem -out activemq.p12 -name stomp.my.net
+$ sudo openssl pkcs12 -export -in temp.pem -out activemq.p12 -name activemq.example.com
 Enter Export Password:
 Verifying - Enter Export Password:
 $sudo keytool -importkeystore  -destkeystore keystore.jks -srckeystore activemq.p12 -srcstoretype PKCS12 -alias activemq.example.com
