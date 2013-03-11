@@ -74,7 +74,7 @@ module MCollective
                 when "identity"
                   @identity = val
                 when "direct_addressing"
-                  val =~ /^1|y/i ? @direct_addressing = true : @direct_addressing = false
+                  @direct_addressing = false unless val =~ /^1|y/i
                 when "direct_addressing_threshold"
                   @direct_addressing_threshold = val.to_i
                 when "color"
@@ -185,7 +185,7 @@ module MCollective
       @collectives = ["mcollective"]
       @main_collective = @collectives.first
       @ssl_cipher = "aes-256-cbc"
-      @direct_addressing = false
+      @direct_addressing = true
       @direct_addressing_threshold = 10
       @default_discovery_method = "mc"
       @default_discovery_options = []

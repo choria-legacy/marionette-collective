@@ -60,6 +60,28 @@ module MCollective
         end
       end
 
+      it "should set direct_addressing to true by default" do
+        File.expects(:open).with("/nonexisting", "r").returns(StringIO.new(""))
+        File.expects(:exists?).with("/nonexisting").returns(true)
+        File.expects(:exists?).with(File.join(File.dirname("/nonexisting"), "rpc-help.erb")).returns(true)
+        PluginManager.stubs(:loadclass)
+        PluginManager.stubs("<<")
+
+        Config.instance.loadconfig("/nonexisting")
+        Config.instance.direct_addressing.should == true
+      end
+
+      it "should allow direct_addressing to be disabled in the config file" do
+        File.expects(:open).with("/nonexisting", "r").returns(StringIO.new("direct_addressing=n"))
+        File.expects(:exists?).with("/nonexisting").returns(true)
+        File.expects(:exists?).with(File.join(File.dirname("/nonexisting"), "rpc-help.erb")).returns(true)
+        PluginManager.stubs(:loadclass)
+        PluginManager.stubs("<<")
+
+        Config.instance.loadconfig("/nonexisting")
+        Config.instance.direct_addressing.should == false
+      end
+
       it "should not allow the syslog logger type on windows" do
         Util.expects("windows?").returns(true).twice
         File.expects(:open).with("/nonexisting", "r").returns(StringIO.new("logger_type = syslog"))
