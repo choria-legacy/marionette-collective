@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/03/12|Explicitly include StringIO|19367|
 |2013/03/12|Enable direct addressing by default|19665|
 |2013/02/20|Fix error code collision on PLMC18|19366|
 |2013/02/15|Validate arguments supplied to the RPC application and raise errors sooner|19181|
