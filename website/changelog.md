@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/03/13|Set correct reply-to headers in the RabbitMQ connector|17034|
 |2013/03/12|Pre-populate the data from data plugins like agent replies|19564|
 |2013/03/12|Explicitly include StringIO|19367|
 |2013/03/12|Enable direct addressing by default|19665|
