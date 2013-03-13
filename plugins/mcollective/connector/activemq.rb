@@ -32,7 +32,7 @@ module MCollective
     #    plugin.activemq.pool.size = 2
     #
     #    plugin.activemq.pool.1.host = stomp1.your.net
-    #    plugin.activemq.pool.1.port = 6163
+    #    plugin.activemq.pool.1.port = 61613
     #    plugin.activemq.pool.1.user = you
     #    plugin.activemq.pool.1.password = secret
     #    plugin.activemq.pool.1.ssl = true
@@ -42,7 +42,7 @@ module MCollective
     #    plugin.activemq.pool.1.ssl.fallback = true
     #
     #    plugin.activemq.pool.2.host = stomp2.your.net
-    #    plugin.activemq.pool.2.port = 6163
+    #    plugin.activemq.pool.2.port = 61613
     #    plugin.activemq.pool.2.user = you
     #    plugin.activemq.pool.2.password = secret
     #    plugin.activemq.pool.2.ssl = false
@@ -161,7 +161,7 @@ module MCollective
             host = {}
 
             host[:host] = get_option("activemq.pool.#{poolnum}.host")
-            host[:port] = get_option("activemq.pool.#{poolnum}.port", 6163).to_i
+            host[:port] = get_option("activemq.pool.#{poolnum}.port", 61613).to_i
             host[:login] = get_env_or_option("STOMP_USER", "activemq.pool.#{poolnum}.user")
             host[:passcode] = get_env_or_option("STOMP_PASSWORD", "activemq.pool.#{poolnum}.password")
             host[:ssl] = get_bool_option("activemq.pool.#{poolnum}.ssl", false)
