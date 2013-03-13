@@ -264,6 +264,7 @@ module MCollective
           msg.stubs(:agent).returns("agent")
           msg.stubs(:collective).returns("mcollective")
           msg.stubs(:type).returns(:direct_request)
+          msg.stubs(:reply_to).returns("/topic/mcollective")
           msg.expects(:discovered_hosts).returns(["one", "two"])
 
           @connection.expects(:publish).with('/exchange/mcollective_directed/one', 'msg', {'reply-to' => '/temp-queue/mcollective_reply_agent'})
@@ -345,8 +346,9 @@ module MCollective
           message.expects(:type).returns(:request).times(3)
           message.expects(:agent).returns("rspecagent")
           message.expects(:collective).returns("mcollective")
+          message.expects(:reply_to).returns("/topic/rspec")
 
-          @c.expects(:make_target).with("rspecagent", :request, "mcollective", nil)
+          @c.expects(:make_target).with("rspecagent", :request, "mcollective", "/topic/rspec", nil)
           @c.target_for(message)
         end
 
@@ -355,8 +357,9 @@ module MCollective
           message.expects(:type).returns(:direct_request).times(3)
           message.expects(:agent).returns("rspecagent")
           message.expects(:collective).returns("mcollective")
+          message.expects(:reply_to).returns("/topic/rspec")
 
-          @c.expects(:make_target).with("rspecagent", :direct_request, "mcollective", nil)
+          @c.expects(:make_target).with("rspecagent", :direct_request, "mcollective", "/topic/rspec", nil)
           @c.target_for(message)
         end
 
@@ -382,8 +385,9 @@ module MCollective
           @c.make_target("test", :reply, "mcollective").should == {:name => "/temp-queue/mcollective_reply_test", :headers => {}, :id => "mcollective_test_replies"}
           @c.make_target("test", :broadcast, "mcollective").should == {:name => "/exchange/mcollective_broadcast/test", :headers => {"reply-to"=>"/temp-queue/mcollective_reply_test"}, :id => "mcollective_broadcast_test"}
           @c.make_target("test", :request, "mcollective").should == {:name => "/exchange/mcollective_broadcast/test", :headers => {"reply-to"=>"/temp-queue/mcollective_reply_test"}, :id => "mcollective_broadcast_test"}
-          @c.make_target("test", :direct_request, "mcollective", "rspec").should == {:headers=>{"reply-to"=>"/temp-queue/mcollective_reply_test"}, :name=>"/exchange/mcollective_directed/rspec", :id => nil}
+          @c.make_target("test", :direct_request, "mcollective", nil, "rspec").should == {:headers=>{"reply-to"=>"/temp-queue/mcollective_reply_test"}, :name=>"/exchange/mcollective_directed/rspec", :id => nil}
           @c.make_target("test", :directed, "mcollective").should == {:name => "/exchange/mcollective_directed/rspec", :headers=>{}, :id => "rspec_directed_to_identity"}
+          @c.make_target("test", :request, "mcollective", "/topic/rspec", "rspec").should == {:headers=>{"reply-to"=>"/topic/rspec"}, :name=>"/exchange/mcollective_broadcast/test", :id => "mcollective_broadcast_test"}
         end
 
         it "should raise an error for unknown collectives" do

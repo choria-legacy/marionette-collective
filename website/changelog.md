@@ -10,6 +10,7 @@ toc: false
 |----|-----------|------|
 |2013/04/29|Improve config defaults on windows machines|20388|
 |2013/04/11|Add direct addressing awareness to the fire and forget request mode|17930|
+|2013/03/13|Set correct reply-to headers in the RabbitMQ connector|17034|
 |*2013/02/14*|*Release 2.2.3*|19265|
 |2013/02/14|Update vendored JSON gem for CVE-2013-0269|19265|
 |2012/02/13|Restore the ability to set a discovery timeout on a RPC client|19238|
