@@ -73,7 +73,7 @@ module MCollective
             host = {}
 
             host[:host] = get_option("rabbitmq.pool.#{poolnum}.host")
-            host[:port] = get_option("rabbitmq.pool.#{poolnum}.port", 6163).to_i
+            host[:port] = get_option("rabbitmq.pool.#{poolnum}.port", 61613).to_i
             host[:login] = get_env_or_option("STOMP_USER", "rabbitmq.pool.#{poolnum}.user")
             host[:passcode] = get_env_or_option("STOMP_PASSWORD", "rabbitmq.pool.#{poolnum}.password")
             host[:ssl] = get_bool_option("rabbitmq.pool.#{poolnum}.ssl", false)
