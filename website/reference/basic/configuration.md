@@ -9,6 +9,9 @@ title: Configuration Guide
 [Auditing]: /mcollective/simplerpc/auditing.html
 [Authorization]: /mcollective/simplerpc/authorization.html
 [Subcollectives]: /mcollective/reference/basic/subcollectives.html
+[server_config]: /mcollective/configure/server.html
+
+> **Note:** There is a new [Server Configuration Reference][server_config] page with a more complete overview of MCollective's server daemon settings. A similar client configuration page is forthcoming. 
 
 This guide tells you about the major configuration options in the daemon and client config files.  There are options not mentioned
 here typically ones specific to a certain plugin.

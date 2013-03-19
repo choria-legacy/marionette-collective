@@ -36,6 +36,7 @@ toc: false
 [ActiveMQ]: /mcollective/reference/integration/activemq_security.html
 [MessageFormat]: /mcollective/reference/basic/messageformat.html
 [ChangeLog]: /mcollective/changelog.html
+[server_config]: /mcollective/configure/server.html
 
 The Marionette Collective AKA mcollective is a framework to build server
 orchestration or parallel job execution systems.
@@ -93,7 +94,7 @@ MCollective is licensed under the Apache 2 license.
 
 ### Introductory and Tutorial Pages
  * See it in action in our [Screencasts]
- * Read the [GettingStarted] and [Configuration] guides for installation instructions
+ * Read the [GettingStarted], [Server Configuration Reference][server_config], and [Configuration] guides for installation instructions
  * Read the [Terminology] page if you see any words where the meaning in the context of MCollective is not clear
  * Read the [ChangeLog] page to see how MCollective has developed
  * Learn how to write basic reports for your servers - [NodeReports]
