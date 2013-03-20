@@ -4,15 +4,12 @@ layout: default
 ---
 
 
-<!-- TODO Got to change this middleware link as soon as enough of the deploy docs come up. -->
-[middleware]: /mcollective/deploy/middleware/activemq.html
+[middleware]: /mcollective/deploy/middleware/
 [filters]: /mcollective/reference/ui/filters.html
 [plugin_directory]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki
 [facter_plugin]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/FactsFacter
 [ohai_plugin]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/FactsOhai
 [chef_classfile]: /mcollective/reference/integration/chef.html#class-filters
-[fact]: #facts-identity-and-classes
-[connector_plugin]: #connector-settings
 [subcollectives]: /mcollective/reference/basic/subcollectives.html
 [registration]: /mcollective/reference/plugins/registration.html
 [puppetdb]: /puppetdb/
@@ -27,6 +24,7 @@ layout: default
 [activemq_connector]: /mcollective/reference/plugins/connector_activemq.html
 [rabbitmq_connector]: /mcollective/reference/plugins/connector_rabbitmq.html
 [stdlib]: http://forge.puppetlabs.com/puppetlabs/stdlib
+[client_config_ssl_plugin]: ./client.html#ssl-plugin-settings
 
 {% capture badbool %}**Note:** Use these exact values only; do not use "true" or "false."{% endcapture %}
 
@@ -96,18 +94,18 @@ plugin.psk = j9q8kx7fnuied9e
 
 <a href="#classesfile">classesfile</a> = /var/lib/puppet/state/classes.txt
 
+# <a href="#node-registration">Registration (recommended):</a>
+# -----------------------
+
+<a href="#registerinterval">registerinterval</a> = 600
+<a href="#registration">registration</a> = agentlist
+<a href="#registrationcollective">registration_collective</a> = mcollective
+
 # <a href="#subcollectives">Subcollectives (optional):</a>
 # -------------------------
 
 <a href="#collectives">collectives</a> = mcollective,uk_collective
 <a href="#maincollective">main_collective</a> = mcollective
-
-# <a href="#node-registration">Registration (optional):</a>
-# -----------------------
-
-<a href="#registerinterval">registerinterval</a> = 300
-<a href="#registration">registration</a> = agentlist
-<a href="#registrationcollective">registration_collective</a> = mcollective
 
 # <a href="#auditing">Auditing (optional):</a>
 # -------------------
@@ -127,6 +125,7 @@ plugin.psk = j9q8kx7fnuied9e
 
 <a href="#loggertype">logger_type</a> = file
 <a href="#loglevel">loglevel</a> = info
+<a href="#logfile">logfile</a> = /var/log/mcollective.log
 <a href="#keeplogs">keeplogs</a> = 5
 <a href="#maxlogsize">max_log_size</a> = 2097152
 <a href="#logfacility">logfacility</a> = user
@@ -174,7 +173,7 @@ The spaces on either side of the equals sign are optional. Lines starting with a
 
 Many of MCollective's settings are named with the format `plugin.<NAME>.<SETTING_NAME>`. These settings can optionally be put in separate files, in the `/etc/mcollective/plugin.d/` directory.
 
-To move a plugin setting to an external file, put it in `/etc/mcollective/plugin.d/<NAME>.cfg`, and use only the `<SETTING_NAME>` segment of the setting. So this:
+To move a `plugin.<NAME>.<SETTING_NAME>` setting to an external file, put it in `/etc/mcollective/plugin.d/<NAME>.cfg`, and use only the `<SETTING_NAME>` segment of the setting. So this:
 
     # /etc/mcollective/server.cfg
     plugin.puppet.splay = true
@@ -254,6 +253,7 @@ plugin.activemq.pool.1.port = 61614
 plugin.activemq.pool.1.user = mcollective
 plugin.activemq.pool.1.password = secret
 plugin.activemq.pool.1.ssl = 1
+# When ssl == 1:
 plugin.activemq.pool.1.ssl.ca = /var/lib/puppet/ssl/certs/ca.pem
 plugin.activemq.pool.1.ssl.cert = /var/lib/puppet/ssl/certs/web01.example.com.pem
 plugin.activemq.pool.1.ssl.key = /var/lib/puppet/ssl/private_keys/web01.example.com.pem
@@ -324,9 +324,9 @@ The RabbitMQ connector uses very similar settings to the ActiveMQ connector, wit
 <pre><code><a href="#securityprovider">securityprovider</a> = ssl
 
 # <a href="#ssl-plugin-settings">SSL plugin settings:</a>
-plugin.ssl_client_cert_dir = /etc/mcollective.d/clients
-plugin.ssl_server_private = /etc/mcollective.d/server_private.pem
-plugin.ssl_server_public = /etc/mcollective.d/server_public.pem
+plugin.ssl_client_cert_dir = /etc/mcollective/clients
+plugin.ssl_server_private = /etc/mcollective/server_private.pem
+plugin.ssl_server_public = /etc/mcollective/server_public.pem
 
 # <a href="#psk-plugin-settings">PSK plugin settings:</a>
 plugin.psk = j9q8kx7fnuied9e
@@ -370,6 +370,12 @@ All of these settings have **no default,** and must be set for the SSL plugin to
 - **`plugin.ssl_server_public`** --- The path to the server public key file, which must be in `.pem` format.
 - **`plugin.ssl_client_cert_dir`** --- A directory containing every authorized client public key.
 
+The client uses different settings, which are covered in the [client config reference][client_config_ssl_plugin]:
+
+- `plugin.ssl_server_public`
+- `plugin.ssl_client_private`
+- `plugin.ssl_client_public`
+
 
 #### PSK Plugin Settings
 
@@ -381,8 +387,10 @@ All of these settings have **no default,** and must be set for the SSL plugin to
 ([↑ Back to top](#content))
 
 
-Facts, Identity, and Classes
+Recommended Features
 -----
+
+### Facts, Identity, and Classes
 
 <pre><code><a href="#factsource">factsource</a> = yaml
 <a href="#pluginyaml">plugin.yaml</a> = /etc/mcollective/facts.yaml
@@ -451,11 +459,11 @@ If you are using Puppet and Facter, you can populate it by putting something lik
 {% highlight ruby %}
     # /etc/puppet/manifests/site.pp
     file{"/etc/mcollective/facts.yaml":
-       owner    => root,
-       group    => root,
-       mode     => 400,
-       loglevel => debug, # reduce noise in Puppet reports
-       content  => inline_template("<%= scope.to_hash.reject { |k,v| k.to_s =~ /(uptime_seconds|timestamp|free)/ }.to_yaml %>"), # exclude rapidly changing facts
+      owner    => root,
+      group    => root,
+      mode     => 400,
+      loglevel => debug, # reduce noise in Puppet reports
+      content  => inline_template("<%= scope.to_hash.reject { |k,v| k.to_s =~ /(uptime_seconds|timestamp|free)/ }.to_yaml %>"), # exclude rapidly changing facts
     }
 {% endhighlight %}
 
@@ -466,6 +474,59 @@ How long (in seconds) to cache fact results before refreshing from source. This 
 - _Default:_ `300`
 
 ([↑ Back to top](#content))
+
+
+### Node Registration
+
+<pre><code><a href="#registerinterval">registerinterval</a> = 600
+<a href="#registration">registration</a> = agentlist
+<a href="#registrationcollective">registration_collective</a> = mcollective
+</code>
+</pre>
+
+> **Note:** We recommend that everyone using the ActiveMQ or RabbitMQ connector set a `registerinterval` of about 600 seconds (10m). You do not need to set a non-default registration plugin or configure a receiver for the registration messages. (If you do, you might want to extend the interval a bit to reduce load.)
+>
+> We do this to work around a set of annoyances in the underlying network protocols:
+>
+> * Stomp connections are completely idle when no messages are being sent.
+> * Many firewalls will kill idle TCP connections after a while, which can cause nodes to drop out of the deployment at seemingly random times.
+> * MCollective sets the keep-alive flag on its TCP connections, but most default OS configurations only send the first keep-alive packet after about two hours, so this doesn't really fix the problem. Nodes may still disappear for an hour or so, then come back.
+> * Stomp 1.1 fixes this with protocol-level heartbeats, but the implementations haven't quite caught up and have had some bugs, so we can't rely on it yet.
+>
+> Thus, we work around all this by sending an irrelevant registration message every ten minutes, which keeps the connection alive (and will recover if it _does_ die) with a very lightweight amount of traffic.
+
+By default, registration is disabled, due to [`registerinterval`](#registerinterval) being set to 0.
+
+Optionally, MCollective servers can [send periodic heartbeat messages][registration] containing some inventory information. This can provide a central inventory at sites that don't already use something like [PuppetDB][], and can also be used as a simple passive monitoring system.
+
+The default registration plugin, `agentlist`, sends a standard SimpleRPC command over the MCollective middleware, to be processed by some server with an agent called `registration` installed. You would need to ensure that the `registration` agent is extremely performant (due to the volume of message it will receive) and installed on a limited number of servers. If your [middleware][] supports detailed permissions, you must also ensure that it allows servers to send commands to the registration agent ([ActiveMQ instructions](/mcollective/deploy/middleware/activemq.html#detailed-restrictions)).
+
+Some registration plugins (e.g. `redis`) can insert data directly into the inventory instead of sending an RPC message. This is a flexible system, and the user is in charge of deciding what to build with it, if anything. If all you need is a searchable inventory, [PuppetDB][] is probably closer to your needs.
+
+#### `registerinterval`
+
+How long (in seconds) to wait between registration messages. Setting this to 0 disables registration.
+
+- _Default:_ `0`
+
+#### `registration`
+
+The [registration plugin][registration] to use.
+
+This plugin must be installed on the server sending the message, and will dictate what the message contains. The default `agentlist` plugin will only send a list of the installed agents. See [Registration Plugins][registration] for more details.
+
+- _Default:_ `agentlist`
+- _Allowed values:_ The name of any installed registration plugin. {{ pluginname }}
+
+#### `registration_collective`
+
+Which subcollective to send registration messages to, when using a SimpleRPC-based registration plugin.
+
+- _Default:_ (the value of [`main_collective`](#maincollective), usually `mcollective`)
+
+
+([↑ Back to top](#content))
+
 
 
 Optional Features
@@ -503,47 +564,6 @@ A comma-separated list (spaces OK) of [subcollectives][] this server should join
 The main collective for this server. Currently, this is only used as the default value for the [`registration_collective`](#registrationcollective) setting.
 
 - _Default:_ (the first value of [the `collectives` setting](#collectives), usually `mcollective`)
-
-
-([↑ Back to top](#content))
-
-
-### Node Registration
-
-<pre><code><a href="#registerinterval">registerinterval</a> = 300
-<a href="#registration">registration</a> = agentlist
-<a href="#registrationcollective">registration_collective</a> = mcollective
-</code>
-</pre>
-
-By default, registration is disabled, due to [`registerinterval`](#registerinterval) being set to 0.
-
-Optionally, MCollective servers can [send periodic heartbeat messages][registration] containing some inventory information. This can provide a central inventory at sites that don't already use something like [PuppetDB][], and can also be used as a simple passive monitoring system.
-
-The default registration plugin, `agentlist`, sends a standard SimpleRPC command over the MCollective middleware, to be processed by some server with an agent called `registration` installed. You would need to ensure that the `registration` agent is extremely performant (due to the volume of message it will receive) and installed on a limited number of servers. If your [middleware][] supports detailed permissions, you must also ensure that it allows servers to send commands to the registration agent ([ActiveMQ instructions](/mcollective/deploy/middleware/activemq.html#detailed-restrictions)).
-
-Some registration plugins (e.g. `redis`) can insert data directly into the inventory instead of sending an RPC message. This is a flexible system, and the user is in charge of deciding what to build with it, if anything. If all you need is a searchable inventory, [PuppetDB][] is probably closer to your needs.
-
-#### `registerinterval`
-
-How long (in seconds) to wait between registration messages. Setting this to 0 disables registration.
-
-- _Default:_ `0`
-
-#### `registration`
-
-The [registration plugin][registration] to use.
-
-This plugin must be installed on the server sending the message, and will dictate what the message contains. The default `agentlist` plugin will only send a list of the installed agents. See [Registration Plugins][registration] for more details.
-
-- _Default:_ `agentlist`
-- _Allowed values:_ The name of any installed registration plugin. {{ pluginname }}
-
-#### `registration_collective`
-
-Which subcollective to send registration messages to, when using a SimpleRPC-based registration plugin.
-
-- _Default:_ (the value of [`main_collective`](#maincollective), usually `mcollective`)
 
 
 ([↑ Back to top](#content))
