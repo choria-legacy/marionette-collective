@@ -24,7 +24,7 @@ module MCollective
       set_config_defaults(configfile)
 
       if File.exists?(configfile)
-        File.open(configfile, "r").each do |line|
+        File.readlines(configfile).each do |line|
 
           # strip blank spaces, tabs etc off the end of all lines
           line.gsub!(/\s*$/, "")
@@ -123,6 +123,8 @@ module MCollective
             end
           end
         end
+
+        raise('The %s config file does not specify a libdir setting, cannot continue' % configfile) if @libdir.empty?
 
         I18n.load_path = Dir[File.expand_path(File.join(File.dirname(__FILE__), "locales", "*.yml"))]
         I18n.locale = :en

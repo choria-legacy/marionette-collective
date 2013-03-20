@@ -5,6 +5,13 @@ require 'spec_helper'
 module MCollective
   describe Config do
     describe "#loadconfig" do
+      it "should fail when no libdir is set" do
+        File.expects(:exists?).with("/nonexisting").returns(true)
+        File.expects(:readlines).with("/nonexisting").returns([])
+        Config.instance.stubs(:set_config_defaults)
+        expect { Config.instance.loadconfig("/nonexisting") }.to raise_error("The /nonexisting config file does not specify a libdir setting, cannot continue")
+      end
+
       it "should only test that libdirs are absolute paths" do
         Util.expects(:absolute_path?).with("/one").returns(true)
         Util.expects(:absolute_path?).with("/two").returns(true)
@@ -15,14 +22,14 @@ module MCollective
         File.stubs(:exists?).with(File.join(File.dirname("/nonexisting"), "rpc-help.erb")).returns(true)
 
         ["/one:/two", "/three"].each do |path|
-          File.stubs(:open).with("/nonexisting", "r").returns(StringIO.new("libdir = #{path}"))
+          File.expects(:readlines).with("/nonexisting").returns(["libdir = #{path}"])
 
           Config.instance.loadconfig("/nonexisting")
 
           PluginManager.clear
         end
 
-        File.stubs(:open).with("/nonexisting", "r").returns(StringIO.new("libdir = four"))
+        File.expects(:readlines).with("/nonexisting").returns(["libdir = four"])
 
         expect { Config.instance.loadconfig("/nonexisting") }.to raise_error(/should be absolute paths/)
       end
@@ -38,7 +45,7 @@ module MCollective
           "\\\\?\\c:\\foo", "//?/UNC/bar", "//foo/bar",
           "//?/c:/foo"
         ].each do |input|
-          File.expects(:open).with("/nonexisting", "r").returns(StringIO.new("identity = #{input}"))
+          File.expects(:readlines).with("/nonexisting").returns(["identity = #{input}", "libdir=/nonexistinglib"])
           File.expects(:exists?).with("/nonexisting").returns(true)
           File.expects(:exists?).with(File.join(File.dirname("/nonexisting"), "rpc-help.erb")).returns(true)
 
@@ -50,7 +57,7 @@ module MCollective
 
       it "should allow valid identities" do
         ["foo", "foo_bar", "foo-bar", "foo-bar-123", "foo.bar", "foo_bar_123"].each do |input|
-          File.expects(:open).with("/nonexisting", "r").returns(StringIO.new("identity = #{input}"))
+          File.expects(:readlines).with("/nonexisting").returns(["identity = #{input}", "libdir=/nonexistinglib"])
           File.expects(:exists?).with("/nonexisting").returns(true)
           File.expects(:exists?).with(File.join(File.dirname("/nonexisting"), "rpc-help.erb")).returns(true)
           PluginManager.stubs(:loadclass)
@@ -61,7 +68,7 @@ module MCollective
       end
 
       it "should set direct_addressing to true by default" do
-        File.expects(:open).with("/nonexisting", "r").returns(StringIO.new(""))
+        File.expects(:readlines).with("/nonexisting").returns(["libdir=/nonexistinglib"])
         File.expects(:exists?).with("/nonexisting").returns(true)
         File.expects(:exists?).with(File.join(File.dirname("/nonexisting"), "rpc-help.erb")).returns(true)
         PluginManager.stubs(:loadclass)
@@ -72,7 +79,7 @@ module MCollective
       end
 
       it "should allow direct_addressing to be disabled in the config file" do
-        File.expects(:open).with("/nonexisting", "r").returns(StringIO.new("direct_addressing=n"))
+        File.expects(:readlines).with("/nonexisting").returns(["libdir=/nonexistinglib", "direct_addressing=n"])
         File.expects(:exists?).with("/nonexisting").returns(true)
         File.expects(:exists?).with(File.join(File.dirname("/nonexisting"), "rpc-help.erb")).returns(true)
         PluginManager.stubs(:loadclass)
@@ -84,7 +91,7 @@ module MCollective
 
       it "should not allow the syslog logger type on windows" do
         Util.expects("windows?").returns(true).twice
-        File.expects(:open).with("/nonexisting", "r").returns(StringIO.new("logger_type = syslog"))
+        File.expects(:readlines).with("/nonexisting").returns(["libdir=/nonexistinglib", "logger_type=syslog"])
         File.expects(:exists?).with("/nonexisting").returns(true)
         File.expects(:exists?).with(File.join(File.dirname("/nonexisting"), "rpc-help.erb")).returns(true)
         PluginManager.stubs(:loadclass)
@@ -96,7 +103,7 @@ module MCollective
       it "should default to finding the help template in the same dir as the config file" do
         path = File.join(File.dirname("/nonexisting"), "rpc-help.erb")
 
-        File.expects(:open).with("/nonexisting", "r").returns(StringIO.new(""))
+        File.expects(:readlines).with("/nonexisting").returns(["libdir=/nonexistinglib"])
         File.expects(:exists?).with("/nonexisting").returns(true)
         PluginManager.stubs(:loadclass)
         PluginManager.stubs("<<")
@@ -110,7 +117,7 @@ module MCollective
       it "should fall back to old behavior if the help template file does not exist in the config dir" do
         path = File.join(File.dirname("/nonexisting"), "rpc-help.erb")
 
-        File.expects(:open).with("/nonexisting", "r").returns(StringIO.new(""))
+        File.expects(:readlines).with("/nonexisting").returns(["libdir=/nonexistinglib"])
         File.expects(:exists?).with("/nonexisting").returns(true)
         File.expects(:exists?).with(path).returns(false)
         PluginManager.stubs(:loadclass)
@@ -121,7 +128,7 @@ module MCollective
       end
 
       it "should support multiple default_discovery_options" do
-        File.expects(:open).with("/nonexisting", "r").returns(StringIO.new("default_discovery_options = 1\ndefault_discovery_options = 2"))
+        File.expects(:readlines).with("/nonexisting").returns(["default_discovery_options = 1", "default_discovery_options = 2", "libdir=/nonexistinglib"])
         File.expects(:exists?).with("/nonexisting").returns(true)
         File.expects(:exists?).with(File.join(File.dirname("/nonexisting"), "rpc-help.erb")).returns(true)
         PluginManager.stubs(:loadclass)
@@ -177,7 +184,8 @@ module MCollective
         File.stubs(:exists?).returns(true)
         File.stubs(:directory?).with(@plugindir).returns(true)
         File.stubs(:exists?).with(servercfg).returns(true)
-        File.expects(:open).with(servercfg, "r").returns(["plugin.rspec.key = default"])
+        File.expects(:readlines).with(servercfg).returns(["plugin.rspec.key = default", "libdir=/nonexisting"])
+        File.stubs(:directory?).with("/nonexisting").returns(true)
 
         Dir.expects(:new).with(@plugindir).returns(["rspec.cfg"])
         File.expects(:open).with(File.join(@plugindir, "rspec.cfg"), "r").returns(["key = overridden"])
