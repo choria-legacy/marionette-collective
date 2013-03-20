@@ -5,7 +5,6 @@ toc: false
 ---
 [blip]: http://mcollective.blip.tv/
 [slideshare]: http://www.slideshare.net/mcollective
-[ec2demo]: /mcollective/ec2demo.html
 [Terminology]: /mcollective/terminology.html
 [SimpleRPCIntroduction]: /mcollective/simplerpc/
 [DDL]: /mcollective/reference/plugins/ddl.html
@@ -43,17 +42,6 @@ SimpleRPC framework but is still valid today.
 
 <a name="ec2_demo">&nbsp;</a>
 
-### EC2 Based Demo
-Sometimes you just want to know if a tool is right for you by getting hands on experience
-we've made a EC2 hosted demo where you can fire up as many nodes in a cluster as you want and
-get some experience.
-
-View the [ec2demo] page for more about this.
-
-<iframe width="640" height="360" src="http://www.youtube-nocookie.com/embed/Hw0Z1xfg050" frameborder="0" allowfullscreen></iframe>
-
-<a name="message_flow">&nbsp;</a>
-
 ### Message Flow, Terminology and Components
 This video introduces the messaging concepts you need to know about when using MCollective.
 It shows how the components talk with each other and what software needs to be installed where
@@ -85,7 +73,7 @@ After you have watched the video, you can refer to the [DDL] wiki page for more 
 <a name="simplerpc_ddl_irb">&nbsp;</a>
 
 ### SimpleRPC DDL enhanced IRB
-Based on the SimpleRPC DDL, this custom IRB shell supports command completion. 
+Based on the SimpleRPC DDL, this custom IRB shell supports command completion.
 
 <iframe width="640" height="480" src="http://www.youtube-nocookie.com/embed/xikjjXvN6nA" frameborder="0" allowfullscreen></iframe>
 

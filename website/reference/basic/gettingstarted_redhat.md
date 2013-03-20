@@ -26,6 +26,16 @@ title: Getting Started
 [EPEL]: http://fedoraproject.org/wiki/EPEL
 [server_config]: /mcollective/configure/server.html
 
+
+> ## This Page is Deprecated
+>
+> We've revamped our getting started documentation! Instead of this page, use one of the following:
+>
+> * [Demo MCollective with Vagrant](/mcollective/deploy/demo.html)
+> * [Deploy MCollective (Standard Deployment)](/mcollective/deploy/standard.html)
+
+
+
 Getting started using Red Hat based distribution like Red Hat Enterprise Linux and CentOS is easy as RPMs are available for all the required components.  This guide walks you through the process.
 
 ## Requirements

@@ -27,6 +27,15 @@ title: Getting Started
 [RubyGems]: http://packages.debian.org/search?suite=default&section=all&arch=any&searchon=names&keywords=rubygems
 [server_config]: /mcollective/configure/server.html
 
+
+> ## This Page is Deprecated
+>
+> We've revamped our getting started documentation! Instead of this page, use one of the following:
+>
+> * [Demo MCollective with Vagrant](/mcollective/deploy/demo.html)
+> * [Deploy MCollective (Standard Deployment)](/mcollective/deploy/standard.html)
+
+
 Getting started using Debian based distribution like Debian squeeze and Ubuntu is easy as DEBs are available for most the required components.  This guide walks you through the process.
 
 ## Requirements
