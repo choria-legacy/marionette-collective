@@ -10,8 +10,6 @@ module MCollective
         config = Config.instance.pluginconf
 
         @timeout = 5
-        @timeout = config["discovery.timeout"].to_i if config.include?("discovery.timeout")
-
         @meta = {:license => "Apache License, Version 2",
                  :author => "R.I.Pienaar <rip@devco.net>",
                  :timeout => @timeout,

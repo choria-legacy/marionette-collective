@@ -36,13 +36,13 @@ layout: default
 
 
 
-This document describes MCollective server configuration in MCollective 2.0.0 and higher. Older versions may lack certain fetaures. 
+This document describes MCollective server configuration in MCollective 2.0.0 and higher. Older versions may lack certain fetaures.
 
 
 Example / Index
 -----
 
-The following is an example MCollective server config file showing all of the major groups of settings. All of the setting names styled as links can be clicked, and will take you down the page to a full description of that setting. 
+The following is an example MCollective server config file showing all of the major groups of settings. All of the setting names styled as links can be clicked, and will take you down the page to a full description of that setting.
 
 [See below the example for a full description of the config file location and format.](#the-server-config-files)
 
@@ -166,8 +166,8 @@ Each line consists of a setting, an equals sign, and a value:
 
 The spaces on either side of the equals sign are optional. Lines starting with a `#` are comments.
 
-> **Note on Boolean Values:** MCollective's config code does not have consistent handling of boolean values. Many of the core settings will accept values of `1/0` and `y/n`, but will fail to handle `true/false`; additionally, each plugin can handle boolean values differently, and some of them do not properly handle the `y/n` values accepted by the core settings. 
-> 
+> **Note on Boolean Values:** MCollective's config code does not have consistent handling of boolean values. Many of the core settings will accept values of `1/0` and `y/n`, but will fail to handle `true/false`; additionally, each plugin can handle boolean values differently, and some of them do not properly handle the `y/n` values accepted by the core settings.
+>
 > Nearly all known plugins and core settings accept `1` and `0`. Until further notice, you should always use these for all boolean settings, as no other values are universally safe.
 
 ### Plugin Config Directory (Optional)
@@ -177,22 +177,22 @@ Many of MCollective's settings are named with the format `plugin.<NAME>.<SETTING
 To move a plugin setting to an external file, put it in `/etc/mcollective/plugin.d/<NAME>.cfg`, and use only the `<SETTING_NAME>` segment of the setting. So this:
 
     # /etc/mcollective/server.cfg
-    plugin.discovery.timeout = 10
+    plugin.puppet.splay = true
 
 ...is equivalent to:
 
-    # /etc/mcollective/plugin.d/discovery.cfg
-    timeout = 10
+    # /etc/mcollective/plugin.d/puppet.cfg
+    splay = true
 
 Note that this doesn't work for settings like `plugin.psk`, since they have no `<SETTING_NAME>` segment; a setting must have at least three segments to go in a plugin.cfg file.
 
 ### Best Practices
 
-You should manage your MCollective servers' config files with config management software (such as Puppet). While most settings in a deployment are the same, several should be different for each server, and managing these differences manually is impractical. 
+You should manage your MCollective servers' config files with config management software (such as Puppet). While most settings in a deployment are the same, several should be different for each server, and managing these differences manually is impractical.
 
 If your deployment is fairly simple and there is little division of responsibility (e.g. having one group in charge of MCollective core and another group in charge of several agent plugins), then you can manage the config file with a simple template.
 
-If your deployment is large or complex, or you expect it to become so, you should manage MCollective settings as individual resources, as this is the only practical way to divide responsibilities within a single file. 
+If your deployment is large or complex, or you expect it to become so, you should manage MCollective settings as individual resources, as this is the only practical way to divide responsibilities within a single file.
 
 Below is an example of how to do this using the `file_line` type from the [puppetlabs/stdlib module][stdlib]:
 
@@ -201,14 +201,14 @@ Below is an example of how to do this using the `file_line` type from the [puppe
     define mcollective::setting ($setting = $title, $target = '/etc/mcollective/server.cfg', $value) {
       validate_re($target, '\/(plugin\.d\/[a-z]+|server)\.cfg\Z')
       $regex_escaped_setting = regsubst($setting, '\.', '\\.', 'G') # assume dots are the only regex-unsafe chars in a setting name.
-  
+
       file_line {"mco_setting_${title}":
         path  => $target,
         line  => "${setting} = ${value}",
         match => "^ *${regex_escaped_setting} *=.*$",
       }
     }
-    
+
     # /etc/puppet/modules/mcollective_core/manifests/server/connector.pp
     # ...
     # Connector settings:
@@ -311,7 +311,7 @@ ActiveMQ is the main middleware we recommend for MCollective. The ActiveMQ conne
 
 #### RabbitMQ Connector Settings
 
-The RabbitMQ connector uses very similar settings to the ActiveMQ connector, with the same `.pool.1.host` style of setting names. 
+The RabbitMQ connector uses very similar settings to the ActiveMQ connector, with the same `.pool.1.host` style of setting names.
 
 [See the RabbitMQ connector documentation][rabbitmq_connector] for more complete details.
 
@@ -333,7 +333,7 @@ plugin.psk = j9q8kx7fnuied9e
 </code>
 </pre>
 
-MCollective always requires a security plugin. (Although they're called security plugins, they actually handle more, including message serialization.) Each security plugin will have additional settings it requires. 
+MCollective always requires a security plugin. (Although they're called security plugins, they actually handle more, including message serialization.) Each security plugin will have additional settings it requires.
 
 > #### Shared Configuration
 >
@@ -342,7 +342,7 @@ MCollective always requires a security plugin. (Although they're called security
 It's possible to write new security plugins, but most people use one of the three included in MCollective:
 
 - **SSL:** The best choice for most users. Provides very good security when combined with TLS on the connector plugin (see above).
-- **PSK:** Poor security, but easy to configure; fine for proof-of-concept deployments. 
+- **PSK:** Poor security, but easy to configure; fine for proof-of-concept deployments.
 - **AES:** Complex to configure, and carries a noticable performance cost in large networks. Only suitable for certain use cases, like where TLS on the middleware is impossible.
 
 For a full-system look at how security works in MCollective, see [Security Overview][security_overview].
@@ -358,17 +358,17 @@ Which security plugin to use.
 #### SSL Plugin Settings
 
 > **Note:** This security plugin requires you to manage and distribute SSL credentials. [See the SSL security plugin page][ssl_plugin] for full details. In summary:
-> 
+>
 > * All servers share **one** "server" keypair. They must all have a copy of the public key and private key.
 > * Every admin user must have a copy of the server public key.
 > * Every admin user has their own "client" keypair.
 > * Every server must have a copy of **every** authorized client public key.
 
-All of these settings have **no default,** and must be set for the SSL plugin to work. 
+All of these settings have **no default,** and must be set for the SSL plugin to work.
 
 - **`plugin.ssl_server_private`** --- The path to the server private key file, which must be in `.pem` format.
 - **`plugin.ssl_server_public`** --- The path to the server public key file, which must be in `.pem` format.
-- **`plugin.ssl_client_cert_dir`** --- A directory containing every authorized client public key. 
+- **`plugin.ssl_client_cert_dir`** --- A directory containing every authorized client public key.
 
 
 #### PSK Plugin Settings
@@ -398,7 +398,7 @@ MCollective clients use filters to discover nodes and limit commands. (See [Disc
 
 * **Facts:** A collection of key/value data about a server's hardware and software. (E.g. `memorytotal = 8.00 GB`, `kernel = Darwin`, etc.)
 * **Identity:** The name of the node.
-* **Classes:** The Puppet classes (or Chef cookbooks, etc.) applied to this node. Classes are useful as metadata because they describe what _roles_ a server fills at your site. 
+* **Classes:** The Puppet classes (or Chef cookbooks, etc.) applied to this node. Classes are useful as metadata because they describe what _roles_ a server fills at your site.
 
 None of these settings are mandatory, but MCollective is less useful without them.
 
@@ -406,7 +406,7 @@ None of these settings are mandatory, but MCollective is less useful without the
 
 The node's name or identity. This **should** be unique for each node, but does not **need** to be.
 
-- _Default:_ The value of Ruby's `Socket.gethostname` method, which is usually the server's FQDN. 
+- _Default:_ The value of Ruby's `Socket.gethostname` method, which is usually the server's FQDN.
 - _Sample value:_ `web01.example.com`
 - _Allowed values:_ Any string containing only alphanumeric characters, hyphens, and dots --- i.e. matching the regular expression `/\A[\w\.\-]+\Z/`
 
@@ -438,7 +438,7 @@ The fact file(s) to load for [the default `yaml` fact plugin](#factsource).
 
 - _Default:_ (nothing)
 - _Sample value:_ `/etc/mcollective/facts.yaml`
-- _Valid values:_ A single path, or a list of paths separated by the {{ path_separator }}. 
+- _Valid values:_ A single path, or a list of paths separated by the {{ path_separator }}.
 
 **Notes:**
 
@@ -482,7 +482,7 @@ Subcollectives provide an alternate way of dividing up the servers in a deployme
 
 * [See the Subcollectives and Partitioning page][subcollectives] for more details and an example of site partitioning.
 
-Subcollective membership is managed **on the server side,** by each server's config file. A given server can join any number of collectives, and will respond to commands from any of them. 
+Subcollective membership is managed **on the server side,** by each server's config file. A given server can join any number of collectives, and will respond to commands from any of them.
 
 > #### Shared Configuration
 >
@@ -518,11 +518,11 @@ The main collective for this server. Currently, this is only used as the default
 
 By default, registration is disabled, due to [`registerinterval`](#registerinterval) being set to 0.
 
-Optionally, MCollective servers can [send periodic heartbeat messages][registration] containing some inventory information. This can provide a central inventory at sites that don't already use something like [PuppetDB][], and can also be used as a simple passive monitoring system. 
+Optionally, MCollective servers can [send periodic heartbeat messages][registration] containing some inventory information. This can provide a central inventory at sites that don't already use something like [PuppetDB][], and can also be used as a simple passive monitoring system.
 
-The default registration plugin, `agentlist`, sends a standard SimpleRPC command over the MCollective middleware, to be processed by some server with an agent called `registration` installed. You would need to ensure that the `registration` agent is extremely performant (due to the volume of message it will receive) and installed on a limited number of servers. If your [middleware][] supports detailed permissions, you must also ensure that it allows servers to send commands to the registration agent ([ActiveMQ instructions](/mcollective/deploy/middleware/activemq.html#detailed-restrictions)). 
+The default registration plugin, `agentlist`, sends a standard SimpleRPC command over the MCollective middleware, to be processed by some server with an agent called `registration` installed. You would need to ensure that the `registration` agent is extremely performant (due to the volume of message it will receive) and installed on a limited number of servers. If your [middleware][] supports detailed permissions, you must also ensure that it allows servers to send commands to the registration agent ([ActiveMQ instructions](/mcollective/deploy/middleware/activemq.html#detailed-restrictions)).
 
-Some registration plugins (e.g. `redis`) can insert data directly into the inventory instead of sending an RPC message. This is a flexible system, and the user is in charge of deciding what to build with it, if anything. If all you need is a searchable inventory, [PuppetDB][] is probably closer to your needs. 
+Some registration plugins (e.g. `redis`) can insert data directly into the inventory instead of sending an RPC message. This is a flexible system, and the user is in charge of deciding what to build with it, if anything. If all you need is a searchable inventory, [PuppetDB][] is probably closer to your needs.
 
 #### `registerinterval`
 
@@ -534,7 +534,7 @@ How long (in seconds) to wait between registration messages. Setting this to 0 d
 
 The [registration plugin][registration] to use.
 
-This plugin must be installed on the server sending the message, and will dictate what the message contains. The default `agentlist` plugin will only send a list of the installed agents. See [Registration Plugins][registration] for more details. 
+This plugin must be installed on the server sending the message, and will dictate what the message contains. The default `agentlist` plugin will only send a list of the installed agents. See [Registration Plugins][registration] for more details.
 
 - _Default:_ `agentlist`
 - _Allowed values:_ The name of any installed registration plugin. {{ pluginname }}
@@ -557,7 +557,7 @@ Which subcollective to send registration messages to, when using a SimpleRPC-bas
 </code>
 </pre>
 
-Optionally, MCollective can log the SimpleRPC agent commands it receives from admin users, recording both the command itself and some identifying information about the user who issued it. The caller ID of a command is determined by the [security plugin][security_plugin] being used. 
+Optionally, MCollective can log the SimpleRPC agent commands it receives from admin users, recording both the command itself and some identifying information about the user who issued it. The caller ID of a command is determined by the [security plugin][security_plugin] being used.
 
 MCollective ships with a local logging audit plugin, called `Logfile`, which saves audit info to a local file (different from the daemon log file). Log lines look like this:
 
@@ -609,18 +609,18 @@ The [actionpolicy][] plugin, which is provided in the [plugin directory][plugin_
 
 #### `rpcauthorization`
 
-Whether to enable [SimpleRPC authorization][Authorization] globally. 
+Whether to enable [SimpleRPC authorization][Authorization] globally.
 
 - _Default:_ `0`
 - _Allowed values:_ `1`, `0`, `y`, `n` --- {{ badbool }}
 
 #### `rpcauthprovider`
 
-The plugin to use when globally managing authorization. See [SimpleRPC Authorization][authorization] for more details. 
+The plugin to use when globally managing authorization. See [SimpleRPC Authorization][authorization] for more details.
 
 - _Default:_ (nothing)
 - _Sample value:_ `action_policy`
-- _Allowed values:_ The name of any installed authorization plugin. This uses different capitalization/formatting rules from the other plugin settings: if the name of the plugin (in the code) has any interior capital letters (e.g. `ActionPolicy`), you should use a lowercase value for the setting but insert an underscore before the place where the interior capital letter(s) would have gone (e.g. `action_policy`). If the name contains no interior capital letters, simply use a lowercase value with no other changes. 
+- _Allowed values:_ The name of any installed authorization plugin. This uses different capitalization/formatting rules from the other plugin settings: if the name of the plugin (in the code) has any interior capital letters (e.g. `ActionPolicy`), you should use a lowercase value for the setting but insert an underscore before the place where the interior capital letter(s) would have gone (e.g. `action_policy`). If the name contains no interior capital letters, simply use a lowercase value with no other changes.
 
 
 ([↑ Back to top](#content))
@@ -640,13 +640,13 @@ Advanced Settings
 </code>
 </pre>
 
-The MCollective server daemon can log to its own log file (which it will automatically rotate), or to the syslog. It can also log directly to the console, if you are running it in the foreground instead of daemonized. 
+The MCollective server daemon can log to its own log file (which it will automatically rotate), or to the syslog. It can also log directly to the console, if you are running it in the foreground instead of daemonized.
 
-Some of the settings below only apply if you are using log files, and some only apply if you are using syslog. 
+Some of the settings below only apply if you are using log files, and some only apply if you are using syslog.
 
 #### `logger_type`
 
-How the MCollective server daemon should log. You generally want to use a file or syslog. 
+How the MCollective server daemon should log. You generally want to use a file or syslog.
 
 - _Default:_ `file`
 - _Allowed values:_ `file`, `syslog`, `console`
@@ -662,7 +662,7 @@ How verbosely to log.
 
 _When `logger_type == file`_
 
-Where the log file should be stored. 
+Where the log file should be stored.
 
 - _Default:_ (nothing; the package's default config file usually sets a platform-appropriate value)
 - _Sample value:_ `/var/log/mcollective.log`
@@ -703,7 +703,7 @@ The syslog facility to use.
 </code>
 </pre>
 
-These settings generally shouldn't be changed by the user, but their values may vary by platform. The package you used to install MCollective should have created a config file with platform-appropriate values for these settings. 
+These settings generally shouldn't be changed by the user, but their values may vary by platform. The package you used to install MCollective should have created a config file with platform-appropriate values for these settings.
 
 #### `daemonize`
 
@@ -716,7 +716,7 @@ This depends on your platform's init system. For example, newer Ubuntu releases 
 
 #### `libdir`
 
-Where to look for plugins. Should be a single path or a list of paths separated by the {{ path_separator }}. 
+Where to look for plugins. Should be a single path or a list of paths separated by the {{ path_separator }}.
 
 By default, this setting is blank, but the package you installed MCollective with should supply a default server.cfg file with a platform-appropriate value for this setting. **If server.cfg has no value for this setting, MCollective will not work.**
 
@@ -725,7 +725,7 @@ By default, this setting is blank, but the package you installed MCollective wit
 
 #### `ssl_cipher`
 
-The cipher to use for encryption. This is currently only relevant if you are using the [AES security plugin][security_aes]. 
+The cipher to use for encryption. This is currently only relevant if you are using the [AES security plugin][security_aes].
 
 This setting should be a standard OpenSSL cipher string. See `man enc` for a list.
 
@@ -733,4 +733,4 @@ This setting should be a standard OpenSSL cipher string. See `man enc` for a lis
 
 #### `topicprefix`, `queueprefix`, and `topicsep`
 
-These settings may be included in your config file, but can be deleted or ignored. They were relevant to the legacy `stomp` connector, but all users of MCollective 2.0.0 and higher should be using the `activemq` or `rabbitmq` connectors instead. 
+These settings may be included in your config file, but can be deleted or ignored. They were relevant to the legacy `stomp` connector, but all users of MCollective 2.0.0 and higher should be using the `activemq` or `rabbitmq` connectors instead.

@@ -11,7 +11,7 @@ title: Configuration Guide
 [Subcollectives]: /mcollective/reference/basic/subcollectives.html
 [server_config]: /mcollective/configure/server.html
 
-> **Note:** There is a new [Server Configuration Reference][server_config] page with a more complete overview of MCollective's server daemon settings. A similar client configuration page is forthcoming. 
+> **Note:** There is a new [Server Configuration Reference][server_config] page with a more complete overview of MCollective's server daemon settings. A similar client configuration page is forthcoming.
 
 This guide tells you about the major configuration options in the daemon and client config files.  There are options not mentioned
 here typically ones specific to a certain plugin.
@@ -66,7 +66,6 @@ The server configuration file should be root only readable
 |rpcauthprovider|action_policy|Use the _MCollective::Util::ActionPolicy_ plugin to manage authorization|
 |rpclimitmethod|The method used for --limit-results.  Can be either _first_ or _random_|
 |fact_cache_time|300|How long to cache fact results for before refreshing from source|
-|plugin.discovery.timeout|10|Sets the timeout for the discovery agent, useful if facts are very slow|
 
 The last example sets a option for the _discovery_ plugin, you can also set this in _/etc/mcollective/plugin.d/discovery.cfg_, in that case
 you'd just set _timeout=10_ in the file.
