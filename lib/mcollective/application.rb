@@ -319,46 +319,31 @@ module MCollective
       exit 1
     end
 
+    def halt_code(stats)
+      request_stats = {:discoverytime => 0,
+                       :discovered => 0,
+                       :okcount => 0,
+                       :failcount => 0}.merge(stats.to_hash)
+
+      return 4 if request_stats[:discoverytime] == 0 && request_stats[:responses] == 0
+      return 3 if request_stats[:discovered] > 0 && request_stats[:responses] == 0
+      return 2 if request_stats[:discovered] > 0 && request_stats[:failcount] > 0
+      return 1 if request_stats[:discovered] == 0
+      return 0 if request_stats[:discoverytime] == 0 && request_stats[:discovered] == request_stats[:okcount]
+      return 0 if request_stats[:discovered] == request_stats[:okcount]
+    end
+
     # A helper that creates a consistent exit code for applications by looking at an
     # instance of MCollective::RPC::Stats
     #
     # Exit with 0 if nodes were discovered and all passed
-    # Exit with 0 if no discovery were done and > 0 responses were received
+    # Exit with 0 if no discovery were done and > 0 responses were received, all ok
     # Exit with 1 if no nodes were discovered
     # Exit with 2 if nodes were discovered but some RPC requests failed
-    # Exit with 3 if nodes were discovered, but not responses received
+    # Exit with 3 if nodes were discovered, but no responses received
     # Exit with 4 if no discovery were done and no responses were received
     def halt(stats)
-      request_stats = {:discoverytime => 0,
-                       :discovered => 0,
-                       :failcount => 0}.merge(stats.to_hash)
-
-      # was discovery done?
-      if request_stats[:discoverytime] != 0
-        # was any nodes discovered
-        if request_stats[:discovered] == 0
-          exit 1
-
-        # nodes were discovered, did we get responses
-        elsif request_stats[:responses] == 0
-          exit 3
-
-        else
-          # we got responses and discovery was done, no failures
-          if request_stats[:failcount] == 0
-            exit 0
-          else
-            exit 2
-          end
-        end
-      else
-        # discovery wasnt done and we got no responses
-        if request_stats[:responses] == 0
-          exit 4
-        else
-          exit 0
-        end
-      end
+      exit(halt_code(stats))
     end
 
     # Wrapper around MC::RPC#rpcclient that forcably supplies our options hash

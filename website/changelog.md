@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/03/21|Improve error reporting from the rpc application in the light of direct_addressing|19827|
 |2013/03/20|Fail with a friendly error message when no libdir is set|19752|
 |2013/03/14|Change default RabbitMQ and ActiveMQ ports to 61613|19734|
 |2013/03/13|Set correct reply-to headers in the RabbitMQ connector|17034|

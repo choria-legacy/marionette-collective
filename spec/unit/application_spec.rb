@@ -414,7 +414,7 @@ module MCollective
 
     describe "#halt" do
       before do
-        @stats = {:discoverytime => 0, :discovered => 0, :failcount => 0, :responses => 0}
+        @stats = {:discoverytime => 0, :discovered => 0, :failcount => 0, :responses => 0, :okcount => 0}
       end
 
       it "should exit with code 0 if discovery was done and all responses passed" do
@@ -423,28 +423,25 @@ module MCollective
         @stats[:discoverytime] = 2
         @stats[:discovered] = 2
         @stats[:responses] = 2
+        @stats[:okcount] = 2
 
-        app.expects(:exit).with(0)
-
-        app.halt(@stats)
+        app.halt_code(@stats).should == 0
       end
 
       it "should exit with code 0 if no discovery were done but responses were received" do
         app = Application.new
 
         @stats[:responses] = 1
+        @stats[:okcount] = 1
+        @stats[:discovered] = 1
 
-        app.expects(:exit).with(0)
-
-        app.halt(@stats)
+        app.halt_code(@stats).should == 0
       end
 
-      it "should exit with code 0 if discovery info is missing" do
+      it "should exit with code 1 if discovery info is missing" do
         app = Application.new
 
-        app.expects(:exit).with(0)
-
-        app.halt({})
+        app.halt_code({}).should == 1
       end
 
       it "should exit with code 1 if no nodes were discovered and discovery was done" do
@@ -452,22 +449,29 @@ module MCollective
 
         @stats[:discoverytime] = 2
 
-        app.expects(:exit).with(1)
-
-        app.halt(@stats)
+        app.halt_code(@stats).should == 1
       end
 
       it "should exit with code 2 if a request failed for some nodes" do
         app = Application.new
 
-        @stats[:discovered] = 1
+        @stats[:discovered] = 2
         @stats[:failcount] = 1
         @stats[:discoverytime] = 2
+        @stats[:responses] = 2
+
+        app.halt_code(@stats).should == 2
+      end
+
+      it "should exit with code 2 when no discovery were done and there were failure results" do
+        app = Application.new
+
+        @stats[:discovered] = 1
+        @stats[:failcount] = 1
+        @stats[:discoverytime] = 0
         @stats[:responses] = 1
 
-        app.expects(:exit).with(2)
-
-        app.halt(@stats)
+        app.halt_code(@stats).should == 2
       end
 
       it "should exit with code 3 if no responses were received after discovery" do
@@ -476,17 +480,13 @@ module MCollective
         @stats[:discovered] = 1
         @stats[:discoverytime] = 2
 
-        app.expects(:exit).with(3)
-
-        app.halt(@stats)
+        app.halt_code(@stats).should == 3
       end
 
       it "should exit with code 4 if no discovery was done and no responses were received" do
         app = Application.new
 
-        app.expects(:exit).with(4)
-
-        app.halt(@stats)
+        app.halt_code(@stats).should == 4
       end
     end
 
