@@ -10,7 +10,6 @@ module MCollective
         @config.stubs(:identity).returns("test")
         @config.stubs(:configured).returns(true)
         @config.stubs(:topicsep).returns(".")
-        @config.stubs(:topicprefix).returns("/topic/")
 
         @stats = mock("stats")
 

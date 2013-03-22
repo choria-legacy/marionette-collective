@@ -74,7 +74,6 @@ Configuration
 There is no packaged configuration; you can use the following example:
 
     # cat > /etc/mcollective/client.cfg << "EOF"
-    topicprefix = /topic/
     main_collective = mcollective
     collectives = mcollective
     libdir = /usr/share/mcollective/plugins

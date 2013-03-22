@@ -5,16 +5,16 @@ module MCollective
 
     attr_accessor :mode
 
-    attr_reader :topicprefix, :daemonize, :pluginconf, :libdir, :configured
+    attr_reader :daemonize, :pluginconf, :libdir, :configured
     attr_reader :logfile, :keeplogs, :max_log_size, :loglevel, :logfacility
     attr_reader :identity, :daemonize, :connector, :securityprovider, :factsource
-    attr_reader :registration, :registerinterval, :topicsep, :classesfile
+    attr_reader :registration, :registerinterval, :classesfile
     attr_reader :rpcauditprovider, :rpcaudit, :configdir, :rpcauthprovider
     attr_reader :rpcauthorization, :color, :configfile, :rpchelptemplate
     attr_reader :rpclimitmethod, :logger_type, :fact_cache_time, :collectives
     attr_reader :main_collective, :ssl_cipher, :registration_collective
     attr_reader :direct_addressing, :direct_addressing_threshold, :ttl, :helptemplatedir
-    attr_reader :queueprefix, :default_discovery_method, :default_discovery_options
+    attr_reader :default_discovery_method, :default_discovery_options
 
     def initialize
       @configured = false
@@ -35,8 +35,6 @@ module MCollective
               val = $2
 
               case key
-                when "topicsep"
-                  @topicsep = val
                 when "registration"
                   @registration = val.capitalize
                 when "registration_collective"
@@ -47,10 +45,6 @@ module MCollective
                   @collectives = val.split(",").map {|c| c.strip}
                 when "main_collective"
                   @main_collective = val
-                when "topicprefix"
-                  @topicprefix = val
-                when "queueprefix"
-                  @queueprefix = val
                 when "logfile"
                   @logfile = val
                 when "keeplogs"
@@ -165,9 +159,6 @@ module MCollective
       @registration = "Agentlist"
       @registerinterval = 0
       @registration_collective = nil
-      @topicsep = "."
-      @topicprefix = "/topic/"
-      @queueprefix = "/queue/"
       @classesfile = "/var/lib/puppet/state/classes.txt"
       @rpcaudit = false
       @rpcauditprovider = ""

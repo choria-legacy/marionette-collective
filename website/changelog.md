@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/03/22|Remove the topicprefix, queueprefix and topicsep options|19673|
 |2013/03/21|Remove the plugin.discovery.timeout setting as it's not relevant anymore|19694|
 |2013/03/21|Improve error reporting from the rpc application in the light of direct_addressing|19827|
 |2013/03/20|Fail with a friendly error message when no libdir is set|19752|

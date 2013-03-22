@@ -9,7 +9,6 @@ diff -urNad mcollective-0.4.1~/etc/client.cfg mcollective-0.4.1/etc/client.cfg
 --- mcollective-0.4.1~/etc/client.cfg	1970-01-01 00:00:00.000000000 +0000
 +++ mcollective-0.4.1/etc/client.cfg	2010-01-06 14:37:24.000000000 +0000
 @@ -0,0 +1,19 @@
-+topicprefix = /topic/mcollective
 +libdir = /usr/share/mcollective/plugins
 +logger_type = console
 +loglevel = warn
@@ -33,7 +32,6 @@ diff -urNad mcollective-0.4.1~/etc/client.cfg.dist mcollective-0.4.1/etc/client.
 --- mcollective-0.4.1~/etc/client.cfg.dist	2010-01-02 14:54:25.000000000 +0000
 +++ mcollective-0.4.1/etc/client.cfg.dist	1970-01-01 00:00:00.000000000 +0000
 @@ -1,19 +0,0 @@
--topicprefix = /topic/mcollective
 -libdir = /usr/libexec/mcollective
 -logger_type = console
 -loglevel = warn
@@ -68,7 +66,6 @@ diff -urNad mcollective-0.4.1~/etc/server.cfg mcollective-0.4.1/etc/server.cfg
 --- mcollective-0.4.1~/etc/server.cfg	1970-01-01 00:00:00.000000000 +0000
 +++ mcollective-0.4.1/etc/server.cfg	2010-01-06 14:37:50.000000000 +0000
 @@ -0,0 +1,20 @@
-+topicprefix = /topic/mcollective
 +libdir = /usr/share/mcollective/plugins
 +logfile = /var/log/mcollective.log
 +loglevel = info
@@ -93,7 +90,6 @@ diff -urNad mcollective-0.4.1~/etc/server.cfg.dist mcollective-0.4.1/etc/server.
 --- mcollective-0.4.1~/etc/server.cfg.dist	2010-01-02 14:54:25.000000000 +0000
 +++ mcollective-0.4.1/etc/server.cfg.dist	1970-01-01 00:00:00.000000000 +0000
 @@ -1,20 +0,0 @@
--topicprefix = /topic/mcollective
 -libdir = /usr/libexec/mcollective
 -logfile = /var/log/mcollective.log
 -loglevel = info

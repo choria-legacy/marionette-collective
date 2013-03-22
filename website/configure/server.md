@@ -730,7 +730,3 @@ The cipher to use for encryption. This is currently only relevant if you are usi
 This setting should be a standard OpenSSL cipher string. See `man enc` for a list.
 
 - _Default:_ `aes-256-cbc`
-
-#### `topicprefix`, `queueprefix`, and `topicsep`
-
-These settings may be included in your config file, but can be deleted or ignored. They were relevant to the legacy `stomp` connector, but all users of MCollective 2.0.0 and higher should be using the `activemq` or `rabbitmq` connectors instead.
