@@ -96,7 +96,12 @@ module MCollective
       result = Data.send(function_hash["name"], function_hash["params"])
 
       if function_hash["value"]
-        eval_result = result.send(function_hash["value"])
+        begin
+          eval_result = result.send(function_hash["value"])
+        rescue
+          # If data field has not been set we set the comparison result to nil
+          eval_result = nil
+        end
         return eval_result
       else
         return result
@@ -129,6 +134,9 @@ module MCollective
     # includes a function
     def self.eval_compound_fstatement(function_hash)
       l_compare = execute_function(function_hash)
+
+      # Break out early and return false if the function returns nil
+      return false unless l_compare
 
       # Prevent unwanted discovery by limiting comparison operators
       # on Strings and Booleans

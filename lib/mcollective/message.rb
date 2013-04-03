@@ -139,7 +139,7 @@ module MCollective
           @requestid = request.payload[:requestid]
           @payload = PluginManager["security_plugin"].encodereply(agent, payload, requestid, request.payload[:callerid])
         when :request, :direct_request
-          validate_compount_filter(@filter["compound"]) unless @filter["compound"].empty?
+          validate_compound_filter(@filter["compound"]) unless @filter["compound"].empty?
 
           @requestid = create_reqid unless @requestid
           @payload = PluginManager["security_plugin"].encoderequest(Config.instance.identity, payload, requestid, filter, agent, collective, ttl)
@@ -148,7 +148,7 @@ module MCollective
       end
     end
 
-    def validate_compount_filter(compound_filter)
+    def validate_compound_filter(compound_filter)
       compound_filter.each do |filter|
         filter.each do |statement|
           if statement["fstatement"]
@@ -156,11 +156,7 @@ module MCollective
             pluginname = Data.pluginname(functionname)
             value = statement["fstatement"]["value"]
 
-            begin
-              ddl = DDL.new(pluginname, :data)
-            rescue
-              raise DDLValidationError, "Could not find DDL for data plugin #{pluginname}, cannot use #{functionname}() in discovery"
-            end
+            ddl = DDL.new(pluginname, :data)
 
             # parses numbers and booleans entered as strings into proper
             # types of data so that DDL validation will pass
@@ -169,7 +165,7 @@ module MCollective
             Data.ddl_validate(ddl, statement["fstatement"]["params"])
 
             unless value && Data.ddl_has_output?(ddl, value)
-              raise DDLValidationError, "#{functionname}() does not return a #{value} value"
+              DDL.validation_fail!(:PLMC41, "Data plugin '%{functionname}()' does not return a '%{value}' value", :error, {:functionname => functionname, :value => value})
             end
           end
         end

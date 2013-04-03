@@ -117,6 +117,14 @@ module MCollective
         result = Matcher.execute_function({"name" => "foo", "params" => "bar"})
         result.should == "success"
       end
+
+      it "should return nil if the result cannot be evaluated" do
+        data = mock
+        data.expects(:send).with("value").raises("error")
+        Data.expects(:send).with("foo", "bar").returns(data)
+        result = Matcher.execute_function({"name" => "foo", "params" => "bar", "value" => "value"})
+        result.should == nil
+      end
     end
 
     describe "#eval_compound_statement" do
@@ -167,6 +175,12 @@ module MCollective
 
         it "should return false if a FalseClass is compared with a < or >" do
           Matcher.expects(:execute_function).returns(false)
+          result = Matcher.eval_compound_fstatement(function_hash)
+          result.should == false
+        end
+
+        it "should return false immediately if the function execution returns nil" do
+          Matcher.expects(:execute_function).returns(nil)
           result = Matcher.eval_compound_fstatement(function_hash)
           result.should == false
         end

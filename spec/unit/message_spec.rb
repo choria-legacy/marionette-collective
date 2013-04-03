@@ -302,6 +302,30 @@ module MCollective
       end
     end
 
+    describe "#validate_compound_filter" do
+      let(:ddl) { mock }
+      let(:message) { Message.new("msg", "message", :type => :reply) }
+      let(:statement) { [{"fstatement" => {"name" => "rspec", "value" => "rspec_value", "params" => "rspec_param"} }] }
+
+      before do
+        Data.stubs(:pluginname).returns("rspec")
+        Data.stubs(:ddl_transform_input).with(ddl, "rspec_param").returns("rspec_param")
+        DDL.stubs(:new).returns(ddl)
+        Data.stubs(:ddl_validate).with(ddl, "rspec_param")
+      end
+
+      it "should correctly validate a compound filter" do
+        Data.stubs(:ddl_has_output?).with(ddl, "rspec_value").returns(true)
+        message.validate_compound_filter([statement])
+      end
+
+      it "should fail if an invalid value is queries" do
+        Data.stubs(:ddl_has_output?).with(ddl, "rspec_value").returns(false)
+        DDL.expects(:validation_fail!).with(:PLMC41, "Data plugin '%{functionname}()' does not return a '%{value}' value", :error, {:functionname => "rspec", :value => "rspec_value"})
+        message.validate_compound_filter([statement])
+      end
+    end
+
     describe "#validate" do
       it "should only validate requests" do
         m = Message.new("msg", "message", :type => :reply)
