@@ -151,10 +151,18 @@ module MCollective
         config = File.expand_path("~/.mcollective")
 
         unless File.readable?(config) && File.file?(config)
-          config = "/etc/mcollective/client.cfg"
+          if self.windows?
+            config = File.join(self.windows_prefix, "etc", "client.cfg")
+          else
+            config = "/etc/mcollective/client.cfg"
+          end
         end
       rescue Exception => e
-        config = "/etc/mcollective/client.cfg"
+        if self.windows?
+          config = File.join(self.windows_prefix, "etc", "client.cfg")
+        else
+          config = "/etc/mcollective/client.cfg"
+        end
       end
 
       return config
