@@ -135,6 +135,12 @@ module MCollective
        "compound" => []}
     end
 
+    # Returns the PuppetLabs mcollective path for windows
+    def self.windows_prefix
+      require 'win32/dir'
+      prefix = File.join(Dir::COMMON_APPDATA, "PuppetLabs", "mcollective")
+    end
+
     # Picks a config file defaults to ~/.mcollective
     # else /etc/mcollective/client.cfg
     def self.config_file_for_user
@@ -145,10 +151,18 @@ module MCollective
         config = File.expand_path("~/.mcollective")
 
         unless File.readable?(config) && File.file?(config)
-          config = "/etc/mcollective/client.cfg"
+          if self.windows?
+            config = File.join(self.windows_prefix, "etc", "client.cfg")
+          else
+            config = "/etc/mcollective/client.cfg"
+          end
         end
       rescue Exception => e
-        config = "/etc/mcollective/client.cfg"
+        if self.windows?
+          config = File.join(self.windows_prefix, "etc", "client.cfg")
+        else
+          config = "/etc/mcollective/client.cfg"
+        end
       end
 
       return config
