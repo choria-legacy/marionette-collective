@@ -9,7 +9,11 @@ opts = GetoptLong.new(
   [ '--pidfile', '-p', GetoptLong::REQUIRED_ARGUMENT]
 )
 
-configfile = "/etc/mcollective/server.cfg"
+if MCollective::Util.windows?
+  configfile = File.join(MCollective::Util.windows_prefix, "etc", "server.cfg")
+else
+  configfile = "/etc/mcollective/server.cfg"
+end
 pid = ""
 
 opts.each do |opt, arg|
