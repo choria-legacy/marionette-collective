@@ -532,6 +532,7 @@ module MCollective
           message = mock
           Message.expects(:new).with(@request, nil, {:agent => "foo", :type => :request, :collective => "mcollective", :filter => "filter", :options => @rpcclient.options}).returns(message)
 
+          @rpcclient.expects(:identity_filter_discovery_optimization)
           @rpcclient.fire_and_forget_request("rspec", {:rspec => "test"}, "filter")
         end
 
@@ -542,6 +543,7 @@ module MCollective
           @rpcclient.reply_to = "/reply/to"
           message.expects(:reply_to=).with("/reply/to")
 
+          @rpcclient.expects(:identity_filter_discovery_optimization)
           @rpcclient.fire_and_forget_request("rspec", {:rspec => "test"})
         end
 
@@ -553,6 +555,7 @@ module MCollective
           message.expects(:discovered_hosts=).with(["rspec"])
           message.expects(:type=).with(:direct_request)
 
+          @rpcclient.expects(:identity_filter_discovery_optimization)
           @rpcclient.fire_and_forget_request("rspec", {:rspec => "test"})
         end
 
@@ -566,6 +569,7 @@ module MCollective
           message.expects(:discovered_hosts=).with(["rspec"])
           message.expects(:type=).with(:direct_request)
 
+          @rpcclient.expects(:identity_filter_discovery_optimization)
           @rpcclient.fire_and_forget_request("rspec", {:rspec => "test"})
         end
       end

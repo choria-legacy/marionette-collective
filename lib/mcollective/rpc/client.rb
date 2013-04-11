@@ -491,24 +491,8 @@ module MCollective
             @discovered_agents = hosts
             @force_direct_request = true
 
-          # if an identity filter is supplied and it is all strings no regex we can use that
-          # as discovery data, technically the identity filter is then redundant if we are
-          # in direct addressing mode and we could empty it out but this use case should
-          # only really be for a few -I's on the CLI
-          #
-          # For safety we leave the filter in place for now, that way we can support this
-          # enhancement also in broadcast mode.
-          #
-          # This is only needed for the 'mc' discovery method, other methods might change
-          # the concept of identity to mean something else so we should pass the full
-          # identity filter to them
-          elsif options[:filter]["identity"].size > 0 && @discovery_method == "mc"
-            regex_filters = options[:filter]["identity"].select{|i| i.match("^\/")}.size
-
-            if regex_filters == 0
-              @discovered_agents = options[:filter]["identity"].clone
-              @force_direct_request = true if Config.instance.direct_addressing
-            end
+          else
+            identity_filter_discovery_optimization
           end
         end
 
@@ -715,6 +699,8 @@ module MCollective
       def fire_and_forget_request(action, args, filter=nil)
         validate_request(action, args)
 
+        identity_filter_discovery_optimization
+
         req = new_request(action.to_s, args)
 
         filter = options[:filter] unless filter
@@ -728,6 +714,28 @@ module MCollective
         end
 
         client.sendreq(message, nil)
+      end
+
+      # if an identity filter is supplied and it is all strings no regex we can use that
+      # as discovery data, technically the identity filter is then redundant if we are
+      # in direct addressing mode and we could empty it out but this use case should
+      # only really be for a few -I's on the CLI
+      #
+      # For safety we leave the filter in place for now, that way we can support this
+      # enhancement also in broadcast mode.
+      #
+      # This is only needed for the 'mc' discovery method, other methods might change
+      # the concept of identity to mean something else so we should pass the full
+      # identity filter to them
+      def identity_filter_discovery_optimization
+        if options[:filter]["identity"].size > 0 && @discovery_method == "mc"
+          regex_filters = options[:filter]["identity"].select{|i| i.match("^\/")}.size
+
+          if regex_filters == 0
+            @discovered_agents = options[:filter]["identity"].clone
+            @force_direct_request = true if Config.instance.direct_addressing
+          end
+        end
       end
 
       # Calls an agent in a way very similar to call_agent but it supports batching
