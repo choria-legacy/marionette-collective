@@ -710,7 +710,12 @@ module MCollective
         message = Message.new(req, nil, {:agent => @agent, :type => :request, :collective => @collective, :filter => filter, :options => options})
         message.reply_to = @reply_to if @reply_to
 
-        return @client.sendreq(message, nil)
+        if @force_direct_request
+          message.discovered_hosts = discover.clone
+          message.type = :direct_request
+        end
+
+        client.sendreq(message, nil)
       end
 
       # Calls an agent in a way very similar to call_agent but it supports batching
