@@ -722,7 +722,7 @@ module MCollective
         message = Message.new(req, nil, {:agent => @agent, :type => :request, :collective => @collective, :filter => filter, :options => options})
         message.reply_to = @reply_to if @reply_to
 
-        if @force_direct_request
+        if @force_direct_request || @client.discoverer.force_direct_mode?
           message.discovered_hosts = discover.clone
           message.type = :direct_request
         end

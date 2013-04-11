@@ -545,11 +545,24 @@ module MCollective
           @rpcclient.fire_and_forget_request("rspec", {:rspec => "test"})
         end
 
-        it "should support direct_requests" do
+        it "should support direct_requests with discovery data supplied" do
           message = mock
           Message.expects(:new).with(@request, nil, {:agent => "foo", :type => :request, :collective => "mcollective", :filter => @rpcclient.filter, :options => @rpcclient.options}).returns(message)
 
           @rpcclient.discover :nodes => "rspec"
+          message.expects(:discovered_hosts=).with(["rspec"])
+          message.expects(:type=).with(:direct_request)
+
+          @rpcclient.fire_and_forget_request("rspec", {:rspec => "test"})
+        end
+
+        it "should support direct_requests with discoverers that force direct mode" do
+          message = mock
+          Message.expects(:new).with(@request, nil, {:agent => "foo", :type => :request, :collective => "mcollective", :filter => @rpcclient.filter, :options => @rpcclient.options}).returns(message)
+
+          @discoverer.stubs(:force_direct_mode?).returns(true)
+          @rpcclient.stubs(:discover).returns(["rspec"])
+
           message.expects(:discovered_hosts=).with(["rspec"])
           message.expects(:type=).with(:direct_request)
 
