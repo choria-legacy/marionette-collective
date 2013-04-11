@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/04/11|Add direct addressing awareness to the fire and forget request mode|17930|
 |2013/03/22|Remove the topicprefix, queueprefix and topicsep options|19673|
 |2013/03/21|Remove the plugin.discovery.timeout setting as it's not relevant anymore|19694|
 |2013/03/21|Improve error reporting from the rpc application in the light of direct_addressing|19827|
