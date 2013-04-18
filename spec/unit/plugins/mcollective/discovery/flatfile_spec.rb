@@ -42,6 +42,16 @@ module MCollective
         it "should filter against non regex nodes" do
           Flatfile.discover(Util.empty_filter.merge("identity" => ["one"]), 0, 0, @client).should == ["one"]
         end
+
+        it "should fail for invalid identities" do
+          [" one", "two ", " three ", "four four"].each do |host|
+            File.expects(:readlines).with("/nonexisting").returns([host])
+
+            expect {
+              Flatfile.discover(Util.empty_filter, 0, 0, @client).should == ["one", "two", "three", "four"]
+            }.to raise_error('Identities can only match /\w\.\-/')
+          end
+        end
       end
     end
   end

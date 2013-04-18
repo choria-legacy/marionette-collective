@@ -15,7 +15,11 @@ module MCollective
 
         discovered = []
 
-        hosts = File.readlines(file).map{|l| l.chomp}
+        hosts = File.readlines(file).map do |host|
+          host = host.chomp
+          raise 'Identities can only match /\w\.\-/' unless host.match(/^[\w\.\-]+$/)
+          host
+        end
 
         # this plugin only supports identity filters, do regex matches etc against
         # the list found in the flatfile
