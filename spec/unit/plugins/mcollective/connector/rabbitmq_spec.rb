@@ -96,7 +96,8 @@ module MCollective
                         "rabbitmq.backup" => "true",
                         "rabbitmq.timeout" => "1",
                         "rabbitmq.vhost" => "mcollective",
-                        "rabbitmq.connect_timeout" => "5"}
+                        "rabbitmq.connect_timeout" => "5",
+                        "rabbitmq.heart_beat" => "1000,1000"}
 
 
           ENV.delete("STOMP_USER")
@@ -118,7 +119,7 @@ module MCollective
                                        :randomize => true,
                                        :reliable => true,
                                        :logger => "logger",
-                                       :connect_headers => {'accept-version' => '1.0', 'host' => 'mcollective'},
+                                       :connect_headers => {'accept-version' => '1.1', 'host' => 'mcollective', 'heart-beat' => '1000,1000'},
                                        :hosts => [{:passcode => 'password1',
                                                    :host => 'host1',
                                                    :port => 6163,
