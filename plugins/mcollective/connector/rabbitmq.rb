@@ -103,7 +103,7 @@ module MCollective
 
           # RabbitMQ and Stomp supports vhosts, this sets it in a way compatible with RabbitMQ and
           # force the version to 1.0, 1.1 support will be added in future
-          connection[:connect_headers] = {"accept-version" => '1.0', "host" => get_option("rabbitmq.vhost", "/")}
+          connection[:connect_headers] = {"accept-version" => '1.0', "host" => get_option("rabbitmq.vhost", "/"), "heart-beat" => get_option("rabbitmq.heart_beat", "0,0")}
 
           connection[:logger] = EventLogger.new
 
