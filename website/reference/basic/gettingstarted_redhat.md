@@ -6,7 +6,7 @@ title: Getting Started
 [ActiveMQ]: http://activemq.apache.org/
 [EC2Demo]: /mcollective/ec2demo.html
 [Stomp]: http://stomp.codehaus.org/Ruby+Client
-[DepRPMs]: http://www.marionette-collective.org/activemq/
+[DepRPMs]: http://yum.puppetlabs.com/
 [DebianBug]: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=562954
 [SecurityWithActiveMQ]: /mcollective/reference/integration/activemq_security.html
 [ActiveMQClustering]: /mcollective/reference/integration/activemq_clusters.html

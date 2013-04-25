@@ -7,7 +7,7 @@ title: Getting Started
 [RabbitMQ]: http://www.rabbitmq.com/
 [EC2Demo]: /mcollective/ec2demo.html
 [Stomp]: http://stomp.codehaus.org/Ruby+Client
-[DepRPMs]: http://www.marionette-collective.org/activemq/
+[DepRPMs]: http://yum.puppetlabs.com/
 [DebianBug]: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=562954
 [SecurityWithActiveMQ]: /mcollective/reference/integration/activemq_security.html
 [ActiveMQClustering]: http://www.devco.net/archives/2009/11/10/activemq_clustering.php
@@ -40,7 +40,8 @@ We try to keep the requirements on external Gems to a minimum, you only need:
  * Rubygems
  * [Ruby Stomp Client][Stomp]
 
-RPMs for these are available [here][DepRPMs].
+RPMs for these are available in the [dependencies repo][DepRPMs] for your 
+operating system release.
 
 ## ActiveMQ
 ActiveMQ is currently the most used middleware for MCollective, it would be our recommended choice and one
@@ -65,9 +66,10 @@ setup instructions for initial testing (make sure JDK is installed, see below fo
 Below should help you get stomp and a user going. For their excellent full docs please see [ActiveMQ].
 There are also tested configurations in [the ext directory][ActiveMQSamples]
 
-A spec file can be found in the *ext* directory on GitHub that can be used to build RPMs for RedHat/CentOS/Fedora
-you need *tanukiwrapper* which you can find from *jpackage*, it runs fine under OpenJDK that comes with recent
-versions of these Operating Systems.  I've uploaded some RPMs and SRPMs [here][DepRPMs].
+A spec file can be found in the *ext* directory on GitHub that can be used to 
+build RPMs for RedHat/CentOS/Fedora. You can find prebuilt RPMs of the 
+dependencies for most recent RPM-based distributions in the [dependencies repo][DepRPMs]
+for your operating system release.
 
 For Debian systems you'd be better off using OpenJDK than Sun JDK, there's a known issue [#562954][DebianBug].
 
