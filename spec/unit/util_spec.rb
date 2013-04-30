@@ -398,6 +398,7 @@ module MCollective
 
         stdout = mock()
         stdout.expects(:tty?).returns(true)
+        Util.expects(:windows?).returns(false)
         environment = mock()
         environment.expects(:[]).with("COLUMNS").returns(5).twice
         environment.expects(:[]).with("LINES").returns(5).twice
@@ -408,6 +409,7 @@ module MCollective
       it "should return the correct dimensions if ENV term is set and tput is present" do
         stdout = mock()
         stdout.expects(:tty?).returns(true)
+        Util.expects(:windows?).returns(false)
         environment = mock()
         environment.expects(:[]).with("COLUMNS").returns(false)
         environment.expects(:[]).with("TERM").returns(true)
@@ -422,6 +424,7 @@ module MCollective
       it "should return the correct dimensions if stty is present" do
         stdout = mock()
         stdout.expects(:tty?).returns(true)
+        Util.expects(:windows?).returns(false)
 
         environment = mock()
         environment.expects(:[]).with("COLUMNS").returns(false)
