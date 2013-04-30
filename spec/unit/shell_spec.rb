@@ -71,6 +71,8 @@ module MCollective
     end
 
     describe "#runcommand" do
+      let(:nl) { MCollective::Util.windows? ? "\r\n" : "\n" }
+
       it "should run the command" do
         Shell.any_instance.stubs("systemu").returns(true).once.with("date", "stdout" => '', "stderr" => '', "env" => {"LC_ALL" => "C"}, 'cwd' => Dir.tmpdir)
         s = Shell.new("date")
@@ -80,8 +82,8 @@ module MCollective
       it "should set stdin, stdout and status" do
         s = Shell.new('ruby -e "STDERR.puts \"stderr\"; STDOUT.puts \"stdout\""')
         s.runcommand
-        s.stdout.should == "stdout\n"
-        s.stderr.should == "stderr\n"
+        s.stdout.should == "stdout#{nl}"
+        s.stderr.should == "stderr#{nl}"
         s.status.exitstatus.should == 0
       end
 
@@ -92,10 +94,10 @@ module MCollective
         s.status.exitstatus.should == 1
       end
 
-      it "shold have correct environment" do
+      it "should have correct environment" do
         s = Shell.new('ruby -e "puts ENV[\'LC_ALL\'];puts ENV[\'foo\'];"', :environment => {"foo" => "bar"})
         s.runcommand
-        s.stdout.should == "C\nbar\n"
+        s.stdout.should == "C#{nl}bar#{nl}"
       end
 
       it "should save stdout in custom stdout variable" do
@@ -104,8 +106,8 @@ module MCollective
         s = Shell.new('echo foo', :stdout => out)
         s.runcommand
 
-        s.stdout.should == "STDOUTfoo\n"
-        out.should == "STDOUTfoo\n"
+        s.stdout.should == "STDOUTfoo#{nl}"
+        out.should == "STDOUTfoo#{nl}"
       end
 
       it "should save stderr in custom stderr variable" do
@@ -114,8 +116,8 @@ module MCollective
         s = Shell.new('ruby -e "STDERR.puts \"foo\""', :stderr => out)
         s.runcommand
 
-        s.stderr.should == "STDERRfoo\n"
-        out.should == "STDERRfoo\n"
+        s.stderr.should == "STDERRfoo#{nl}"
+        out.should == "STDERRfoo#{nl}"
       end
 
       it "should run in the correct cwd" do
@@ -123,21 +125,21 @@ module MCollective
 
         s.runcommand
 
-        s.stdout.should == "#{Dir.tmpdir}\n"
+        s.stdout.should == "#{Dir.tmpdir}#{nl}"
       end
 
       it "should send the stdin" do
         s = Shell.new('ruby -e "puts STDIN.gets"', :stdin => "hello world")
         s.runcommand
 
-        s.stdout.should == "hello world\n"
+        s.stdout.should == "hello world#{nl}"
       end
 
       it "should support multiple lines of stdin" do
         s = Shell.new('ruby -e "puts STDIN.gets;puts;puts STDIN.gets"', :stdin => "first line\n2nd line")
         s.runcommand
 
-        s.stdout.should == "first line\n\n2nd line\n"
+        s.stdout.should == "first line#{nl}#{nl}2nd line#{nl}"
       end
     end
   end
