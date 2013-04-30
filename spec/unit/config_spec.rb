@@ -21,7 +21,7 @@ module MCollective
         File.stubs(:exists?).with("/nonexisting").returns(true)
         File.stubs(:exists?).with(File.join(File.dirname("/nonexisting"), "rpc-help.erb")).returns(true)
 
-        ["/one:/two", "/three"].each do |path|
+        ["/one#{File::PATH_SEPARATOR}/two", "/three"].each do |path|
           File.expects(:readlines).with("/nonexisting").returns(["libdir = #{path}"])
 
           Config.instance.loadconfig("/nonexisting")
