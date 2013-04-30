@@ -11,7 +11,7 @@ module MCollective
         expect { UnixDaemon.daemonize_runner }.to raise_error("The Unix Daemonizer can not be used on the Windows Platform")
       end
 
-      it "should write the pid file if requested" do
+      it "should write the pid file if requested", :unless => MCollective::Util.windows? do
         f = mock
         f.expects(:write).with(Process.pid)
 
@@ -26,7 +26,7 @@ module MCollective
         UnixDaemon.daemonize_runner("/nonexisting")
       end
 
-      it "should not write a pid file unless requested" do
+      it "should not write a pid file unless requested", :unless => MCollective::Util.windows? do
         r = mock
         r.expects(:run)
 

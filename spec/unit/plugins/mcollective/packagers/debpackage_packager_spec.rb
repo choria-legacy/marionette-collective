@@ -4,7 +4,7 @@ require File.dirname(__FILE__) + '/../../../../../plugins/mcollective/pluginpack
 
 module MCollective
   module PluginPackager
-    describe DebpackagePackager do
+    describe DebpackagePackager, :unless => MCollective::Util.windows? do
 
       let(:maketmpdir) do
         tmpdir = Dir.mktmpdir("mc-test")

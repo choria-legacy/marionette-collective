@@ -68,6 +68,7 @@ module MCollective
       end
 
       it "should request the message including the exception string and log it" do
+        pending("#20506", :if => MCollective::Util.windows?) do
         Log.stubs(:config_and_check_level).returns(true)
         Log.expects(:message_for).with(:PLMC1, {:rspec => "test", :error => "Exception: this is a test"}).returns("This is a test")
         Log.expects(:log).with(:debug, "This is a test", "test:2")
@@ -76,6 +77,7 @@ module MCollective
         e.set_backtrace ["/some/dir/test:1", "/some/dir/test:2"]
 
         Log.logexception(:PLMC1, :debug, e, false, {:rspec => "test"})
+        end
       end
     end
 
