@@ -88,7 +88,7 @@ rd = Rake::RDocTask.new(:doc) { |rdoc|
 
 desc "Run spec tests"
 task :test do
-    sh "cd spec;rake"
+  sh "cd spec && rake"
 end
 
 desc "Create a tarball for this release"
