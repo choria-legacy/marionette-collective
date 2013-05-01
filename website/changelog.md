@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/05/01|Improve behaviour of data matchers when return values are nil|20059|
 |2013/04/29|Improve config defaults on windows machines|20388|
 |2013/04/18|Enforce valid identity names in the file discovery method|20282|
 |2013/04/11|Add direct addressing awareness to the fire and forget request mode|17930|
