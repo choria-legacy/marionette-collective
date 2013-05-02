@@ -71,7 +71,13 @@ module MCollective
     end
 
     describe "#runcommand" do
-      let(:nl) { MCollective::Util.windows? ? "\r\n" : "\n" }
+      let(:nl) do
+        if MCollective::Util.windows? && STDOUT.tty? && STDERR.tty?
+          "\r\n"
+        else
+          "\n"
+        end
+      end
 
       it "should run the command" do
         Shell.any_instance.stubs("systemu").returns(true).once.with("date", "stdout" => '', "stderr" => '', "env" => {"LC_ALL" => "C"}, 'cwd' => Dir.tmpdir)
