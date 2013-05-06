@@ -30,16 +30,16 @@ sub collectives.
 First we create a virtual host, user and some permissions on the vhost:
 
 {% highlight console %}
-rabbitmqadmin declare vhost=/mcollective
-rabbitmqadmin declare user=mcollective password=changeme
+rabbitmqadmin declare vhost name=/mcollective
+rabbitmqadmin declare user name=mcollective password=changeme tags=administrator
 rabbitmqadmin declare permission vhost=/mcollective user=mcollective configure=.* write=.* read=.*
 {% endhighlight %}
 
 And then we need to create two exchanges that the mcollective plugin needs:
 
 {% highlight console %}
-rabbitmqadmin declare exchange vhost=/mcollective name=mcollective_broadcast type=topic
-rabbitmqadmin declare exchange vhost=/mcollective name=mcollective_directed type=direct
+rabbitmqadmin declare exchange --user=mcollective --password=changeme --vhost=/mcollective name=mcollective_broadcast type=topic
+rabbitmqadmin declare exchange --user=mcollective --password=changeme --vhost=/mcollective name=mcollective_directed type=direct
 {% endhighlight %}
 
 ## Configuring MCollective
