@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/05/07|Support the latest version of the JSON gem|20594|
 |2013/04/29|Improve config defaults on windows machines|20388|
 |2013/03/13|Set correct reply-to headers in the RabbitMQ connector|17034|
 |2013/03/12|Explicitly include StringIO|19367|

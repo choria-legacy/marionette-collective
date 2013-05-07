@@ -91,7 +91,7 @@ module MCollective
       def load_json_results(file)
         return {} unless File.readable?(file)
 
-        JSON.load(File.read(file))
+        JSON.load(File.read(file)) || {}
       rescue JSON::ParserError
         {}
       end
