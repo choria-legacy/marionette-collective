@@ -8,6 +8,76 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_2_4">&nbsp;</a>
+
+## 2.2.4 - 2013/05/20
+
+This is a maintenance release to the current production series of MCollective.
+This release is a bug fix only release.
+
+### Bug Fixes
+
+ * A work around for a API behaviour change in the latest JSON gem have been added
+ * Configuration defaults on MS Windows have been improved
+ * The correct reply-to headers are now set by the RabbitMQ connector allowing async communication modes
+ * The StringIO library is now specifically required to avoid a case where the client library would fail when a non YAML fact source is set on the client
+ * The Util#versioncmp function incorrectly compared semver versions with high minor versions
+
+### Backwards Compatibility and Upgrading
+
+This release should be 100% backwards compatible with 2.2.0, 2.2.1, 2.2.2 and 2.2.3, when upgrading
+from earlier releases please review the Release notes for 2.0.0.
+
+### Changes since 2.2.3
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2013/05/10|Correctly detect version differences in semver version where the path level is greater 10|20661|
+|2013/05/07|Support the latest version of the JSON gem|20594|
+|2013/04/29|Improve config defaults on windows machines|20388|
+|2013/03/13|Set correct reply-to headers in the RabbitMQ connector|17034|
+|2013/03/12|Explicitly include StringIO|19367|
+
+<a name="2_2_3">&nbsp;</a>
+
+## 2.2.3 - 2013/02/14
+
+This is a maintenance release to the current production version of MCollective.
+This release is a bug fix only release.
+
+### Bug Fixes
+
+ * The vendored JSON gem was updated to version 1.5.5 due to CVE-2013-0269
+ * The RPC client inadvertently lost the ability to set discovery_timeout, this has been restored
+ * Plugins with underscores in their name were not packagable on Debian, we now change underscores to dashes
+ * The STOMP adapter will not be maintained past this release series, we now issue deprecation warnigns
+ * A config file reading race condition were fixed, we no longer attempt to use config details before parsing the config file thus always using defaults.
+ * Dependencies on packaged plugins have been made more specific to ensure updates work correctly
+
+### Backwards Compatibility and Upgrading
+
+This release should be 100% backwards compatible with 2.2.0, 2.2.1 and 2.2.2, when upgrading
+from earlier releases please review the Release notes for 2.0.0.
+
+If you packaged any plugins with a underscore in their name, future packages will have a dash
+instead, this might cause upgrade problems.
+
+We are deprecating the STOMP connector, if you are using this connector please consider moving to the
+ActiveMQ or RabbitMQ specific ones.
+
+### Changes since 2.2.2
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|*2013/02/14*|*Release 2.2.3*|19265|
+|2013/02/14|Update vendored JSON gem for CVE-2013-0269|19265|
+|2013/02/13|Restore the ability to set a discovery timeout on a RPC client|19238|
+|2013/02/12|Replace underscores in plugin names with dashes to keep Debian happy|19200|
+|2013/02/12|Fix package building on certain Debian systems|19141|
+|2013/02/12|Deprecate the stomp connector|19146|
+|2013/02/07|Read the client config before trying to use any configuration options|19105|
+|2013/01/22|Set *=* dependencies on the various packages that form a plugin rather than *>=*|18758|
+
 <a name="2_2_2">&nbsp;</a>
 
 ## 2.2.2 - 2013/01/17
