@@ -9,7 +9,6 @@ toc: false
 |Date|Description|Ticket|
 |----|-----------|------|
 |2013/04/29|Improve config defaults on windows machines|20388|
-|2013/04/11|Add direct addressing awareness to the fire and forget request mode|17930|
 |2013/03/13|Set correct reply-to headers in the RabbitMQ connector|17034|
 |2013/03/12|Explicitly include StringIO|19367|
 |*2013/02/14*|*Release 2.2.3*|19265|
