@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 gem 'json'
 gem 'stomp'
 gem 'systemu'
+gem 'rdoc'
 
 group :dev do
   gem 'rake'
