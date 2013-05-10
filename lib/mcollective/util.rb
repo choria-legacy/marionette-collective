@@ -427,33 +427,34 @@ module MCollective
     # returns -1 if a < b
     # returns 1 if a > b
     #
-    # Code originally from Puppet but refactored to a more
-    # ruby style that fits in better with this code base
+    # Code originally from Puppet
     def self.versioncmp(version_a, version_b)
       vre = /[-.]|\d+|[^-.\d]+/
-      ax = version_a.scan(vre)
+        ax = version_a.scan(vre)
       bx = version_b.scan(vre)
 
-      until ax.empty? || bx.empty?
+      while (ax.length>0 && bx.length>0)
         a = ax.shift
         b = bx.shift
 
-        next      if a == b
-        next      if a == '-' && b == '-'
-        return -1 if a == '-'
-        return 1  if b == '-'
-        next      if a == '.' && b == '.'
-        return -1 if a == '.'
-        return 1  if b == '.'
-
-        if a =~ /^[^0]\d+$/ && b =~ /^[^0]\d+$/
-          return Integer(a) <=> Integer(b)
+        if( a == b )                 then next
+        elsif (a == '-' && b == '-') then next
+        elsif (a == '-')             then return -1
+        elsif (b == '-')             then return 1
+        elsif (a == '.' && b == '.') then next
+        elsif (a == '.' )            then return -1
+        elsif (b == '.' )            then return 1
+        elsif (a =~ /^\d+$/ && b =~ /^\d+$/) then
+          if( a =~ /^0/ or b =~ /^0/ ) then
+            return a.to_s.upcase <=> b.to_s.upcase
+          end
+          return a.to_i <=> b.to_i
         else
           return a.upcase <=> b.upcase
         end
       end
 
-      version_a <=> version_b
+      version_a <=> version_b;
     end
 
     # we should really use Pathname#absolute? but it's not in all the
