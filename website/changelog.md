@@ -67,6 +67,12 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|*2013/05/21*|*Release 2.2.4*|20592|
+|2013/05/10|Correctly detect version differences in semver version where the path level is greater 10|20661|
+|2013/05/07|Support the latest version of the JSON gem|20594|
+|2013/04/29|Improve config defaults on windows machines|20388|
+|2013/03/13|Set correct reply-to headers in the RabbitMQ connector|17034|
+|2013/03/12|Explicitly include StringIO|19367|
 |*2013/02/14*|*Release 2.2.3*|19265|
 |2013/02/14|Update vendored JSON gem for CVE-2013-0269|19265|
 |2013/02/13|Restore the ability to set a discovery timeout on a RPC client|19238|
