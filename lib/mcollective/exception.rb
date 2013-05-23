@@ -22,7 +22,7 @@ module MCollective
       Log.logexception(@code, level, self, log_backtrace)
     end
   end
-
+  class Shutdown<Exception;end
   # Exceptions for the RPC system
   class DDLValidationError<CodedError;end
   class ValidatorError<RuntimeError; end

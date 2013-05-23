@@ -20,6 +20,7 @@ module MCollective
 
       @agents = Agents.new
 
+      @agent_threads = Array.new
       unless Util.windows?
         Signal.trap("USR1") do
           log_code(:PLMC2, "Reloading all agents after receiving USR1 signal", :info)
@@ -30,6 +31,10 @@ module MCollective
           log_code(:PLMC3, "Cycling logging level due to USR2 signal", :info)
 
           Log.cycle_level
+        end
+        Signal.trap("TERM") do
+          log_code(:PLMC99, "Received TERM signal.", :info)
+          raise Shutdown
         end
       else
         Util.setup_windows_sleeper
@@ -59,6 +64,12 @@ module MCollective
           else
             log_code(:PLMC5, "Received a control message, possibly via 'mco controller' but this has been deprecated", :error)
           end
+        rescue Shutdown
+          Log.info("Shutting down gracefully.")
+          @agent_threads.delete_if {|thread| !thread.alive? }
+          Log.info("Waiting for #{@agent_threads.length} thread(s) to finish up.") unless @agent_threads.empty?
+          @agent_threads.each {|thread| thread.join(10)}
+          break
         rescue SignalException => e
           logexception(:PLMC7, "Exiting after signal: %{error}", :warn, e)
           @connection.disconnect
@@ -81,9 +92,11 @@ module MCollective
     def agentmsg(request)
       log_code(:PLMC8, "Handling message for agent '%{agent}' on collective '%{collective} with requestid '%{requestid}'", :debug, :agent => request.agent, :collective => request.collective, :requestid => request.requestid)
 
-      @agents.dispatch(request, @connection) do |reply_message|
+      @agent_threads << @agents.dispatch(request, @connection) do |reply_message|
         reply(reply_message, request) if reply_message
       end
+      #remove teminated threads from collection
+      @agent_threads.delete_if {|thread| !thread.alive? }
     end
 
     # Deals with messages sent to our control topic
