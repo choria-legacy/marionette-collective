@@ -74,8 +74,9 @@ module MCollective
       # for the child to exit and not leave zombies.
       @status = systemu(@command, opts) do |cid|
         begin
-          sleep 1
-          Process::waitpid(cid)
+          until Process::waitpid(cid, Process::WNOHANG) do
+            sleep 1
+          end 
         rescue SystemExit
         rescue Errno::ECHILD
         rescue Exception => e
