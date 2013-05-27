@@ -64,11 +64,18 @@ module MCollective
           else
             log_code(:PLMC5, "Received a control message, possibly via 'mco controller' but this has been deprecated", :error)
           end
+          purge_agent_threads
         rescue Shutdown
-          Log.info("Shutting down gracefully.")
-          @agent_threads.delete_if {|thread| !thread.alive? }
-          Log.info("Waiting for #{@agent_threads.length} thread(s) to finish up.") unless @agent_threads.empty?
-          @agent_threads.each {|thread| thread.join(10)}
+          purge_agent_threads
+          Log.info("Shutting down gracefully. Waiting for #{@agent_threads.length} agent(s) to finish up.") unless @agent_threads.empty?
+          begin
+            Timeout.timeout(@config.shutdown_timeout) do
+              @agent_threads.each {|thread| thread.join}
+            end
+          rescue Timeout::Error
+            Log.info "Shutdown timeout (#{@config.shutdown_timeout}s) exceeded waiting for agent threads. Exiting."
+          end
+          @connection.disconnect
           break
         rescue SignalException => e
           logexception(:PLMC7, "Exiting after signal: %{error}", :warn, e)
@@ -95,8 +102,6 @@ module MCollective
       @agent_threads << @agents.dispatch(request, @connection) do |reply_message|
         reply(reply_message, request) if reply_message
       end
-      #remove teminated threads from collection
-      @agent_threads.delete_if {|thread| !thread.alive? }
     end
 
     # Deals with messages sent to our control topic
@@ -144,6 +149,11 @@ module MCollective
       msg.publish
 
       @stats.sent
+    end
+    
+    #remove teminated threads from collection
+    def purge_agent_threads
+      @agent_threads.delete_if {|thread| !thread.alive? }
     end
   end
 end

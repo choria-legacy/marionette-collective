@@ -15,6 +15,7 @@ module MCollective
     attr_reader :main_collective, :ssl_cipher, :registration_collective
     attr_reader :direct_addressing, :direct_addressing_threshold, :ttl, :helptemplatedir
     attr_reader :queueprefix, :default_discovery_method, :default_discovery_options
+    attr_reader :shutdown_timeout
 
     def initialize
       @configured = false
@@ -117,6 +118,8 @@ module MCollective
                   @default_discovery_options << val
                 when "default_discovery_method"
                   @default_discovery_method = val
+                when "shutdown_timeout"
+                  @shutdown_timeout = val.to_i
                 else
                   raise("Unknown config parameter #{key}")
               end
@@ -191,6 +194,7 @@ module MCollective
       @default_discovery_options = []
       @ttl = 60
       @mode = :client
+      @shutdown_timeout = 2
 
       # look in the config dir for the template so users can provide their own and windows
       # with odd paths will just work more often, but fall back to old behavior if it does
