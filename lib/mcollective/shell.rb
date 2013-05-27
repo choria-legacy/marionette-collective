@@ -75,7 +75,7 @@ module MCollective
       @status = systemu(@command, opts) do |cid|
         begin
           until Process::waitpid(cid, Process::WNOHANG) do
-            sleep 1
+            sleep 0.25
           end 
         rescue SystemExit
         rescue Errno::ECHILD
