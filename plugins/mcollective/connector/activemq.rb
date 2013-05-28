@@ -312,7 +312,14 @@ module MCollective
 
       def headers_for(msg, identity=nil)
         headers = {}
+
         headers = {"priority" => @msgpriority} if @msgpriority > 0
+
+        headers["timestamp"] = (Time.now.utc.to_i * 1000).to_s
+
+        # set the expires header based on the TTL, we build a small additional
+        # timeout of 10 seconds in here to allow for network latency etc
+        headers["expires"] = ((Time.now.utc.to_i + msg.ttl + 10) * 1000).to_s
 
         if [:request, :direct_request].include?(msg.type)
           target = make_target(msg.agent, :reply, msg.collective)

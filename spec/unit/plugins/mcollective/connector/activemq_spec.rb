@@ -381,20 +381,26 @@ module MCollective
       end
 
       describe "#headers_for" do
-        it "should return empty headers if priority is 0" do
+        it "should not set priority header if priority is 0" do
           message = mock
           message.expects(:type).returns(:foo)
+          message.stubs(:ttl).returns(30)
+
+          Time.expects(:now).twice.returns(Time.at(1368557431))
 
           @c.instance_variable_set("@msgpriority", 0)
-          @c.headers_for(message).should == {}
+          @c.headers_for(message).should_not includes("priority")
         end
 
         it "should return a priority if priority is non 0" do
           message = mock
           message.expects(:type).returns(:foo)
+          message.stubs(:ttl).returns(30)
+
+          Time.expects(:now).twice.returns(Time.at(1368557431))
 
           @c.instance_variable_set("@msgpriority", 1)
-          @c.headers_for(message).should == {"priority" => 1}
+          @c.headers_for(message)["priority"].should == 1
         end
 
         it "should set mc_identity for direct requests" do
@@ -403,10 +409,16 @@ module MCollective
           message.expects(:agent).returns("rspecagent")
           message.expects(:collective).returns("mcollective")
           message.expects(:reply_to).returns(nil)
+          message.stubs(:ttl).returns(30)
+
+          Time.expects(:now).twice.returns(Time.at(1368557431))
 
           @c.instance_variable_set("@msgpriority", 0)
           @c.expects(:make_target).with("rspecagent", :reply, "mcollective").returns({:name => "test"})
-          @c.headers_for(message, "some.node").should == {"mc_identity"=>"some.node", "reply-to"=>"test"}
+
+          headers = @c.headers_for(message, "some.node")
+          headers["mc_identity"].should == "some.node"
+          headers["reply-to"].should == "test"
         end
 
         it "should set a reply-to header for :request type messages" do
@@ -415,10 +427,13 @@ module MCollective
           message.expects(:agent).returns("rspecagent")
           message.expects(:collective).returns("mcollective")
           message.expects(:reply_to).returns(nil)
+          message.stubs(:ttl).returns(30)
+
+          Time.expects(:now).twice.returns(Time.at(1368557431))
 
           @c.instance_variable_set("@msgpriority", 0)
           @c.expects(:make_target).with("rspecagent", :reply, "mcollective").returns({:name => "test"})
-          @c.headers_for(message).should == {"reply-to" => "test"}
+          @c.headers_for(message)["reply-to"].should == "test"
         end
 
         it "should set reply-to correctly if the message defines it" do
@@ -427,9 +442,23 @@ module MCollective
           message.expects(:agent).returns("rspecagent")
           message.expects(:collective).returns("mcollective")
           message.expects(:reply_to).returns("rspec").twice
+          message.stubs(:ttl).returns(30)
 
-          @c.headers_for(message).should == {"reply-to" => "rspec"}
+          Time.expects(:now).twice.returns(Time.at(1368557431))
 
+          @c.headers_for(message)["reply-to"].should == "rspec"
+        end
+
+        it "should set the timestamp and ttl based on the message object" do
+          message = mock
+          message.expects(:type).returns(:foo)
+          message.stubs(:ttl).returns(100)
+
+          Time.expects(:now).twice.returns(Time.at(1368557431))
+
+          headers = @c.headers_for(message)
+          headers["timestamp"].should == "1368557431000"
+          headers["expires"].should == "1368557541000"
         end
       end
 
