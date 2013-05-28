@@ -197,6 +197,10 @@ module MCollective
 
         end
 
+        # marks messages as valid for ttl + 10 seconds, we do this here
+        # rather than in make_target as this should only be set on publish
+        target[:headers]["expiration"] = ((msg.ttl + 10) * 1000).to_s
+
         return target
       end
 

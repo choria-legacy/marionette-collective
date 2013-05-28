@@ -265,10 +265,11 @@ module MCollective
           msg.stubs(:collective).returns("mcollective")
           msg.stubs(:type).returns(:direct_request)
           msg.stubs(:reply_to).returns("/topic/mcollective")
+          msg.stubs(:ttl).returns(60)
           msg.expects(:discovered_hosts).returns(["one", "two"])
 
-          @connection.expects(:publish).with('/exchange/mcollective_directed/one', 'msg', {'reply-to' => '/temp-queue/mcollective_reply_agent'})
-          @connection.expects(:publish).with('/exchange/mcollective_directed/two', 'msg', {'reply-to' => '/temp-queue/mcollective_reply_agent'})
+          @connection.expects(:publish).with('/exchange/mcollective_directed/one', 'msg', {'reply-to' => '/temp-queue/mcollective_reply_agent', 'expiration' => '70000'})
+          @connection.expects(:publish).with('/exchange/mcollective_directed/two', 'msg', {'reply-to' => '/temp-queue/mcollective_reply_agent', 'expiration' => '70000'})
 
           @c.publish(msg)
         end
@@ -332,13 +333,14 @@ module MCollective
         it "should create reply targets based on reply-to headers in requests" do
           message = mock
           message.expects(:type).returns(:reply)
+          message.expects(:ttl).returns(60)
 
           request = mock
           request.expects(:headers).returns({"reply-to" => "foo"})
 
           message.expects(:request).returns(request)
 
-          @c.target_for(message).should == {:name => "foo", :headers => {}, :id => ""}
+          @c.target_for(message).should == {:name => "foo", :headers => {"expiration" => "70000"}, :id => ""}
         end
 
         it "should create new request targets" do
@@ -347,8 +349,9 @@ module MCollective
           message.expects(:agent).returns("rspecagent")
           message.expects(:collective).returns("mcollective")
           message.expects(:reply_to).returns("/topic/rspec")
+          message.expects(:ttl).returns(60)
 
-          @c.expects(:make_target).with("rspecagent", :request, "mcollective", "/topic/rspec", nil)
+          @c.expects(:make_target).with("rspecagent", :request, "mcollective", "/topic/rspec", nil).returns({:name => "", :headers => {}, :id => nil})
           @c.target_for(message)
         end
 
@@ -358,8 +361,9 @@ module MCollective
           message.expects(:agent).returns("rspecagent")
           message.expects(:collective).returns("mcollective")
           message.expects(:reply_to).returns("/topic/rspec")
+          message.expects(:ttl).returns(60)
 
-          @c.expects(:make_target).with("rspecagent", :direct_request, "mcollective", "/topic/rspec", nil)
+          @c.expects(:make_target).with("rspecagent", :direct_request, "mcollective", "/topic/rspec", nil).returns({:name => "", :headers => {}, :id => nil})
           @c.target_for(message)
         end
 
