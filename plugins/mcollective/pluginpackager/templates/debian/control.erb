@@ -10,7 +10,7 @@
     end
 
   if @current_package_data[:plugindependency]
-    @current_package_data[:plugindependency] = "#{@current_package_data[:plugindependency][:name]} (= #{current_package_data[:plugindependency][:version]}-#{@current_package_data[:plugindependency][:iteration]})"
+    @current_package_data[:plugindependency] = "#{@current_package_data[:plugindependency][:name]} (= ${binary:Version})"
     @current_package_data[:dependencies].push(@current_package_data[:plugindependency])
   end
 -%>
