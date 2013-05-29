@@ -10,7 +10,7 @@
     end
 
   if @current_package_data[:plugindependency]
-    @current_package_data[:plugindependency] = "#{@current_package_data[:plugindependency][:name]} (= #{current_package_data[:plugindependency][:version]}-#{@current_package_data[:plugindependency][:iteration]})"
+    @current_package_data[:plugindependency] = "#{@current_package_data[:plugindependency][:name]} (= ${binary:Version})"
     @current_package_data[:dependencies].push(@current_package_data[:plugindependency])
   end
 -%>
@@ -18,6 +18,7 @@ Source: <%= @current_package_shortname %>
 Homepage: <%= @plugin.metadata[:url]%>
 Section: utils
 Priority: extra
+Build-Depends: debhelper, cdbs, dpatch
 Maintainer: <%= @plugin.metadata[:author] %>
 Standards-Version: 3.8.0
 
