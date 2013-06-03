@@ -38,8 +38,8 @@ rabbitmqadmin declare permission vhost=/mcollective user=mcollective configure=.
 And then we need to create two exchanges that the mcollective plugin needs:
 
 {% highlight console %}
-rabbitmqadmin declare exchange vhost=/mcollective name=mcollective_broadcast type=topic
-rabbitmqadmin declare exchange vhost=/mcollective name=mcollective_directed type=direct
+rabbitmqadmin declare exchange --vhost=/mcollective name=mcollective_broadcast type=topic
+rabbitmqadmin declare exchange --vhost=/mcollective name=mcollective_directed type=direct
 {% endhighlight %}
 
 ## Configuring MCollective
