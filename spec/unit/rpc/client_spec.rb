@@ -276,6 +276,77 @@ module MCollective
         end
       end
 
+      describe "#class_filter" do
+        it "should add a class to the filter" do
+          @client.class_filter("rspec")
+          @client.filter["cf_class"].should == ["rspec"]
+        end
+
+        it "should be idempotent" do
+          @client.class_filter("rspec")
+          @client.class_filter("rspec")
+          @client.filter["cf_class"].should == ["rspec"]
+        end
+      end
+
+      describe "#fact_filter" do
+        before do
+          Util.stubs(:parse_fact_string).with("rspec=present").returns({:value => "present", :fact => "rspec", :operator => "=="})
+        end
+
+        it "should add a fact to the filter" do
+          @client.fact_filter("rspec", "present", "=")
+          @client.filter["fact"].should == [{:value=>"present", :fact=>"rspec", :operator=>"=="}]
+        end
+
+        it "should be idempotent" do
+          @client.fact_filter("rspec", "present", "=")
+          @client.fact_filter("rspec", "present", "=")
+          @client.filter["fact"].should == [{:value=>"present", :fact=>"rspec", :operator=>"=="}]
+        end
+      end
+
+      describe "#agent_filter" do
+        it "should add an agent to the filter" do
+          @client.filter["agent"].should == ["foo"]
+        end
+
+        it "should be idempotent" do
+          @client.agent_filter("foo")
+          @client.filter["agent"].should == ["foo"]
+        end
+      end
+
+      describe "#identity_filter" do
+        it "should add a node to the filter" do
+          @client.identity_filter("rspec_node")
+          @client.filter["identity"].should == ["rspec_node"]
+        end
+
+        it "should be idempotent" do
+          @client.identity_filter("rspec_node")
+          @client.identity_filter("rspec_node")
+          @client.filter["identity"].should == ["rspec_node"]
+        end
+      end
+
+      describe "#compound_filter" do
+        before do
+          Matcher.stubs(:create_compound_callstack).with("filter").returns("filter")
+        end
+
+        it "should add a compound filter" do
+          @client.compound_filter("filter")
+          @client.filter["compound"].should == ["filter"]
+        end
+
+        it "should be idempotent" do
+          @client.compound_filter("filter")
+          @client.compound_filter("filter")
+          @client.filter["compound"].should == ["filter"]
+        end
+      end
+
       describe "#discovery_timeout" do
         it "should favour the initial options supplied timeout" do
           client = Client.new("rspec", {:options => {:disctimeout => 3, :filter => Util.empty_filter, :config => "/nonexisting"}})
