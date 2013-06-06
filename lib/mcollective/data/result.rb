@@ -10,7 +10,7 @@ module MCollective
         @data = {}
 
         outputs.keys.each do |output|
-          @data[output] = outputs[output].fetch(:default, nil)
+          @data[output] = Marshal.load(Marshal.dump(outputs[output].fetch(:default, nil)))
         end
       end
 

@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/06/06|Clone the default values from the DDL to avoid accidental modifications to the cached DDL file|21104|
 |2013/06/05|Filter methods on the RPC Client are now idempotent|20233|
 |2013/06/04|run() call in an agent can return incorrect Process::Status|17667|
 |2013/06/03|Improve debian dependencies so packages can be rebuilt in a chroot|20950|
