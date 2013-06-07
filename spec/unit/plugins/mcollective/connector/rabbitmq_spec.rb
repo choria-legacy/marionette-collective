@@ -458,28 +458,11 @@ module MCollective
       end
 
       describe "#get_bool_option" do
-        it "should return the default if option isnt set" do
-          @config.expects(:pluginconf).returns({}).once
-          @c.get_bool_option("test", "default").should == "default"
-        end
+        it "should use Util::str_to_bool to translate a boolean value found in the config" do
+          @config.expects(:pluginconf).returns({"rspec" => "true"})
+          Util.expects(:str_to_bool).with("true").returns(true)
 
-        ["1", "yes", "true"].each do |boolean|
-          it "should map options to true correctly" do
-            @config.expects(:pluginconf).returns({"test" => boolean}).twice
-            @c.get_bool_option("test", "default").should == true
-          end
-        end
-
-        ["0", "no", "false"].each do |boolean|
-          it "should map options to false correctly" do
-            @config.expects(:pluginconf).returns({"test" => boolean}).twice
-            @c.get_bool_option("test", "default").should == false
-          end
-        end
-
-        it "should return default for non boolean options" do
-          @config.expects(:pluginconf).returns({"test" => "foo"}).twice
-          @c.get_bool_option("test", "default").should == "default"
+          @c.get_bool_option("rspec", "true").should be_true
         end
       end
     end

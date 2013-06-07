@@ -493,5 +493,26 @@ module MCollective
         newary.should == ["0002", "1", "1.06", "1.1-3", "1.1-4", "1.1-5", "1.1.6", "1.1.a", "1.1a", "1.2", "1.2.8", "1.2.10", "1.5", "2.3", "2.3.0", "2.3.1", "2.3a.1", "2.4", "2.4", "2.4b", "2.40.2", "3.0", "3.1"]
       end
     end
+
+    describe "str_to_bool" do
+      it "should transform true like strings into TrueClass" do
+        ["1", "y", "yes", "Y", "YES", "t", "true", "T", "TRUE"].each do |val|
+          Util.str_to_bool(val).should be_true
+        end
+      end
+
+      it "should transform false like strings into FalseClass" do
+        ["0", "n", "no", "N", "NO", "f", "false", "F", "FALSE"].each do |val|
+          Util.str_to_bool(val).should be_false
+        end
+      end
+
+      it "should raise an exception if the string does not match the boolean pattern" do
+        ["yep", "nope", "yess", "noway", "rspec", "YES!", "NO?"].each do |val|
+          Util.expects(:raise_code).with(:PLMC42, "Cannot convert string value '%{value}' into a boolean.", :error, :value => val)
+          Util.str_to_bool(val).should be_false
+        end
+      end
+    end
   end
 end

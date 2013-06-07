@@ -151,7 +151,7 @@ module MCollective
         end
 
         begin
-          @base64 = get_bool_option("activemq.base64", false)
+          @base64 = get_bool_option("activemq.base64", "false")
           @msgpriority = get_option("activemq.priority", 0).to_i
 
           pools = @config.pluginconf["activemq.pool.size"].to_i
@@ -164,9 +164,9 @@ module MCollective
             host[:port] = get_option("activemq.pool.#{poolnum}.port", 61613).to_i
             host[:login] = get_env_or_option("STOMP_USER", "activemq.pool.#{poolnum}.user")
             host[:passcode] = get_env_or_option("STOMP_PASSWORD", "activemq.pool.#{poolnum}.password")
-            host[:ssl] = get_bool_option("activemq.pool.#{poolnum}.ssl", false)
+            host[:ssl] = get_bool_option("activemq.pool.#{poolnum}.ssl", "false")
 
-            host[:ssl] = ssl_parameters(poolnum, get_bool_option("activemq.pool.#{poolnum}.ssl.fallback", false)) if host[:ssl]
+            host[:ssl] = ssl_parameters(poolnum, get_bool_option("activemq.pool.#{poolnum}.ssl.fallback", "false")) if host[:ssl]
 
             Log.debug("Adding #{host[:host]}:#{host[:port]} to the connection pool")
             hosts << host
@@ -180,11 +180,11 @@ module MCollective
           # these can be guessed, the documentation isn't clear
           connection[:initial_reconnect_delay] = Float(get_option("activemq.initial_reconnect_delay", 0.01))
           connection[:max_reconnect_delay] = Float(get_option("activemq.max_reconnect_delay", 30.0))
-          connection[:use_exponential_back_off] = get_bool_option("activemq.use_exponential_back_off", true)
+          connection[:use_exponential_back_off] = get_bool_option("activemq.use_exponential_back_off", "true")
           connection[:back_off_multiplier] = Integer(get_option("activemq.back_off_multiplier", 2))
           connection[:max_reconnect_attempts] = Integer(get_option("activemq.max_reconnect_attempts", 0))
-          connection[:randomize] = get_bool_option("activemq.randomize", false)
-          connection[:backup] = get_bool_option("activemq.backup", false)
+          connection[:randomize] = get_bool_option("activemq.randomize", "false")
+          connection[:backup] = get_bool_option("activemq.backup", "false")
           connection[:timeout] = Integer(get_option("activemq.timeout", -1))
           connection[:connect_timeout] = Integer(get_option("activemq.connect_timeout", 30))
           connection[:reliable] = true
@@ -388,19 +388,9 @@ module MCollective
         raise("No plugin.#{opt} configuration option given")
       end
 
-      # gets a boolean option from the config, supports y/n/true/false/1/0
-      def get_bool_option(opt, default)
-        return default unless @config.pluginconf.include?(opt)
-
-        val = @config.pluginconf[opt]
-
-        if val =~ /^1|yes|true/
-          return true
-        elsif val =~ /^0|no|false/
-          return false
-        else
-          return default
-        end
+      # looks up a boolean value in the config
+      def get_bool_option(val, default)
+        Util.str_to_bool(@config.pluginconf.fetch(val, default))
       end
     end
   end

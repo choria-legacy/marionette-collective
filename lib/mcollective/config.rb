@@ -68,13 +68,13 @@ module MCollective
                 when "identity"
                   @identity = val
                 when "direct_addressing"
-                  @direct_addressing = false unless val =~ /^1|y/i
+                  @direct_addressing = Util.str_to_bool(val)
                 when "direct_addressing_threshold"
                   @direct_addressing_threshold = val.to_i
                 when "color"
-                  val =~ /^1|y/i ? @color = true : @color = false
+                  @color = Util.str_to_bool(val)
                 when "daemonize"
-                  val =~ /^1|y/i ? @daemonize = true : @daemonize = false
+                  @daemonize = Util.str_to_bool(val)
                 when "securityprovider"
                   @securityprovider = val.capitalize
                 when "factsource"
@@ -86,11 +86,11 @@ module MCollective
                 when /^plugin.(.+)$/
                   @pluginconf[$1] = val
                 when "rpcaudit"
-                  val =~ /^1|y/i ? @rpcaudit = true : @rpcaudit = false
+                  @rpcaudit = Util.str_to_bool(val)
                 when "rpcauditprovider"
                   @rpcauditprovider = val.capitalize
                 when "rpcauthorization"
-                  val =~ /^1|y/i ? @rpcauthorization = true : @rpcauthorization = false
+                  @rpcauthorization = Util.str_to_bool(val)
                 when "rpcauthprovider"
                   @rpcauthprovider = val.capitalize
                 when "rpchelptemplate"

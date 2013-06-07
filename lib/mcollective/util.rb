@@ -1,6 +1,8 @@
 module MCollective
   # Some basic utility helper methods useful to clients, agents, runner etc.
   module Util
+    extend Translatable
+
     # Finds out if this MCollective has an agent by the name passed
     #
     # If the passed name starts with a / it's assumed to be regex
@@ -467,6 +469,19 @@ module MCollective
       end
 
       !!path.match(path_matcher)
+    end
+
+    # Converts a string into a boolean value
+    # Strings matching 1,y,yes,true or t will return TrueClass
+    # Any other value will return FalseClass
+    def self.str_to_bool(val)
+      if val =~ /^(1|yes|true|y|t)$/i
+        return  true
+      elsif val =~ /^(0|no|false|n|f)$/i
+        return false
+      else
+        raise_code(:PLMC42, "Cannot convert string value '%{value}' into a boolean.", :error, :value => val)
+      end
     end
 
     # Looks up and interprolate the hash values into a i18n string
