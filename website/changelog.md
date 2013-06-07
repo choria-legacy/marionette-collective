@@ -8,6 +8,9 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/06/06|Clone the default values from the DDL to avoid accidental modifications to the cached DDL file|21104|
+|2013/06/05|Filter methods on the RPC Client are now idempotent|20233|
+|2013/06/04|run() call in an agent can return incorrect Process::Status|17667|
 |2013/06/03|Improve debian dependencies so packages can be rebuilt in a chroot|20950|
 |2013/05/28|Set expire headers in the ActiveMQ and RabbitMQ message headers|19905|
 |2013/05/10|Correctly detect version differences in semver version where the path level is greater 10|20661|

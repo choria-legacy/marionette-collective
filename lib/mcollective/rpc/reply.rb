@@ -26,7 +26,9 @@ module MCollective
         interface = @ddl.action_interface(@action)
 
         interface[:output].keys.each do |output|
-          @data[output] = interface[:output][output][:default]
+          # must deep clone this data to avoid accidental updates of the DDL in cases where the
+          # default is for example a string and someone does << on it
+          @data[output] = Marshal.load(Marshal.dump(interface[:output][output].fetch(:default, nil)))
         end
       end
 

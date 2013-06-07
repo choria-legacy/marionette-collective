@@ -387,7 +387,7 @@ module MCollective
 
       # Sets the class filter
       def class_filter(klass)
-        @filter["cf_class"] << klass
+        @filter["cf_class"] = @filter["cf_class"] | [klass]
         @filter["cf_class"].compact!
         reset
       end
@@ -399,10 +399,10 @@ module MCollective
 
         if value.nil?
           parsed = Util.parse_fact_string(fact)
-          @filter["fact"] << parsed unless parsed == false
+          @filter["fact"] = @filter["fact"] | [parsed] unless parsed == false
         else
           parsed = Util.parse_fact_string("#{fact}#{operator}#{value}")
-          @filter["fact"] << parsed unless parsed == false
+          @filter["fact"] = @filter["fact"] | [parsed] unless parsed == false
         end
 
         @filter["fact"].compact!
@@ -411,21 +411,21 @@ module MCollective
 
       # Sets the agent filter
       def agent_filter(agent)
-        @filter["agent"] << agent
+        @filter["agent"] = @filter["agent"] | [agent]
         @filter["agent"].compact!
         reset
       end
 
       # Sets the identity filter
       def identity_filter(identity)
-        @filter["identity"] << identity
+        @filter["identity"] = @filter["identity"] | [identity]
         @filter["identity"].compact!
         reset
       end
 
       # Set a compound filter
       def compound_filter(filter)
-        @filter["compound"] <<  Matcher.create_compound_callstack(filter)
+        @filter["compound"] = @filter["compound"] |  [Matcher.create_compound_callstack(filter)]
         reset
       end
 
