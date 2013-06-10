@@ -232,7 +232,7 @@ module MCollective
 
           when :directed # subscribing to directed messages
             target[:name] = "/exchange/%s_directed/%s" % [ collective, @config.identity ]
-            target[:id] = "%s_directed_to_identity" % @config.identity
+            target[:id] = "%s_%s_directed_to_identity" % [ collective, @config.identity ]
         end
 
         target
