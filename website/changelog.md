@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/06/04|run() call in an agent can return incorrect Process::Status|17667|
 |*2013/05/20*|*Release 2.2.4*|20592|
 |2013/05/10|Correctly detect version differences in semver version where the path level is greater 10|20661|
 |2013/05/07|Support the latest version of the JSON gem|20594|
