@@ -144,9 +144,9 @@ module MCollective
 
         log_code(:PLMC37, "Starting default activation checks for the '%{agent}' agent", :debug, :agent => agent_name)
 
-        should_activate = Util.str_to_bool(Config.instance.pluginconf.fetch("#{agent_name}.activate_agent", false))
+        should_activate = Util.str_to_bool(Config.instance.pluginconf.fetch("#{agent_name}.activate_agent", true))
 
-        if should_activate
+        unless should_activate
           log_code(:PLMC38, "Found plugin configuration '%{agent}.activate_agent' with value '%{should_activate}'", :debug, :agent => agent_name, :should_activate => should_activate)
         end
 
