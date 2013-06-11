@@ -496,13 +496,13 @@ module MCollective
 
     describe "str_to_bool" do
       it "should transform true like strings into TrueClass" do
-        ["1", "y", "yes", "Y", "YES", "t", "true", "T", "TRUE"].each do |val|
+        ["1", "y", "yes", "Y", "YES", "t", "true", "T", "TRUE", true].each do |val|
           Util.str_to_bool(val).should be_true
         end
       end
 
       it "should transform false like strings into FalseClass" do
-        ["0", "n", "no", "N", "NO", "f", "false", "F", "FALSE"].each do |val|
+        ["0", "n", "no", "N", "NO", "f", "false", "F", "FALSE", false].each do |val|
           Util.str_to_bool(val).should be_false
         end
       end
