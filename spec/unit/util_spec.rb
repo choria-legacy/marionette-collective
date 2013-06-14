@@ -482,6 +482,12 @@ module MCollective
         Util.absolute_path?('/foo', '/', nil).should == true
         Util.absolute_path?('/foo/foo', '/', nil).should == true
       end
+
+      it "should correctly validate paths on Windows" do
+        ['C:\foo', '\foo\bar', '\C\FOO\Bar', '/C/FOO/Bar'].each do |path|
+          Util.absolute_path?(path, '/', '\\').should be_true
+        end
+      end
     end
 
     describe "#versioncmp" do

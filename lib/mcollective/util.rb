@@ -463,7 +463,7 @@ module MCollective
     # ruby versions we support and it comes down to roughly this
     def self.absolute_path?(path, separator=File::SEPARATOR, alt_separator=File::ALT_SEPARATOR)
       if alt_separator
-        path_matcher = /^[#{Regexp.quote alt_separator}#{Regexp.quote separator}]/
+        path_matcher = /^([a-zA-Z]:){0,1}[#{Regexp.quote alt_separator}#{Regexp.quote separator}]/
       else
         path_matcher = /^#{Regexp.quote separator}/
       end
