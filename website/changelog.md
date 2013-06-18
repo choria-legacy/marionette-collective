@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/06/18|Correctly detect Windows absolute paths|21251|
 |2013/06/10|Fix and centralize handling of boolean values for settings|19751|
 |2013/06/06|Clone the default values from the DDL to avoid accidental modifications to the cached DDL file|21104|
 |2013/06/05|Filter methods on the RPC Client are now idempotent|20233|
