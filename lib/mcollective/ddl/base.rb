@@ -38,18 +38,19 @@ module MCollective
       #
       # If no template name is provided one will be chosen based
       # on the plugin type.  If the provided template path is
-      # not absolute then the template will be loaded relative to
-      # helptemplatedir configuration parameter
+      # not absolute then the template will be loaded either from
+      # the config dir and if that does not exist, default to
+      # /etc/mcollective
       def help(template=nil)
         template = template_for_plugintype unless template
-        template = File.join(@config.helptemplatedir, template) unless template.start_with?(File::SEPARATOR)
+        template = Util.templatepath(template) unless Util.absolute_path?(template)
 
         template = File.read(template)
         meta = @meta
         entities = @entities
 
         unless template == "metadata-help.erb"
-          metadata_template = File.join(@config.helptemplatedir, "metadata-help.erb")
+          metadata_template = Util.templatepath("metadata-help.erb")
           metadata_template = File.read(metadata_template)
           metastring = ERB.new(metadata_template, 0, '%')
           metastring = metastring.result(binding)
@@ -68,7 +69,7 @@ module MCollective
         when :agent
           return "rpc-help.erb"
         else
-          if File.exists?(File.join(@config.helptemplatedir,"#{@plugintype}-help.erb"))
+          if File.exists?(Util.templatepath("#{@plugintype}-help.erb"))
             return "#{@plugintype}-help.erb"
           else
             # Default help template gets loaded if plugintype-help does not exist.

@@ -18,6 +18,8 @@ module MCollective
 
         it "should return correct new path for other ddls" do
           @ddl.instance_variable_set("@plugintype", :data)
+          @ddl.stubs(:helptemplatedir).returns("/etc/mcollective")
+          Util.stubs(:templatepath).with("data-help.erb").returns("/etc/mcollective/data-help.erb")
           File.expects(:exists?).with("/etc/mcollective/data-help.erb").returns(true)
           @ddl.template_for_plugintype.should == "data-help.erb"
         end
@@ -31,6 +33,8 @@ module MCollective
         end
 
         it "should use template from help template path when provided template name is not an absolute file path" do
+          Util.stubs(:absolute_path?).returns(false)
+          Util.stubs(:templatepath).returns("/etc/mcollective/foo", "/etc/mcollective/metadata-help.erb")
           File.expects(:read).with("/etc/mcollective/foo").returns("rspec")
           File.expects(:read).with("/etc/mcollective/metadata-help.erb").returns("rspec")
           @ddl.help("foo").should == "rspec"

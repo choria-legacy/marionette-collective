@@ -432,7 +432,7 @@ module MCollective
     # Code originally from Puppet
     def self.versioncmp(version_a, version_b)
       vre = /[-.]|\d+|[^-.\d]+/
-        ax = version_a.scan(vre)
+      ax = version_a.scan(vre)
       bx = version_b.scan(vre)
 
       while (ax.length>0 && bx.length>0)
@@ -492,6 +492,16 @@ module MCollective
       else
         I18n.t(msgid, args)
       end
+    end
+
+    # Looks up the template directory and returns its full path
+    def self.templatepath(template_file)
+      config_dir = File.dirname(Config.instance.configfile)
+      template_path = File.join(config_dir, template_file)
+      return template_path if File.exists?(template_path)
+
+      template_path = File.join("/etc/mcollective", template_file)
+      return template_path
     end
   end
 end

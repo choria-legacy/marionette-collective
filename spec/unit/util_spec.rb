@@ -520,5 +520,24 @@ module MCollective
         end
       end
     end
+
+    describe "#templatepath" do
+      before do
+        config = mock
+        config.stubs(:configfile).returns("/rspec/server.cfg")
+        Config.stubs(:instance).returns(config)
+      end
+      it "should look for a template in the config dir" do
+        File.stubs(:exists?).with("/rspec/test-help.erb").returns(true)
+        Util.templatepath("test-help.erb").should == "/rspec/test-help.erb"
+      end
+
+      it "should look for a template in the default dir" do
+        File.stubs(:exists?).with("/rspec/test-help.erb").returns(false)
+        File.stubs(:exists?).with("/etc/mcollective/test-help.erb").returns(true)
+        Util.templatepath("test-help.erb").should == "/etc/mcollective/test-help.erb"
+
+      end
+    end
   end
 end

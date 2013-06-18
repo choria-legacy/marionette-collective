@@ -10,10 +10,10 @@ module MCollective
     attr_reader :identity, :daemonize, :connector, :securityprovider, :factsource
     attr_reader :registration, :registerinterval, :classesfile
     attr_reader :rpcauditprovider, :rpcaudit, :configdir, :rpcauthprovider
-    attr_reader :rpcauthorization, :color, :configfile, :rpchelptemplate
+    attr_reader :rpcauthorization, :color, :configfile
     attr_reader :rpclimitmethod, :logger_type, :fact_cache_time, :collectives
     attr_reader :main_collective, :ssl_cipher, :registration_collective
-    attr_reader :direct_addressing, :direct_addressing_threshold, :ttl, :helptemplatedir
+    attr_reader :direct_addressing, :direct_addressing_threshold, :ttl
     attr_reader :default_discovery_method, :default_discovery_options
 
     def initialize
@@ -93,8 +93,6 @@ module MCollective
                   @rpcauthorization = Util.str_to_bool(val)
                 when "rpcauthprovider"
                   @rpcauthprovider = val.capitalize
-                when "rpchelptemplate"
-                  @rpchelptemplate = val
                 when "rpclimitmethod"
                   @rpclimitmethod = val.to_sym
                 when "logger_type"
@@ -105,8 +103,6 @@ module MCollective
                   @ssl_cipher = val
                 when "ttl"
                   @ttl = val.to_i
-                when "helptemplatedir"
-                  @helptemplatedir = val
                 when "default_discovery_options"
                   @default_discovery_options << val
                 when "default_discovery_method"
@@ -184,13 +180,6 @@ module MCollective
       @default_discovery_options = []
       @ttl = 60
       @mode = :client
-
-      # look in the config dir for the template so users can provide their own and windows
-      # with odd paths will just work more often, but fall back to old behavior if it does
-      # not exist
-      @rpchelptemplate = File.join(File.dirname(configfile), "rpc-help.erb")
-      @rpchelptemplate = "/etc/mcollective/rpc-help.erb" unless File.exists?(@rpchelptemplate)
-      @helptemplatedir = File.dirname(@rpchelptemplate)
     end
 
     def read_plugin_config_dir(dir)

@@ -8,7 +8,7 @@ module MCollective
     end
 
     def msg_template
-      File.read(File.join(Config.instance.helptemplatedir, "msg-help.erb"))
+      File.read(Util.templatepath("msg-help.erb"))
     end
 
     def main
