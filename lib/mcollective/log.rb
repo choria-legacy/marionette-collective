@@ -67,7 +67,8 @@ module MCollective
       def logexception(msgid, level, e, backtrace=false, args={})
         return false unless config_and_check_level(level)
 
-        origin = File.basename(e.backtrace[1])
+        path, line, method = e.backtrace[1].split(/:(\d+)/)
+        origin = "%s:%s%s" % [File.basename(path), line, method]
 
         if e.is_a?(CodedError)
           msg = "%s: %s" % [e.code, e.to_s]
@@ -161,7 +162,13 @@ module MCollective
 
       # figures out the filename that called us
       def from
-        from = File.basename(caller[2])
+        path, line, method = execution_stack[3].split(/:(\d+)/)
+        "%s:%s%s" % [File.basename(path), line, method]
+      end
+
+      # this method is here to facilitate testing
+      def execution_stack
+        caller
       end
     end
   end

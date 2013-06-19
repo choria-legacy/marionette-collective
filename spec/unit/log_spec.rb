@@ -68,16 +68,18 @@ module MCollective
       end
 
       it "should request the message including the exception string and log it" do
-        pending("#20506", :if => MCollective::Util.windows?) do
         Log.stubs(:config_and_check_level).returns(true)
         Log.expects(:message_for).with(:PLMC1, {:rspec => "test", :error => "Exception: this is a test"}).returns("This is a test")
         Log.expects(:log).with(:debug, "This is a test", "test:2")
 
         e = Exception.new("this is a test")
-        e.set_backtrace ["/some/dir/test:1", "/some/dir/test:2"]
+        if Util.windows?
+          e.set_backtrace ['C:\some\dir\test:1', 'C:\some\dir\test:2']
+        else
+          e.set_backtrace ["/some/dir/test:1", "/some/dir/test:2"]
+        end
 
         Log.logexception(:PLMC1, :debug, e, false, {:rspec => "test"})
-        end
       end
     end
 
@@ -140,6 +142,38 @@ module MCollective
 
         Log.configure(@logger)
         Log.cycle_level
+      end
+    end
+
+    describe "#from" do
+      let(:execution_stack) do
+        if Util.windows?
+          ['C:\rspec\test1:52:in `rspec block1\'',
+           'C:\rspec\test2:52:in `rspec block2\'',
+           'C:\rspec\test3:52:in `rspec block3\'',
+           'C:\rspec\test4:52:in `rspec block4\'']
+        else
+          ["/rspec/test1:52:in `rspec block1'",
+           "/rspec/test2:52:in `rspec block2'",
+           "/rspec/test3:52:in `rspec block3'",
+           "/rspec/test4:52:in `rspec block4'"]
+        end
+      end
+
+      it "should return the correct from string when given file, line, block" do
+        Log.stubs(:execution_stack).returns(execution_stack)
+        Log.from.should == "test4:52:in `rspec block4'"
+      end
+
+      it "should return the correct from string shen given file and line" do
+        if Util.windows?
+          execution_stack[3] = 'C:\rspec\test4:52'
+        else
+          execution_stack[3] = '/rspec/test4:52'
+        end
+
+        Log.stubs(:execution_stack).returns(execution_stack)
+        Log.from.should == "test4:52"
       end
     end
   end
