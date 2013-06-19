@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/06/19|Ensure the line numbers are printed correctly on both Windows and Unix|20506|
 |2013/06/19|Remove the rpchelptemplate and helptemplatedir options|20714|
 |2013/06/18|Correctly detect Windows absolute paths|21251|
 |2013/06/10|Fix and centralize handling of boolean values for settings|19751|
