@@ -149,12 +149,15 @@ ActiveMQ must listen over the network for Stomp connections; otherwise, MCollect
 
 * Note that the protocol/port/arguments for Stomp URIs can differ:
     * Unencrypted: `stomp+nio://0.0.0.0:61613`
-    * CA-verified TLS (ActiveMQ ≥ 5.7): `stomp+nio+ssl://0.0.0.0:61614?needClientAuth=true`
-    * CA-verified TLS (5.5 and 5.6): `stomp+ssl://0.0.0.0:61614?needClientAuth=true`
-    * Anonymous TLS: `stomp+nio+ssl://0.0.0.0:61614` (5.7+) or `stomp+ssl://0.0.0.0:61614` (5.5/5.6)
+    * CA-verified TLS: `stomp+ssl://0.0.0.0:61614?needClientAuth=true`
+    * Anonymous TLS: `stomp+ssl://0.0.0.0:61614`
 * You can choose to restrict the interface/hostname to use instead of listening on `0.0.0.0`.
 
-(The stomp+nio+ssl protocol had a bug on ActiveMQ 5.6 and didn't exist in 5.5, but provides better performance on 5.7+.)
+
+<!-- uncomment and move into place when activemq 5.9 comes out and we can verify that the bug is fixed.
+    * CA-verified TLS (ActiveMQ ≥ 5.9): `stomp+nio+ssl://0.0.0.0:61614?needClientAuth=true`
+(The stomp+nio+ssl protocol didn't exist in ActiveMQ 5.5, had a major bug on 5.6, and would drop about half of replies from more than 300 nodes through 5.8, but provides better performance on 5.9+.)
+ -->
 
 > **If you are using TLS,** note that you must also:
 >
