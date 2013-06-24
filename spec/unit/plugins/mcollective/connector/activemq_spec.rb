@@ -161,6 +161,8 @@ module MCollective
                         "activemq.pool.1.ssl.ca" => "rspec1.ca,rspec2.ca"}
 
           @config.expects(:pluginconf).returns(pluginconf).at_least_once
+          @c.expects(:get_key_file).returns("rspec.key").at_least_once
+          @c.expects(:get_cert_file).returns("rspec.cert").at_least_once
 
           File.expects(:exist?).with("rspec.cert").twice.returns(true)
           File.expects(:exist?).with("rspec.key").twice.returns(true)
@@ -194,6 +196,33 @@ module MCollective
           @config.expects(:pluginconf).returns(pluginconf).at_least_once
 
           expect { @c.ssl_parameters(1, false) }.to raise_error
+        end
+      end
+
+      describe "#get_key_file" do
+        it "should return the filename from the environment variable" do
+          ENV["MCOLLECTIVE_ACTIVEMQ_POOL2_SSL_KEY"] = "/path/to/rspec/env"
+          @c.get_key_file(2).should == "/path/to/rspec/env"
+        end
+
+        it "should return the filename defined in the config file if the environment varialbe doesn't exist" do
+          ENV.delete("MCOLLECTIVE_ACTIVEMQ_POOL2_SSL_KEY")
+          @c.expects(:get_option).with("activemq.pool.2.ssl.key", false).returns("/path/to/rspec/conf")
+          @c.get_key_file(2).should == "/path/to/rspec/conf"
+        end
+
+      end
+
+      describe "#get_cert_file" do
+        it "should return the filename from the environment variable" do
+          ENV["MCOLLECTIVE_ACTIVEMQ_POOL2_SSL_CERT"] = "/path/to/rspec/env"
+          @c.get_cert_file(2).should == "/path/to/rspec/env"
+        end
+
+        it "should return the filename defined in the config file if the environment varialbe doesn't exist" do
+          ENV.delete("MCOLLECTIVE_ACTIVEMQ_POOL2_SSL_CERT")
+          @c.expects(:get_option).with("activemq.pool.2.ssl.cert", false).returns("/path/to/rspec/conf")
+          @c.get_cert_file(2).should == "/path/to/rspec/conf"
         end
       end
 

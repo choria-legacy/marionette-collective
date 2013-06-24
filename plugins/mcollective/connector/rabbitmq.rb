@@ -115,8 +115,8 @@ module MCollective
 
       # Sets the SSL paramaters for a specific connection
       def ssl_parameters(poolnum, fallback)
-        params = {:cert_file => get_option("rabbitmq.pool.#{poolnum}.ssl.cert", false),
-                  :key_file  => get_option("rabbitmq.pool.#{poolnum}.ssl.key", false),
+        params = {:cert_file => get_cert_file(poolnum),
+                  :key_file  => get_key_file(poolnum),
                   :ts_files  => get_option("rabbitmq.pool.#{poolnum}.ssl.ca", false)}
 
         raise "cert, key and ca has to be supplied for verified SSL mode" unless params[:cert_file] && params[:key_file] && params[:ts_files]
@@ -142,6 +142,22 @@ module MCollective
           Log.error("Failed to set full SSL verified mode: #{e.class}: #{e}")
           raise(e)
         end
+      end
+
+      # Returns the name of the private key file used by RabbitMQ
+      # Will first check if an environment variable MCOLLECTIVE_RABBITMQ_POOLX_SSL_KEY exists,
+      # where X is the RabbitMQ pool number.
+      # If the environment variable doesn't exist, it will try and load the value from the config.
+      def get_key_file(poolnum)
+        ENV["MCOLLECTIVE_RABBITMQ_POOL%s_SSL_KEY" % poolnum] || get_option("rabbitmq.pool.#{poolnum}.ssl.key", false)
+      end
+
+      # Returns the name of the certificate file used by RabbitMQ
+      # Will first check if an environment variable MCOLLECTIVE_RABBITMQ_POOLX_SSL_CERT exists,
+      # where X is the RabbitMQ pool number.
+      # If the environment variable doesn't exist, it will try and load the value from the config.
+      def get_cert_file(poolnum)
+        ENV["MCOLLECTIVE_RABBITMQ_POOL%s_SSL_CERT" % poolnum] || get_option("rabbitmq.pool.#{poolnum}.ssl.cert", false)
       end
 
       # Receives a message from the RabbitMQ connection

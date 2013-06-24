@@ -232,8 +232,10 @@ ActiveMQ is the main middleware we recommend for MCollective. The ActiveMQ conne
 - **`plugin.activemq.pool.1.ssl`** --- Whether to use TLS when connecting to ActiveMQ. _Default:_ `0`; _allowed:_ `1/0`, `true/false`, `yes/no`
 - **`plugin.activemq.pool.1.ssl.fallback`** --- _(When `ssl == 1`)_ Whether to allow unverified TLS if the ca/cert/key settings aren't set. _Default:_ `0`; _allowed:_ `1/0`, `true/false`, `yes/no`
 - **`plugin.activemq.pool.1.ssl.ca`** --- _(When `ssl == 1`)_ The CA certificate to use when verifying ActiveMQ's certificate. Must be the fully-qualified path to a `.pem` file. _Default:_ (nothing)
-- **`plugin.activemq.pool.1.ssl.cert`** --- _(When `ssl == 1`)_ The certificate to present when connecting to ActiveMQ. Must be the fully-qualified path to a `.pem` file. _Default:_ (nothing)
-- **`plugin.activemq.pool.1.ssl.key`** --- _(When `ssl == 1`)_ The private key corresponding to this node's certificate. Must be the fully-qualified path to a `.pem` file. _Default:_ (nothing)
+- **`plugin.activemq.pool.1.ssl.cert`** --- _(When `ssl == 1`)_ The certificate to present when connecting to ActiveMQ. Must be the fully-qualified path to a `.pem` file. As of version 2.3.2 MCollective will also check the environment variable `MCOLLECTIVE_ACTIVEMQ_POOL1_SSL_CERT` for
+the client's ssl cert. _Default:_ (nothing)
+- **`plugin.activemq.pool.1.ssl.key`** --- _(When `ssl == 1`)_ The private key corresponding to this node's certificate. Must be the fully-qualified path to a `.pem` file. As of version 2.3.2 MCollective will also check the environment variable `MCOLLECTIVE_ACTIVEMQ_POOL1_SSL_KEY` for
+the client's ssl key. _Default:_ (nothing)
 
 #### RabbitMQ Connector Settings
 
