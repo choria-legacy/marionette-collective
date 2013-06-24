@@ -31,7 +31,7 @@ module MCollective
 
           unless line =~ /^#|^$/
             if (line =~ /(.+?)\s*=\s*(.+)/)
-              key = $1
+              key = $1.strip
               val = $2
 
               case key
@@ -108,7 +108,7 @@ module MCollective
                 when "default_discovery_method"
                   @default_discovery_method = val
                 else
-                  raise("Unknown config parameter #{key}")
+                  raise("Unknown config parameter '#{key}'")
               end
             end
           end
@@ -194,7 +194,7 @@ module MCollective
           line.gsub!(/\s*$/, "")
           next if line =~ /^#|^$/
           if (line =~ /(.+?)\s*=\s*(.+)/)
-            key = $1
+            key = $1.strip
             val = $2
             @pluginconf["#{plugin}.#{key}"] = val
           end

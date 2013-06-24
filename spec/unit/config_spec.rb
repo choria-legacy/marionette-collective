@@ -53,6 +53,15 @@ module MCollective
         end
       end
 
+      it "should strip whitespaces from config keys" do
+        File.expects(:exists?).with("/nonexisting").returns(true)
+        File.expects(:readlines).with("/nonexisting").returns([" identity= your.example.com  ", "libdir=/nonexisting"])
+
+        config = Config.instance
+        config.loadconfig("/nonexisting")
+        config.identity.should == "your.example.com"
+      end
+
       it "should allow valid identities" do
         ["foo", "foo_bar", "foo-bar", "foo-bar-123", "foo.bar", "foo_bar_123"].each do |input|
           File.expects(:readlines).with("/nonexisting").returns(["identity = #{input}", "libdir=/nonexistinglib"])
@@ -137,6 +146,13 @@ module MCollective
       it "should set config parameters correctly" do
         Dir.expects(:new).with(@plugindir).returns(["foo.cfg"])
         File.expects(:open).with(File.join(@plugindir, "foo.cfg"), "r").returns(["rspec = test"])
+        Config.instance.read_plugin_config_dir(@plugindir)
+        Config.instance.pluginconf.should == {"foo.rspec" => "test"}
+      end
+
+      it "should strip whitespaces from config keys" do
+        Dir.expects(:new).with(@plugindir).returns(["foo.cfg"])
+        File.expects(:open).with(File.join(@plugindir, "foo.cfg"), "r").returns(["   rspec  = test"])
         Config.instance.read_plugin_config_dir(@plugindir)
         Config.instance.pluginconf.should == {"foo.rspec" => "test"}
       end
