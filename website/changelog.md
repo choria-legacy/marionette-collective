@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/06/23|Gracefully handle whitespaces in the config file before config keys|21407|
 |2013/06/19|Ensure the line numbers are printed correctly on both Windows and Unix|20506|
 |2013/06/19|Remove the rpchelptemplate and helptemplatedir options|20714|
 |2013/06/18|Correctly detect Windows absolute paths|21251|
