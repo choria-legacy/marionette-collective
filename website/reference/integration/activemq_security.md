@@ -8,7 +8,7 @@ toc: false
 [Wildcard]: http://activemq.apache.org/wildcards.html
 [activemq_config]: /mcollective/deploy/middleware/activemq.html
 [mcollective_username]: /mcollective/reference/plugins/connector_activemq.html#configuring-mcollective
-[mcollective_tls]: ./activemq_ssl.html#configuring-mcollective-servers
+[mcollective_tls]: ./activemq_ssl.html#step-2-configure-mcollective-servers
 
 As part of rolling out MCollective you need to think about security. The various examples in the quick start guide and on this blog has allowed all agents to talk to all nodes all agents. The problem with this approach is that should you have untrusted users on a node they can install the client applications and read the username/password from the server config file and thus control your entire architecture.
 
@@ -18,7 +18,7 @@ General information about [ActiveMQ Security can be found on their wiki][Securit
 
 ## Configuring Security in activemq.xml
 
-[The ActiveMQ config reference][activemq_config] contains all relevant info for configuring security is activemq.xml. The most relevant sections are: 
+[The ActiveMQ config reference][activemq_config] contains all relevant info for configuring security is activemq.xml. The most relevant sections are:
 
 * [Topic and Queue Names](/mcollective/deploy/middleware/activemq.html#topic-and-queue-names) --- Info about the destinations that MCollective uses.
 * [Transport Connectors](/mcollective/deploy/middleware/activemq.html#transport-connectors) --- URL structure for insecure and TLS transports.

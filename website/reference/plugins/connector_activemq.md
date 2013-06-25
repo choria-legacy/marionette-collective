@@ -6,7 +6,7 @@ toc: false
 
 [STOMP]: http://stomp.codehaus.org/
 [wildcard]: http://activemq.apache.org/wildcards.html
-[subcollectives]: /reference/basic/subcollectives.html
+[subcollectives]: /mcollective/reference/basic/subcollectives.html
 [activemq_config]: /mcollective/deploy/middleware/activemq.html
 
 
@@ -19,11 +19,11 @@ This plugin requires version _1.2.2_ or newer of the Stomp gem.
 
 ### Topic and Queue Names
 
-The new connector uses different destination names from the old stomp connector. 
+The new connector uses different destination names from the old stomp connector.
 
 MCollective uses the following destination names. This list uses standard [ActiveMQ destination wildcards][wildcard]. "COLLECTIVE" is the name of the collective being used; by default, this is `mcollective`, but if you are using [subcollectives][], each one is implemented as an equal peer of the default collective.
 
-Topics: 
+Topics:
 
 - `ActiveMQ.Advisory.>` (built-in topics that all ActiveMQ producers and consumers need all permissions on)
 - `COLLECTIVE.*.agent` (for each agent plugin, where the `*` is the name of the plugin)
@@ -36,7 +36,7 @@ Queues:
 Note especially that:
 
 * We can now do direct addressing to specific nodes.
-* Replies now go directly to the instigating client instead of being brodcast on a topic. 
+* Replies now go directly to the instigating client instead of being brodcast on a topic.
 
 This has big impact on overall CPU usage by clients on busy networks, and also optimizes the traffic flow on
 networks with many brokers.
@@ -44,7 +44,7 @@ networks with many brokers.
 
 ## Configuring ActiveMQ
 
-See [the ActiveMQ config reference][activemq_config] for details on configuring ActiveMQ for this connector. As recommended at the top of the reference, you should skim the sections you care about and edit an example config file while reading. 
+See [the ActiveMQ config reference][activemq_config] for details on configuring ActiveMQ for this connector. As recommended at the top of the reference, you should skim the sections you care about and edit an example config file while reading.
 
 
 ## Configuring MCollective
