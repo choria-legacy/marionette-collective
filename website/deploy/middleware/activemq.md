@@ -10,8 +10,8 @@ layout: default
 [template_example]: TODO
 [apache_activemq_config_docs]: http://activemq.apache.org/version-5-xml-configuration.html
 
-[subcollectives]: /reference/basic/subcollectives.html
-[activemq_connector]: /reference/plugins/connector_activemq.html
+[subcollectives]: /mcollective/reference/basic/subcollectives.html
+[activemq_connector]: /mcollective/reference/plugins/connector_activemq.html
 [mcollective_connector_tls]: /mcollective/reference/integration/activemq_ssl.html
 
 

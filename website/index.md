@@ -94,7 +94,9 @@ MCollective is licensed under the Apache 2 license.
 
 ### Introductory and Tutorial Pages
  * See it in action in our [Screencasts]
- * Read the [GettingStarted], [Server Configuration Reference][server_config], and [Configuration] guides for installation instructions
+ * Read the [Overview of Components](./overview_components.html) to understand MCollective's basic structure
+ * Use the [Vagrant Demo Environment](/mcollective/deploy/demo.html) to try MCollective today
+ * See the [Standard Deployment Getting Started Guide](/mcollective/deploy/standard.html) to install and deploy MCollective in your own infrastructure
  * Read the [Terminology] page if you see any words where the meaning in the context of MCollective is not clear
  * Read the [ChangeLog] page to see how MCollective has developed
  * Learn how to write basic reports for your servers - [NodeReports]

@@ -19,7 +19,7 @@ There is also a [slideshare] site where presentations will go that we do at conf
 <ol>
 <li><a href="#introduction">Introducing MCollective</a></li>
 <li><a href="#ec2_demo">EC2 Hosted Demo</a></li>
-<li><a href="#message_flow">Message Flow, Terminology and Components</a></li>
+<li><a href="#message-flow-terminology-and-components">Message Flow, Terminology and Components</a></li>
 <li><a href="#writing_agents">Writing Agents</a></li>
 <li><a href="#simplerpc_ddl">Detailed information about the DDL</a></li>
 </ol>

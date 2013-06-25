@@ -5,8 +5,8 @@ layout: default
 ---
 
 [ddl]: /mcollective/reference/plugins/ddl.html
-[middleware]: ./middleware/
-[standard_deploy]: ./standard.html
+[middleware]: /mcollective/deploy/middleware/
+[standard_deploy]: /mcollective/deploy/standard.html
 [agents]: /mcollective/simplerpc/agents.html
 [subcollectives]: /mcollective/reference/basic/subcollectives.html
 [actionpolicy]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/AuthorizationActionPolicy
@@ -16,9 +16,9 @@ layout: default
 
 > This page is informational, not practical. It describes MCollective's components and global configuration.
 >
-> * For an overview of deployment topics, see [the deployment index page](./index.html).
-> * To try MCollective now, see the [Vagrant demo toolkit](./demo.html).
-> * To deploy MCollective into your production environment, see the [standard deployment getting started guide](./standard.html).
+> * For an overview of deployment topics, see [the deployment index page](/mcollective/deploy/index.html).
+> * To try MCollective now, see the [Vagrant demo toolkit](/mcollective/deploy/demo.html).
+> * To deploy MCollective into your production environment, see the [standard deployment getting started guide](/mcollective/deploy/standard.html).
 
 The MCollective Components
 -----
