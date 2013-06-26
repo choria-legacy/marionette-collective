@@ -201,6 +201,8 @@ mco plugin package [options] <directory>
           return ddl
         end
       end
+
+      return nil
     end
 
     # Show application list and plugin help
@@ -223,12 +225,16 @@ mco plugin package [options] <directory>
             end
           end
 
-          abort "Could not find a plugin named %s in any supported plugin type" % configuration[:target] unless found_plugin_type
-
+          abort "Could not find a plugin named '%s' in any supported plugin type" % configuration[:target] unless found_plugin_type
           ddl = load_plugin_ddl(configuration[:target], found_plugin_type)
         end
 
-        puts ddl.help(configuration[:rpctemplate])
+        if ddl
+          puts ddl.help(configuration[:rpctemplate])
+        else
+          abort "Could not find a '%s' plugin named '%s'" % configuration[:target].split('/')
+        end
+
       else
         puts "Please specify a plugin. Available plugins are:"
         puts
