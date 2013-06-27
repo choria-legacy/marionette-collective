@@ -75,6 +75,23 @@ module MCollective
     #
     #     plugin.activemq.priority = 4
     #
+    # This plugin supports Stomp protocol 1.1 when combined with the stomp gem version
+    # 1.2.10 or newer.  To enable network heartbeats which will help keep the connection
+    # alive over NAT connections and aggresive session tracking firewalls you can set:
+    #
+    #     plugin.activemq.heartbeat_interval = 30
+    #
+    # which will cause a heartbeat to be sent on 30 second intervals and one to be expected
+    # from the broker every 30 seconds.  The shortest supported period is 30 seconds, if
+    # you set it lower it will get forced to 30 seconds.
+    #
+    # After 2 failures to receive a heartbeat the connection will be reset via the normal
+    # failover mechanism.
+    #
+    # By default if heartbeat_interval is set it will request Stomp 1.1 but support fallback
+    # to 1.0, but you can enable strict Stomp 1.1 only operation
+    #
+    #     plugin.activemq.stomp_1_0_fallback = 0
     class Activemq<Base
       attr_reader :connection
 
@@ -129,6 +146,29 @@ module MCollective
 
         def on_ssl_connectfail(params)
           Log.error("SSL session creation with #{stomp_url(params)} failed: #{params[:ssl_exception]}")
+        end
+
+        # Stomp 1.1+ - heart beat read (receive) failed.
+        def on_hbread_fail(params, ticker_data)
+          Log.error("Heartbeat read failed from '%s': %s" % [stomp_url(params), ticker_data.inspect])
+        rescue Exception => e
+        end
+
+        # Stomp 1.1+ - heart beat send (transmit) failed.
+        def on_hbwrite_fail(params, ticker_data)
+          Log.error("Heartbeat write failed from '%s': %s" % [stomp_url(params), ticker_data.inspect])
+        rescue Exception => e
+        end
+
+        # Log heart beat fires
+        def on_hbfire(params, srind, curt)
+          case srind
+            when "receive_fire"
+              Log.debug("Received heartbeat from %s: %s, %s" % [stomp_url(params), srind, curt])
+            when "send_fire"
+              Log.debug("Publishing heartbeat to %s: %s, %s" % [stomp_url(params), srind, curt])
+          end
+        rescue Exception => e
         end
 
         def stomp_url(params)
@@ -188,6 +228,9 @@ module MCollective
           connection[:timeout] = Integer(get_option("activemq.timeout", -1))
           connection[:connect_timeout] = Integer(get_option("activemq.connect_timeout", 30))
           connection[:reliable] = true
+          connection[:connect_headers] = connection_headers
+          connection[:max_hbrlck_fails] = Integer(get_option("activemq.max_hbrlck_fails", 2))
+          connection[:max_hbread_fails] = Integer(get_option("activemq.max_hbread_fails", 2))
 
           connection[:logger] = EventLogger.new
 
@@ -195,6 +238,43 @@ module MCollective
         rescue Exception => e
           raise("Could not connect to ActiveMQ Server: #{e}")
         end
+      end
+
+      def stomp_version
+        ::Stomp::Version::STRING
+      end
+
+      def connection_headers
+        headers = {:"accept-version" => "1.0"}
+
+        heartbeat_interval = Integer(get_option("activemq.heartbeat_interval", 0))
+        stomp_1_0_fallback = get_bool_option("activemq.stomp_1_0_fallback", true)
+
+        headers[:host] = get_option("activemq.vhost", "mcollective")
+
+        if heartbeat_interval > 0
+          unless Util.versioncmp(stomp_version, "1.2.10") >= 0
+            raise("Setting STOMP 1.1 properties like heartbeat intervals require at least version 1.2.10 of the STOMP gem")
+          end
+
+          if heartbeat_interval < 30
+            Log.warn("Connection heartbeat is set to %d, forcing to minimum value of 30s")
+            heartbeat_interval = 30
+          end
+
+          heartbeat_interval = heartbeat_interval * 1000
+          headers[:"heart-beat"] = "%d,%d" % [heartbeat_interval + 500, heartbeat_interval - 500]
+
+          if stomp_1_0_fallback
+            headers[:"accept-version"] = "1.1,1.0"
+          else
+            headers[:"accept-version"] = "1.1"
+          end
+        else
+          Log.warn("Connecting without STOMP 1.1 heartbeats, if you are using ActiveMQ 5.8 or newer consider setting plugin.activemq.heartbeat_interval")
+        end
+
+        headers
       end
 
       # Sets the SSL paramaters for a specific connection

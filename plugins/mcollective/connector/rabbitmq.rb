@@ -45,6 +45,29 @@ module MCollective
           Log.error("SSL session creation with #{stomp_url(params)} failed: #{params[:ssl_exception]}")
         end
 
+        # Stomp 1.1+ - heart beat read (receive) failed.
+        def on_hbread_fail(params, ticker_data)
+          Log.error("Heartbeat read failed from '%s': %s" % [stomp_url(params), ticker_data.inspect])
+        rescue Exception => e
+        end
+
+        # Stomp 1.1+ - heart beat send (transmit) failed.
+        def on_hbwrite_fail(params, ticker_data)
+          Log.error("Heartbeat write failed from '%s': %s" % [stomp_url(params), ticker_data.inspect])
+        rescue Exception => e
+        end
+
+        # Log heart beat fires
+        def on_hbfire(params, srind, curt)
+          case srind
+            when "receive_fire"
+              Log.debug("Received heartbeat from %s: %s, %s" % [stomp_url(params), srind, curt])
+            when "send_fire"
+              Log.debug("Publishing heartbeat to %s: %s, %s" % [stomp_url(params), srind, curt])
+          end
+        rescue Exception => e
+        end
+
         def stomp_url(params)
           "%s://%s@%s:%d" % [ params[:cur_ssl] ? "stomp+ssl" : "stomp", params[:cur_login], params[:cur_host], params[:cur_port]]
         end
@@ -100,10 +123,10 @@ module MCollective
           connection[:timeout] = Integer(get_option("rabbitmq.timeout", -1))
           connection[:connect_timeout] = Integer(get_option("rabbitmq.connect_timeout", 30))
           connection[:reliable] = true
+          connection[:max_hbrlck_fails] = Integer(get_option("rabbitmq.max_hbrlck_fails", 2))
+          connection[:max_hbread_fails] = Integer(get_option("rabbitmq.max_hbread_fails", 2))
 
-          # RabbitMQ and Stomp supports vhosts, this sets it in a way compatible with RabbitMQ and
-          # force the version to 1.0, 1.1 support will be added in future
-          connection[:connect_headers] = {"accept-version" => '1.0', "host" => get_option("rabbitmq.vhost", "/")}
+          connection[:connect_headers] = connection_headers
 
           connection[:logger] = EventLogger.new
 
@@ -111,6 +134,43 @@ module MCollective
         rescue Exception => e
           raise("Could not connect to RabbitMQ Server: #{e}")
         end
+      end
+
+      def connection_headers
+        headers = {:"accept-version" => "1.0"}
+
+        heartbeat_interval = Integer(get_option("rabbitmq.heartbeat_interval", 0))
+        stomp_1_0_fallback = get_bool_option("rabbitmq.stomp_1_0_fallback", true)
+
+        headers[:host] = get_option("rabbitmq.vhost", "/")
+
+        if heartbeat_interval > 0
+          unless Util.versioncmp(stomp_version, "1.2.10") >= 0
+            raise("Setting STOMP 1.1 properties like heartbeat intervals require at least version 1.2.10 of the STOMP gem")
+          end
+
+          if heartbeat_interval < 30
+            Log.warn("Connection heartbeat is set to %d, forcing to minimum value of 30s")
+            heartbeat_interval = 30
+          end
+
+          heartbeat_interval = heartbeat_interval * 1000
+          headers[:"heart-beat"] = "%d,%d" % [heartbeat_interval + 500, heartbeat_interval - 500]
+
+          if stomp_1_0_fallback
+            headers[:"accept-version"] = "1.1,1.0"
+          else
+            headers[:"accept-version"] = "1.1"
+          end
+        else
+          Log.warn("Connecting without STOMP 1.1 heartbeats, consider setting plugin.rabbitmq.heartbeat_interval")
+        end
+
+        headers
+      end
+
+      def stomp_version
+        ::Stomp::Version::STRING
       end
 
       # Sets the SSL paramaters for a specific connection

@@ -95,6 +95,8 @@ module MCollective
                         "activemq.randomize" => "true",
                         "activemq.backup" => "true",
                         "activemq.timeout" => "1",
+                        "activemq.max_hbrlck_fails" => 3,
+                        "activemq.max_hbread_fails" => 3,
                         "activemq.connect_timeout" => "5"}
 
 
@@ -114,9 +116,12 @@ module MCollective
                                        :use_exponential_back_off => false,
                                        :max_reconnect_attempts => 5,
                                        :initial_reconnect_delay => 0.02,
+                                       :max_hbread_fails => 3,
+                                       :max_hbrlck_fails => 3,
                                        :randomize => true,
                                        :reliable => true,
                                        :logger => "logger",
+                                       :connect_headers => {},
                                        :hosts => [{:passcode => 'password1',
                                                    :host => 'host1',
                                                    :port => 6163,
@@ -130,9 +135,53 @@ module MCollective
           ])
 
           @c.expects(:ssl_parameters).with(2, true).returns(true)
+          @c.expects(:connection_headers).returns({})
 
           @c.instance_variable_set("@connection", nil)
           @c.connect(connector)
+        end
+      end
+
+      describe "#connection_headers" do
+        before do
+          @c.stubs(:stomp_version).returns("1.2.10")
+        end
+
+        it "should default to stomp 1.0 only" do
+          @config.expects(:pluginconf).returns({}).at_least_once
+          @c.connection_headers[:"accept-version"] == "1.0"
+        end
+
+        it "should support setting the vhost" do
+          @config.expects(:pluginconf).returns("activemq.vhost" => "rspec").at_least_once
+          @c.connection_headers.should == {:host => "rspec", :"accept-version" => "1.0"}
+        end
+
+        it "should log a warning about not using Stomp 1.1" do
+          @config.expects(:pluginconf).returns("activemq.heartbeat_interval" => "0").at_least_once
+          Log.expects(:warn).with(regexp_matches(/without STOMP 1.1 heartbeats/))
+          @c.connection_headers
+        end
+
+        it "should not support stomp 1.1 with older versions of the stomp gem" do
+          @config.expects(:pluginconf).returns("activemq.heartbeat_interval" => "30").at_least_once
+          @c.expects(:stomp_version).returns("1.0.0").once
+          expect { @c.connection_headers }.to raise_error("Setting STOMP 1.1 properties like heartbeat intervals require at least version 1.2.10 of the STOMP gem")
+        end
+
+        it "should force the heartbeat to min 30 seconds" do
+          @config.expects(:pluginconf).returns("activemq.heartbeat_interval" => "10").at_least_once
+          @c.connection_headers[:"heart-beat"].should == "30500,29500"
+        end
+
+        it "should default to 1.0 and 1.1 support" do
+          @config.expects(:pluginconf).returns("activemq.heartbeat_interval" => "30").at_least_once
+          @c.connection_headers[:"accept-version"].should == "1.1,1.0"
+        end
+
+        it "should support stomp 1.1 only operation" do
+          @config.expects(:pluginconf).returns("activemq.heartbeat_interval" => "30", "activemq.stomp_1_0_fallback" => 0).at_least_once
+          @c.connection_headers[:"accept-version"].should == "1.1"
         end
       end
 
