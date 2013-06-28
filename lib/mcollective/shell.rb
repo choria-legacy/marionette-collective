@@ -67,16 +67,18 @@ module MCollective
 
       opts["stdin"] = @stdin if @stdin
 
-      # Running waitpid on the cid here will start a thread
-      # with the waitpid in it, this way even if the thread
-      # that started this process gets killed due to agent
-      # timeout or such there will still be a waitpid waiting
-      # for the child to exit and not leave zombies.
+      # Check if the parent thread is alive. If it should die,
+      # and the process spawned by systemu is still alive,
+      # fire off a blocking waitpid and wait for the process to
+      # finish so that we can avoid zombies.
+      thread = Thread.current
       @status = systemu(@command, opts) do |cid|
         begin
-          until Process::waitpid(cid, Process::WNOHANG) do
-            sleep 0.25
-          end 
+          while(thread.alive?)
+            sleep 0.1
+          end
+
+          Process.waitpid(cid) if Process.getpgid(cid)
         rescue SystemExit
         rescue Errno::ECHILD
         rescue Exception => e
