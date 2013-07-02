@@ -391,7 +391,7 @@ module MCollective
           @c.make_target("test", :broadcast, "mcollective").should == {:name => "/exchange/mcollective_broadcast/test", :headers => {"reply-to"=>"/temp-queue/mcollective_reply_test"}, :id => "mcollective_broadcast_test"}
           @c.make_target("test", :request, "mcollective").should == {:name => "/exchange/mcollective_broadcast/test", :headers => {"reply-to"=>"/temp-queue/mcollective_reply_test"}, :id => "mcollective_broadcast_test"}
           @c.make_target("test", :direct_request, "mcollective", nil, "rspec").should == {:headers=>{"reply-to"=>"/temp-queue/mcollective_reply_test"}, :name=>"/exchange/mcollective_directed/rspec", :id => nil}
-          @c.make_target("test", :directed, "mcollective").should == {:name => "/exchange/mcollective_directed/rspec", :headers=>{}, :id => "rspec_directed_to_identity"}
+          @c.make_target("test", :directed, "mcollective").should == {:name => "/exchange/mcollective_directed/rspec", :headers=>{}, :id => "mcollective_rspec_directed_to_identity"}
           @c.make_target("test", :request, "mcollective", "/topic/rspec", "rspec").should == {:headers=>{"reply-to"=>"/topic/rspec"}, :name=>"/exchange/mcollective_broadcast/test", :id => "mcollective_broadcast_test"}
         end
 
