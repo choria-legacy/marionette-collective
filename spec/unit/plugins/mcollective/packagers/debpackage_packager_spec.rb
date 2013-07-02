@@ -280,7 +280,7 @@ module MCollective
           packager.prepare_tmpdirs({:files => [@tmpfile]})
           File.directory?(tmpdir).should == true
           File.directory?(File.join(tmpdir, "debian")).should == true
-          File.exists?(File.join(tmpdir, packager.libdir, "tmp", File.basename(@tmpfile))).should == true
+          File.exists?(File.join(tmpdir, packager.libdir, File.dirname(tmpdir), File.basename(@tmpfile))).should == true
         end
       end
 

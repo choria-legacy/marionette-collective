@@ -1,6 +1,7 @@
 #!/usr/bin/env rspec
 
 require 'spec_helper'
+require 'pathname'
 
 module MCollective
   describe Shell do
@@ -127,11 +128,12 @@ module MCollective
       end
 
       it "should run in the correct cwd" do
-        s = Shell.new('ruby -e "puts Dir.pwd"', :cwd => Dir.tmpdir)
+        tmpdir = Pathname.new(Dir.tmpdir).realpath.to_s
+        s = Shell.new('ruby -e "puts Dir.pwd"', :cwd => tmpdir)
 
         s.runcommand
 
-        s.stdout.should == "#{Dir.tmpdir}#{nl}"
+        s.stdout.should == "#{tmpdir}#{nl}"
       end
 
       it "should send the stdin" do

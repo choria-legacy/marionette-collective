@@ -151,7 +151,8 @@ module MCollective
           if Util.windows?
             @runner.canrun?(File.join(ENV['SystemRoot'], "explorer.exe")).should == true
           else
-            @runner.canrun?("/bin/true").should == true
+            true_exe = ENV["PATH"].split(File::PATH_SEPARATOR).map {|f| p = File.join(f, "true") ;p if File.exists?(p)}.compact.first
+            @runner.canrun?(true_exe).should == true
           end
         end
 
