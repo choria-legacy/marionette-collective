@@ -228,7 +228,9 @@ module MCollective
 
       describe "#discovery_method=" do
         it "should set the method" do
+          @client.default_discovery_method.should == true
           @client.discovery_method = "rspec"
+          @client.default_discovery_method.should == false
           @client.discovery_method.should == "rspec"
         end
 
@@ -237,6 +239,7 @@ module MCollective
           client.discovery_method = "rspec"
           client.discovery_method.should == "rspec"
           client.discovery_options.should == ["rspec"]
+          client.default_discovery_method.should == false
         end
 
         it "should clear the options if none are given initially" do
