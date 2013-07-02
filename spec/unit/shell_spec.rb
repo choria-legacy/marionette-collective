@@ -1,6 +1,7 @@
 #!/usr/bin/env rspec
 
 require 'spec_helper'
+require 'rbconfig'
 
 module MCollective
   describe Shell do
@@ -131,7 +132,11 @@ module MCollective
 
         s.runcommand
 
-        s.stdout.should == "#{Dir.tmpdir}#{nl}"
+        if RbConfig::CONFIG['host_os'] =~ /darwin|mac os/
+            s.stdout.should == "/private#{Dir.tmpdir}#{nl}"
+        else
+            s.stdout.should == "#{Dir.tmpdir}#{nl}"
+        end
       end
 
       it "should send the stdin" do
