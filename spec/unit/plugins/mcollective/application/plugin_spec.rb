@@ -17,11 +17,11 @@ module MCollective
       describe "#doc_command" do
         it "should display doc output for a plugin that exists when using 'plugin'" do
           @app.configuration[:target] = "rspec"
-          PluginManager.stubs(:find).with(:agent, "ddl").returns("rspec")
-          PluginManager.stubs(:find).with(:aggregate, "ddl").returns("")
-          PluginManager.stubs(:find).with(:data, "ddl").returns("")
-          PluginManager.stubs(:find).with(:discovery, "ddl").returns("")
-          PluginManager.stubs(:find).with(:validator, "ddl").returns("")
+          PluginManager.stubs(:find).with(:agent, "ddl").returns(["rspec"])
+          PluginManager.stubs(:find).with(:aggregate, "ddl").returns([""])
+          PluginManager.stubs(:find).with(:data, "ddl").returns([""])
+          PluginManager.stubs(:find).with(:discovery, "ddl").returns([""])
+          PluginManager.stubs(:find).with(:validator, "ddl").returns([""])
           @app.stubs(:load_plugin_ddl).with('rspec', :agent).returns(ddl)
           ddl.expects(:help).with("rspec-helptemplate.erb").returns("agent_template")
           @app.expects(:puts).with("agent_template")
@@ -38,7 +38,7 @@ module MCollective
 
         it "should display a failure message for a plugin that doesn't exist when using 'plugin'" do
           @app.configuration[:target] = "rspec"
-          PluginManager.stubs(:find).returns("")
+          PluginManager.stubs(:find).returns([""])
           @app.expects(:abort).with("Could not find a plugin named 'rspec' in any supported plugin type").raises("test_error")
 
           expect{
@@ -58,7 +58,7 @@ module MCollective
 
         it "should display a failure message if duplicate plugins are found" do
           @app.configuration[:target] = "rspec"
-          PluginManager.stubs(:find).returns("rspec")
+          PluginManager.stubs(:find).returns(["rspec"])
           @app.stubs(:abort).with("Duplicate plugin name found, please specify a full path like agent/rpcutil").raises("test_error")
 
           expect{
