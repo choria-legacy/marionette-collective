@@ -18,6 +18,7 @@ module MCollective
         it "should display doc output for a plugin that exists when using 'plugin'" do
           @app.configuration[:target] = "rspec"
           PluginManager.stubs(:find).with(:agent, "ddl").returns("rspec")
+          PluginManager.stubs(:find).with(:aggregate, "ddl").returns("")
           PluginManager.stubs(:find).with(:data, "ddl").returns("")
           PluginManager.stubs(:find).with(:discovery, "ddl").returns("")
           PluginManager.stubs(:find).with(:validator, "ddl").returns("")
