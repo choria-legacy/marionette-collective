@@ -29,9 +29,13 @@ module MCollective
           # strip blank spaces, tabs etc off the end of all lines
           line.gsub!(/\s*$/, "")
 
+          prefix = nil
           unless line =~ /^#|^$/
-            if (line =~ /(.+?)\s*=\s*(.+)/)
+            if (line =~ /^\[(.+)\]$/)
+              prefix = $1.strip
+            elsif (line =~ /(.+?)\s*=\s*(.+)/)
               key = $1.strip
+              key = "#{prefix}.#{key}" if prefix
               val = $2
 
               case key
@@ -196,8 +200,7 @@ module MCollective
           next if line =~ /^#|^$/
           if line =~ /^\[(.*)\]$/
             prefix = $1.strip
-          end
-          if (line =~ /(.+?)\s*=\s*(.+)/)
+          elsif (line =~ /(.+?)\s*=\s*(.+)/)
             key = $1.strip
             key = "#{prefix}.#{key}" if prefix
             val = $2
