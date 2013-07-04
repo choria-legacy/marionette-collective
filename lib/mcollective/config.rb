@@ -192,9 +192,14 @@ module MCollective
         File.open("#{dir}/#{pluginconfigfile}", "r").each do |line|
           # strip blank lines
           line.gsub!(/\s*$/, "")
+          prefix = nil
           next if line =~ /^#|^$/
+          if line =~ /^\[(.*)\]$/
+            prefix = $1.strip
+          end
           if (line =~ /(.+?)\s*=\s*(.+)/)
             key = $1.strip
+            key = "#{prefix}.#{key}" if prefix
             val = $2
             @pluginconf["#{plugin}.#{key}"] = val
           end
