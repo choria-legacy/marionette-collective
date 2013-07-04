@@ -24,12 +24,12 @@ module MCollective
       set_config_defaults(configfile)
 
       if File.exists?(configfile)
+        prefix = nil
         File.readlines(configfile).each do |line|
 
           # strip blank spaces, tabs etc off the end of all lines
           line.gsub!(/\s*$/, "")
 
-          prefix = nil
           unless line =~ /^#|^$/
             if (line =~ /^\[(.+)\]$/)
               prefix = $1.strip
@@ -193,10 +193,10 @@ module MCollective
         next unless pluginconfigfile =~ /^([\w]+).cfg$/
 
         plugin = $1
+        prefix = nil
         File.open("#{dir}/#{pluginconfigfile}", "r").each do |line|
           # strip blank lines
           line.gsub!(/\s*$/, "")
-          prefix = nil
           next if line =~ /^#|^$/
           if line =~ /^\[(.*)\]$/
             prefix = $1.strip
