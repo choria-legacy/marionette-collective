@@ -8,6 +8,102 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_3_2">&nbsp;</a>
+
+## 2.3.2 - 2013/07/11
+
+This is the third release in the new development series of MCollective.  This
+release features enhancements and bug fixes.
+
+This release is for early adopters, production users should consider the 2.2.x
+series.
+
+There are important steps to take before upgrading to this release, please carefully
+read the updating section below.
+
+### New Features and Improvements
+
+ * Correct reply-to headers are now set for both ActiveMQ and RabbitMQ
+ * Fire and forget requests are now direct addressing aware
+ * Boolean values in the config classes have now been standardised via a new Util#str_to_bool helper
+ * SSL certificate paths for ActiveMQ and RabbitMQ can now be set in the users shell environment
+ * Aggregate plugins are supported in the 'mco plugin doc' application and bundled plugins now have usage information
+ * Default ports for ActiveMQ and RabbitMQ have changed to 61613
+ * Data returned by data plugins are pre-populated with defaults from the DDL
+ * Direct addressing is now enabled by default
+ * Argument validation in the rpc application now happens before discovery to provide more timely user feedback
+ * Improved error handling and error messages
+ * Remove the topicprefix, queueprefix, rpchelptemplate, helptemplatedir, plugin.discovery.timeout and topicsep configuration options
+ * Certain paths have more platform appropriate defaults on Windows
+ * Filter methods on the RPC client are now idempotent
+
+### Bug Fixes
+
+ * Correctly handle discovery where data plugins return nil for a specific item
+ * The flatfile discovery method validates identities found using the same rules as the config class
+ * The Util#versioncmp function behaves correctly with semver versions where the minor is larger than 10
+ * Debian packages will now build correctly in a chroot
+ * The run() agent helper could sometimes return -1 and leave zombies, this has been improved
+ * Certain operations on a reply data item in an agent could alter the cached copy of the DDL thus affecting future agent invocations
+ * Absolute paths on Windows are detected correctly
+ * Line numbers are printed correctly in logs on Windows machines
+ * Whitespace before config keys in the config file are now ignored
+
+### Backwards Compatibility and Upgrading
+
+In release 2.3.1 we removed the Stomp connector, in this release we are removing a number of unused
+configuration options that was used by this connector and a few others that has become pointless over
+the years.
+
+If you have any of the following in your configuration files you must remove them *before* upgrading
+as the daemon and client will fail to start if any of them are present:
+
+  * topicprefix
+  * queueprefix
+  * rpchelptemplate
+  * helptemplatedir
+  * plugin.discovery.timeout
+  * topicsep
+
+If you have in the past not configured the port for the ActiveMQ and RabbitMQ connectors the default
+would have been 6163, this has now changed to 61613 to be more in line with what other projects default
+to.  This means if you rely on the defaulting behaviour you might now have to specifically state the
+ports.  We recommend always stating ports specifically.
+
+### Changes since 2.2.3
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2013/07/03|Improve error reporting when requesting docs for a non existing plugin|21429|
+|2013/07/03|Support aggregate plugins in 'mco plugin doc'|18414|
+|2013/07/03|Allow the ActiveMQ and RabbitMQ SSL cert paths to be set using environment variables|20550|
+|2013/06/23|Gracefully handle whitespaces in the config file before config keys|21407|
+|2013/06/19|Ensure the line numbers are printed correctly on both Windows and Unix|20506|
+|2013/06/19|Remove the rpchelptemplate and helptemplatedir options|20714|
+|2013/06/18|Correctly detect Windows absolute paths|21251|
+|2013/06/10|Fix and centralize handling of boolean values for settings|19751|
+|2013/06/06|Clone the default values from the DDL to avoid accidental modifications to the cached DDL file|21104|
+|2013/06/05|Filter methods on the RPC Client are now idempotent|20233|
+|2013/06/04|run() call in an agent can return incorrect Process::Status|17667|
+|2013/06/03|Improve debian dependencies so packages can be rebuilt in a chroot|20950|
+|2013/05/28|Set expire headers in the ActiveMQ and RabbitMQ message headers|19905|
+|2013/05/10|Correctly detect version differences in semver version where the path level is greater 10|20661|
+|2013/05/01|Improve behaviour of data matchers when return values are nil|20059|
+|2013/04/29|Improve config defaults on windows machines|20388|
+|2013/04/18|Enforce valid identity names in the file discovery method|20282|
+|2013/04/11|Add direct addressing awareness to the fire and forget request mode|17930|
+|2013/03/22|Remove the topicprefix, queueprefix and topicsep options|19673|
+|2013/03/21|Remove the plugin.discovery.timeout setting as it's not relevant anymore|19694|
+|2013/03/21|Improve error reporting from the rpc application in the light of direct_addressing|19827|
+|2013/03/20|Fail with a friendly error message when no libdir is set|19752|
+|2013/03/14|Change default RabbitMQ and ActiveMQ ports to 61613|19734|
+|2013/03/13|Set correct reply-to headers in the RabbitMQ connector|17034|
+|2013/03/12|Pre-populate the data from data plugins like agent replies|19564|
+|2013/03/12|Explicitly include StringIO|19367|
+|2013/03/12|Enable direct addressing by default|19665|
+|2013/02/20|Fix error code collision on PLMC18|19366|
+|2013/02/15|Validate arguments supplied to the RPC application and raise errors sooner|19181|
+
 <a name="2_2_4">&nbsp;</a>
 
 ## 2.2.4 - 2013/05/21
