@@ -1,4 +1,11 @@
-%{!?ruby_sitelib: %global ruby_sitelib %(ruby -rrbconfig -e "puts RbConfig::CONFIG['sitelibdir']")}
+# Fedora 19 ships with ruby 2, which uses vendorlibdir instead
+# of sitelibdir
+%if 0%{?fedora} >= 19
+%global ruby_libdir %(ruby -rrconfig -e 'puts RbConfig::CONFIG["vendorlibdir"]')
+%else
+%global ruby_libdir %(ruby -rrbconfig -e "puts RbConfig::CONFIG['sitelibdir']")}
+%endif
+
 %define release %{rpm_release}%{?dist}
 
 Summary: Application Server for hosting Ruby code on any capable middleware
@@ -10,8 +17,7 @@ License: ASL 2.0
 URL: http://puppetlabs.com/mcollective/introduction/
 Source0: http://downloads.puppetlabs.com/mcollective/%{name}-%{version}.tgz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: ruby
-BuildRequires: ruby(abi) >= 1.8
+BuildRequires: ruby >= 1.8
 Requires: mcollective-common = %{version}-%{release}
 Packager: R.I.Pienaar <rip@devco.net>
 BuildArch: noarch
@@ -19,8 +25,7 @@ BuildArch: noarch
 %package common
 Summary: Common libraries for the mcollective clients and servers
 Group: System Environment/Libraries
-Requires: ruby
-Requires: ruby(abi) >= 1.8
+Requires: ruby >= 1.8
 Requires: rubygems
 Requires: rubygem(stomp)
 
@@ -51,7 +56,7 @@ Server for the mcollective Application Server
 
 %install
 rm -rf %{buildroot}
-%{__install} -d -m0755  %{buildroot}/%{ruby_sitelib}/mcollective
+%{__install} -d -m0755  %{buildroot}/%{ruby_libdir}/mcollective
 %{__install} -d -m0755  %{buildroot}%{_bindir}
 %{__install} -d -m0755  %{buildroot}%{_sbindir}
 %{__install} -d -m0755  %{buildroot}%{_sysconfdir}/init.d
@@ -76,7 +81,7 @@ rm -rf %{buildroot}
 %endif
 
 
-cp -R lib/* %{buildroot}/%{ruby_sitelib}/
+cp -R lib/* %{buildroot}/%{ruby_libdir}/
 cp -R plugins/* %{buildroot}%{_libexecdir}/mcollective/
 cp bin/mc-* %{buildroot}%{_sbindir}/
 cp bin/mco %{buildroot}%{_bindir}/
@@ -101,8 +106,8 @@ fi
 
 %files common
 %doc COPYING
-%{ruby_sitelib}/mcollective.rb
-%{ruby_sitelib}/mcollective
+%{ruby_libdir}/mcollective.rb
+%{ruby_libdir}/mcollective
 %{_libexecdir}/mcollective/mcollective
 %dir %{_sysconfdir}/mcollective
 %dir %{_sysconfdir}/mcollective/ssl
