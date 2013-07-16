@@ -87,7 +87,7 @@ action "get_facts", :description => "Retrieve multiple facts from the fact store
            :type        => :string,
            :validation  => '^[\w\-\. ]+$',
            :optional    => false,
-           :maxlength   => 100
+           :maxlength   => 200
 
      output :values,
             :description => "List of values of the facts",
