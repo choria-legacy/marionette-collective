@@ -82,10 +82,10 @@ action "get_facts", :description => "Retrieve multiple facts from the fact store
      display :always
 
      input :facts,
-           :prompt      => "Space separated list of facts",
+           :prompt      => "Comma-separated list of facts",
            :description => "Facts to retrieve",
            :type        => :string,
-           :validation  => '^[\w\-\. ]+$',
+           :validation  => '^[\w\-\. ,]+$',
            :optional    => false,
            :maxlength   => 200
 

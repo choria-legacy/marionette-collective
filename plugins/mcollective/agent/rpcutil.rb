@@ -25,9 +25,9 @@ module MCollective
 
       action "get_facts" do
         response = {}
-        request[:facts].split(' ').each do |fact|
+        request[:facts].split(',').map { |x| x.strip }.each do |fact|
           value = Facts[fact]
-          response[:fact] = value
+          response[fact] = value
         end
         reply[:values] = response
       end
