@@ -91,7 +91,7 @@ action "get_facts", :description => "Retrieve multiple facts from the fact store
 
      output :values,
             :description => "List of values of the facts",
-            :display_as => "Value"
+            :display_as => "Values"
 end
 
 action "daemon_stats", :description => "Get statistics from the running daemon" do
