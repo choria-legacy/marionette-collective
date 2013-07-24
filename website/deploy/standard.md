@@ -39,6 +39,16 @@ This getting started guide will help you deploy a standard MCollective environme
 
 > **Note:** If you've never used MCollective before, [start with the Vagrant-based demo toolkit instead][vagrant_demo]. This guide is meant for production-grade deployments, and requires a bit of building before you can do a simple `mco ping` command.
 
+> ### Puppet Enterprise
+>
+> Puppet Enterprise includes MCollective, and automates the entire deployment process. See [the PE orchestration documentation][pe_orchestration] for more details; see [the PE installation instructions][pe_install] to install PE.
+>
+> * Puppet Enterprise 3.0 ships with MCollective 2.2.4.
+> * Puppet Enterprise 2.8 ships with MCollective 1.2.1.
+
+[pe_orchestration]: /pe/latest/orchestration_overview.html
+[pe_install]: /pe/latest/install_basic.html
+
 ### What is an MCollective Deployment?
 
 [See the MCollective components overview][overview_roles] for an introduction to the parts that make up an MCollective deployment.

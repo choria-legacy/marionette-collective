@@ -34,6 +34,16 @@ Which is to say: Deploying MCollective isn't difficult, but it requires some pla
 * [Follow the "standard deployment" getting started guide][standard_deploy]. These conventions will get you a very secure and high-performance starter deployment. You can customize MCollective in depth later when you need to.
 * If you have special needs and know what you're doing, you can design a custom deployment. Decide on a middleware type and topology, decide on a security plugin, and follow the steps of the deployment process outlined below.
 
+> ### Puppet Enterprise
+>
+> Puppet Enterprise includes MCollective, and automates the entire deployment process. See [the PE orchestration documentation][pe_orchestration] for more details; see [the PE installation instructions][pe_install] to install PE.
+>
+> * Puppet Enterprise 3.0 ships with MCollective 2.2.4.
+> * Puppet Enterprise 2.8 ships with MCollective 1.2.1.
+
+[pe_orchestration]: /pe/latest/orchestration_overview.html
+[pe_install]: /pe/latest/install_basic.html
+
 
 Deployment Process
 -----
