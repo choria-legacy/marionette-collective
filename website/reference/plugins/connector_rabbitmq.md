@@ -36,6 +36,8 @@ rabbitmqadmin declare permission vhost=/mcollective user=mcollective configure=.
 rabbitmqadmin declare permission vhost=/mcollective user=guest configure=.* write=.* read=.*
 {% endhighlight %}
 
+And then we need to create two exchanges that the mcollective plugin needs:
+
 {% highlight console %}
 rabbitmqadmin declare exchange --vhost=/mcollective name=mcollective_directed type=direct
 rabbitmqadmin declare exchange --vhost=/mcollective name=mcollective_broadcast type=topic
