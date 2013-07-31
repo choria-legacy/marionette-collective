@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/07/31|Surpress Errno::ESRCH info messages when running shell commands|21779|
 |*2013/07/11*|*Release 2.3.2*|21527|
 |2013/07/03|Improve error reporting when requesting docs for a non existing plugin|21429|
 |2013/07/03|Support aggregate plugins in 'mco plugin doc'|18414|
