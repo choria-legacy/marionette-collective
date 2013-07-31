@@ -149,6 +149,12 @@ module MCollective
 
         s.stdout.should == "first line#{nl}#{nl}2nd line#{nl}"
       end
+
+      it "should quietly catch Errno::ESRCH if the systemu process has completed" do
+        s = Shell.new("echo foo")
+        Thread.any_instance.stubs(:alive?).raises(Errno::ESRCH)
+        s.runcommand
+      end
     end
   end
 end

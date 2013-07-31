@@ -80,6 +80,7 @@ module MCollective
 
           Process.waitpid(cid) if Process.getpgid(cid)
         rescue SystemExit
+        rescue Errno::ESRCH
         rescue Errno::ECHILD
         rescue Exception => e
           Log.info("Unexpected exception received while waiting for child process: #{e.class}: #{e}")
