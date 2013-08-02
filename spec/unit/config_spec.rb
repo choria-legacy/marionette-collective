@@ -112,6 +112,22 @@ module MCollective
         Config.instance.loadconfig("/nonexisting")
         Config.instance.default_discovery_options.should == ["1", "2"]
       end
+
+      it "should set prefixes when it meets section" do
+        File.expects(:readlines).with("/nonexisting").returns(["libdir = /nonexistlib",
+                                                               "[plugin.plugin1]",
+                                                               "parameter = value1",
+                                                               "[plugin.plugin2]",
+                                                               "parameter = value2"])
+        File.expects(:exists?).with("/nonexisting").returns(true)
+        PluginManager.stubs(:loadclass)
+        PluginManager.stubs("<<")
+
+        Config.instance.loadconfig "/nonexisting"
+        Config.instance.libdir.should == ["/nonexistlib"]
+        Config.instance.pluginconf["plugin1.parameter"].should == "value1"
+        Config.instance.pluginconf["plugin2.parameter"].should == "value2"
+      end
     end
 
     describe "#read_plugin_config_dir" do
@@ -174,6 +190,18 @@ module MCollective
 
         Config.instance.loadconfig(servercfg)
         Config.instance.pluginconf.should == {"rspec.key" => "overridden"}
+      end
+      it "should understand sections right" do
+        Dir.expects(:new).with(@plugindir).returns(["foo.cfg"])
+        File.expects(:open).with(File.join(@plugindir, "foo.cfg"), "r").returns(["rspec = test",
+                                                                                 "[section1]",
+                                                                                 "parameter = value1",
+                                                                                 "[section2]",
+                                                                                 "parameter = value2"])
+        Config.instance.read_plugin_config_dir(@plugindir)
+        Config.instance.pluginconf["foo.rspec"].should == "test"
+        Config.instance.pluginconf["foo.section1.parameter"].should == "value1"
+        Config.instance.pluginconf["foo.section2.parameter"].should == "value2"
       end
     end
   end

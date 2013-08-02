@@ -24,14 +24,18 @@ module MCollective
       set_config_defaults(configfile)
 
       if File.exists?(configfile)
+        prefix = nil
         File.readlines(configfile).each do |line|
 
           # strip blank spaces, tabs etc off the end of all lines
           line.gsub!(/\s*$/, "")
 
           unless line =~ /^#|^$/
-            if (line =~ /(.+?)\s*=\s*(.+)/)
+            if (line =~ /^\[(.+)\]$/)
+              prefix = $1.strip
+            elsif (line =~ /(.+?)\s*=\s*(.+)/)
               key = $1.strip
+              key = "#{prefix}.#{key}" if prefix
               val = $2
 
               case key
@@ -189,12 +193,16 @@ module MCollective
         next unless pluginconfigfile =~ /^([\w]+).cfg$/
 
         plugin = $1
+        prefix = nil
         File.open("#{dir}/#{pluginconfigfile}", "r").each do |line|
           # strip blank lines
           line.gsub!(/\s*$/, "")
           next if line =~ /^#|^$/
-          if (line =~ /(.+?)\s*=\s*(.+)/)
+          if line =~ /^\[(.*)\]$/
+            prefix = $1.strip
+          elsif (line =~ /(.+?)\s*=\s*(.+)/)
             key = $1.strip
+            key = "#{prefix}.#{key}" if prefix
             val = $2
             @pluginconf["#{plugin}.#{key}"] = val
           end
