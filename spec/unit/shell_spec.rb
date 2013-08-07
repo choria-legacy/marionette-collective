@@ -155,6 +155,29 @@ module MCollective
         Thread.any_instance.stubs(:alive?).raises(Errno::ESRCH)
         s.runcommand
       end
+
+      it "should kill the systemu process after the specified timeout is exceeded" do
+        s = Shell.new('ruby -e "sleep 2"', :timeout=> 1)
+        s.runcommand
+        #p s.status
+        s.status.signaled?.should be_true
+      end
+
+      it "should kill the systemu process if the parent thread exits and :on_thread_exit is specified" do
+        tempfile = Dir::Tmpname.create('shellspec') {} 
+        s = Shell.new(%{ruby -e "File.open('#{tempfile}','w'){|f| f.write $$ };sleep 2"}, :timeout=> :on_thread_exit)
+        thrd = Thread.new { s.runcommand }
+        #wait until the thread has written its pid to file
+        until (File.exists? tempfile) do
+          sleep 0.1
+        end 
+        childpid = IO::read(tempfile).to_i
+        File.unlink tempfile
+        Thread.kill thrd
+        #wait for the systemu guard thread to kill the child
+        sleep 0.2
+        expect { Process.getpgid(childpid) }.to raise_error(Errno::ESRCH)
+      end
     end
   end
 end

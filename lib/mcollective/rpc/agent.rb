@@ -215,7 +215,7 @@ module MCollective
           end
         end
 
-        [:stdin, :cwd, :environment].each do |k|
+        [:stdin, :cwd, :environment, :timeout].each do |k|
           if options.include?(k)
             shellopts[k] = options[k]
           end
