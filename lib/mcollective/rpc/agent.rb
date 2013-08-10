@@ -67,7 +67,7 @@ module MCollective
 
         begin
           # Incoming requests need to be validated against the DDL thus reusing
-          # all the work users put into creating DDLs and creating a consistant
+          # all the work users put into creating DDLs and creating a consistent
           # quality of input validation everywhere with the a simple once off
           # investment of writing a DDL
           @request.validate!

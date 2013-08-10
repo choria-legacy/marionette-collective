@@ -1344,7 +1344,7 @@ You can also access this functionality via the API please see the docs for usage
 Any existing script or application should support this functionality without any
 code changes.
 
-The results, error reporting, statistics reporting and so forth all stays consistant
+The results, error reporting, statistics reporting and so forth all stays consistent
 with non batched behavior.
 
 The batching requires a direct addressing capable collective.
