@@ -24,7 +24,7 @@ the techniques documented here to writing plugins for that application system.
 See the full reference for the plugin system [here][AppPlugin].  You should try
 to write your general agent CLIs using this plugin system rather than the stand
 alone scripts detailed below as that promote a unified interface that behave in a
-consistant manner.
+consistent manner.
 
 We've recorded a [tutorial that will give you a quick look at what is involved
 in writing agents and a very simple client][WritingAgentsScreenCast].

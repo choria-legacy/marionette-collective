@@ -491,7 +491,7 @@ possible machines, an action which might have a big impact on your YUM
 servers. Consequently, *package* prompts for confirmation and, at the
 end of processing, displays a brief summary of the network status.
 
-While the behaviors of custom applications are not always consistant
+While the behaviors of custom applications are not always consistent
 with each other, in general they accept the standard discovery flags.
 For details of which flags are accepted in a given application, use the
 *mco help appname* command.
