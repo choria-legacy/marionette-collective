@@ -164,21 +164,13 @@ module MCollective
       end
 
       it "should kill the systemu process if the parent thread exits and :on_thread_exit is specified" do
-        # Partially borrowed from ruby 1.9's Dir::Tmpname.make_tmpname for 1.8.7-compatibility
-        tempfile = File.join ::Dir.tmpdir, "shellspec#{Time.now.strftime("%Y%m%d")}-#{$$}-#{rand(0x100000000).to_s(36)}" 
-
-        s = Shell.new(%{ruby -e "File.open('#{tempfile}','w'){|f| f.write $$ };sleep 2"}, :timeout=> :on_thread_exit)
-        thrd = Thread.new { s.runcommand }
-        #wait until the thread has written its pid to file
-        until (File.exists? tempfile) do
-          sleep 0.1
-        end 
-        childpid = IO::read(tempfile).to_i
-        File.unlink tempfile
-        Thread.kill thrd
-        #wait for the systemu guard thread to kill the child
-        sleep 0.2
-        expect { Process.getpgid(childpid) }.to raise_error(Errno::ESRCH)
+        s = Shell.new(%{ruby -e "sleep 1"}, :timeout=> :on_thread_exit)
+        # we need to wait a little bit so that the subprocess is actually created before
+        # the guarding thread reaches its timeout/kill section 
+        # this stub returns true two times for thread.alive? and false for subsequent calls
+        Thread.any_instance.stubs(:alive?).returns(true, true, false)
+        s.runcommand
+        s.status.signaled?.should be_true
       end
     end
   end
