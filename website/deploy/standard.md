@@ -473,6 +473,10 @@ After receiving this partial config file, a new user should fill out the credent
     libdir = /usr/libexec/mcollective
     helptemplatedir = /etc/mcollective
 
+    # Logging:
+    logger_type = console
+    loglevel = warn
+
 
 > **Deployment status:** MCollective is **fully functional.** Any configured admin user can run `mco ping` to discover nodes, use the `mco inventory` command to search for more detailed information, and use the `mco rpc` command to trigger actions from installed agents (currently only the `rpcutil` agent). See the [mco command-line interface documentation][cli_docs] for more detailed information on filtering and addressing commands.
 >
