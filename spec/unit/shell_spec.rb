@@ -156,11 +156,16 @@ module MCollective
         s.runcommand
       end
 
-      it "should kill the systemu process after the specified timeout is exceeded" do
+      it "should terminate the systemu process after the specified timeout is exceeded" do
         s = Shell.new('ruby -e "sleep 2"', :timeout=> 1)
         s.runcommand
-        #p s.status
-        s.status.signaled?.should be_true
+        s.status.termsig.should == ::Signal.list.fetch('TERM') 
+      end
+
+      it "should kill an unresponsive systemu process on timeout" do
+         s = Shell.new(%{ruby -e 'Signal.trap("TERM") {}; sleep 5'}, :timeout => 1)
+         s.runcommand
+         s.status.termsig.should == ::Signal.list.fetch('KILL')   
       end
 
       it "should kill the systemu process if the parent thread exits and :on_thread_exit is specified" do

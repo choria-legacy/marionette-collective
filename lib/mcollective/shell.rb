@@ -89,9 +89,14 @@ module MCollective
               sleep 0.1
             end
           end
+
           if Process.getpgid(cid)
             #if the process is still running terminate if timeout was specified
-            Process.kill('KILL', cid) if timeout
+            if timeout
+              Process.kill('TERM', cid)
+              sleep 2
+              Process.kill('KILL', cid) if ( Process.getpgid(cid) rescue false )
+            end
             Process.waitpid(cid) unless thread.alive?  # only wait if the parent thread is dead
           end
         rescue SystemExit
