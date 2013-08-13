@@ -10,7 +10,7 @@ title: Writing SimpleRPC Clients
 [OptionParser]: http://github.com/puppetlabs/marionette-collective/blob/master/lib/mcollective/optionparser.rb
 [AppPlugin]: ../reference/plugins/application.html
 
-As pointed out in the [SimpleRPCIntroduction] page you can use the _mco rpc_ CLI
+As pointed out in the [SimpleRPCIntroduction] page you can use the `mco rpc` CLI
 to call agents and it will do it's best to print results in a sane way.  When
 this is not enough you can write your own clients.
 
@@ -41,10 +41,10 @@ Mixin][RubyMixin] in your own code, it provides:
  * Tools to help you print results
  * Tools to print stats
  * Tools to construct your own filters
- * While retaining full power of _MCollective::Client_ if you need the additional feature sets
+ * While retaining full power of `MCollective::Client` if you need the additional feature sets
  * And being as simple or as complex to match your level of code proficiency
 
-We'll write a client for the _Helloworld_ agent that you saw in the
+We'll write a client for the `Helloworld` agent that you saw in the
 [SimpleRPCIntroduction].
 
 ## Call an Agent and print the result
@@ -66,7 +66,7 @@ printrpcstats
 mc.disconnect
 {% endhighlight %}
 
-Save this into _hello.rb_ and run it with _--help_, you should see the standard basic help including filters for discovery.
+Save this into `hello.rb` and run it with `--help`, you should see the standard basic help including filters for discovery.
 
 If you've set up the Agent and run the client you should see something along these lines:
 
@@ -76,9 +76,9 @@ $ hello.rb
 Finished processing 44 hosts in 375.57 ms
 {% endhighlight %}
 
-While it ran you would have seen a little progress bar and then just the summary line.  The idea is that if you're talking to a 1000 machine there's no point in seeing a thousand _OK_, you only want to see what failed and this is exactly what happens here, you're only seeing errors.
+While it ran you would have seen a little progress bar and then just the summary line.  The idea is that if you're talking to a 1000 machine there's no point in seeing a thousand `OK`, you only want to see what failed and this is exactly what happens here, you're only seeing errors.
 
-If you run it with _--verbose_ you'll see a line of text for every host and also a larger summary of results.
+If you run it with `--verbose` you'll see a line of text for every host and also a larger summary of results.
 
 I'll explain each major line in the code below then add some more features from there:
 
@@ -90,7 +90,7 @@ mc = rpcclient("helloworld")
 
 The first line pulls in the various helper functions that we provide, this is the Mixin we mentioned earlier.
 
-We then create a new client to the agent "helloworld" that you access through the _mc_ variable.
+We then create a new client to the agent "helloworld" that you access through the `mc` variable.
 
 {% highlight ruby %}
 printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
@@ -98,9 +98,9 @@ printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
 printrpcstats
 {% endhighlight %}
 
-To call a specific action you simply have to do _mc.echo_ this calls the _echo_ action, we pass a _:msg_ parameter into it with the string we want echo'd back.  The parameters will differ from action to action.  It returns a simple array of the results that you can print any way you want, we'll show that later.
+To call a specific action you simply have to do `mc.echo` this calls the `echo` action, we pass a `:msg` parameter into it with the string we want echo'd back.  The parameters will differ from action to action.  It returns a simple array of the results that you can print any way you want, we'll show that later.
 
-_printrpc_ and _printrpcstats_ are functions used to print the results and stats respectively.
+`printrpc` and `printrpcstats` are functions used to print the results and stats respectively.
 
 {% highlight ruby %}
 mc.disconnect
@@ -121,13 +121,13 @@ mc.discover :verbose => true
 printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC"), :verbose => true
 {% endhighlight %}
 
-Here we've added a _:verbose_ flag and we've specifically called the discover method.  Usually you don't need to call discover it will do it on demand.  Doing it this way you'll always see the line:
+Here we've added a `:verbose` flag and we've specifically called the discover method.  Usually you don't need to call discover it will do it on demand.  Doing it this way you'll always see the line:
 
 {% highlight console %}
 Determining the amount of hosts matching filter for 2 seconds .... 44
 {% endhighlight %}
 
-Passing verbose to _printrpc_ forces it to print all the results, failures or not.
+Passing verbose to `printrpc` forces it to print all the results, failures or not.
 
 If you just wanted to force verbose on for all client interactions, do:
 
@@ -159,7 +159,7 @@ stats = mc.echo(:msg => "Welcome to MCollective Simple RPC").stats
 report = stats.report
 {% endhighlight %}
 
-_report_ will now have the text that would have been displayed by 'printrpcstats' you can also use _no_response_report_ to get report text for just the list of hosts that didnt respond.
+`report` will now have the text that would have been displayed by 'printrpcstats' you can also use `no_response_report` to get report text for just the list of hosts that didnt respond.
 
 If you didn't want to just print the results out to STDOUT you can also get them back as just text:
 
@@ -169,7 +169,7 @@ report = rpcresults mc.echo(:msg => "Welcome to MCollective Simple RPC")
 
 
 ## Applying filters programatically
-You can pass filters on the command line using the normal _--with-`*`_ options but you can also do it programatically.  Here's a new version of the client that only calls machines with the configuration management class _/dev_server/_ and the fact _country=uk_
+You can pass filters on the command line using the normal `--with-*` options but you can also do it programatically.  Here's a new version of the client that only calls machines with the configuration management class `/dev_server/` and the fact `country=uk`
 
 {% highlight ruby %}
 mc = rpcclient("helloworld")
@@ -180,9 +180,9 @@ mc.fact_filter "country", "uk"
 printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
 {% endhighlight %}
 
-You can set other filters like _agent`_`filter_, _identity`_`filter_ and _compound`_`filter_.
+You can set other filters like `agent_filter`, `identity_filter` and `compound_filter`.
 
-The fact_filter method supports a few other forms in adition to above:
+The `fact_filter` method supports a few other forms in adition to above:
 
 {% highlight ruby %}
 mc.fact_filter "country=uk"
@@ -202,7 +202,7 @@ mc.class_filter /dev_server/
 mc.reset_filter
 {% endhighlight %}
 
-After this code snippet the filter will only have an agent filter of _helloworld_ set.
+After this code snippet the filter will only have an agent filter of `helloworld` set.
 
 ## Processing Agents in Batches
 By default the client will communicate with all machines at the same time.
@@ -211,7 +211,7 @@ This might not be desired as you might affect a DOS on related components.
 You can instruct the client to communicate with remote agents in batches
 and sleep between each batch.
 
-Any client application has this capability using the _--batch_ and _--batch-sleep-time_
+Any client application has this capability using the `--batch` and `--batch-sleep-time`
 command line options.
 
 You can also enable this programatically either per client or per request:
@@ -232,7 +232,7 @@ mc.echo(:msg => "hello world", :batch_size => 10, :batch_sleep_time => 5)
 
 By default batching is disabled and sleep time is 1
 
-Setting the batch_size to 0 will disable batch mode in both examples above,
+Setting the `batch_size` to 0 will disable batch mode in both examples above,
 effectively overriding what was supplied on the command line.
 
 ## Forcing Rediscovery
@@ -250,7 +250,7 @@ mc.fact_filter "country", "uk"
 printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
 {% endhighlight %}
 
-Here we make one _echo_ call - which would do a discovery - we then reset the client, adjust filters and call it again.  The 2nd call would do a new discovery and have new client lists etc.
+Here we make one `echo` call - which would do a discovery - we then reset the client, adjust filters and call it again.  The 2nd call would do a new discovery and have new client lists etc.
 
 ## Supplying your own discovery information
 
@@ -311,7 +311,7 @@ mc.limit_method = :random
 printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
 {% endhighlight %}
 
-The above code will force a _random_ selection, you can also set it to _:first_
+The above code will force a `:random` selection, you can also set it to `:first`
 
 ## Gaining access to the full MCollective::Client
 If you wanted to work with the Client directly as in [WritingAgents] after perhaps setting up some queries or gathering data first you can gain access to the client, you might also need access to the options array that was parsed out from the command line and any subsequent filters that you added.
@@ -365,7 +365,7 @@ dev2.you.net                          : hello world
 dev3.you.net                          : hello world
 {% endhighlight %}
 
-The _each_ in the above code just loops through the array of results.  Results are an array of Hashes, the data you got for above has the following structure:
+The `each` in the above code just loops through the array of results.  Results are an array of Hashes, the data you got for above has the following structure:
 
 {% highlight console %}
 [{:statusmsg=>"OK",
@@ -378,7 +378,7 @@ The _each_ in the above code just loops through the array of results.  Results a
  :statuscode=>0}]
 {% endhighlight %}
 
-The _:statuscode_ matches the table above so you can make decisions based on each result's status.
+The `:statuscode` matches the table above so you can make decisions based on each result's status.
 
 ### Gaining access to MCollective::Client#req results
 You can get access to each result in real time, in this case you will need to handle the exceptions in the table above and you'll get a different style of result set.  The result set will be exactly as from the full blown client.
@@ -409,7 +409,7 @@ In this mode the results you get will be like this:
  :senderagent=>"helloworld"}
 {% endhighlight %}
 
-Note how here we need to catch the exceptions, just handing _:statuscode_ will not be enough as the RPC client will raise exceptions - all descendant from _RPCError_ so you can easily catch just those.
+Note how here we need to catch the exceptions, just handing `:statuscode` will not be enough as the RPC client will raise exceptions - all descendant from `RPCError` so you can easily catch just those.
 
 You can additionally gain access to a SimpleRPC style result in addition to the more complex native client results:
 
@@ -438,7 +438,7 @@ end
 You will need to handle exceptions yourself but you have a simpler result set to deal with
 
 ## Adding custom command line options
-You can look at the _mco rpc_ script for a big sample, here I am just adding a simple _--msg_ option to our script so you can customize the message that will be sent and received.
+You can look at the `mco rpc` script for a big sample, here I am just adding a simple `--msg` option to our script so you can customize the message that will be sent and received.
 
 {% highlight ruby linenos %}
 #!/usr/bin/ruby
@@ -477,7 +477,7 @@ dev2.you.net                          : foo
 dev3.you.net                          : foo
 {% endhighlight %}
 
-Documentation for the Options Parser can be found [in it's code][OptionParser].
+Documentation for the Options Parser can be found [in its code][OptionParser].
 
 And finally if you add options as above rather than try to parse it yourself you will get help integration for free:
 
@@ -542,7 +542,7 @@ You will loose these abilities:
 
 The above should make it clear already that this is a limited use case, it's essentially a broadcast request with no feedback loop.
 
-The code below will send a request to the _runonce_ action for an agent _puppetd_, once the request is dispatched I will have no idea if it got handled etc, my code will just continue onwards.
+The code below will send a request to the `runonce` action for an agent `puppetd`, once the request is dispatched I will have no idea if it got handled etc, my code will just continue onwards.
 
 {% highlight ruby %}
 p = rpcclient("puppetd")
@@ -573,6 +573,6 @@ printrpc puppet.runonce(:forcerun => true)
 
 But instead of doing any discovery it will use the host list and filter you supplied in the call.
 
-## The _rpcutil_ Helper Agent
+## The `rpcutil` Helper Agent
 
-A helper agent called [_rpcutil_][RPCUtil] is included that helps you gather stats, inventory etc about the running daemon.
+A helper agent called [`rpcutil`][RPCUtil] is included that helps you gather stats, inventory etc about the running daemon.

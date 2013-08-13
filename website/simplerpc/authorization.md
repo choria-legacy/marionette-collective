@@ -12,7 +12,7 @@ As part of the [SimpleRPC][SimpleRPCIntroduction] framework we've added an autho
 
 Combined with [Connection Security][SecurityWithActiveMQ], [Centralized Auditing][SimpleRPCAuditing] and Crypto signed messages this rounds out a series of extremely important features for large companies that in combination allow for very precise control over your MCollective Cluster.
 
-The clients will include the _uid_ of the process running the client library in the requests and the authorization function will have access to that on the requests.
+The clients will include the `uid` of the process running the client library in the requests and the authorization function will have access to that on the requests.
 
 There is a sample full featured plugin called [ActionPolicy] that you can use or get some inspiration from.
 
@@ -48,7 +48,7 @@ module MCollective::Agent
 end
 {% endhighlight %}
 
-The call extra _authorized`_`by :authorize`_`it_ line tells your agent to use the _MCollective::Util::AuthorizeIt_ class for authorization.
+The call extra `authorized_by :authorize_it` line tells your agent to use the `MCollective::Util::AuthorizeIt` class for authorization.
 
 ## Enabling RPC authorization globally
 You can enable a specific plugin on all RPC agents in the server config file.  If you do this and an agent also specify it's own authorization the agent will take priority.
@@ -58,4 +58,4 @@ rpcauthorization = yes
 rpcauthprovider = action_policy
 {% endhighlight %}
 
-Note setting _rpcauthorization = no_ here doesn't disable it everywhere, agents that specify authorization will still be used.  This boolean enables the global auth policy not the per agent.
+Note setting `rpcauthorization = no` here doesn't disable it everywhere, agents that specify authorization will still be used.  This boolean enables the global auth policy not the per agent.

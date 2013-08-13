@@ -158,7 +158,7 @@ class MCollective::Application::Echo<MCollective::Application
 end
 {% endhighlight %}
 
-In this case if the user used either _-m message_ or _--message message_ on the CLI the desired message would be in _configuration`[`:message`]`_
+In this case if the user used either `-m message` or `--message message` on the CLI the desired message would be in `configuration[:message]`
 
 #### Required Arguments
 You can require that a certain parameter is always passed:
@@ -200,7 +200,7 @@ option :args,
   :type           => :array
 {% endhighlight %}
 
-Here if you supplied multiple arguments _configuration`[`:args`]`_ will be an array with all the options supplied.
+Here if you supplied multiple arguments `configuration[:args]` will be an array with all the options supplied.
 
 #### Argument validation
 You can validate input passed on the CLI:

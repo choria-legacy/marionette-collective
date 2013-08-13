@@ -241,7 +241,7 @@ your.domain.com
 
 The filter commands are important they will be the main tool you use to target only parts of your infrastructure with calls to agents.
 
-See the *--help* option to the various *mco `*`* commands for available options.  You can now look at some of the available plugins and
+See the `--help` option to the various `mco *` commands for available options.  You can now look at some of the available plugins and
 play around, you might need to run the server process as root if you want to play with services etc.
 
 ### Plugins

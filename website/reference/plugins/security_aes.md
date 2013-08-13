@@ -69,7 +69,7 @@ reason the following are needed:
  * Each other server that wish to receive these requests need the public key of the sending server
 
 In this scenario each server will act as a client making RPC requests to the collective network
-for any agent called _registration_.  So in this scenario the server acts as a client and therefore
+for any agent called `registration`.  So in this scenario the server acts as a client and therefore
 need a key-pair to identify it.
 
 ### Manual key distribution with each server and client having unique keys
@@ -109,16 +109,16 @@ access to private keys before they can start observing parts of the exchange.
 |Attackers can create new nodes and inject registration data for those new nodes|no|
 
 To configure this scenario use the following options and manually copy public keys to the
-_plugin.aes.client`_`cert`_`dir_ directory:
+`plugin.aes.client_cert_dir` directory:
 
 |Settings|Value|Descritpion|
 |--------|-----|-----------|
-|plugin.aes.send_pubkey|0|Do not send public keys|
-|plugin.aes.learn_pubkeys|0|Do not learn public keys|
+|`plugin.aes.send_pubkey`|0|Do not send public keys|
+|`plugin.aes.learn_pubkeys`|0|Do not learn public keys|
 
 ### Automatic public key distribution with each server and client having unique keys
 
-Here we enable the  _plugin.aes.learn`_`pubkeys_ feature on all servers.  Your public keys
+Here we enable the  `plugin.aes.learn_pubkeys` feature on all servers.  Your public keys
 will now be distributed automatically on demand but you loose some security in that anyone
 with access to your network or middleware can observe the contents of replies and registration
 data
@@ -142,13 +142,13 @@ deploy a [Authorization][SimpleRPCAuthorization] plugin that denies unknown clie
 |Registration data can be protected from rogue agents posing as registration agents|yes|
 |Attackers can create new nodes and inject registration data for those new nodes|*yes*|
 
-To configure this scenario use the following options and ensure the _mcollectived_ can write
-to the _plugin.aes.client`_`cert`_`dir_ directory:
+To configure this scenario use the following options and ensure the `mcollectived` can write
+to the `plugin.aes.client_cert_dir` directory:
 
 |Settings|Value|Descritpion|
 |--------|-----|-----------|
-|plugin.aes.send_pubkey|1|Send public keys|
-|plugin.aes.learn_pubkeys|1|Learn public keys|
+|`plugin.aes.send_pubkey`|1|Send public keys|
+|`plugin.aes.learn_pubkeys`|1|Learn public keys|
 
 ### Manual public key distribution with servers sharing a key pair and clients having unique keys
 
@@ -174,13 +174,13 @@ overhead.
 |Attackers can gain access to the server public keys by just listening on the network|no|
 |Registration data can be protected from rogue agents posing as registration agents|*no*|
 
-To configure this scenario use the following options and ensure the _mcollectived_ can write
-to the _plugin.aes.client`_`cert`_`dir_ directory:
+To configure this scenario use the following options and ensure the `mcollectived` can write
+to the `plugin.aes.client_cert_dir` directory:
 
 |Settings|Value|Descritpion|
 |--------|-----|-----------|
-|plugin.aes.send_pubkey|0|Do not send public keys|
-|plugin.aes.learn_pubkeys|0|Do not learn public keys|
+|`plugin.aes.send_pubkey`|0|Do not send public keys|
+|`plugin.aes.learn_pubkeys`|0|Do not learn public keys|
 
 ### Automatic public key distribution with servers sharing a key and client having unique keys
 
@@ -188,7 +188,7 @@ This is comparable to the older SSL plugin where all servers shared the same pub
 pair.  Here anyone who is part of the network can decrypt the traffic related to registration
 but replies to clients are still securely encrypted and visable only to them.
 
-Here we enable the  _plugin.aes.learn`_`pubkeys_ feature on all servers.  Your public keys
+Here we enable the  `plugin.aes.learn_pubkeys` feature on all servers.  Your public keys
 will now be distributed automatically on demand but you loose some security in that anyone
 with access to your network or middleware can observe the contents of replies and registration
 data
@@ -211,13 +211,13 @@ deploy a [Authorization][SimpleRPCAuthorization] plugin that denies unknown clie
 |Attackers can gain access to the server public keys by just listening on the network|*yes*|
 |Registration data can be protected from rogue agents posing as registration agents|*no*|
 
-To configure this scenario use the following options and ensure the _mcollectived_ can write
-to the _plugin.aes.client`_`cert`_`dir_ directory:
+To configure this scenario use the following options and ensure the `mcollectived` can write
+to the `plugin.aes.client_cert_dir` directory:
 
 |Settings|Value|Descritpion|
 |--------|-----|-----------|
-|plugin.aes.send_pubkey|1|Send public keys|
-|plugin.aes.learn_pubkeys|1|Learn public keys|
+|`plugin.aes.send_pubkey`|1|Send public keys|
+|`plugin.aes.learn_pubkeys`|1|Learn public keys|
 
 ## Creating keys
 
@@ -234,10 +234,10 @@ Client and Server keys are made using the same basic method.
 ## Reusing Puppet keys
 
 Puppet managed nodes will all have keys created by Puppet already, you can reuse these if your
-_mcollectived_ runs as root.
+`mcollectived` runs as root.
 
-Generally Puppet stores these in _/var/lib/puppet/ssl/private`_`keys/fqdn.pem_ and _/var/lib/puppet/ssl/public`_`keys/fqdn.pem_
-simply configure these paths for your _server`_`private_ and _server`_`public_ options.
+Generally Puppet stores these in `/var/lib/puppet/ssl/private_keys/fqdn.pem` and `/var/lib/puppet/ssl/public_keys/fqdn.pem`
+simply configure these paths for your `server_private` and `server_public` options.
 
 Clients will still need their own keys made and distributed.
 
@@ -255,24 +255,24 @@ Clients will still need their own keys made and distributed.
 
 |Setting|Example / Default|Description
 |-------|-----------------|-----------|
-|securityprovider|aes_security|Enables this security provider|
-|plugin.aes.serializer|yaml or marshal|Serialization to use|
-|plugin.aes.send_pubkey|0 or 1|Send the public key with every request|
-|plugin.aes.learn_pubkeys|0 or 1|Receive public keys from the network and cache them locally|
+|`securityprovider`|`aes_security`|Enables this security provider|
+|`plugin.aes.serializer`|`yaml` or `marshal`|Serialization to use|
+|`plugin.aes.send_pubkey`|`0` or `1`|Send the public key with every request|
+|`plugin.aes.learn_pubkeys`|`0` or `1`|Receive public keys from the network and cache them locally|
 
 ### Client Options
 
 |Setting|Example / Default|Description
 |-------|-----------------|-----------|
-|plugin.aes.client_private|/home/user/.mcollective.d/user-private.pem|The private key path for the user.  File must be /\w\.\-/|
-|plugin.aes.client_public|/home/user/.mcollective.d/user.pem|The public key path for the user.  File must be /\w\.\-/|
+|`plugin.aes.client_private`|`/home/user/.mcollective.d/user-private.pem`|The private key path for the user.  File must be `/\w\.\-/`|
+|`plugin.aes.client_public`|`/home/user/.mcollective.d/user.pem`|The public key path for the user.  File must be `/\w\.\-/`|
 
 ### Server Options
 
 |Setting|Example / Default|Description
 |-------|-----------------|-----------|
-|plugin.aes.client_cert_dir|/etc/mcollective/ssl/clients|Where to store and load client public keys|
-|plugin.aes.server_private|/etc/mcollective/ssl/server-private.pem|Server private key.  File must be /\w\.\-/|
-|plugin.aes.server_public|/etc/mcollective/ssl/server-public.pem|Server public key.  File must be /\w\.\-/|
-|plugin.aes.enforce_ttl|1|Enforce TTL and Message time security, warn only when disabled.  1.3.2 and newer only|
+|`plugin.aes.client_cert_dir`|`/etc/mcollective/ssl/clients`|Where to store and load client public keys|
+|`plugin.aes.server_private`|`/etc/mcollective/ssl/server-private.pem`|Server private key.  File must be `/\w\.\-/`|
+|`plugin.aes.server_public`|`/etc/mcollective/ssl/server-public.pem`|Server public key.  File must be `/\w\.\-/`|
+|`plugin.aes.enforce_ttl`|`1`|Enforce TTL and Message time security, warn only when disabled.  1.3.2 and newer only|
 
