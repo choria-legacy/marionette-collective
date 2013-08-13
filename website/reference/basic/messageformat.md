@@ -9,7 +9,7 @@ title: Message Format
 
 The messages that gets put on the middleware attempts to contain everything that mcollective needs to function, avoiding where possible special features in the Middle Ware.  This will hopefully make it easier to create Connector plugins for other middleware.
 
-At present the task of encoding and decoding messages lies with the _MCollective::Security::`*`_ classes, see the provided [security plugins][SecurityPlugins] as a examples.
+At present the task of encoding and decoding messages lies with the `MCollective::Security::*` classes, see the provided [security plugins][SecurityPlugins] as a examples.
 
 Abstracting the encoding away from the security plugins is a goal for future refactorings, till then each security plugin will need to at least conform to the following structure.
 

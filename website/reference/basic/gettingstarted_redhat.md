@@ -50,12 +50,12 @@ We try to keep the requirements on external Gems to a minimum, you only need:
 
 We strongly recommend you set up a local Yum repository that will host all the packages on your LAN, you can get the prerequisite packages here:
 
- * [ActiveMQ][MCDownloads] - activemq-5.4.0-2.el5.noarch.rpm, activemq-info-provider-5.4.0-2.el5.noarch.rpm, tanukiwrapper-3.2.3-1jpp.`*`.rpm
+ * [ActiveMQ][MCDownloads] - `activemq-5.4.0-2.el5.noarch.rpm`, `activemq-info-provider-5.4.0-2.el5.noarch.rpm`, `tanukiwrapper-3.2.3-1jpp.*.rpm`
  * Java - OpenJDK that is included with your distribution
  * Ruby - included with your distribution
  * RubyGems - [EPEL]
  * Stomp Ruby Gem - [EPEL]
- * [MCollective][MCDownloads] - mcollective-2.2.x-1.el5.noarch.rpm, mcollective-common-2.2.x-1.el5.noarch.rpm, mcollective-client-2.2.x-1.el5.noarch.rpm
+ * [MCollective][MCDownloads] - `mcollective-2.2.x-1.el5.noarch.rpm`, `mcollective-common-2.2.x-1.el5.noarch.rpm`, `mcollective-client-2.2.x-1.el5.noarch.rpm`
 
 The rest of this guide will assume you set up a Yum repository.  Puppet Labs hosts a Yum repository with all these dependencies at _yum.puppetlabs.com_.
 
@@ -237,7 +237,7 @@ your.domain.com
 
 The filter commands are important they will be the main tool you use to target only parts of your infrastructure with calls to agents.
 
-See the *--help* option to the various *mco `*`* commands for available options.  You can now look at some of the available plugins and
+See the `--help` option to the various `mco *` commands for available options.  You can now look at some of the available plugins and
 play around, you might need to run the server process as root if you want to play with services etc.
 
 ### Plugins

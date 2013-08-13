@@ -30,11 +30,11 @@ A more complex example might be:
 exim.setsender(:msgid => "1NOTVx-00028U-7G", :sender => "foo@bar.com")
 {% endhighlight %}
 
-Effectively this creates a hash with the members _:msgid_ and _:sender_.
+Effectively this creates a hash with the members `:msgid` and `:sender`.
 
 Your data types should be preserved if your Security plugin supports that - the default one does - so you can pass in Arrays, Hashes, OpenStructs, Hashes of Hashes but you should always pass something in and it should be key/value pairs like a Hash expects.
 
-You cannot use the a data item called _:process_results_ as this has special meaning to the agent and client.  This will indicate to the agent that the client is'nt going to be waiting to process results.  You might choose not to send back a reply based on this.
+You cannot use the a data item called `:process_results` as this has special meaning to the agent and client.  This will indicate to the agent that the client is'nt going to be waiting to process results.  You might choose not to send back a reply based on this.
 
 ## Sample Agent
 Here's our sample *Helloworld* agent:
@@ -57,7 +57,7 @@ end
 
 Strictly speaking this Agent will work but isn't considered complete - there's no meta data and no help.
 
-A helper agent called [_rpcutil_][RPCUtil] is included that helps you gather stats, inventory etc about the running daemon.  It's a full SimpleRPC agent including DDL, you can look at it for an example.
+A helper agent called [`rpcutil`][RPCUtil] is included that helps you gather stats, inventory etc about the running daemon.  It's a full SimpleRPC agent including DDL, you can look at it for an example.
 
 ### Agent Name
 The agent name is derived from the class name, the example code creates *MCollective::Agent::Helloworld* and the agent name would be *helloworld*.
@@ -67,7 +67,7 @@ The agent name is derived from the class name, the example code creates *MCollec
 ### Meta Data and Initialization
 Simple RPC agents still need meta data like in [WritingAgents], without it you'll just have some defaults assigned, code below adds the meta data to our agent:
 
-**NOTE**: As of version 2.1.1 the _metadata_ section is deprecated, all agents must have DDL files with this information in them.
+**NOTE**: As of version 2.1.1 the `metadata` section is deprecated, all agents must have DDL files with this information in them.
 
 {% highlight ruby linenos %}
 module MCollective
@@ -121,7 +121,7 @@ or not:
 plugin.helloworld.activate_agent = false
 {% endhighlight %}
 
-You can also place the following in _/etc/mcollective/plugins.d/helloworld.cfg_:
+You can also place the following in `/etc/mcollective/plugins.d/helloworld.cfg`:
 
 {% highlight ini %}
 activate_agent = false
@@ -146,7 +146,7 @@ end
 If this block returns false or raises an exception then the agent will not be active on
 this machine and it will not be discovered.
 
-When the agent gets loaded it will test if _/usr/bin/puppet_ exist and only if it does
+When the agent gets loaded it will test if `/usr/bin/puppet` exist and only if it does
 will this agent be enabled.
 
 ## Help and the Data Description Language
@@ -213,7 +213,7 @@ All of these checks will raise an InvalidRPCData exception, you shouldn't catch 
 
 We'll make input validators plugins so you can provide your own types of validation easily.
 
-Additionally if can escape strings being passed to a shell, escaping is done in line with the _Shellwords#shellescape_ method that is in newer version of Ruby:
+Additionally if can escape strings being passed to a shell, escaping is done in line with the `Shellwords#shellescape` method that is in newer version of Ruby:
 
 {% highlight ruby linenos %}
    safe = shellescape(request[:foo])
@@ -267,12 +267,12 @@ Accessing it via the first will give you full access to all the normal Hash meth
 ## Running Shell Commands
 
 A helper function exist that makes it easier to run shell commands and gain
-access to their _STDOUT_ and _STDERR_.
+access to their `STDOUT` and `STDERR`.
 
 We recommend everyone use this method for calling to shell commands as it forces
-*LC_ALL* to *C* as well as wait on all the children and avoids zombies, you can
+`LC_ALL` to `C` as well as wait on all the children and avoids zombies, you can
 set unique working directories and shell environments that would be impossible
-using simple _system_ that is provided with Ruby.
+using simple `system` that is provided with Ruby.
 
 The simplest case is just to run a command and send output back to the client:
 
@@ -280,8 +280,8 @@ The simplest case is just to run a command and send output back to the client:
 reply[:status] = run("echo 'hello world'", :stdout => :out, :stderr => :err)
 {% endhighlight %}
 
-Here you will have set _reply`[`:out`]`_, _reply`[`:err`]`_ and _reply`[`:status`]`_ based
-on the output from the command
+Here you will have set `reply[:out]`, `reply[:err]` and `reply[:status]` based
+on the output from the command.
 
 You can append the output of the command to any string:
 
@@ -291,11 +291,11 @@ err = ""
 status = run("echo 'hello world'", :stdout => out, :stderr => err)
 {% endhighlight %}
 
-Here the STDOUT of the command will be saved in the variable _out_ and not sent
-back to the caller.  The only caveat is that the variables _out_ and _err_ should
-have the _<<_ method, so if you supplied an array each line of output will be a
-single member of the array.  In the example _out_ would be an array of lines
-while _err_ would just be a big multi line string.
+Here the STDOUT of the command will be saved in the variable `out` and not sent
+back to the caller.  The only caveat is that the variables `out` and `err` should
+have the `<<` method, so if you supplied an array each line of output will be a
+single member of the array.  In the example `out` would be an array of lines
+while `err` would just be a big multi line string.
 
 By default any trailing new lines will be included in the output and error:
 
@@ -311,9 +311,9 @@ You can shorten this to:
 reply[:status] = run("echo 'hello world'", :stdout => :out, :stderr => :err, :chomp => true)
 {% endhighlight %}
 
-This will remove a trailing new line from the _reply`[`:out`]`_ and _reply`[`:err`]`_.
+This will remove a trailing new line from the `reply[:out]` and `reply[:err]`.
 
-If you wanted this command to run from the _/tmp_ directory:
+If you wanted this command to run from the `/tmp` directory:
 
 {% highlight ruby %}
 reply[:status] = run("echo 'hello world'", :stdout => :out, :stderr => :err, :cwd => "/tmp")
@@ -330,7 +330,7 @@ completely failed to run in the case where the file doesn't exist, resources wer
 not available etc the exit code will be -1
 
 You have to set the cwd and environment through these options, do not simply
-call _chdir_ or adjust the _ENV_ hash in an agent as that will not be safe in
+call `chdir` or adjust the `ENV` hash in an agent as that will not be safe in
 the context of a multi threaded Ruby application.
 
 ## Constructing Replies
@@ -359,7 +359,7 @@ end
 
 {% endhighlight %}
 
-The number in *reply.fail* corresponds to the codes in [ResultsandExceptions] it would default to *1* so you could just say:
+The number in `reply.fail` corresponds to the codes in [ResultsandExceptions] it would default to `1` so you could just say:
 
 {% highlight ruby %}
 reply.fail "No such message #{request[:msg]}" unless have_msg?(request[:msg])
@@ -367,11 +367,11 @@ reply.fail "No such message #{request[:msg]}" unless have_msg?(request[:msg])
 
 This is hypothetical action that is supposed to remove a message from some queue, if we do have a String as input that matches our message id's we then check that we do have such a message and if we don't we fail with a helpful message.
 
-Technically this will just set *statuscode* and *statusmsg* fields in the reply to appropriate values.
+Technically this will just set `statuscode` and `statusmsg` fields in the reply to appropriate values.
 
 It won't actually raise exceptions or exit your action though you should do that yourself as in the example here.
 
-There is also a *fail!* instead of just *fail* it does the same basic function but also raises exceptions.  This lets you abort processing of the agent immediately without performing your own checks on *statuscode* as above later on.
+There is also a `fail!` instead of just `fail` it does the same basic function but also raises exceptions.  This lets you abort processing of the agent immediately without performing your own checks on `statuscode` as above later on.
 
 ## Actions in external scripts
 Actions can be implemented using other programming languages as long as they support JSON.
@@ -382,19 +382,19 @@ action "test" do
 end
 {% endhighlight %}
 
-The script _/some/external/script_ will be called with 2 arguments:
+The script `/some/external/script` will be called with 2 arguments:
 
  * The path to a file with the request in JSON format
  * The path to a file where you should write your response as a JSON hash
 
-You can also access these 2 file paths in the *MCOLLECTIVE_REPLY_FILE* and *MCOLLECTIVE_REQUEST_FILE* environment variables
+You can also access these 2 file paths in the `MCOLLECTIVE_REPLY_FILE` and `MCOLLECTIVE_REQUEST_FILE` environment variables
 
 Simply write your reply as a JSON hash into the reply file.
 
 The exit code of your script should correspond to the ones in [ResultsandExceptions].  Any text in STDERR will be
-logged on the server at *error* level and used in the text for the fail text.
+logged on the server at `error` level and used in the text for the fail text.
 
-Any text to STDOUT will be logged on the server at level *info*.
+Any text to STDOUT will be logged on the server at level `info`.
 
 These scripts can be placed in a standard location:
 
@@ -404,13 +404,13 @@ action "test" do
 end
 {% endhighlight %}
 
-This will search each configured libdir for _libdir/agent/agent_name/script.py_. If you specified a full path it will not try to find the file in libdirs.
+This will search each configured libdir for `libdir/agent/agent_name/script.py`. If you specified a full path it will not try to find the file in libdirs.
 
 ## Sharing code between agents
 Sometimes you have code that is needed by multiple agents or shared between the agent and client.  MCollective has
-name space called *MCollective::Util* for this kind of code and the packagers and so forth supports it.
+name space called `MCollective::Util` for this kind of code and the packagers and so forth supports it.
 
-Create a class with your shared code given a name like *MCollective::Util::Yourco* and save this file in the libdir in *util/yourco.rb*
+Create a class with your shared code given a name like `MCollective::Util::Yourco` and save this file in the libdir in `util/yourco.rb`
 
 A sample class can be seen here:
 
@@ -447,7 +447,7 @@ You can write to the server log file using the normal logger class:
 Log.debug ("Hello from your agent")
 {% endhighlight %}
 
-You can log at levels *info*, *warn*, *debug*, *fatal* or *error*.
+You can log at levels `info`, `warn`, `debug`, `fatal` or `error`.
 
 ## Data Caching
 As of version 2.2.0 there is a system wide Cache you can use to store data that might be costly to create on each request.
@@ -473,9 +473,9 @@ action "get_customer_data" do
 end
 {% endhighlight %}
 
-Here we setup a new cache table called *:customer* if it does not already exist, the cache has a 10 minute validity.
-We then try to read a cached customer record for *request\[:customerid\]* and if it's not been put in the cache
-before or if it expired I create a new customer record using a method called *get_customer* and then save it
+Here we setup a new cache table called `:customer` if it does not already exist, the cache has a 10 minute validity.
+We then try to read a cached customer record for `request[:customerid]` and if it's not been put in the cache
+before or if it expired I create a new customer record using a method called `get_customer` and then save it
 into the cache.
 
 If you have critical code in an agent that can only ever be run once you can use the Mutex from the same cache
@@ -504,23 +504,23 @@ We provide a few hooks into the processing of a message, you've already used thi
 
 You'd use these hooks to add some functionality into the processing chain of agents, maybe you want to add extra logging for audit purposes of the raw incoming message and replies, these hooks will let you do that.
 
-|Hook Function Name|Description|
-|------------------|-----------|
-|startup_hook|Called at the end of the initialize method of the _RPC::Agent_ base class|
-|before_processing_hook(msg, connection)|Before processing of a message starts, pass in the raw message and the <em>MCollective::Connector</em> class|
-|after_processing_hook|Just before the message is dispatched to the client|
+Hook Function Name                        | Description
+------------------------------------------|------------------------------------------------------------------------------------------------------
+`startup_hook`                            | Called at the end of the initialize method of the `RPC::Agent` base class
+`before_processing_hook(msg, connection)` | Before processing of a message starts, pass in the raw message and the `MCollective::Connector` class
+`after_processing_hook`                   | Just before the message is dispatched to the client
 
-### *startup_hook*
-Called at the end of the _RPC::Agent_ standard initialize method use this to adjust meta parameters, timeouts and any setup you need to do.
+### `startup_hook`
+Called at the end of the `RPC::Agent` standard initialize method use this to adjust meta parameters, timeouts and any setup you need to do.
 
 This will not be called right when the daemon starts up, we use lazy loading and initialization so it will only be called the first time a request for this agent arrives.
 
-### *before_processing_hook*
-Called just after a message was received from the middleware before it gets passed to the handlers.  *request* and *reply* will already be set, the msg passed is the message as received from the normal mcollective runner and the connection is the actual connector.
+### `before_processing_hook`
+Called just after a message was received from the middleware before it gets passed to the handlers.  `request` and `reply` will already be set, the msg passed is the message as received from the normal mcollective runner and the connection is the actual connector.
 
 You can in theory send off new messages over the connector maybe for auditing or something, probably limited use case in simple agents.
 
-### *after_processing_hook*
+### `after_processing_hook`
 Called at the end of processing just before the response gets sent to the middleware.
 
 This gets run outside of the main exception handling block of the agent so you should handle any exceptions you could raise yourself.  The reason  it is outside of the block is so you'll have access to even status codes set by the exception handlers.  If you do raise an exception it will just be passed onto the runner and processing will fail.

@@ -106,7 +106,7 @@ main_collective = mcollective
 {% endhighlight %}
 
 The _collectives_ directive tells the node all the collectives it should belong
-to and the _main`_`collective_ instructs Registration where to direct messages
+to and the `main_collective` instructs Registration where to direct messages
 to.
 
 ## Testing
@@ -183,7 +183,7 @@ The ActiveMQ connector plugin identifies subcollectives with the **first segment
 
 So for direct node addressing, for example, the default `mcollective` collective would use the `mcollective.nodes` queue, and `uk_collective` would use the `uk_collective.nodes` queue. For the package agent, they would use the `mcollective.package.agent` and `uk_collective.package.agent` topics, respectively.
 
-This makes it easy to use ActiveMQ destination wildcards to control access to a given collective. 
+This makes it easy to use ActiveMQ destination wildcards to control access to a given collective.
 
 ### Per-Subcollective Authorization
 
@@ -191,7 +191,7 @@ To control subcollective access, identify the set of topics and queues that coll
 
 * [See the "Authorization" section of the ActiveMQ config reference][activemq_authorization] for details.
 * The ["Detailed Restrictions"][activemq_detailed] example shows all of the topics and queues used by the default collective; you can copy/paste/modify these for a small number of collectives.
-* The ["Detailed Restrictions with Multiple Subcollectives"][activemq_subcollectives] example uses a snippet of ERB template to manage any number of collectives. 
+* The ["Detailed Restrictions with Multiple Subcollectives"][activemq_subcollectives] example uses a snippet of ERB template to manage any number of collectives.
 
 You must then [configure multiple ActiveMQ user accounts][activemq_authentication] for your site's admins. Give each user membership in the groups they'll need to manage their collectives.
 

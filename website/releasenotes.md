@@ -25,7 +25,7 @@ read the updating section below.
 
  * Correct reply-to headers are now set for both ActiveMQ and RabbitMQ
  * Fire and forget requests are now direct addressing aware
- * Boolean values in the config classes have now been standardised via a new Util#str_to_bool helper
+ * Boolean values in the config classes have now been standardised via a new `Util#str_to_bool` helper
  * SSL certificate paths for ActiveMQ and RabbitMQ can now be set in the users shell environment
  * Aggregate plugins are supported in the 'mco plugin doc' application and bundled plugins now have usage information
  * Default ports for ActiveMQ and RabbitMQ have changed to 61613
@@ -147,8 +147,8 @@ series.
 ### New Features and Improvements
 
  * Initial work towards online help, improved logging and internationalization
- * The output from *--help* has been made clearer
- * The output of a failed reply in the default *printrpc* method has been improved
+ * The output from `--help` has been made clearer
+ * The output of a failed reply in the default `printrpc` method has been improved
 
 ### Bug Fixes
 
@@ -159,7 +159,7 @@ series.
  * A config file reading race condition were fixed, we no longer attempt to use config details before parsing the config file thus always using defaults.
  * Dependencies on packaged plugins have been made more specific to ensure updates work correctly
  * When an argument to the rpc application fails to parse the command will fail instead of continue with unexpected side effects
- * Processing of *--no-response* was broken in 2.3.0, this has been fixed
+ * Processing of `--no-response` was broken in 2.3.0, this has been fixed
 
 ### Removed Functionality
 
@@ -187,7 +187,7 @@ The rpc application failed to run: PLMC30: Action 'get_fact' needs a 'fact' argu
 Use the 'mco doc PLMC30' command for details about this error, use -v for full error backtrace details
 {% endhighlight %}
 
-You can now use the *mco doc PLMC30* command to get additional information about this error
+You can now use the `mco doc PLMC30` command to get additional information about this error
 and any other error code you might see.
 
 Only a small number of errors and log lines have been updated for the new system and
@@ -256,7 +256,7 @@ ActiveMQ or RabbitMQ specific ones.
 |2013/02/12|Fix package building on certain Debian systems|19141|
 |2013/02/12|Deprecate the stomp connector|19146|
 |2013/02/07|Read the client config before trying to use any configuration options|19105|
-|2013/01/22|Set *=* dependencies on the various packages that form a plugin rather than *>=*|18758|
+|2013/01/22|Set `=` dependencies on the various packages that form a plugin rather than `>=`|18758|
 
 <a name="2_0_1">&nbsp;</a>
 
@@ -1843,8 +1843,8 @@ This release is for early adopters, production users should consider the 1.0.x s
 ### Bug Fixes
 
  * Missing _libdirs_ will not cause crashes anymore
- * Parse _MCOLLECTIVE\_EXTRA\_OPTS_ correctly with multiple options
- * _file`_`logger_ failures are handled better
+ * Parse `MCOLLECTIVE_EXTRA_OPTS` correctly with multiple options
+ * `file_logger` failures are handled better
  * Improve middleware communication in unreliable settings by adding timeouts
    around middleware operations
 
@@ -1872,7 +1872,7 @@ start configuring the new sub-collective feature you will loose compatiblity
 between versions.
 
 Various defaults apply, if you configure it with these exactly topic and
-collective names you can leave off the _main`_`collective_ and _collectives_
+collective names you can leave off the `main_collective` and `collectives`
 directives as the above settings would be their defaults
 
 ### Changes
@@ -2758,7 +2758,7 @@ Old code will keep working but you should change to this name for filters to be 
 |Date|Description|Ticket|
 |----|-----------|------|
 | 2009/12/28 | Add support for other configuration management systems like chef in the --with-class filters|13|
-| 2009/12/28 | Add a _Util.empty`_`filter?_ to test for an empty filter| |
+| 2009/12/28 | Add a `Util.empty_filter?` to test for an empty filter| |
 | 2009/12/27 | Create a new client framework SimpleRPCIntroduction|6|
 | 2009/12/27 | Add support for multiple filters of the same type|3|
 
@@ -2766,7 +2766,7 @@ Old code will keep working but you should change to this name for filters to be 
 
 ### Release Focus and Notes
 
-Primarily a bug fix release.  Only new feature is to allow the user to create _MCollective::Util::`*`_ classes and put those in the plugins directory.  This is useful for more complex agents and clients.
+Primarily a bug fix release.  Only new feature is to allow the user to create `MCollective::Util::*` classes and put those in the plugins directory.  This is useful for more complex agents and clients.
 
 ### Backwards Compatibility
 

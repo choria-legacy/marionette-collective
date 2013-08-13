@@ -24,7 +24,7 @@ and returns a hash like this:
  :version=>"2.0.0"}
 {% endhighlight %}
 
-## _daemon`_`stats_ Action
+## `daemon_stats` Action
 
 Retrieves statistics about the running daemon, how many messages it's handled, passed, dropped etc.
 
@@ -49,7 +49,7 @@ See the DDL for the agent for a full reference
 
 Replies will always be less than received since the current message has not been sent yet when the stats are gathered.
 
-## _get`_`fact_ Action
+## `get_fact` Action
 
 Retrieves a single fact from the server
 
@@ -58,7 +58,7 @@ Retrieves a single fact from the server
  :value  => 1}
 {% endhighlight %}
 
-## _agent`_`inventory_ Action
+## `agent_inventory` Action
 
 Returns a list of all agents with their meta data like version, author, license etc
 
@@ -80,7 +80,7 @@ Returns a list of all agents with their meta data like version, author, license 
 }
 {% endhighlight %}
 
-## _get`_`config`_`item_ Action
+## `get_config_item` Action
 
 Retrieves the active value for any configuration item on a server
 
@@ -97,7 +97,7 @@ A simple lightweight ping action that just returns each nodes local time
 {:pong   => 1295471526}
 {% endhighlight %}
 
-## _collective`_`info_ Action
+## `collective_info` Action
 
 Retrieves the main and sub collectives configured
 
