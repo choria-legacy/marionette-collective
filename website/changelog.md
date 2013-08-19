@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/08/19|add an install.rb file to mcollective|22220|
 |2013/08/02|Support Stomp 1.1 with RabbitMQ and ActiveMQ|15182|
 |2013/07/31|Surpress Errno::ESRCH info messages when running shell commands|21779|
 |*2013/07/11*|*Release 2.3.2*|21527|
