@@ -90,12 +90,16 @@ module MCollective
             end
           end
 
-          if Process.getpgid(cid)
+          if (Process.waitpid(cid, Process::WNOHANG).nil? rescue false)
             #if the process is still running terminate if timeout was specified
             if timeout
-              Process.kill('TERM', cid)
-              sleep 2
-              Process.kill('KILL', cid) if ( Process.getpgid(cid) rescue false )
+              if Util.windows?
+                Process.kill('KILL', cid)
+              else
+                Process.kill('TERM', cid)
+                sleep 2
+                Process.kill('KILL', cid) if ( Process.waitpid(cid, Process::WNOHANG).nil? rescue false )
+              end
             end
             Process.waitpid(cid) unless thread.alive?  # only wait if the parent thread is dead
           end

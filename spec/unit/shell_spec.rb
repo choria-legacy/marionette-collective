@@ -2,6 +2,7 @@
 
 require 'spec_helper'
 require 'pathname'
+require 'benchmark'
 
 module MCollective
   describe Shell do
@@ -158,14 +159,21 @@ module MCollective
 
       it "should terminate the systemu process after the specified timeout is exceeded" do
         s = Shell.new('ruby -e "sleep 2"', :timeout=> 1)
-        s.runcommand
-        s.status.termsig.should == ::Signal.list.fetch('TERM') 
+        shell_runtime = Benchmark.realtime { s.runcommand }
+
+        shell_runtime.should < 1.9
+        #skip POSIX signal expectation on windows
+        s.status.termsig.should == ::Signal.list.fetch('TERM') unless Util.windows?
       end
 
-      it "should kill an unresponsive systemu process on timeout" do
-         s = Shell.new(%{ruby -e 'Signal.trap("TERM") {}; sleep 5'}, :timeout => 1)
-         s.runcommand
-         s.status.termsig.should == ::Signal.list.fetch('KILL')   
+      #windows has no POSIX signal handeling so the next test make no sense on windows
+      unless Util.windows?
+        it "should kill an unresponsive systemu process on timeout" do
+          s = Shell.new(%{ruby -e 'Signal.trap("TERM") {}; sleep 5'}, :timeout => 1)
+          s.runcommand
+
+          s.status.termsig.should == ::Signal.list.fetch('KILL')   
+        end
       end
 
       it "should kill the systemu process if the parent thread exits and :on_thread_exit is specified" do
@@ -174,8 +182,10 @@ module MCollective
         # the guarding thread reaches its timeout/kill section 
         # this stub returns true two times for thread.alive? and false for subsequent calls
         Thread.any_instance.stubs(:alive?).returns(true, true, false)
-        s.runcommand
-        s.status.signaled?.should be_true
+        shell_runtime = Benchmark.realtime { s.runcommand }
+        shell_runtime.should < 0.9
+        #skip POSIX signal expectation on windows
+        s.status.signaled?.should be_true unless Util.windows?
       end
     end
   end
