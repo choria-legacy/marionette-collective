@@ -81,7 +81,7 @@ module MCollective
       end
 
       it "should run the command" do
-        Shell.any_instance.stubs("systemu").returns(true).once.with("date", "stdout" => '', "stderr" => '', "env" => {"LC_ALL" => "C"}, 'cwd' => Dir.tmpdir)
+        Shell.any_instance.stubs("systemu").returns(mock(:thread=>stub_everything())).once.with("date", "stdout" => '', "stderr" => '', "env" => {"LC_ALL" => "C"}, 'cwd' => Dir.tmpdir)
         s = Shell.new("date")
         s.runcommand
       end
@@ -154,6 +154,15 @@ module MCollective
         s = Shell.new("echo foo")
         Thread.any_instance.stubs(:alive?).raises(Errno::ESRCH)
         s.runcommand
+      end
+
+      it "should not leave the guarding thread running when the command has finished" do
+        s = Shell.new(%{ruby -e "sleep 1"})
+        thread_count_before = Thread.list.select{|thr|thr.alive?}.count
+        s.runcommand
+        sleep 0.1
+        thread_count_after = Thread.list.select{|thr|thr.alive?}.count
+        thread_count_after.should == thread_count_before
       end
     end
   end
