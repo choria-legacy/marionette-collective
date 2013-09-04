@@ -21,7 +21,6 @@ layout: default
 [config_client]: /mcollective/configure/client.html
 [deploy_plugins]: ./plugins.html
 [anchor_official]: #installing-with-the-official-packages
-[peinstall]: /pe/latest/install_basic.html
 [enable_repos]: /guides/puppetlabs_package_repositories.html
 [server_libdir]: /mcollective/configure/server.html#platform-defaults
 [client_libdir]: /mcollective/configure/client.html#platform-defaults
@@ -31,6 +30,15 @@ Summary
 -----
 
 > **Note:** This page is about installing MCollective. Installation is only one step of a many-step deployment process. See the [MCollective deployment index][deploy] for the complete picture.
+
+> ### Puppet Enterprise
+>
+> Puppet Enterprise includes MCollective, and automates the entire deployment process. See [the PE orchestration documentation][pe_orchestration] for more details; see [the PE installation instructions][pe_install] to install PE.
+>
+> * Puppet Enterprise 3.0 ships with MCollective 2.2.4.
+> * Puppet Enterprise 2.8 ships with MCollective 1.2.1.
+
+Installing MCollective requires the following steps:
 
 - [Make sure your middleware is up and running and your firewalls are in order.](#pre-install)
 - Install the `mcollective` package on servers, then make sure the `mcollective` service is running.
@@ -85,29 +93,17 @@ MCollective also requires the Stomp rubygem, version **1.2.2 or higher.** The in
 
 Puppet Labs provides official pre-built packages for the most common Linux-based operating systems. If you are running any of these systems, you can use the "[Official Packages][anchor_official]" install instructions.
 
-#### Red Hat-Like
+#### Red Hat Enterprise Linux (and Derivatives)
 
-* Enterprise Linux 5 (including RHEL, CentOS, etc.) (also supported by [Puppet Enterprise][peinstall])
-* Enterprise Linux 6 (also supported by [Puppet Enterprise][peinstall])
-* Fedora 16
-* Fedora 17
+{% include platforms_redhat_like.markdown %}
+
+#### Fedora
+
+{% include platforms_fedora.markdown %}
 
 #### Debian-Like
 
-* Debian 6 "Squeeze" (current stable release) (also supported by [Puppet Enterprise][peinstall])
-* Debian "Wheezy" (current testing distribution)
-* Debian "Sid" (current unstable distribution)
-* Ubuntu 12.04 LTS "Precise Pangolin" (also supported by [Puppet Enterprise][peinstall])
-* Ubuntu 10.04 LTS "Lucid Lynx" (also supported by [Puppet Enterprise][peinstall])
-* Ubuntu 8.04 LTS "Hardy Heron"
-* Ubuntu 12.10 "Quantal Quetzal"
-* Ubuntu 11.10 "Oneiric Ocelot"
-
-### Puppet Enterprise
-
-Puppet Enterprise includes MCollective, and automates the entire deployment process. See [the PE orchestration documentation][pe_orchestration] for more details; see [the PE installation instructions][pe_install] to install PE.
-
-Puppet Enterprise 2.8 ships with MCollective 1.2.1.
+{% include platforms_debian_like.markdown %}
 
 ([↑ Back to top](#content))
 
