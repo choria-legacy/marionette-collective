@@ -1,4 +1,6 @@
 module MCollective
+  class MessagePublishTimeout < StandardError; end
+  
   # container for a message, its headers, agent, collective and other meta data
   class Message
     attr_reader :message, :request, :validated, :msgtime, :payload, :type, :expected_msgid, :reply_to
@@ -211,20 +213,24 @@ module MCollective
 
     # publish a reply message by creating a target name and sending it
     def publish
-      Timeout.timeout(2) do
-        # If we've been specificaly told about hosts that were discovered
-        # use that information to do P2P calls if appropriate else just
-        # send it as is.
-        if @discovered_hosts && Config.instance.direct_addressing
-          if @discovered_hosts.size <= Config.instance.direct_addressing_threshold
-            self.type = :direct_request
-            Log.debug("Handling #{requestid} as a direct request")
+      begin
+        Timeout.timeout(2) do
+          # If we've been specificaly told about hosts that were discovered
+          # use that information to do P2P calls if appropriate else just
+          # send it as is.
+          if @discovered_hosts && Config.instance.direct_addressing
+            if @discovered_hosts.size <= Config.instance.direct_addressing_threshold
+              self.type = :direct_request
+              Log.debug("Handling #{requestid} as a direct request")
+            end
+  
+            PluginManager["connector_plugin"].publish(self)
+          else
+            PluginManager["connector_plugin"].publish(self)
           end
-
-          PluginManager["connector_plugin"].publish(self)
-        else
-          PluginManager["connector_plugin"].publish(self)
         end
+      rescue Timeout::Error => e
+        raise MessagePublishTimeout, "Publishing message timed out."
       end
     end
 
