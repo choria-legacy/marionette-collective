@@ -3,7 +3,7 @@
 %if 0%{?fedora} >= 19
 %global ruby_libdir %(ruby -rrconfig -e 'puts RbConfig::CONFIG["vendorlibdir"]')
 %else
-%global ruby_libdir %(ruby -rrbconfig -e "puts RbConfig::CONFIG['sitelibdir']")}
+%global ruby_libdir %(ruby -rrbconfig -e "puts RbConfig::CONFIG['sitelibdir']")
 %endif
 
 %define release %{rpm_release}%{?dist}
