@@ -6,7 +6,7 @@ layout: default
 
 [tls]: ./activemq.html#tls-credentials
 
-Since ActiveMQ runs on the JVM, [configuring it to use TLS encryption/authentication][tls] requires a pair of Java keystores; it can't just use the normal PEM format certificates and keys used by Puppet and MCollective. 
+Since ActiveMQ runs on the JVM, [configuring it to use TLS encryption/authentication][tls] requires a pair of Java keystores; it can't just use the normal PEM format certificates and keys used by Puppet and MCollective.
 
 Java keystores require some non-obvious steps to set up, so this guide provides full instructions, including both a [manual method](#manually-creating-keystores) and a [Puppet method](#creating-keystores-with-puppet).
 
@@ -19,7 +19,7 @@ ActiveMQ needs the following credentials:
 * A certificate signed by the site's CA
 * A private key to match its certificate
 
-These can come from anywhere, but the CA has to match the one used by MCollective. 
+These can come from anywhere, but the CA has to match the one used by MCollective.
 
 The easiest approach is to re-use your site's Puppet cert infrastructure, since it's already everywhere and has tools for issuing and signing arbitrary certificates.
 
@@ -30,7 +30,7 @@ As ever, remember to **protect the private key.**
 On your ActiveMQ server:
 
 * Locate the ssldir by running `sudo puppet agent --configprint ssldir`.
-* Copy the following files to your working directory, making sure to give unique names to the cert and private key:
+* Copy the following files to a working directory, making sure to give unique names to the cert and private key:
     * `<ssldir>/certs/ca.pem`
     * `<ssldir>/certs/<node name>.pem`
     * `<ssldir>/private_keys/<node name>.pem`
@@ -59,7 +59,7 @@ You can now:
 
 We need a **"truststore"** and a **"keystore."** We also need a **password** for each. (You can use the same password for both stores.)
 
-Remember the password(s) for later, because it needs to [go in the activemq.xml file][tls]. 
+Remember the password(s) for later, because it needs to [go in the activemq.xml file][tls].
 
 ### Step 1: Truststore
 
@@ -69,7 +69,7 @@ The truststore determines which certificates are allowed to connect to ActiveMQ.
 
 > You could also _not_ import a CA, and instead import every individual certificate you want to allow. If you do that, you're on your own, but the commands should be similar.
 
-In the working directory with your PEM-format credentials, run the following command. Replace `ca.pem` with whatever you named your copy of the CA cert, and use the password when requested.
+In the working directory where you copied your PEM-format credentials, run the following command. Replace `ca.pem` with whatever you named your copy of the CA cert, and use the password when requested.
 
 {% highlight console %}
 $ sudo keytool -import -alias "My CA" -file ca.pem -keystore truststore.jks
@@ -107,7 +107,7 @@ MD5 Fingerprint=99:D3:28:6B:37:13:7A:A2:B8:73:75:4A:31:78:0B:68
 
 The keystore contains the ActiveMQ broker's certificate and private key, which it uses to identify itself to the applications that connect to it.
 
-In the working directory with your PEM-format credentials, run the following commands. Substitute the names of your key and certificate files where necessary, and the common name of your ActiveMQ server's certificate for `activemq.example.com`.
+In the working directory where you copied your PEM-format credentials, run the following commands. Substitute the names of your key and certificate files where necessary, and the common name of your ActiveMQ server's certificate for `activemq.example.com`.
 
 These commands use both an "export/source" password and a "destination" password. The export/source password is never used again after this series of commands.
 
@@ -259,7 +259,7 @@ The code below is an example, but it will work fine if you put it in a module (e
         mode    => 0600,
         require => Java_ks['activemq_ca:truststore'],
       }
-    
+
     }
 {% endhighlight %}
 
