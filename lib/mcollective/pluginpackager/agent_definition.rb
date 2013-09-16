@@ -2,14 +2,14 @@ module MCollective
   module PluginPackager
     # MCollective Agent Plugin package
     class AgentDefinition
-      attr_accessor :path, :packagedata, :metadata, :target_path, :vendor, :iteration, :preinstall
+      attr_accessor :path, :packagedata, :metadata, :target_path, :vendor, :revision, :preinstall
       attr_accessor :plugintype, :dependencies, :postinstall, :mcname, :mcversion
 
-      def initialize(path, name, vendor, preinstall, postinstall, iteration, dependencies, mcdependency, plugintype)
+      def initialize(path, name, vendor, preinstall, postinstall, revision, dependencies, mcdependency, plugintype)
         @plugintype = plugintype
         @path = path
         @packagedata = {}
-        @iteration = iteration || 1
+        @revision = revision || 1
         @preinstall = preinstall
         @postinstall = postinstall
         @vendor = vendor || "Puppet Labs"
@@ -48,7 +48,7 @@ module MCollective
         else
           return nil
         end
-        agent[:plugindependency] = {:name => "#{@mcname}-#{@metadata[:name]}-common", :version => @metadata[:version], :iteration => @iteration}
+        agent[:plugindependency] = {:name => "#{@mcname}-#{@metadata[:name]}-common", :version => @metadata[:version], :revision => @revision}
         agent
       end
 
@@ -63,7 +63,7 @@ module MCollective
 
         client[:files] += Dir.glob(File.join(clientdir, "*")) if PluginPackager.check_dir_present clientdir
         client[:files] += Dir.glob(File.join(aggregatedir, "*")) if PluginPackager.check_dir_present aggregatedir
-        client[:plugindependency] = {:name => "#{@mcname}-#{@metadata[:name]}-common", :version => @metadata[:version], :iteration => @iteration}
+        client[:plugindependency] = {:name => "#{@mcname}-#{@metadata[:name]}-common", :version => @metadata[:version], :revision => @revision}
         client[:files].empty? ? nil : client
       end
 

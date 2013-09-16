@@ -17,105 +17,115 @@ mco plugin package [options] <directory>
            doc : Display documentation for a specific plugin.
     END_OF_USAGE
 
-    option  :pluginname,
-            :description => "Plugin name",
-            :arguments => ["-n", "--name NAME"],
-            :type => String
+    option :pluginname,
+           :description => 'Plugin name',
+           :arguments   => ['-n', '--name NAME'],
+           :type        => String
 
     option :postinstall,
-           :description => "Post install script",
-           :arguments => ["--postinstall POSTINSTALL"],
-           :type => String
+           :description => 'Post install script',
+           :arguments   => ['--postinstall POSTINSTALL'],
+           :type        => String
 
     option :preinstall,
-           :description => "Pre install script",
-           :arguments => ["--preinstall PREINSTALL"],
-           :type => String
+           :description => 'Pre install script',
+           :arguments   => ['--preinstall PREINSTALL'],
+           :type        => String
+
+    option :revision,
+           :description => 'Revision number',
+           :arguments   => ['--revision REVISION'],
+           :type        => String
 
     option :iteration,
-           :description => "Iteration number",
-           :arguments => ["--iteration ITERATION"],
-           :type => String
+           :description => 'DEPRECATED - Use --revision instead',
+           :arguments   => ['--iteration ITERATION'],
+           :type        => String
 
     option :vendor,
-           :description => "Vendor name",
-           :arguments => ["--vendor VENDOR"],
-           :type => String
+           :description => 'Vendor name',
+           :arguments   => ['--vendor VENDOR'],
+           :type        => String
 
     option :pluginpath,
-           :description => "MCollective plugin path",
-           :arguments => ["--pluginpath PATH"],
-           :type => String
+           :description => 'MCollective plugin path',
+           :arguments   => ['--pluginpath PATH'],
+           :type        => String
 
     option :mcname,
-           :description => "MCollective type (mcollective, pe-mcollective) that the packages depend on",
-           :arguments => ["--mcname NAME"],
-           :type => String
+           :description => 'MCollective type (mcollective, pe-mcollective) that the packages depend on',
+           :arguments   => ['--mcname NAME'],
+           :type        => String
 
     option :mcversion,
-           :description => "Version of MCollective that the packages depend on",
-           :arguments => "--mcversion MCVERSION",
-           :type => String
+           :description => 'Version of MCollective that the packages depend on',
+           :arguments   => ['--mcversion MCVERSION'],
+           :type        => String
 
     option :dependency,
-           :description => "Adds a dependency to the plugin",
-           :arguments => ["--dependency DEPENDENCIES"],
-           :type => :array
+           :description => 'Adds a dependency to the plugin',
+           :arguments   => ['--dependency DEPENDENCIES'],
+           :type        => :array
 
     option :format,
-           :description => "Package output format. Defaults to rpmpackage or debpackage",
-           :arguments => ["--format OUTPUTFORMAT"],
-           :type => String
+           :description => 'Package output format. Defaults to rpmpackage or debpackage',
+           :arguments   => ['--format OUTPUTFORMAT'],
+           :type        => String
 
     option :sign,
-           :description => "Embed a signature in the package",
-           :arguments => ["--sign"],
-           :type => :boolean
+           :description => 'Embed a signature in the package',
+           :arguments   => ['--sign'],
+           :type        => :boolean
 
     option :rpctemplate,
-           :description => "Template to use.",
-           :arguments => ["--template HELPTEMPLATE"],
-           :type => String
+           :description => 'Template to use.',
+           :arguments   => ['--template HELPTEMPLATE'],
+           :type        => String
 
     option :description,
-           :description => "Plugin description",
-           :arguments => ["--description DESCRIPTION"],
-           :type => String
+           :description => 'Plugin description',
+           :arguments   => ['--description DESCRIPTION'],
+           :type        => String
 
     option :author,
-           :description => "The author of the plugin",
-           :arguments => ["--author AUTHOR"],
-           :type => String
+           :description => 'The author of the plugin',
+           :arguments   => ['--author AUTHOR'],
+           :type        => String
 
     option :license,
-           :description => "The license under which the plugin is distributed",
-           :arguments => ["--license LICENSE"],
-           :type => String
+           :description => 'The license under which the plugin is distributed',
+           :arguments   => ['--license LICENSE'],
+           :type        => String
 
     option :version,
-           :description => "The version of the plugin",
-           :arguments => ["--pluginversion VERSION"],
-           :type => String
+           :description => 'The version of the plugin',
+           :arguments   => ['--pluginversion VERSION'],
+           :type        => String
 
     option :url,
-           :description => "Url at which information about the plugin can be found",
-           :arguments => ["--url URL"],
-           :type => String
+           :description => 'Url at which information about the plugin can be found',
+           :arguments   => ['--url URL'],
+           :type        => String
 
     option :timeout,
            :description => "The plugin's timeout",
-           :arguments => ["--timeout TIMEOUT"],
-           :type => Integer
+           :arguments   => ['--timeout TIMEOUT'],
+           :type        => Integer
 
     option :actions,
-           :description => "Actions to be generated for an Agent Plugin",
-           :arguments => ["--actions [ACTIONS]"],
-           :type => Array
+           :description => 'Actions to be generated for an Agent Plugin',
+           :arguments   => ['--actions [ACTIONS]'],
+           :type        => Array
 
     option :outputs,
-           :description => "Outputs to be generated for an Data Plugin",
-           :arguments => ["--outputs [OUTPUTS]"],
-           :type => Array
+           :description => 'Outputs to be generated for an Data Plugin',
+           :arguments   => ['--outputs [OUTPUTS]'],
+           :type        => Array
+
+    option :keep_artifacts,
+           :dsecription => "Don't remove artifacts after building packages",
+           :arguments   => ['--keep-artifacts'],
+           :type        => :boolean
 
     # Handle alternative format that optparser can't parse.
     def post_option_parser(configuration)
@@ -187,7 +197,7 @@ mco plugin package [options] <directory>
       plugin = prepare_plugin
       (configuration[:pluginpath] = configuration[:pluginpath] + "/") if (configuration[:pluginpath] && !configuration[:pluginpath].match(/^.*\/$/))
       packager = PluginPackager["#{configuration[:format].capitalize}Packager"]
-      packager.new(plugin, configuration[:pluginpath], configuration[:sign], options[:verbose]).create_packages
+      packager.new(plugin, configuration[:pluginpath], configuration[:sign], options[:verbose], configuration[:keep_artifacts]).create_packages
     end
 
     # Agents are just called 'agent' but newer plugin types are
@@ -276,10 +286,16 @@ mco plugin package [options] <directory>
         configuration[:dependency] = configuration[:dependency][0].split(" ") if configuration[:dependency] && configuration[:dependency].size == 1
         configuration[:dependency].map!{|dep| {:name => dep, :version => nil}} if configuration[:dependency]
         mcdependency = {:mcname => configuration[:mcname], :mcversion => configuration[:mcversion]}
+        
+        #Deprecate  warning for --iteration
+        if configuration[:iteration]
+          puts 'Warning. The --iteration flag has been deprecated. Please use --revision instead.'
+          configuration[:revision] = configuration[:iteration] unless configuration[:revision]
+        end
 
         plugin_class.new(configuration[:target], configuration[:pluginname],
                          configuration[:vendor], configuration[:preinstall],
-                         configuration[:postinstall], configuration[:iteration],
+                         configuration[:postinstall], configuration[:revision],
                          configuration[:dependency], mcdependency , plugintype)
     end
 

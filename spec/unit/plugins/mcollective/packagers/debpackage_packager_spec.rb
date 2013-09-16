@@ -6,304 +6,324 @@ module MCollective
   module PluginPackager
     describe DebpackagePackager, :unless => MCollective::Util.windows? do
 
-      let(:maketmpdir) do
-        tmpdir = Dir.mktmpdir("mc-test")
-        @tmpdirs << tmpdir
-        tmpdir
+      let(:plugin) do
+        plugin = mock
+        plugin.stubs(:mcname).returns('mcollective')
+        plugin.stubs(:metadata).returns({ :name => 'rspec', :version => '1.0'})
+        plugin.stubs(:target_path).returns('/rspec')
+        plugin
       end
 
-      before :all do
-        @tmpdirs = []
+      let(:packager) do
+        p = DebpackagePackager.new(plugin)
+        p.instance_variable_set(:@plugin, plugin)
+        p.instance_variable_set(:@tmpdir, 'rspec_tmp')
+        p.instance_variable_set(:@build_dir, 'rspec_build')
+        p.instance_variable_set(:@libdir, 'rspec_libdir')
+        p
+      end
+
+      let(:data) do
+        {:files => ['/rspec/agent/file.rb', '/rspec/agent/file.ddl', '/rspec/application/file.rb'],
+         :dependencies => [{:name => 'dep1', :version => nil, :revision => nil},
+                          {:name => 'dep2', :version => '1.1', :revision => nil},
+                          {:name => 'dep3', :version => '1.1', :revision => 2}],
+         :plugindependency => {:name => 'mcollective-rspec-common'}}
       end
 
       before :each do
-        PluginPackager.stubs(:build_tool?).with("debuild").returns(true)
-        @plugin = mock()
-        @plugin.stubs(:mcname).returns("mcollective")
+        PluginPackager.stubs(:command_available?).returns(true)
       end
 
-      after :all do
-        @tmpdirs.each{|tmpdir| FileUtils.rm_rf tmpdir if File.directory? tmpdir}
-      end
+      describe '#initialize' do
+        it 'should set the instance variables' do
+          new_packager = DebpackagePackager.new(plugin)
+          new_packager.instance_variable_get(:@plugin).should == plugin
+          new_packager.instance_variable_get(:@verbose).should == false
+          new_packager.instance_variable_get(:@libdir).should == '/usr/share/mcollective/plugins/mcollective/'
+          new_packager.instance_variable_get(:@signature).should == nil
+          new_packager.instance_variable_get(:@package_name).should == 'mcollective-rspec'
+        end
 
-      describe "#initialize" do
-        it "should raise an exception if debuild isn't present" do
-          PluginPackager.expects(:build_tool?).with("debuild").returns(false)
+        it 'should fail if debuild is not present on the system' do
+          PluginPackager.stubs(:command_available?).with('debuild').returns(false)
           expect{
-            DebpackagePackager.new("plugin")
-          }.to raise_error(RuntimeError, "package 'debuild' is not installed")
-        end
-
-        it "should set the correct libdir and verbose value" do
-          PluginPackager.expects(:build_tool?).with("debuild").returns(true)
-          packager = DebpackagePackager.new("plugin", nil, nil, true)
-          packager.libdir.should == "/usr/share/mcollective/plugins/mcollective/"
-          packager.verbose.should == true
+            DebpackagePackager.new(plugin)
+          }.to raise_error("Cannot build package. 'debuild' is not present on the system.")
         end
       end
 
-      describe "#create_packages" do
-        before :each do
-          @packager = DebpackagePackager.new(@plugin)
-          @plugin.stubs(:packagedata).returns({:test => {:files => ["test.rb"]}})
-          @plugin.stubs(:metadata).returns({:name => "test_plugin", :version => "1"})
-          @plugin.stubs(:iteration).returns("1")
-          @packager.stubs(:prepare_tmpdirs)
-          @packager.stubs(:create_package)
-          @packager.stubs(:move_packages)
-          @packager.stubs(:cleanup_tmpdirs)
-          Dir.stubs(:mktmpdir).with("mcollective_packager").returns("/tmp")
-          Dir.stubs(:mkdir)
-        end
-
-        it "should set the package instance variables" do
-          @packager.create_packages
-          @packager.current_package_type.should == :test
-          @packager.current_package_data.should == {:files => ["test.rb"]}
-          @packager.current_package_shortname.should == "mcollective-test_plugin-test"
-          @packager.current_package_fullname.should == "mcollective-test_plugin-test_1-1"
-        end
-
-        it "Should create the build dir" do
-          Dir.expects(:mkdir).with("/tmp/mcollective-test_plugin-test_1")
-          @packager.create_packages
-        end
-
-        it "should create packages" do
-          @packager.expects(:create_package)
-          @packager.create_packages
-        end
-      end
-
-      describe "#create_package" do
-        it "should raise an exception if the package cannot be created" do
-          packager = DebpackagePackager.new(@plugin)
-          packager.stubs(:create_file).raises("test exception")
-          expect{
-            packager.create_package
-          }.to raise_error(RuntimeError, "Could not build package - test exception")
-        end
-
-        it "should correctly create a package" do
-          packager = DebpackagePackager.new(@plugin, nil, nil, true)
-
-          packager.expects(:create_file).with("control")
-          packager.expects(:create_file).with("Makefile")
-          packager.expects(:create_file).with("compat")
-          packager.expects(:create_file).with("rules")
-          packager.expects(:create_file).with("copyright")
-          packager.expects(:create_file).with("changelog")
+      describe '#create_packages' do
+        it 'should run through the complete build process' do
+          build_dir = 'mc-tmp/mcollective-rspec_1.0'
+          tmpdir = 'mc-tmp'
+          packager.stubs(:puts)
+          Dir.expects(:mktmpdir).with('mcollective_packager').returns(tmpdir)
+          Dir.expects(:mkdir).with(build_dir)
+          packager.expects(:create_debian_dir)
+          plugin.stubs(:packagedata).returns({:agent => data})
+          packager.expects(:prepare_tmpdirs).with(data)
+          packager.expects(:create_install_file).with(:agent, data)
+          packager.expects(:create_pre_and_post_install).with(:agent)
+          packager.expects(:create_debian_files)
           packager.expects(:create_tar)
-          packager.expects(:create_install)
-          packager.expects(:create_preandpost_install)
-
-          packager.build_dir = "/tmp"
-          packager.tmpdir = "/tmp"
-          packager.current_package_fullname = "test"
-          PluginPackager.expects(:safe_system).with("debuild -i -us -uc")
-          packager.expects(:puts).with("Created package test")
-
-          packager.create_package
+          packager.expects(:run_build)
+          packager.expects(:move_packages)
+          packager.expects(:cleanup_tmpdirs)
+          packager.create_packages
         end
 
-        it "should add a signature if one is given" do
-          packager = DebpackagePackager.new(@plugin, nil, "test", true)
+        it 'should clean up tmpdirs if keep_artifacts is false' do
+          packager.stubs(:puts)
+          Dir.stubs(:mktmpdir).raises('error')
+          packager.expects(:cleanup_tmpdirs)
+          expect{
+            packager.create_packages
+          }.to raise_error('error')
+        end
 
-          packager.expects(:create_file).with("control")
-          packager.expects(:create_file).with("Makefile")
-          packager.expects(:create_file).with("compat")
-          packager.expects(:create_file).with("rules")
-          packager.expects(:create_file).with("copyright")
-          packager.expects(:create_file).with("changelog")
-          packager.expects(:create_tar)
-          packager.expects(:create_install)
-          packager.expects(:create_preandpost_install)
-
-          packager.build_dir = "/tmp"
-          packager.tmpdir = "/tmp"
-          packager.current_package_fullname = "test"
-          PluginPackager.expects(:safe_system).with("debuild -i -ktest")
-          packager.expects(:puts).with("Created package test")
-
-          packager.create_package
+        it 'should keep the build artifacts if keep_artifacts is true' do
+          packager.instance_variable_set(:@keep_artifacts, true)
+          packager.stubs(:puts)
+          Dir.stubs(:mktmpdir).raises('error')
+          packager.expects(:cleanup_tmpdirs).never
+          expect{
+            packager.create_packages
+          }.to raise_error('error')
         end
       end
 
-      describe "#create_preandpost_install" do
-        before :each do
-          @packager = DebpackagePackager.new(@plugin)
-        end
-
-        it "should raise an exception if preinstall is not null and preinstall script isn't present" do
-          @plugin.stubs(:preinstall).returns("myscript")
-          File.expects(:exists?).with("myscript").returns(false)
-          expect{
-            @packager.create_preandpost_install
-          }.to raise_error(RuntimeError, "pre-install script 'myscript' not found")
-        end
-
-        it "should raise an exception if postinstall is not null and postinstall script isn't present" do
-          @plugin.stubs(:preinstall).returns(nil)
-          @plugin.stubs(:postinstall).returns("myscript")
-          File.expects(:exists?).with("myscript").returns(false)
-          expect{
-            @packager.create_preandpost_install
-          }.to raise_error(RuntimeError, "post-install script 'myscript' not found")
-        end
-
-        it "should copy the preinstall and postinstall scripts to the correct directory with the correct name" do
-          @plugin.stubs(:postinstall).returns("myscript")
-          @plugin.stubs(:preinstall).returns("myscript")
-          @packager.build_dir = "/tmp/"
-          @packager.current_package_shortname = "test"
-          File.expects(:exists?).with("myscript").twice.returns(true)
-          FileUtils.expects(:cp).with("myscript", "/tmp/debian/test.preinst")
-          FileUtils.expects(:cp).with("myscript", "/tmp/debian/test.postinst")
-          @packager.create_preandpost_install
-        end
-      end
-
-      describe "#create_install" do
-        before :each do
-          @packager = DebpackagePackager.new(@plugin)
-          @plugin.stubs(:path).returns("")
-        end
-
-        it "should raise an exception if the install file can't be created" do
-          File.expects(:join).raises("test error")
-          expect{
-            @packager.create_install
-          }.to raise_error(RuntimeError, "Could not create install file - test error")
-        end
-
-        it "should copy the package install file to the correct location" do
-          tmpdir = maketmpdir
-          Dir.mkdir(File.join(tmpdir, "debian"))
-          @packager.build_dir = tmpdir
-          @packager.current_package_shortname = "test"
-          @packager.current_package_data = {:files => ["foo.rb"]}
-          @packager.create_install
-          install_file = File.read("#{tmpdir}/debian/test.install")
-          install_file.should == "/usr/share/mcollective/plugins/mcollective/foo.rb /usr/share/mcollective/plugins/mcollective\n"
-        end
-      end
-
-      describe "#move_packages" do
-        before :each do
-          @plugin = mock()
-        end
-
-        it "should move the packages to the working directory" do
-          Dir.expects(:glob)
-          File.expects(:join)
-          FileUtils.expects(:cp)
-          @packager = DebpackagePackager.new(@plugin)
-          @packager.move_packages
-        end
-
-        it "should raise an error if the packages could not be moved" do
-          @packager = DebpackagePackager.new(@plugin)
-          File.expects(:join).raises("error")
-          expect{
-            @packager.move_packages
-          }.to raise_error(RuntimeError, "Could not copy packages to working directory: 'error'")
-        end
-      end
-
-      describe "#create_tar" do
-        before :each do
-          @packager = DebpackagePackager.new(@plugin, nil, true)
-        end
-
-        it "should raise an exception if the tarball can't be built" do
-          PluginPackager.expects(:do_quietly?).raises("test error")
-          expect{
-            @packager.create_tar
-          }.to raise_error(RuntimeError, "Could not create tarball - test error")
-        end
-
-        it "should create a tarball containing the package files" do
-          @packager.tmpdir = "/tmp"
-          @packager.build_dir = "/build_dir"
-          @packager.current_package_shortname = "test"
-          @plugin.stubs(:metadata).returns(@plugin)
-          @plugin.stubs(:[]).with(:version).returns("1")
-          @plugin.stubs(:iteration).returns("1")
-          PluginPackager.expects(:safe_system).with("tar -Pcvzf /tmp/test_1.orig.tar.gz test_1")
-          @packager.create_tar
-        end
-      end
-
-      describe "#create_file" do
-        before :each do
-          @packager = DebpackagePackager.new(@plugin)
-        end
-
-        it "should raise an exception if the file can't be created" do
-          File.expects(:dirname).raises("test error")
-          expect{
-            @packager.create_file("test")
-          }.to raise_error(RuntimeError, "could not create test file - test error")
-        end
-
-        it "should place a build file in the debian directory" do
-          tmpdir = maketmpdir
-          Dir.mkdir(File.join(tmpdir, "debian"))
-          @packager.build_dir = tmpdir
-          File.expects(:read).returns("testfile")
-          @packager.create_file("testfile")
-          File.unstub(:read)
-          result = File.read(File.join(tmpdir, "debian", "testfile"))
-          result.stubs(:result)
-          result.should == "testfile\n"
-        end
-      end
-
-      describe "#prepare_tmpdirs" do
-        before :each do
-          @tmpfile = Tempfile.new("mc-file").path
-        end
-
-        after :each do
-          begin
-            FileUtils.rm(@tmpfile)
-          rescue Exception
+      describe '#create_debian_files' do
+        it 'should create all the debian build files' do
+          ['control', 'Makefile', 'compat', 'rules', 'copyright', 'changelog'].each do |f|
+            packager.expects(:create_file).with(f)
           end
-        end
-
-        it "should create the correct tmp dirs and copy package contents to correct dir" do
-          packager = DebpackagePackager.new(@plugin)
-          tmpdir = maketmpdir
-          packager.build_dir = tmpdir
-          @plugin.stubs(:target_path).returns("")
-
-          packager.prepare_tmpdirs({:files => [@tmpfile]})
-          File.directory?(tmpdir).should == true
-          File.directory?(File.join(tmpdir, "debian")).should == true
-          File.exists?(File.join(tmpdir, packager.libdir, File.dirname(tmpdir), File.basename(@tmpfile))).should == true
+          packager.send(:create_debian_files)
         end
       end
 
-      describe "#cleanup_tmpdirs" do
-        before :all do
-          @tmpdir = maketmpdir
+      describe '#run_build' do
+        it 'should build the packages' do
+          FileUtils.expects(:cd).with('rspec_build').yields
+          PluginPackager.stubs(:do_quietly).with(false).yields
+          PluginPackager.expects(:safe_system).with('debuild --no-lintian -i -us -uc')
+          packager.send(:run_build)
         end
 
-        before :each do
-          @packager = DebpackagePackager.new(@plugin)
+        it 'should build the package and sign it with the set signature' do
+          packager.instance_variable_set(:@signature, '0x1234')
+          FileUtils.expects(:cd).with('rspec_build').yields
+          PluginPackager.stubs(:do_quietly).with(false).yields
+          PluginPackager.expects(:safe_system).with('debuild --no-lintian -i -k0x1234')
+          packager.send(:run_build)
         end
 
-        it "should cleanup temp directories" do
-          @packager.tmpdir = @tmpdir
-          @packager.cleanup_tmpdirs
-          File.directory?(@tmpdir).should == false
+
+        it 'should sign with the exported gpg key' do
+          packager.instance_variable_set(:@signature, true)
+          FileUtils.expects(:cd).with('rspec_build').yields
+          PluginPackager.stubs(:do_quietly).with(false).yields
+          PluginPackager.expects(:safe_system).with('debuild --no-lintian -i')
+          packager.send(:run_build)
+        end
+      end
+
+      describe '#build_dependency_string' do
+        it 'should create the correct dependency string' do
+          result = packager.send(:build_dependency_string, data)
+          result.should == 'dep1, dep2 (>=1.1), dep3 (>=1.1-2), mcollective-rspec-common (= ${binary:Version})'
+        end
+      end
+
+      describe '#create_install_file' do
+        it 'should create the .install file in the correct location' do
+          file = mock
+          file.expects(:puts).with('rspec_libdir/agent/file.rb rspec_libdir/agent')
+          file.expects(:puts).with('rspec_libdir/agent/file.ddl rspec_libdir/agent')
+          file.expects(:puts).with('rspec_libdir/application/file.rb rspec_libdir/application')
+          File.expects(:open).with('rspec_build/debian/mcollective-rspec-agent.install', 'w').yields(file)
+          packager.send(:create_install_file, :agent, data)
         end
 
-        it "should not delete any directories if @tmpdir isn't present" do
-          @packager = DebpackagePackager.new(@plugin)
-          @packager.tmpdir = rand.to_s
-          FileUtils.expects(:rm_r).never
-          @packager.cleanup_tmpdirs
+        it 'should write a message and raise an error if we do not have permission' do
+          File.expects(:open).with('rspec_build/debian/mcollective-rspec-agent.install', 'w').raises(Errno::EACCES)
+          packager.expects(:puts).with("Could not create install file 'rspec_build/debian/mcollective-rspec-agent.install'. Permission denied")
+          expect{
+            packager.send(:create_install_file, :agent, data)
+          }.to raise_error(Errno::EACCES)
+        end
+
+        it 'should write a message and raise an error if we cannot create the install file' do
+          File.expects(:open).with('rspec_build/debian/mcollective-rspec-agent.install', 'w').raises('error')
+          packager.expects(:puts).with("Could not create install file 'rspec_build/debian/mcollective-rspec-agent.install'.")
+          expect{
+            packager.send(:create_install_file, :agent, data)
+          }.to raise_error('error')
+        end
+      end
+
+      describe '#move_packages' do
+        it 'should move the source package and debs to the cdw' do
+          files = ['rspec.deb', 'rspec.diff.gz', 'rspec.orig.tar.gz', 'rspec.changes']
+          Dir.stubs(:glob).returns(files)
+          FileUtils.expects(:cp).with(files, '.')
+          packager.send(:move_packages)
+        end
+
+        it 'should log an error and raise an error if the files cannot be moved' do
+          files = ['rspec.deb', 'rspec.diff.gz', 'rspec.orig.tar.gz', 'rspec.changes']
+          Dir.stubs(:glob).returns(files)
+          FileUtils.expects(:cp).with(files, '.').raises('error')
+          packager.expects(:puts).with('Could not copy packages to working directory.')
+          expect{
+            packager.send(:move_packages)
+          }.to raise_error('error')
+        end
+      end
+
+      describe '#create_pre_and_post_install' do
+        it 'should create the pre-install file' do
+          plugin.stubs(:preinstall).returns('rspec-preinstall')
+          plugin.stubs(:postinstall).returns(nil)
+          File.expects(:exists?).with('rspec-preinstall').returns(true)
+          FileUtils.expects(:cp).with('rspec-preinstall', 'rspec_build/debian/mcollective-rspec-agent.preinst')
+          packager.send(:create_pre_and_post_install, :agent)
+        end
+
+        it 'should create the post-install file' do
+          plugin.stubs(:preinstall).returns(nil)
+          plugin.stubs(:postinstall).returns('rspec-postinstall')
+          File.expects(:exists?).with('rspec-postinstall').returns(true)
+          FileUtils.expects(:cp).with('rspec-postinstall', 'rspec_build/debian/mcollective-rspec-agent.postinst')
+          packager.send(:create_pre_and_post_install, :agent)
+        end
+
+        it 'should fail if a pre-install script is defined but the file does not exist' do
+          plugin.stubs(:preinstall).returns('rspec-preinstall')
+          File.expects(:exists?).with('rspec-preinstall').returns(false)
+          packager.expects(:puts).with("pre-install script 'rspec-preinstall' not found.")
+          expect{
+            packager.send(:create_pre_and_post_install, :agent)
+         }.to raise_error(Errno::ENOENT, 'No such file or directory - rspec-preinstall')
+        end
+
+        it 'should fail if a post-install script is defined but the file does not exist' do
+          plugin.stubs(:preinstall).returns(nil)
+          plugin.stubs(:postinstall).returns('rspec-postinstall')
+          File.expects(:exists?).with('rspec-postinstall').returns(false)
+          packager.expects(:puts).with("post-install script 'rspec-postinstall' not found.")
+          expect{
+            packager.send(:create_pre_and_post_install, :agent)
+         }.to raise_error(Errno::ENOENT, 'No such file or directory - rspec-postinstall')
+        end
+      end
+
+      describe '#create_tar' do
+        it 'should create the tarball' do
+          PluginPackager.stubs(:do_quietly?).yields
+          Dir.stubs(:chdir).with('rspec_tmp').yields
+          PluginPackager.expects(:safe_system).with('tar -Pcvzf rspec_tmp/mcollective-rspec_1.0.orig.tar.gz mcollective-rspec_1.0')
+          packager.send(:create_tar)
+        end
+
+        it 'should log an error and raise an exception if it cannot create the tarball' do
+          PluginPackager.stubs(:do_quietly?).yields
+          Dir.stubs(:chdir).with('rspec_tmp').yields
+          PluginPackager.expects(:safe_system).raises('error')
+          packager.expects(:puts).with("Could not create tarball - mcollective-rspec_1.0.orig.tar.gz")
+          expect{
+            packager.send(:create_tar)
+          }.to raise_error('error')
+        end
+      end
+
+      describe '#create_file' do
+        it 'should create the named file in the build dir' do
+          file = mock
+          erb_content = mock
+          File.stubs(:read).returns('<%= "file content" %>')
+          ERB.expects(:new).with('<%= "file content" %>', nil, '-').returns(erb_content)
+          File.stubs(:open).with('rspec_build/debian/rspec', 'w').yields(file)
+          erb_content.expects(:result).returns('file content')
+          file.expects(:puts).with('file content')
+          packager.send(:create_file, 'rspec')
+        end
+
+        it 'should log an error and raise if it cannot create the file' do
+          File.stubs(:read).returns('<%= "file content" %>')
+          ERB.stubs(:new).with('<%= "file content" %>', nil, '-').raises('error')
+          packager.expects(:puts).with("Could not create file - 'rspec'")
+          expect{
+            packager.send(:create_file, 'rspec')
+          }.to raise_error('error')
+        end
+      end
+
+      describe '#prepare_tmpdirs' do
+        it 'should create the target directories and copy the files' do
+          FileUtils.expects(:mkdir_p).with('rspec_build/rspec_libdir/agent').twice
+          FileUtils.expects(:mkdir_p).with('rspec_build/rspec_libdir/application')
+          FileUtils.expects(:cp_r).with('/rspec/agent/file.rb', 'rspec_build/rspec_libdir/agent')
+          FileUtils.expects(:cp_r).with('/rspec/agent/file.ddl', 'rspec_build/rspec_libdir/agent')
+          FileUtils.expects(:cp_r).with('/rspec/application/file.rb', 'rspec_build/rspec_libdir/application')
+          packager.send(:prepare_tmpdirs, data)
+        end
+
+        it 'should log an error and raise if permissions means the dir cannot be created' do
+          FileUtils.stubs(:mkdir_p).with('rspec_build/rspec_libdir/agent').raises(Errno::EACCES)
+          packager.expects(:puts).with("Could not create directory 'rspec_build/rspec_libdir/agent'. Permission denied")
+          expect{
+            packager.send(:prepare_tmpdirs, data)
+          }.to raise_error(Errno::EACCES)
+        end
+
+        it 'should log an error and raise if the file does not exist' do
+          FileUtils.stubs(:mkdir_p)
+          FileUtils.expects(:cp_r).with('/rspec/agent/file.rb', 'rspec_build/rspec_libdir/agent').raises(Errno::ENOENT)
+          packager.expects(:puts).with("Could not copy file '/rspec/agent/file.rb' to 'rspec_build/rspec_libdir/agent'. File does not exist")
+          expect{
+            packager.send(:prepare_tmpdirs, data)
+          }.to raise_error(Errno::ENOENT)
+        end
+
+        it 'should log an error and raise for any other exception' do
+          File.stubs(:expand_path).raises('error')
+          packager.expects(:puts).with('Could not prepare build directory')
+          expect{
+            packager.send(:prepare_tmpdirs, data)
+          }.to raise_error('error')
+        end
+      end
+
+      describe '#create_debian_dir' do
+        it 'should create the debian dir in the build dir' do
+          FileUtils.expects(:mkdir_p).with('rspec_build/debian')
+          packager.send(:create_debian_dir)
+        end
+
+        it 'should log an error and raise an exception if the dir cannot be created' do
+          FileUtils.expects(:mkdir_p).with('rspec_build/debian').raises('error')
+          packager.expects(:puts).with("Could not create directory 'rspec_build/debian'")
+          expect{
+            packager.send(:create_debian_dir)
+          }.to raise_error('error')
+        end
+      end
+
+      describe '#cleanup_tmpdirs' do
+        it 'should remove the temporary build directory' do
+          File.stubs(:directory?).with('rspec_tmp').returns(true)
+          FileUtils.expects(:rm_r).with('rspec_tmp')
+          packager.send(:cleanup_tmpdirs)
+        end
+
+        it 'should log an error and raise an exception if the directory could not be removed' do
+          File.stubs(:directory?).with('rspec_tmp').returns(true)
+          FileUtils.expects(:rm_r).with('rspec_tmp').raises('error')
+          packager.expects(:puts).with("Could not remove temporary build directory - 'rspec_tmp'")
+          expect{
+            packager.send(:cleanup_tmpdirs)
+          }.to raise_error('error')
         end
       end
     end

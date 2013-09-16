@@ -1,14 +1,14 @@
 module MCollective
   module PluginPackager
     class StandardDefinition
-      attr_accessor :path, :packagedata, :metadata, :target_path, :vendor, :iteration
+      attr_accessor :path, :packagedata, :metadata, :target_path, :vendor, :revision
       attr_accessor :plugintype, :preinstall, :postinstall, :dependencies, :mcname, :mcversion
 
-      def initialize(path, name, vendor, preinstall, postinstall, iteration, dependencies, mcdependency, plugintype)
+      def initialize(path, name, vendor, preinstall, postinstall, revision, dependencies, mcdependency, plugintype)
         @plugintype = plugintype
         @path = path
         @packagedata = {}
-        @iteration = iteration || 1
+        @revision = revision || 1
         @preinstall = preinstall
         @postinstall = postinstall
         @vendor = vendor || "Puppet Labs"
@@ -46,7 +46,7 @@ module MCollective
 
         plugindata[:plugindependency] = {:name => "#{@mcname}-#{@metadata[:name]}-common",
                                       :version => @metadata[:version],
-                                      :iteration => @iteration} if @packagedata[:common]
+                                      :revision => @revision} if @packagedata[:common]
         plugindata
       end
 

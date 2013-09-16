@@ -1,5 +1,5 @@
-<%= @current_package_shortname -%> (<%= @plugin.metadata[:version]-%>-<%= @plugin.iteration-%>) unstable; urgency=low
+<%= @package_name -%> (<%= @plugin.metadata[:version]-%>-<%= @plugin.revision-%>) unstable; urgency=low
 
-    * Automated release for <%= @current_package_shortname-%> by mco plugin packager.
+  * Automated release for <%= @package_name -%> by mco plugin packager.
 
  -- The Marionette Collective <mcollective-dev@googlegroups.com>  <%= Time.new.strftime('%a, %d %b %Y %H:%M:%S %z') %>

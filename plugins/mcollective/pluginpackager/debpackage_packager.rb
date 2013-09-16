@@ -1,146 +1,236 @@
 module MCollective
   module PluginPackager
     class DebpackagePackager
-
       require 'erb'
-      attr_accessor :plugin, :current_package, :tmpdir, :verbose, :libdir
-      attr_accessor :workingdir, :preinstall, :postinstall, :current_package_type
-      attr_accessor :current_package_data, :current_package_shortname
-      attr_accessor :current_package_fullname, :build_dir, :signature
 
-      def initialize(plugin, pluginpath = nil, signature = nil, verbose = false)
-        raise RuntimeError, "package 'debuild' is not installed" unless PluginPackager.build_tool?("debuild")
-        @plugin = plugin
-        @verbose = verbose
-        @libdir = pluginpath || "/usr/share/mcollective/plugins/mcollective/"
-        @signature = signature
-        @tmpdir = ""
-        @build_dir = ""
-        @targetdir = ""
+      def initialize(plugin, pluginpath = nil, signature = nil, verbose = false, keep_artifacts = nil)
+        if PluginPackager.command_available?('debuild')
+          @plugin = plugin
+          @verbose = verbose
+          @libdir = pluginpath || '/usr/share/mcollective/plugins/mcollective/'
+          @signature = signature
+          @package_name = "#{@plugin.mcname}-#{@plugin.metadata[:name]}"
+          @keep_artifacts = keep_artifacts
+        else
+          raise("Cannot build package. 'debuild' is not present on the system.")
+        end
       end
 
+      # Build process :
+      # - create buildroot
+      # - craete buildroot/debian
+      # - create the relative directories with package contents
+      # - create install files for each of the plugins that are going to be built
+      # - create debian build files
+      # - create tarball
+      # - create pre and post install files
+      # - run the build script
+      # - move packages to cwd
+      # - clean up
       def create_packages
-        @plugin.packagedata.each do |type, data|
-          begin
-            @tmpdir = Dir.mktmpdir("mcollective_packager")
-            @current_package_type = type
-            @current_package_data = data
-            @current_package_shortname = "#{@plugin.mcname}-#{@plugin.metadata[:name]}-#{@current_package_type}"
-            @current_package_fullname = "#{@plugin.mcname}-#{@plugin.metadata[:name]}-#{@current_package_type}" +
-                                        "_#{@plugin.metadata[:version]}-#{@plugin.iteration}"
+        begin
+          puts "Building packages for #{@package_name} plugin."
 
-            @build_dir = File.join(@tmpdir, "#{@current_package_shortname}_#{@plugin.metadata[:version]}")
-            Dir.mkdir @build_dir
+          @tmpdir = Dir.mktmpdir('mcollective_packager')
+          @build_dir = File.join(@tmpdir, "#{@package_name}_#{@plugin.metadata[:version]}")
+          Dir.mkdir(@build_dir)
 
-            prepare_tmpdirs data
-            create_package
-            move_packages
-          rescue Exception => e
-            raise e
-          ensure
+          create_debian_dir
+          @plugin.packagedata.each do |type, data|
+            prepare_tmpdirs(data)
+            create_install_file(type, data)
+            create_pre_and_post_install(type)
+          end
+          create_debian_files
+          create_tar
+          run_build
+          move_packages
+
+          puts "Completed building all packages for #{@package_name} plugin."
+        ensure
+          if @keep_artifacts
+            puts 'Keeping build artifacts.'
+            puts "Build artifacts saved - #{@tmpdir}"
+          else
+            puts 'Removing build artifacts.'
             cleanup_tmpdirs
           end
         end
       end
 
-      def create_package
-        begin
-          ["control", "Makefile", "compat", "rules", "copyright", "changelog"].each do |filename|
-            create_file(filename)
-          end
-          create_tar
-          create_install
-          create_preandpost_install
+      private
 
-          FileUtils.cd @build_dir do |f|
-            PluginPackager.do_quietly?(@verbose) do
-              if @signature
-                if @signature.is_a? String
-                  PluginPackager.safe_system "debuild -i -k#{@signature}"
-                else
-                  PluginPackager.safe_system "debuild -i"
-                end
+      def create_debian_files
+        ['control', 'Makefile', 'compat', 'rules', 'copyright', 'changelog'].each do |f|
+          create_file(f)
+        end
+      end
+
+      def run_build
+        FileUtils.cd(@build_dir) do
+          PluginPackager.execute_verbosely(@verbose) do
+            if @signature
+              if @signature.is_a?(String)
+                PluginPackager.safe_system("debuild --no-lintian -i -k#{@signature}")
               else
-                PluginPackager.safe_system "debuild -i -us -uc"
+                PluginPackager.safe_system("debuild --no-lintian -i")
               end
+            else
+              PluginPackager.safe_system("debuild --no-lintian -i -us -uc")
             end
           end
-
-          puts "Created package #{@current_package_fullname}"
-        rescue Exception => e
-          raise RuntimeError, "Could not build package - #{e}"
         end
       end
 
+      # Creates a string used by the control file to specify dependencies
+      # Dependencies can be formatted as :
+      # foo (>= x.x-x)
+      # foo (>= x.x)
+      # foo
+      def build_dependency_string(data)
+        dependencies = []
+        data[:dependencies].each do |dep|
+          if dep[:version] && dep[:revision]
+            dependencies << "#{dep[:name]} (>=#{dep[:version]}-#{dep[:revision]})"
+          elsif dep[:version]
+            dependencies << "#{dep[:name]} (>=#{dep[:version]})"
+          else
+            dependencies << dep[:name]
+          end
+        end
+
+        if data[:plugindependency]
+          dependencies << "#{data[:plugindependency][:name]} (= ${binary:Version})"
+        end
+
+        dependencies.join(', ')
+      end
+
+      # Creates an install file for each of the packages that are going to be created
+      # for the plugin
+      def create_install_file(type, data)
+        install_file = "#{@package_name}-#{type}"
+        begin
+          install_file = File.join(@build_dir, 'debian', "#{install_file}.install")
+          File.open(install_file, 'w') do |file|
+            data[:files].each do |f|
+              extended_filename = File.join(@libdir, File.expand_path(f).gsub(/^#{@plugin.target_path}/, ''))
+              file.puts "#{extended_filename} #{File.dirname(extended_filename)}"
+            end
+          end
+        rescue Errno::EACCES => e
+          puts "Could not create install file '#{install_file}'. Permission denied"
+          raise e
+        rescue => e
+          puts "Could not create install file '#{install_file}'."
+          raise e
+        end
+      end
+
+      # Move source package and debs to cwd
       def move_packages
         begin
-          FileUtils.cp(Dir.glob(File.join(@tmpdir, "*.{deb,dsc,diff.gz,orig.tar.gz,changes}")), ".")
-        rescue Exception => e
-          raise RuntimeError, "Could not copy packages to working directory: '#{e}'"
+          files_to_copy = Dir.glob(File.join(@tmpdir, '*.{deb,dsc,diff.gz,orig.tar.gz,changes}'))
+          FileUtils.cp(files_to_copy, '.')
+        rescue => e
+          puts 'Could not copy packages to working directory.'
+          raise e
         end
       end
 
-      def create_preandpost_install
+      # Create pre and post install files in $buildroot/debian
+      # from supplied scripts.
+      # Note that all packages built for the plugin will invoke
+      # the same pre and post install scripts.
+      def create_pre_and_post_install(type)
         if @plugin.preinstall
-          raise RuntimeError, "pre-install script '#{@plugin.preinstall}' not found"  unless File.exists?(@plugin.preinstall)
-          FileUtils.cp(@plugin.preinstall, File.join(@build_dir, 'debian', "#{@current_package_shortname}.preinst"))
+          if !File.exists?(@plugin.preinstall)
+            puts "pre-install script '#{@plugin.preinstall}' not found."
+            raise(Errno::ENOENT, @plugin.preinstall)
+          else
+            FileUtils.cp(@plugin.preinstall, File.join(@build_dir, 'debian', "#{@package_name}-#{type}.preinst"))
+          end
         end
 
         if @plugin.postinstall
-          raise RuntimeError, "post-install script '#{@plugin.postinstall}' not found" unless File.exists?(@plugin.postinstall)
-          FileUtils.cp(@plugin.postinstall, File.join(@build_dir, 'debian', "#{@current_package_shortname}.postinst"))
-        end
-
-      end
-
-      def create_install
-        begin
-          File.open(File.join(@build_dir, "debian", "#{@current_package_shortname}.install"), "w") do |f|
-            @current_package_data[:files].each do |filename|
-              extended_filename = File.join(@libdir, File.expand_path(filename).gsub(/#{File.expand_path(plugin.path)}|\.\//, ''))
-              f.puts "#{extended_filename} #{File.dirname(extended_filename)}"
-            end
+          if !File.exists?(@plugin.postinstall)
+            puts "post-install script '#{@plugin.postinstall}' not found."
+            raise(Errno::ENOENT, @plugin.postinstall)
+          else
+            FileUtils.cp(@plugin.postinstall, File.join(@build_dir, 'debian', "#{@package_name}-#{type}.postinst"))
           end
-        rescue Exception => e
-          raise RuntimeError, "Could not create install file - #{e}"
         end
       end
 
+      # Tar up source
+      # Expects directory : $mcollective-$agent_$version
+      # Creates file : $buildroot/$mcollective-$agent_$version.orig.tar.gz
       def create_tar
+        name_and_version = "#{@package_name}_#{@plugin.metadata[:version]}"
+        tarfile = "#{name_and_version}.orig.tar.gz"
         begin
-          PluginPackager.do_quietly?(@verbose) do
+          PluginPackager.execute_verbosely(@verbose) do
             Dir.chdir(@tmpdir) do
-              PluginPackager.safe_system "tar -Pcvzf #{File.join(@tmpdir,"#{@current_package_shortname}_#{@plugin.metadata[:version]}.orig.tar.gz")} #{@current_package_shortname}_#{@plugin.metadata[:version]}"
+              PluginPackager.safe_system("tar -Pcvzf #{File.join(@tmpdir, tarfile)} #{name_and_version}")
             end
           end
         rescue Exception => e
-          raise "Could not create tarball - #{e}"
+          puts "Could not create tarball - #{tarfile}"
+          raise e
         end
       end
 
       def create_file(filename)
         begin
-          file = ERB.new(File.read(File.join(File.dirname(__FILE__), "templates", "debian", "#{filename}.erb")), nil, "-")
-          File.open(File.join(@build_dir, "debian", filename), "w") do |f|
+          file = ERB.new(File.read(File.join(File.dirname(__FILE__), 'templates', 'debian', "#{filename}.erb")), nil, '-')
+          File.open(File.join(@build_dir, 'debian', filename), 'w') do |f|
             f.puts file.result(binding)
           end
-        rescue Exception => e
-          raise RuntimeError, "could not create #{filename} file - #{e}"
+        rescue => e
+          puts "Could not create file - '#{filename}'"
+          raise e
         end
       end
 
+      # Move files contained in the plugin to the correct directory
+      # relative to the build root.
       def prepare_tmpdirs(data)
         data[:files].each do |file|
-          @targetdir = File.join(@build_dir, @libdir, File.dirname(File.expand_path(file)).gsub(@plugin.target_path, ""))
-          FileUtils.mkdir_p(@targetdir) unless File.directory? @targetdir
-          FileUtils.cp_r(file, @targetdir)
+          begin
+            targetdir = File.join(@build_dir, @libdir, File.dirname(File.expand_path(file)).gsub(/^#{@plugin.target_path}/, ""))
+            FileUtils.mkdir_p(targetdir) unless File.directory?(targetdir)
+            FileUtils.cp_r(file, targetdir)
+          rescue Errno::EACCES => e
+            puts "Could not create directory '#{targetdir}'. Permission denied"
+            raise e
+          rescue Errno::ENOENT => e
+            puts "Could not copy file '#{file}' to '#{targetdir}'. File does not exist"
+            raise e
+          rescue => e
+            puts 'Could not prepare build directory'
+            raise e
+          end
         end
+      end
 
-        FileUtils.mkdir_p(File.join(@build_dir, "debian"))
+      # Create the $buildroot/debian directory
+      def create_debian_dir
+        deb_dir = File.join(@build_dir, 'debian')
+        begin
+          FileUtils.mkdir_p(deb_dir)
+        rescue => e
+          puts "Could not create directory '#{deb_dir}'"
+          raise e
+        end
       end
 
       def cleanup_tmpdirs
-        FileUtils.rm_r @tmpdir if File.directory? @tmpdir
+        begin
+          FileUtils.rm_r(@tmpdir) if File.directory?(@tmpdir)
+        rescue => e
+          puts "Could not remove temporary build directory - '#{@tmpdir}'"
+          raise e
+        end
       end
     end
   end

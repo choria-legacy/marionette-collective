@@ -75,16 +75,16 @@ module MCollective
       end
     end
 
-    describe "#do_quietly?" do
+    describe "#execute_verbosely" do
       it "should call the block parameter if verbose is true" do
-        result = PluginPackager.do_quietly?(true) {:success}
+        result = PluginPackager.execute_verbosely(true) {:success}
         result.should == :success
       end
 
       it "should call the block parameter quietly if verbose is false" do
         std_out = Tempfile.new("mc_pluginpackager_spec")
         File.expects(:new).with("/dev/null", "w").returns(std_out)
-        PluginPackager.do_quietly?(false) {puts "success"}
+        PluginPackager.execute_verbosely(false) {puts "success"}
         std_out.rewind
         std_out.read.should == "success\n"
         std_out.close
@@ -93,23 +93,23 @@ module MCollective
 
       it "should raise an exception and reset stdout if the block raises an execption" do
         expect{
-          PluginPackager.do_quietly?(false) {raise Exception, "exception"}
+          PluginPackager.execute_verbosely(false) {raise Exception, "exception"}
         }.to raise_error(Exception, "exception")
       end
     end
 
-    describe "#build_tool?" do
+    describe "#command_available?" do
       it "should return true if the given build tool is present on the system" do
         File.expects(:join).returns("foo")
         File.expects(:exists?).with("foo").returns(true)
-        result = PluginPackager.build_tool?("foo")
+        result = PluginPackager.command_available?("foo")
         result.should == true
       end
 
       it "should return false if the given build tool is not present on the system" do
         File.stubs(:join).returns("foo")
         File.stubs(:exists?).with("foo").returns(false)
-        result = PluginPackager.build_tool?("foo")
+        result = PluginPackager.command_available?("foo")
         result.should == false
       end
     end
