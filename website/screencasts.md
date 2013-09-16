@@ -3,7 +3,7 @@ layout: default
 title: Screen Casts
 toc: false
 ---
-[blip]: http://mcollective.blip.tv/
+[YouTube]: https://www.youtube.com/playlist?list=PL74D254ABDFD6CA47&amp;feature=view_all
 [slideshare]: http://www.slideshare.net/mcollective
 [Terminology]: /mcollective/terminology.html
 [SimpleRPCIntroduction]: /mcollective/simplerpc/
@@ -12,7 +12,7 @@ toc: false
 We believe screen casts give the best introduction to new concepts, so we've recorded
 several to complement the documentation.
 
-There's a [blip] channel that has all the videos, you can subscribe and follow there.
+There's a [YouTube] playlist that has all the videos, you can subscribe and follow there.
 There is also a [slideshare] site where presentations will go that we do at conferences and events.
 
 ## Introductions and Guides
