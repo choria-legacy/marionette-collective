@@ -208,7 +208,7 @@ module MCollective
 
         case type
           when :reply # receiving replies on a temp queue
-            target[:name] = "/temp-queue/mcollective_reply_%s" % agent
+            target[:name] = "/exchange/mcollective_reply/%s" % agent
             target[:id] = "mcollective_%s_replies" % agent
 
           when :broadcast, :request # publishing a request to all nodes with an agent
@@ -216,7 +216,7 @@ module MCollective
             if reply_to
               target[:headers]["reply-to"] = reply_to
             else
-              target[:headers]["reply-to"] = "/temp-queue/mcollective_reply_%s" % agent
+              target[:headers]["reply-to"] = "/exchange/mcollective_reply/%s" % agent
             end
             target[:id] = "%s_broadcast_%s" % [collective, agent]
 
@@ -224,7 +224,7 @@ module MCollective
             raise "Directed requests need to have a node identity" unless node
 
             target[:name] = "/exchange/%s_directed/%s" % [ collective, node]
-            target[:headers]["reply-to"] = "/temp-queue/mcollective_reply_%s" % agent
+            target[:headers]["reply-to"] = "/exchange/mcollective_reply/%s" % agent
 
           when :directed # subscribing to directed messages
             target[:name] = "/exchange/%s_directed/%s" % [ collective, @config.identity ]
@@ -236,7 +236,6 @@ module MCollective
 
       # Subscribe to a topic or queue
       def subscribe(agent, type, collective)
-        return if type == :reply
 
         source = make_target(agent, type, collective)
 

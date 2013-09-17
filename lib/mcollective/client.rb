@@ -49,8 +49,7 @@ module MCollective
       request.encode!
 
       Log.debug("Sending request #{request.requestid} to the #{request.agent} agent with ttl #{request.ttl} in collective #{request.collective}")
-
-      subscribe(agent, :reply) unless request.reply_to
+      subscribe(agent, :reply)
 
       request.publish
 
