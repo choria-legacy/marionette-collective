@@ -205,7 +205,11 @@ module MCollective
         raise("Unknown collective '#{collective}' known collectives are '#{@config.collectives.join ', '}'") unless @config.collectives.include?(collective)
 
         target = {:name => "", :headers => {}, :id => nil}
-        reply_exchange_path = ["/exchange/mcollective_reply/%s" % agent,  "#{Config.instance.identity}_#{$$}"].join(".")
+        if  get_bool_option("rabbitmq.use_reply_exchange", false)
+          reply_exchange_path = ["/exchange/mcollective_reply/%s" % agent,  "#{Config.instance.identity}_#{$$}"].join(".")
+        else
+          reply_exchange_path =  "/temp-queue/mcollective_reply_%s" % agent
+        end
         case type
           when :reply # receiving replies on a temp queue
             target[:name] = reply_exchange_path
@@ -236,7 +240,9 @@ module MCollective
 
       # Subscribe to a topic or queue
       def subscribe(agent, type, collective)
-
+        if ! get_bool_option("rabbitmq.use_reply_exchange", false) && type == :reply
+          return
+        end
         source = make_target(agent, type, collective)
 
         unless @subscriptions.include?(source[:id])
@@ -250,7 +256,9 @@ module MCollective
 
       # Subscribe to a topic or queue
       def unsubscribe(agent, type, collective)
-        return if type == :reply
+        if ! get_bool_option("rabbitmq.use_reply_exchange", false) && type == :reply
+          return
+        end
 
         source = make_target(agent, type, collective)
 
