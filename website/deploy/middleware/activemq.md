@@ -474,9 +474,24 @@ _Required._
 
 If you are using a network of brokers, you need to configure which brokers can talk to each other.
 
-On **one** broker in each linked pair, set up **two** bi-directional network connectors: one for topics, and one for queues. (The only difference between them is the `conduitSubscriptions` attribute, which must be false for the queue connector.)
+This configuration can get complex! Here's why:
 
-This is done with a pair of `<networkConnector>` elements inside the `<networkConnectors>` element. Note that the queues connector excludes topics and vice-versa.
+* _This_ is where you define your brokers' network topology: in the sum total of _all_ of the `<networkConnector>` elements across _all_ of your brokers. (This is massively shared configuration --- you can't determine the network topology by looking at the connectors on any single broker.)
+* Each network connector connects two brokers. Think of a network connector as a run of cable between two routers.
+* For reasons that are hard to summarize, every link between two brokers must consist of **two** network connectors:
+    * One reserved for **topics,** with `conduitSubscriptions` set to true (its default value) and queue traffic excluded.
+    * One reserved for **queues,** with `conduitSubscriptions` set to false and topic traffic excluded.
+
+    It's basically as though you had one cable that could only carry UDP and another cable that could only carry TCP. We don't know why it's built like this, but it's easy to get tripped up on, so please watch out.
+* Network connectors can be bidirectional (`duplex="true"`) or unidirectional (`duplex="false"`). Bidirectional is easier to deal with, since you only have to configure the connectors on **one** participant in each link, and the other participant will automatically configure itself. (If you used unidirectional connectors, you'd end up using FOUR network connectors per link, with two on each participant, due to the topic/queue split mentioned above.)
+
+As you can see, there are a lot of ways to do this, especially since this configuration is a direct reflection of your network topology. As an example, a simple star topology could be configured in the following ways:
+
+* The hub broker has two bidirectional connectors for _each_ leaf broker. None of the leaf brokers need any connectors configured. This centralizes the configuration, but the configuration is relatively complex --- you'd need to maintain a list of all leaf nodes.
+* _Every_ leaf broker has two bidirectional connectors pointed toward the hub. This spreads configuration across many nodes, but the configuration is relatively simple, since each leaf broker just needs its own name and the URI of the hub.
+* Every leaf broker has two unidirectional connectors pointed toward the hub, and the hub has two unidirectional connectors pointed at each leaf node. Worst of both worlds; we don't know of a good reason to do this.
+
+Network connectors are configured with `<networkConnector>` elements inside the `<networkConnectors>` element. Note that the queues connector excludes topics and vice-versa.
 
 {% highlight xml %}
     <networkConnectors>
@@ -512,10 +527,10 @@ This is done with a pair of `<networkConnector>` elements inside the `<networkCo
 
 Notes:
 
+* The `name` attribute on each connector **must** be globally unique. Easiest way to do that is to combine the pair of hostnames involved with the word "queues" or "topics."
 * If you're using TLS for OpenWire, you'll need to change the URIs to something like `static:(ssl://stomp2.example.com:61617)` --- note the change of both protocol and port.
 * You will need to adjust the TTL for your network's conditions.
 * A username and password are required. The broker with the `<networkConnector>` connects to the other broker as this user. This user should have **full rights** on **all** queues and topics, unless you really know what you're doing. (See [authentication](#authentication-users-and-groups) and [authorization](#authorization-group-permissions) above.)
-* The `name` attribute on each connector must be globally unique. Easiest way to do that is to combine the pair of hostnames involved with the word "queues" or "topics."
 * Alternately, you can set up two uni-directional connectors on both brokers; see the Fuse or ActiveMQ documentation linked above for more details.
 
 
