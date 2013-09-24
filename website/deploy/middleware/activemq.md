@@ -529,7 +529,7 @@ Notes:
 
 * The `name` attribute on each connector **must** be globally unique. Easiest way to do that is to combine the pair of hostnames involved with the word "queues" or "topics."
 * If you're using TLS for OpenWire, you'll need to change the URIs to something like `static:(ssl://stomp2.example.com:61617)` --- note the change of both protocol and port.
-* You will need to adjust the TTL for your network's conditions.
+* The network TTL is **the number of network hops** that messages and subscriptions are allowed to pass through. You will need to adjust the TTL to match your network's topology. In a ring, it would be the number of brokers minus one; in a star, it would be two.
 * A username and password are required. The broker with the `<networkConnector>` connects to the other broker as this user. This user should have **full rights** on **all** queues and topics, unless you really know what you're doing. (See [authentication](#authentication-users-and-groups) and [authorization](#authorization-group-permissions) above.)
 * Alternately, you can set up two uni-directional connectors on both brokers; see the Fuse or ActiveMQ documentation linked above for more details.
 
