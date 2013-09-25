@@ -1,21 +1,15 @@
+Name: <%= @package_name %>
 Summary: <%= @plugin.metadata[:description] %>
-Name: <%= @current_package_name%>
 Version: <%= @plugin.metadata[:version] %>
-Release: <%= @plugin.iteration %>
-License: <%= @plugin.metadata[:license] %>
-URL: <%= @plugin.metadata[:url] %>
-Vendor: <%= @plugin.vendor %>
-Packager: <%= @plugin.metadata[:author] %>
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Release: <%= @plugin.revision %>
+License: <%= @plugin.metadata[:license]%>
+URL: <%= @plugin.metadata[:url]%>
+Vendor: <%= @plugin.vendor%>
+Packager: <%= @plugin.metadata[:author]%>
 BuildArch: noarch
 Group: System Tools
-Source0: <%= "#{@current_package_name}-#{@plugin.metadata[:version]}.tgz" %>
-<% @current_package_data[:dependencies].each do |dep|-%>
-Requires: <%= dep[:name] -%> <%= ">= #{dep[:version]}" if dep[:version]%><%="-#{dep[:iteration]}" if dep[:iteration]%>
-<% end -%>
-<% if @current_package_data[:plugindependency] %>
-Requires: <%= @current_package_data[:plugindependency][:name] -%> = <%= @current_package_data[:plugindependency][:version]%>-<%= @current_package_data[:plugindependency][:iteration]%>
-<% end %>
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Source0: <%= @package_name_and_version%>.tgz
 
 %description
 <%= @plugin.metadata[:description] %>
@@ -24,27 +18,35 @@ Requires: <%= @current_package_data[:plugindependency][:name] -%> = <%= @current
 %setup
 
 %build
+<% package_files = plugin_files.map{ |f| File.join(@libdir, File.expand_path(f).gsub(/#{File.expand_path(@plugin.path)}|\.\//, '')) } -%>
+<% dirs = package_files.map{ |f| File.dirname(f) }.uniq -%>
 
 %install
-<% @dirs = [] -%>
-<% @package_files = [] -%>
-<% @current_package_data[:files].each do |file| -%>
-<% @dirs << File.dirname(File.join(@libdir, File.expand_path(file).gsub(/#{File.expand_path(plugin.path)}|\.\//, ''))) -%>
-<% @package_files << File.join(@libdir, File.expand_path(file).gsub(/#{File.expand_path(plugin.path)}|\.\//, '')) -%>
-<% end -%>
 rm -rf %{buildroot}
-<% @dirs.uniq.each do |dir| -%>
+<% dirs.each do |dir| -%>
 %{__install} -d -m0755 %{buildroot}<%= dir%>
 <% end -%>
-<% @package_files -=  @dirs %>
-<% @package_files.each do |package_file| -%>
-%{__install} -m0644 <%= (package_file[0].chr == '/') ? package_file[1..package_file.size-1]: package_file%> %{buildroot}<%=package_file %>
+<% package_files.each do |file| -%>
+%{__install} -m0644 -v <%= (file[0].chr == '/') ? file[1..file.size-1]: file%> %{buildroot}<%=file %>
 <% end -%>
 
-%files
-%defattr(-,root,root,-)
-<% @package_files.each do |file| -%>
+<% @plugin.packagedata.each do |type, data| %>
+%package <%= type %>
+Summary: <%= @plugin.metadata[:description] %>
+<% if data[:plugindependency] %>
+Requires: <%= data[:plugindependency][:name] -%> = <%= data[:plugindependency][:version]%>-<%= data[:plugindependency][:revision]%>
+<% end -%>
+<% data[:dependencies].each do |dep|-%>
+Requires: <%= dep[:name] -%> <%= ">= #{dep[:version]}" if dep[:version]%><%="-#{dep[:revision]}" if dep[:revision]%>
+<% end -%>
+%description <%= type %>
+<%= data[:description] %>
+
+%files <%= type %>
+%defattr(-, root, root, -)
+<% package_files(data[:files]).each do |file| -%>
 <%= file %>
+<% end -%>
 <% end -%>
 
 <% if @plugin.preinstall -%>
@@ -57,5 +59,5 @@ rm -rf %{buildroot}
 <% end -%>
 
 %changelog
-* <%= Time.now.strftime("%a %b %d %Y") -%> <%= @plugin.metadata[:author]%> - <%= @plugin.metadata[:version]%>-<%= @plugin.iteration%>
-- Built Package <%= @current_package_name-%>
+* <%= Time.now.strftime("%a %b %d %Y") -%> <%= @plugin.metadata[:author]%> - <%= @plugin.metadata[:version]%>-<%= @plugin.revision %>
+- Built Package <%= @plugin.metadata[:name] -%>

@@ -1,28 +1,15 @@
-<%
-  @current_package_data[:dependencies].map! do |dep|
-      if dep[:version] && dep[:iteration]
-        dep[:name] + '(>=' + dep[:version] + '-' + dep[:iteration].to_s + ')'
-      elsif dep[:version]
-        dep[:name] + '(>=' + dep[:version] + ')'
-      else
-        dep[:name]
-      end
-    end
-
-  if @current_package_data[:plugindependency]
-    @current_package_data[:plugindependency] = "#{@current_package_data[:plugindependency][:name]} (= ${binary:Version})"
-    @current_package_data[:dependencies].push(@current_package_data[:plugindependency])
-  end
--%>
-Source: <%= @current_package_shortname %>
-Homepage: <%= @plugin.metadata[:url]%>
+Source: <%= @package_name %>
+Homepage: <%= @plugin.metadata[:url] %>
 Section: utils
 Priority: extra
-Build-Depends: debhelper, cdbs, dpatch
+Build-Depends: debhelper (>= 7), cdbs, dpatch
 Maintainer: <%= @plugin.metadata[:author] %>
-Standards-Version: 3.8.0
-
-Package: <%= @current_package_shortname %>
+Standards-Version: 3.9.1
+<% @plugin.packagedata.each do |type, data| %>
+Package: <%= "#{@package_name}-#{type}" %>
 Architecture: all
-Depends: <%= @current_package_data[:dependencies].join(", ") %>
-Description: <%= @plugin.metadata[:description] %>
+Depends: <%= build_dependency_string(data) %>
+Description: <%= @plugin.metadata[:description]%>
+ <%= data[:description]%>
+ .
+<% end -%>

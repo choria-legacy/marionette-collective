@@ -33,7 +33,7 @@ module MCollective
     end
 
     # Quietly calls a block if verbose parameter is false
-    def self.do_quietly?(verbose, &block)
+    def self.execute_verbosely(verbose, &block)
       unless verbose
         old_stdout = $stdout.clone
         $stdout.reopen(File.new("/dev/null", "w"))
@@ -51,7 +51,7 @@ module MCollective
     end
 
     # Checks if a build tool is present on the system
-    def self.build_tool?(build_tool)
+    def self.command_available?(build_tool)
       ENV["PATH"].split(File::PATH_SEPARATOR).each do |path|
         builder = File.join(path, build_tool)
         if File.exists?(builder)
@@ -62,7 +62,7 @@ module MCollective
     end
 
     def self.safe_system(*args)
-      raise RuntimeError, "Failed: #{args.join(' ')}" unless system *args
+      raise(RuntimeError, "Failed: #{args.join(' ')}") unless system *args
     end
   end
 end
