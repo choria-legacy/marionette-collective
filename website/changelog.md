@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/09/25|MCO Plugin Packager produces more than one source artifact|22316|
 |2013/09/06|Fix directed request on subcollectives with rabbit connector|21755|
 |2013/08/19|add an install.rb file to mcollective|22220|
 |2013/08/02|Support Stomp 1.1 with RabbitMQ and ActiveMQ|15182|
