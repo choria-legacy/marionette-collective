@@ -130,6 +130,7 @@ module MCollective
 
       describe '#build_dependency_string' do
         it 'should create the correct dependency string' do
+          PluginPackager.expects(:filter_dependencies).with('debian', data[:dependencies]).returns(data[:dependencies])
           result = packager.send(:build_dependency_string, data)
           result.should == 'dep1, dep2 (>=1.1), dep3 (>=1.1-2), mcollective-rspec-common (= ${binary:Version})'
         end
