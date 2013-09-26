@@ -205,10 +205,14 @@ module MCollective
         raise("Unknown collective '#{collective}' known collectives are '#{@config.collectives.join ', '}'") unless @config.collectives.include?(collective)
 
         target = {:name => "", :headers => {}, :id => nil}
-
+        if  get_bool_option("rabbitmq.use_reply_exchange", false)
+          reply_path = ["/exchange/mcollective_reply/%s" % agent,  "#{Config.instance.identity}_#{$$}"].join(".")
+        else
+          reply_path =  "/temp-queue/mcollective_reply_%s" % agent
+        end
         case type
           when :reply # receiving replies on a temp queue
-            target[:name] = "/temp-queue/mcollective_reply_%s" % agent
+            target[:name] = reply_path
             target[:id] = "mcollective_%s_replies" % agent
 
           when :broadcast, :request # publishing a request to all nodes with an agent
@@ -216,7 +220,7 @@ module MCollective
             if reply_to
               target[:headers]["reply-to"] = reply_to
             else
-              target[:headers]["reply-to"] = "/temp-queue/mcollective_reply_%s" % agent
+              target[:headers]["reply-to"] = reply_path
             end
             target[:id] = "%s_broadcast_%s" % [collective, agent]
 
@@ -224,7 +228,7 @@ module MCollective
             raise "Directed requests need to have a node identity" unless node
 
             target[:name] = "/exchange/%s_directed/%s" % [ collective, node]
-            target[:headers]["reply-to"] = "/temp-queue/mcollective_reply_%s" % agent
+            target[:headers]["reply-to"] = reply_path
 
           when :directed # subscribing to directed messages
             target[:name] = "/exchange/%s_directed/%s" % [ collective, @config.identity ]
@@ -236,8 +240,9 @@ module MCollective
 
       # Subscribe to a topic or queue
       def subscribe(agent, type, collective)
-        return if type == :reply
-
+        if ! get_bool_option("rabbitmq.use_reply_exchange", false) && type == :reply
+          return
+        end
         source = make_target(agent, type, collective)
 
         unless @subscriptions.include?(source[:id])
