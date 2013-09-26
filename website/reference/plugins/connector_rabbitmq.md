@@ -35,11 +35,18 @@ rabbitmqadmin declare user=mcollective password=changeme
 rabbitmqadmin declare permission vhost=/mcollective user=mcollective configure=.* write=.* read=.*
 {% endhighlight %}
 
-And then we need to create three exchanges that the mcollective plugin needs:
+Next we create the exchanges that MCollective needs. One for broadcast requests, other for direct addressing:
 
 {% highlight console %}
 rabbitmqadmin declare exchange vhost=/mcollective name=mcollective_broadcast type=topic
 rabbitmqadmin declare exchange vhost=/mcollective name=mcollective_direct type=direct
+{% endhighlight %}
+
+If you want to federate exchanges you will also need third one for sending replies, see 'Federation' section for configuration details.
+
+{%
+
+{% highlight console %}
 rabbitmqadmin declare exchange vhost=/mcollective name=mcollective_reply type=direct
 {% endhighlight %}
 
@@ -93,4 +100,10 @@ To enable that, specify:
 plugin.rabbitmq.use_reply_exchange = true
 {% endhighlight %}
 
-in client/server config file. Note that this change in config is backward-incompatible so you should upgrade all your MColective installations to same version. It also needs mcollective_reply exchange already created.
+in client/server config file and add exchange for replies:
+
+{% highlight ini %}
+rabbitmqadmin declare exchange vhost=/mcollective name=mcollective_reply type=direct
+{% endhighlight %}
+
+Note that this change in config is backward-incompatible so you should upgrade all your MColective installations to same version.
