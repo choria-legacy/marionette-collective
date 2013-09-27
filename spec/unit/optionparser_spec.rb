@@ -109,5 +109,92 @@ module MCollective
         parser.parse[:collective].should == :rspec
       end
     end
+
+    describe '#add_common_options' do
+      before :each do
+        @parser = Optionparser.new
+      end
+
+      after :each do
+        ARGV.pop
+      end
+
+      it 'should parse the --target option' do
+        ARGV << '--target=rspec_collective'
+        @parser.parse
+        @parser.instance_variable_get(:@options)[:collective].should == 'rspec_collective'
+      end
+
+      it 'should parse the --discovery-timeout option' do
+        ARGV << '--discovery-timeout=1'
+        @parser.parse
+        @parser.instance_variable_get(:@options)[:disctimeout].should == 1
+      end
+
+      it 'should parse the --timeout option' do
+        ARGV << '--timeout=5'
+        @parser.parse
+        @parser.instance_variable_get(:@options)[:timeout].should == 5
+      end
+
+      it 'should parse the --quiet option' do
+        ARGV << '--quiet'
+        @parser.parse
+        @parser.instance_variable_get(:@options)[:verbose].should == false
+      end
+
+      it 'should parse the --ttl option' do
+        ARGV << '--ttl=9'
+        @parser.parse
+        @parser.instance_variable_get(:@options)[:ttl].should == 9
+      end
+
+      it 'should parse the --reply-to option' do
+        ARGV << '--reply-to=/rspec/test'
+        @parser.parse
+        @parser.instance_variable_get(:@options)[:reply_to].should == '/rspec/test'
+      end
+
+      it 'should parse the --disc-method option' do
+        ARGV << '--disc-method=flatfile'
+        @parser.parse
+        @parser.instance_variable_get(:@options)[:discovery_method].should == 'flatfile'
+      end
+
+      it 'should fail on the --disc-method option if the discovery method has already been set' do
+        @parser.instance_variable_get(:@options)[:discovery_method] = 'flatfile'
+        ARGV << '--disc-method=dm'
+        expect{
+          @parser.parse
+        }.to raise_error('Discovery method is already set by a competing option')
+      end
+
+      it 'should parse the --disc-option option' do
+        ARGV << '--disc-option=option1'
+        ARGV << '--disc-option=option2'
+        @parser.parse
+        @parser.instance_variable_get(:@options)[:discovery_options].should == ['option1', 'option2']
+        ARGV.pop
+      end
+
+      it 'should parse the --nodes option' do
+        File.expects(:readable?).with('nodes.txt').returns(true)
+        ARGV << '--nodes=nodes.txt'
+        @parser.parse
+        @parser.instance_variable_get(:@options)[:discovery_method].should == 'flatfile'
+        @parser.instance_variable_get(:@options)[:discovery_options].should == ['nodes.txt']
+      end
+
+      it 'should fail on the --nodes option if discovery_method or discovery_options have already been set' do
+      end
+
+      it 'should fail if it cannot read the discovery file' do
+        File.expects(:readable?).with('nodes.txt').returns(false)
+        ARGV << '--nodes=nodes.txt'
+        expect{
+          @parser.parse
+        }.to raise_error('Cannot read the discovery file nodes.txt')
+      end
+    end
   end
 end
