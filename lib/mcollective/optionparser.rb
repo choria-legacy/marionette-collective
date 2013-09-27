@@ -167,7 +167,7 @@ module MCollective
         raise "Cannot read the discovery file #{v}" unless File.readable?(v)
 
         @options[:discovery_method] = "flatfile"
-        @options[:discovery_options] = v
+        @options[:discovery_options] << v
       end
     end
 
