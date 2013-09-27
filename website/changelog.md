@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/09/27|Fix buildmacpkg|16786|
 |2013/09/27|Fix --nodes 'nodefile' on ruby 1.9.3|22720|
 |2013/09/25|MCO Plugin Packager produces more than one source artifact|22316|
 |2013/09/06|Fix directed request on subcollectives with rabbit connector|21755|
