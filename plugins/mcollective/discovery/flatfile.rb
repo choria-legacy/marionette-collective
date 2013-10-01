@@ -6,16 +6,20 @@ module MCollective
     class Flatfile
       def self.discover(filter, timeout, limit=0, client=nil)
         unless client.options[:discovery_options].empty?
-          file = client.options[:discovery_options].first
+          filename = client.options[:discovery_options].first
+          if filename == '-'
+            file = STDIN
+          else
+            raise "Cannot read the file %s specified as discovery source" % filename unless File.readable?(filename)
+            file = File.open(filename, 'r')
+          end
         else
           raise "The flatfile discovery method needs a path to a text file"
         end
 
-        raise "Cannot read the file %s specified as discovery source" % file unless File.readable?(file)
-
         discovered = []
 
-        hosts = File.readlines(file).map do |host|
+        hosts = file.readlines.map do |host|
           host = host.chomp
           raise 'Identities can only match /\w\.\-/' unless host.match(/^[\w\.\-]+$/)
           host

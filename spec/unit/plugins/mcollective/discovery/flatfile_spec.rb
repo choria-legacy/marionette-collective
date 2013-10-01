@@ -15,12 +15,14 @@ module MCollective
 
 
           File.stubs(:readable?).with("/nonexisting").returns(true)
-          File.stubs(:readlines).with("/nonexisting").returns(["one", "two"])
+          @mock_file_obj = mock("My Mock File")
+          File.stubs(:open).with('/nonexisting', 'r').returns(@mock_file_obj)
+          @mock_file_obj.stubs(:readlines).returns(["one", "two"])
         end
 
         it "should use a file specified in discovery_options" do
           File.expects(:readable?).with("/nonexisting").returns(true)
-          File.expects(:readlines).with("/nonexisting").returns(["one", "two"])
+          @mock_file_obj.expects(:readlines).with().returns(["one", "two"])
           Flatfile.discover(Util.empty_filter, 0, 0, @client).should == ["one", "two"]
         end
 
@@ -45,7 +47,7 @@ module MCollective
 
         it "should fail for invalid identities" do
           [" one", "two ", " three ", "four four"].each do |host|
-            File.expects(:readlines).with("/nonexisting").returns([host])
+            @mock_file_obj.expects(:readlines).with().returns([host])
 
             expect {
               Flatfile.discover(Util.empty_filter, 0, 0, @client).should == ["one", "two", "three", "four"]
