@@ -15,6 +15,7 @@ require 'ostruct'
 require 'tmpdir'
 require 'tempfile'
 require 'fileutils'
+require 'mcollective/test'
 
 require 'monkey_patches/instance_variable_defined'
 require 'matchers/exception_matchers'
@@ -22,6 +23,7 @@ require 'matchers/exception_matchers'
 RSpec.configure do |config|
   config.mock_with :mocha
   config.include(MCollective::Matchers)
+  config.include(MCollective::Test::Matchers)
 
   config.before :each do
     MCollective::Config.instance.set_config_defaults("")
