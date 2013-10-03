@@ -78,6 +78,22 @@ action "get_fact", :description => "Retrieve a single fact from the fact store" 
     end
 end
 
+action "get_facts", :description => "Retrieve multiple facts from the fact store" do
+     display :always
+
+     input :facts,
+           :prompt      => "Comma-separated list of facts",
+           :description => "Facts to retrieve",
+           :type        => :string,
+           :validation  => '^\s*[\w\.\-]+(\s*,\s*[\w\.\-]+)*$',
+           :optional    => false,
+           :maxlength   => 200
+
+     output :values,
+            :description => "List of values of the facts",
+            :display_as => "Values"
+end
+
 action "daemon_stats", :description => "Get statistics from the running daemon" do
     display :always
 
