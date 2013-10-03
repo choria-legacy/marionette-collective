@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/10/03|Ability to retrieve multiple facts through rpcutil|21788|
 |2013/10/01|Fix packaging for debain/ubuntu with ruby 1.9|16572|
 |2013/09/27|Fix buildmacpkg|16786|
 |2013/09/27|Fix --nodes 'nodefile' on ruby 1.9.3|22720|
