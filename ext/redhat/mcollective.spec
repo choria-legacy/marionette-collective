@@ -1,7 +1,7 @@
 # Fedora 19 ships with ruby 2, which uses vendorlibdir instead
 # of sitelibdir
 %if 0%{?fedora} >= 19
-%global ruby_libdir %(ruby -rrconfig -e 'puts RbConfig::CONFIG["vendorlibdir"]')
+%global ruby_libdir %(ruby -rrbconfig -e 'puts RbConfig::CONFIG["vendorlibdir"]')
 %else
 %global ruby_libdir %(ruby -rrbconfig -e "puts RbConfig::CONFIG['sitelibdir']")
 %endif
