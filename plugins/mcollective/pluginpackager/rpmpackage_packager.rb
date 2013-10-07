@@ -3,7 +3,7 @@ module MCollective
     class RpmpackagePackager
       require 'erb'
 
-      def initialize(plugin, pluginpath = nil, signature = nil, verbose = false, keep_artifacts = nil)
+      def initialize(plugin, pluginpath = nil, signature = nil, verbose = false, keep_artifacts = nil, module_template = nil)
         if @buildtool = select_command
           @plugin = plugin
           @package_name = "#{@plugin.mcname}-#{@plugin.metadata[:name]}"
