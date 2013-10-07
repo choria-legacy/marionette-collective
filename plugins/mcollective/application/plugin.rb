@@ -279,24 +279,26 @@ mco plugin package [options] <directory>
 
     # Creates the correct package plugin object.
     def prepare_plugin
-        plugintype = set_plugin_type unless configuration[:plugintype]
-        configuration[:format] = "ospackage" unless configuration[:format]
-        PluginPackager.load_packagers
-        plugin_class = PluginPackager[configuration[:plugintype]]
-        configuration[:dependency] = configuration[:dependency][0].split(" ") if configuration[:dependency] && configuration[:dependency].size == 1
-        configuration[:dependency].map!{|dep| {:name => dep, :version => nil}} if configuration[:dependency]
-        mcdependency = {:mcname => configuration[:mcname], :mcversion => configuration[:mcversion]}
-        
-        #Deprecate  warning for --iteration
-        if configuration[:iteration]
-          puts 'Warning. The --iteration flag has been deprecated. Please use --revision instead.'
-          configuration[:revision] = configuration[:iteration] unless configuration[:revision]
-        end
+      plugintype = set_plugin_type unless configuration[:plugintype]
+      configuration[:format] = "ospackage" unless configuration[:format]
+      PluginPackager.load_packagers
+      plugin_class = PluginPackager[configuration[:plugintype]]
 
-        plugin_class.new(configuration[:target], configuration[:pluginname],
-                         configuration[:vendor], configuration[:preinstall],
-                         configuration[:postinstall], configuration[:revision],
-                         configuration[:dependency], mcdependency , plugintype)
+      if configuration[:dependency] && configuration[:dependency].size == 1
+        configuration[:dependency] = configuration[:dependency][0].split(" ")
+      elsif configuration[:dependency]
+        configuration[:dependency].map!{|dep| {:name => dep, :version => nil}}
+      end
+
+      mcdependency = {:mcname => configuration[:mcname], :mcversion => configuration[:mcversion]}
+
+      #Deprecation warning for --iteration
+      if configuration[:iteration]
+        puts 'Warning. The --iteration flag has been deprecated. Please use --revision instead.'
+        configuration[:revision] = configuration[:iteration] unless configuration[:revision]
+      end
+
+      plugin_class.new(configuration, mcdependency, plugintype)
     end
 
     def directory_for_type(type)
