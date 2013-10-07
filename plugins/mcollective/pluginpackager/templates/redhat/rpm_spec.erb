@@ -36,7 +36,7 @@ Summary: <%= @plugin.metadata[:description] %>
 <% if data[:plugindependency] %>
 Requires: <%= data[:plugindependency][:name] -%> = <%= data[:plugindependency][:version]%>-<%= data[:plugindependency][:revision]%>
 <% end -%>
-<% data[:dependencies].each do |dep|-%>
+<% PluginPackager.filter_dependencies('redhat', data[:dependencies]).each do |dep|-%>
 Requires: <%= dep[:name] -%> <%= ">= #{dep[:version]}" if dep[:version]%><%="-#{dep[:revision]}" if dep[:revision]%>
 <% end -%>
 %description <%= type %>

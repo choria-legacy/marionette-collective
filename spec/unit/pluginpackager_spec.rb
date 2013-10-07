@@ -127,5 +127,29 @@ module MCollective
         }.to raise_error(RuntimeError, "Failed: foo")
       end
     end
+
+    describe '#filter_dependencies' do
+      before :each do
+        @dependencies = [{:name => 'rspec', :version => '1.0'}]
+      end
+
+      it 'should leave normal dependencies intact' do
+        result = PluginPackager.filter_dependencies('debian', @dependencies)
+        result.should == @dependencies
+      end
+
+      it 'should filter out dependencies with the incorrect prefix' do
+        @dependencies << {:name => 'redhat::rspec_redhat', :version => '2.0'}
+        result = PluginPackager.filter_dependencies('debian', @dependencies)
+        result.should == [{:name => 'rspec', :version => '1.0'}]
+      end
+
+      it 'should reformat dependencies with the correct prefix' do
+        @dependencies << {:name => 'debian::rspec_debian', :version => '2.0'}
+        result = PluginPackager.filter_dependencies('debian', @dependencies)
+        result.should == [{:name => 'rspec', :version => '1.0'},
+                          {:name => 'rspec_debian', :version => '2.0'}]
+      end
+    end
   end
 end

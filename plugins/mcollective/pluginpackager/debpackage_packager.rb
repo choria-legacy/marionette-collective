@@ -89,7 +89,7 @@ module MCollective
       # foo
       def build_dependency_string(data)
         dependencies = []
-        data[:dependencies].each do |dep|
+        PluginPackager.filter_dependencies('debian', data[:dependencies]).each do |dep|
           if dep[:version] && dep[:revision]
             dependencies << "#{dep[:name]} (>=#{dep[:version]}-#{dep[:revision]})"
           elsif dep[:version]

@@ -64,5 +64,26 @@ module MCollective
     def self.safe_system(*args)
       raise(RuntimeError, "Failed: #{args.join(' ')}") unless system *args
     end
+
+    # Filter out platform specific dependencies
+    # Given a list of dependencies named -
+    # debian::foo
+    # redhat::bar
+    # PluginPackager.filter_dependencies('debian', dependencies)
+    # will return foo.
+    def self.filter_dependencies(prefix, dependencies)
+      dependencies.map do |dependency|
+        if dependency[:name] =~ /^(\w+)::(\w+)/
+          if prefix == $1
+            dependency[:name] = $2
+            dependency
+          else
+            nil
+          end
+        else
+          dependency
+        end
+      end.reject{ |dependency| dependency == nil }
+    end
   end
 end
