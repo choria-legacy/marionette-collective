@@ -5,22 +5,22 @@ module MCollective
       attr_accessor :path, :packagedata, :metadata, :target_path, :vendor, :revision, :preinstall
       attr_accessor :plugintype, :dependencies, :postinstall, :mcname, :mcversion
 
-      def initialize(path, name, vendor, preinstall, postinstall, revision, dependencies, mcdependency, plugintype)
+      def initialize(configuration, mcdependency, plugintype)
         @plugintype = plugintype
-        @path = path
+        @path = configuration[:target]
         @packagedata = {}
-        @revision = revision || 1
-        @preinstall = preinstall
-        @postinstall = postinstall
-        @vendor = vendor || "Puppet Labs"
-        @dependencies = dependencies || []
+        @revision = configuration[:revision] || 1
+        @preinstall = configuration[:preinstall]
+        @postinstall = configuration[:postinstall]
+        @vendor = configuration[:version] || "Puppet Labs"
+        @dependencies = configuration[:dependency] || []
         @target_path = File.expand_path(@path)
         @metadata, mcversion = PluginPackager.get_metadata(@path, "agent")
         @mcname = mcdependency[:mcname] ||  "mcollective"
         @mcversion = mcdependency[:mcversion] || mcversion
+        @metadata[:version] = (configuration[:version] || @metadata[:version])
         @dependencies << {:name => "#{@mcname}-common", :version => @mcversion}
-
-        @metadata[:name] = (name || @metadata[:name]).downcase.gsub(/\s+|_/, "-")
+        @metadata[:name] = (configuration[:pluginname] || @metadata[:name]).downcase.gsub(/\s+|_/, "-")
         identify_packages
       end
 
