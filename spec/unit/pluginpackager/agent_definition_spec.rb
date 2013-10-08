@@ -5,7 +5,7 @@ require 'spec_helper'
 module MCollective
   module PluginPackager
     describe AgentDefinition do
-      
+
       let(:configuration) do
         {:target      => '.',
          :pluginname  => 'test-package',
@@ -14,7 +14,8 @@ module MCollective
          :postinstall => nil,
          :version     => nil,
          :mcname      => nil,
-         :mcversion   => nil
+         :mcversion   => nil,
+         :vendor      => nil,
         }
       end
 
@@ -61,6 +62,12 @@ module MCollective
           configuration[:pluginname] = 'test  package'
           agent = AgentDefinition.new(configuration, {}, "agent")
           agent.metadata[:name].should == "test-package"
+        end
+
+        it 'should set the correct vendor name' do
+          configuration[:vendor] = 'rspec'
+          agent = AgentDefinition.new(configuration, {}, "agent")
+          agent.vendor.should == 'rspec'
         end
       end
 

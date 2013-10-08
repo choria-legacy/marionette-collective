@@ -12,7 +12,7 @@ module MCollective
         @revision = configuration[:revision] || 1
         @preinstall = configuration[:preinstall]
         @postinstall = configuration[:postinstall]
-        @vendor = configuration[:version] || "Puppet Labs"
+        @vendor = configuration[:vendor] || "Puppet Labs"
         @dependencies = configuration[:dependency] || []
         @target_path = File.expand_path(@path)
         @metadata, mcversion = PluginPackager.get_metadata(@path, "agent")
