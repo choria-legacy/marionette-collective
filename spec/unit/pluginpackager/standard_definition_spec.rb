@@ -53,6 +53,12 @@ module MCollective
           plugin = StandardDefinition.new(configuration, {}, "testplugin")
           plugin.metadata[:name].should == "test-plugin"
         end
+
+        it 'should set the correct vendor name' do
+          configuration[:vendor] = 'rspec'
+          agent = StandardDefinition.new(configuration, {}, "agent")
+          agent.vendor.should == 'rspec'
+        end
       end
 
       describe "#identify_packages" do
