@@ -4,22 +4,22 @@ module MCollective
       attr_accessor :path, :packagedata, :metadata, :target_path, :vendor, :revision
       attr_accessor :plugintype, :preinstall, :postinstall, :dependencies, :mcname, :mcversion
 
-      def initialize(path, name, vendor, preinstall, postinstall, revision, dependencies, mcdependency, plugintype)
+      def initialize(configuration, mcdependency, plugintype)
         @plugintype = plugintype
-        @path = path
+        @path = configuration[:target]
         @packagedata = {}
-        @revision = revision || 1
-        @preinstall = preinstall
-        @postinstall = postinstall
-        @vendor = vendor || "Puppet Labs"
-        @dependencies = dependencies || []
+        @revision = configuration[:revision] || 1
+        @preinstall = configuration[:preinstall]
+        @postinstall = configuration[:postinstall]
+        @vendor = configuration[:vendor] || "Puppet Labs"
+        @dependencies = configuration[:dependency] || []
         @target_path = File.expand_path(@path)
         @metadata, mcversion = PluginPackager.get_metadata(@path, @plugintype)
-
         @mcname = mcdependency[:mcname] || "mcollective"
         @mcversion = mcdependency[:mcversion] || mcversion
         @dependencies << {:name => "#{mcname}-common", :version => @mcversion}
-        @metadata[:name] = (name || @metadata[:name]).downcase.gsub(/\s+|_/, "-")
+        @metadata[:name] = (configuration[:pluginname] || @metadata[:name]).downcase.gsub(/\s+|_/, "-")
+        @metadata[:version] = (configuration[:version] || @metadata[:version])
         identify_packages
       end
 
@@ -28,7 +28,7 @@ module MCollective
         common_package = common
         @packagedata[:common] = common_package if common_package
         plugin_package = plugin
-        @packagedata[@plugintype] = plugin_package if plugin_package
+        @packagedata[@plugintype.to_sym] = plugin_package if plugin_package
       end
 
       # Obtain standard plugin files and dependencies
