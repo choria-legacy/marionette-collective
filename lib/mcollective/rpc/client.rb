@@ -5,7 +5,7 @@ module MCollective
     class Client
       attr_accessor :timeout, :verbose, :filter, :config, :progress, :ttl, :reply_to
       attr_reader :client, :stats, :ddl, :agent, :limit_targets, :limit_method, :output_format, :batch_size, :batch_sleep_time, :batch_mode
-      attr_reader :discovery_options, :discovery_method, :limit_seed
+      attr_reader :discovery_options, :discovery_method, :default_discovery_method, :limit_seed
 
       @@initial_options = nil
 
@@ -57,7 +57,13 @@ module MCollective
         @output_format = initial_options[:output_format] || :console
         @force_direct_request = false
         @reply_to = initial_options[:reply_to]
-        @discovery_method = initial_options[:discovery_method] || Config.instance.default_discovery_method
+        @discovery_method = initial_options[:discovery_method]
+        if !@discovery_method
+          @discovery_method = Config.instance.default_discovery_method
+          @default_discovery_method = true
+        else
+          @default_discovery_method = false
+        end
         @discovery_options = initial_options[:discovery_options] || []
         @force_display_mode = initial_options[:force_display_mode] || false
 
@@ -367,6 +373,7 @@ module MCollective
       # since that is the user supplied timeout either via initial options
       # or via specifically setting it on the client.
       def discovery_method=(method)
+        @default_discovery_method = false
         @discovery_method = method
 
         if @initial_options[:discovery_options]
