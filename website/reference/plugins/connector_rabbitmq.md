@@ -27,21 +27,28 @@ basic broker you need to enable the [Stomp plugi][RabbitStomp] and the [CLI Mana
 With that in place you need to create a few exchanges, topics and queues for each of your
 sub collectives.
 
-First we create a virtual host, user and some permissions on the vhost:
+First we create a virtual host, user and some permissions on the vhost (including permissions for the default rabbitmqadmin user to modify the new virtual host):
 
 {% highlight console %}
-rabbitmqadmin declare vhost=/mcollective
-rabbitmqadmin declare user=mcollective password=changeme
+rabbitmqadmin declare vhost name=/mcollective 
+rabbitmqadmin declare user name=mcollective password=changeme tags=
 rabbitmqadmin declare permission vhost=/mcollective user=mcollective configure=.* write=.* read=.*
+rabbitmqadmin declare permission vhost=/mcollective user=guest configure=.* write=.* read=.*
 {% endhighlight %}
 
 And then we need to create two exchanges that the mcollective plugin needs:
 
 {% highlight console %}
-rabbitmqadmin declare exchange --vhost=/mcollective name=mcollective_broadcast type=topic
 rabbitmqadmin declare exchange --vhost=/mcollective name=mcollective_directed type=direct
+rabbitmqadmin declare exchange --vhost=/mcollective name=mcollective_broadcast type=topic
 {% endhighlight %}
 
+If we are going to use multiple collectives, we need to declare exchanges for each collective:
+
+{% highlight console %}
+rabbitmqadmin declare exchange --vhost=/mcollective name=anothercollective_directed type=direct
+rabbitmqadmin declare exchange --vhost=/mcollective name=anothercollective_broadcast type=topic
+{% endhighlight %}
 ## Configuring MCollective
 
 ### Common Options
