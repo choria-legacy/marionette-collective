@@ -12,14 +12,13 @@ module MCollective
     def service_main
       Log.debug("Starting Windows Service Daemon")
 
-      runner = Runner.new(nil)
-      runner.run
+      while running?
+        Runner.new(nil).run
+      end
     end
 
     def service_stop
       Log.info("Windows service stopping")
-      PluginManager["connector_plugin"].disconnect
-      exit! 0
     end
   end
 end
