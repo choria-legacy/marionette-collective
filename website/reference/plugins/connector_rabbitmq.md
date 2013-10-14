@@ -22,7 +22,7 @@ RabbitMQ broker.
 ## Configuring RabbitMQ
 
 Basic installation of the RabbitMQ broker is out of scope for this document apart from the
-basic broker you need to enable the [Stomp plugi][RabbitStomp] and the [CLI Management Tool][RabbitCLI].
+basic broker you need to enable the [Stomp plugin][RabbitStomp] and the [CLI Management Tool][RabbitCLI].
 
 With that in place you need to create a few exchanges, topics and queues for each of your
 sub collectives.
