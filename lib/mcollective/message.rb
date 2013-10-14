@@ -211,21 +211,16 @@ module MCollective
 
     # publish a reply message by creating a target name and sending it
     def publish
-      Timeout.timeout(2) do
-        # If we've been specificaly told about hosts that were discovered
-        # use that information to do P2P calls if appropriate else just
-        # send it as is.
-        if @discovered_hosts && Config.instance.direct_addressing
-          if @discovered_hosts.size <= Config.instance.direct_addressing_threshold
-            self.type = :direct_request
-            Log.debug("Handling #{requestid} as a direct request")
-          end
-
-          PluginManager["connector_plugin"].publish(self)
-        else
-          PluginManager["connector_plugin"].publish(self)
-        end
+      # If we've been specificaly told about hosts that were discovered
+      # use that information to do P2P calls if appropriate else just
+      # send it as is.
+      config = Config.instance
+      if @discovered_hosts && config.direct_addressing && (@discovered_hosts.size <= config.direct_addressing_threshold)
+        self.type = :direct_request
+        Log.debug("Handling #{requestid} as a direct request")
       end
+
+      PluginManager['connector_plugin'].publish(self)
     end
 
     def create_reqid

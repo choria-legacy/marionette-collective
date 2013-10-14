@@ -169,6 +169,18 @@ module MCollective
         }.to raise_error('Discovery method is already set by a competing option')
       end
 
+      it 'should parse the --publish_timeout option' do
+        ARGV << '--publish_timeout=5'
+        @parser.parse
+        @parser.instance_variable_get(:@options)[:publish_timeout].should == 5
+      end
+
+      it 'should parse the --threaded option' do
+        ARGV << '--threaded'
+        @parser.parse
+        @parser.instance_variable_get(:@options)[:threaded].should == true
+      end
+
       it 'should parse the --disc-option option' do
         ARGV << '--disc-option=option1'
         ARGV << '--disc-option=option2'
