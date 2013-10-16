@@ -8,6 +8,8 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/10/16|Add option to thread client|21910|
+|2013/10/16|Publishing time should not be part of the request time|21910|
 |2013/10/11|Add a stdin discovery method|22061|
 |2013/10/08|Plugin packager doesn't apply --pluginversion option|22790|
 |2013/10/07|Mcollective plugins cannot express dependencies|22361|
