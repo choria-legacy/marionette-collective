@@ -15,6 +15,7 @@ module MCollective
     attr_reader :main_collective, :ssl_cipher, :registration_collective
     attr_reader :direct_addressing, :direct_addressing_threshold, :ttl
     attr_reader :default_discovery_method, :default_discovery_options
+    attr_reader :publish_timeout, :threaded
 
     def initialize
       @configured = false
@@ -85,6 +86,8 @@ module MCollective
                   @classesfile = val
                 when /^plugin.(.+)$/
                   @pluginconf[$1] = val
+                when "publish_timeout"
+                  @publish_timeout = val.to_i
                 when "rpcaudit"
                   @rpcaudit = Util.str_to_bool(val)
                 when "rpcauditprovider"
@@ -101,6 +104,8 @@ module MCollective
                   @fact_cache_time = val.to_i
                 when "ssl_cipher"
                   @ssl_cipher = val
+                when "threaded"
+                  @threaded = Util.str_to_bool(val)
                 when "ttl"
                   @ttl = val.to_i
                 when "default_discovery_options"
@@ -180,6 +185,8 @@ module MCollective
       @default_discovery_options = []
       @ttl = 60
       @mode = :client
+      @publish_timeout = 2
+      @threaded = false
     end
 
     def read_plugin_config_dir(dir)

@@ -77,6 +77,8 @@ module MCollective
 
         @collective = @client.collective
         @ttl = initial_options[:ttl] || Config.instance.ttl
+        @publish_timeout = initial_options[:publish_timeout] || Config.instance.publish_timeout
+        @threaded = initial_options[:threaded] || Config.instance.threaded
 
         # if we can find a DDL for the service override
         # the timeout of the client so we always magically
@@ -562,7 +564,9 @@ module MCollective
          :discovery_method => @discovery_method,
          :discovery_options => @discovery_options,
          :force_display_mode => @force_display_mode,
-         :config => @config}
+         :config => @config,
+         :publish_timeout => @publish_timeout,
+         :threaded => @threaded}
       end
 
       # Sets the collective we are communicating with
