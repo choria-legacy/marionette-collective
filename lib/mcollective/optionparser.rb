@@ -169,6 +169,14 @@ module MCollective
         @options[:discovery_method] = "flatfile"
         @options[:discovery_options] << v
       end
+
+      @parser.on("--publish_timeout TIMEOUT", Integer, "Timeout for publishing requests to remote agents.") do |pt|
+        @options[:publish_timeout] = pt
+      end
+
+      @parser.on("--threaded", "Start publishing requests and receiving responses in threaded mode.") do |v|
+        @options[:threaded] = true
+      end
     end
 
     private
