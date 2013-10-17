@@ -24,17 +24,10 @@ module MCollective
       end
 
       describe "#service_stop" do
-        it "should disconnect and exit" do
+        it "should log and exit" do
           Log.expects(:info)
 
-          connector = mock
-          connector.expects(:disconnect).once
-
-          PluginManager.expects("[]").with("connector_plugin").returns(connector)
-
           d = WindowsDaemon.new
-          d.expects("exit!").once
-
           d.service_stop
         end
       end
