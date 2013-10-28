@@ -1,0 +1,45 @@
+---
+project: 'mcollective'
+author: 'Puppet Labs'
+email: 'info@puppetlabs.com'
+homepage: 'https://docs.puppetlabs.com/mcollective/'
+summary: 'Application Server for hosting Ruby code on any capable middleware'
+description: 'The Marionette Collective, e.g. mcollective, is a framework for building server orchestration or parallel job execution systems.'
+version_file: 'lib/mcollective.rb'
+update_version_file: true
+version_strategy: 'odd_even'
+# files and gem_files are space separated lists
+files: 'mcollective.init COPYING doc etc lib plugins ext bin install.rb'
+# List of packaging related templates to evaluate before the tarball is packed
+templates:
+  - "ext/redhat/mcollective.spec.erb"
+  - "ext/debian/changelog.erb"
+# The gem is only built for the mcollective client
+gem_name: 'mcollective-client'
+gem_summary: 'Client libraries for the Mcollective Application Server'
+gem_description: 'Client libraries for the Mcollective Application Server'
+gem_files: 'lib bin'
+gem_test_files: 'spec/**/*'
+gem_require_path: 'lib'
+gem_executables: 'mco'
+gem_default_executables: 'mco'
+gem_excludes: "bin/mcollectived lib/mcollective/runner.rb lib/mcollective/vendor/json lib/mcollective/vendor/load_json.rb lib/mcollective/vendor/systemu lib/mcollective/vendor/load_systemu.rb lib/mcollective/vendor/i18n lib/mcollective/vendor/load_i18n.rb"
+gem_runtime_dependencies:
+  systemu:
+  json:
+  stomp:
+  i18n:
+gem_rdoc_options:
+  - --line-numbers
+  - --main
+  - Mcollective
+  - --exclude
+  - mcollective/vendor
+  - --exclude
+  - spec
+  - --exclude
+  - ext
+  - --exclude
+  - website
+  - --exclude
+  - plugins
