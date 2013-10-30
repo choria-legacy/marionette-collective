@@ -8,6 +8,8 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/10/30|Add rabbitmq federation support with `plugin.rabbitmq.use_reply_exchange`|22603|
+|2013/10/30|Update rabbitmq connector documentation for recent version of rabbitmqadmin|19537|
 |2013/10/17|mcollective service does not gracefully exit on windows|20467|
 |2013/10/16|Add option to thread client|21910|
 |2013/10/16|Publishing time should not be part of the request time|21910|
