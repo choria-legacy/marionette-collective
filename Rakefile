@@ -170,7 +170,6 @@ task :deb => [:clean, :doc, :package] do
     Dir.chdir("#{PROJ_NAME}-#{CURRENT_VERSION}") do
       safe_system %{cp -R ext/debian .}
       safe_system %{cp -R ext/debian/mcollective.init .}
-      safe_system %{cp -R ext/Makefile .}
 
       File.open("debian/changelog", "w") do |f|
         f.puts("mcollective (#{CURRENT_VERSION}-#{CURRENT_RELEASE}) #{PKG_DEB_DISTRIBUTION}; urgency=low")
