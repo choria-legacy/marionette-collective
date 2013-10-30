@@ -27,6 +27,7 @@ module MCollective
         @config.stubs(:configured).returns(true)
         @config.stubs(:identity).returns("rspec")
         @config.stubs(:collectives).returns(["mcollective"])
+        @config.stubs(:pluginconf).returns({})
 
         logger = mock
         logger.stubs(:log)
@@ -462,13 +463,82 @@ module MCollective
       end
 
       describe "#make_target" do
-        it "should create correct targets" do
-          @c.make_target("test", :reply, "mcollective").should == {:name => "/temp-queue/mcollective_reply_test", :headers => {}, :id => "mcollective_test_replies"}
-          @c.make_target("test", :broadcast, "mcollective").should == {:name => "/exchange/mcollective_broadcast/test", :headers => {"reply-to"=>"/temp-queue/mcollective_reply_test"}, :id => "mcollective_broadcast_test"}
-          @c.make_target("test", :request, "mcollective").should == {:name => "/exchange/mcollective_broadcast/test", :headers => {"reply-to"=>"/temp-queue/mcollective_reply_test"}, :id => "mcollective_broadcast_test"}
-          @c.make_target("test", :direct_request, "mcollective", nil, "rspec").should == {:headers=>{"reply-to"=>"/temp-queue/mcollective_reply_test"}, :name=>"/exchange/mcollective_directed/rspec", :id => nil}
-          @c.make_target("test", :directed, "mcollective").should == {:name => "/exchange/mcollective_directed/rspec", :headers=>{}, :id => "mcollective_rspec_directed_to_identity"}
-          @c.make_target("test", :request, "mcollective", "/topic/rspec", "rspec").should == {:headers=>{"reply-to"=>"/topic/rspec"}, :name=>"/exchange/mcollective_broadcast/test", :id => "mcollective_broadcast_test"}
+        context 'rabbitmq.use_reply_exchange' do
+          context 'default (false)' do
+            it "should create correct targets" do
+              @c.make_target("test", :reply, "mcollective").should eq({
+                :name => "/temp-queue/mcollective_reply_test",
+                :headers => {},
+                :id => "mcollective_test_replies",
+              })
+              @c.make_target("test", :broadcast, "mcollective").should eq({
+                :name => "/exchange/mcollective_broadcast/test",
+                :headers => { "reply-to" => "/temp-queue/mcollective_reply_test" },
+                :id => "mcollective_broadcast_test"
+              })
+              @c.make_target("test", :request, "mcollective").should eq({
+                :name => "/exchange/mcollective_broadcast/test",
+                :headers => { "reply-to" => "/temp-queue/mcollective_reply_test" },
+                :id => "mcollective_broadcast_test",
+              })
+              @c.make_target("test", :direct_request, "mcollective", nil, "rspec").should eq({
+                :headers => { "reply-to" => "/temp-queue/mcollective_reply_test" },
+                :name => "/exchange/mcollective_directed/rspec",
+                :id => nil
+              })
+              @c.make_target("test", :directed, "mcollective").should eq({
+                :name => "/exchange/mcollective_directed/rspec",
+                :headers => {},
+                :id => "mcollective_rspec_directed_to_identity",
+              })
+              @c.make_target("test", :request, "mcollective", "/topic/rspec", "rspec").should eq({
+                :headers => { "reply-to" => "/topic/rspec" },
+                :name => "/exchange/mcollective_broadcast/test",
+                :id => "mcollective_broadcast_test",
+              })
+            end
+          end
+
+          context 'true' do
+            before :each do
+              @config.stubs(:pluginconf).returns({
+                'rabbitmq.use_reply_exchange' => '1',
+              })
+            end
+
+            it "should create correct targets" do
+              @c.make_target("test", :reply, "mcollective").should eq({
+                :name => "/exchange/mcollective_reply/rspec_#{$$}",
+                :headers => {},
+                :id => "mcollective_test_replies",
+              })
+              @c.make_target("test", :broadcast, "mcollective").should eq({
+                :name => "/exchange/mcollective_broadcast/test",
+                :headers => { "reply-to" => "/exchange/mcollective_reply/rspec_#{$$}" },
+                :id => "mcollective_broadcast_test"
+              })
+              @c.make_target("test", :request, "mcollective").should eq({
+                :name => "/exchange/mcollective_broadcast/test",
+                :headers => { "reply-to" => "/exchange/mcollective_reply/rspec_#{$$}" },
+                :id => "mcollective_broadcast_test",
+              })
+              @c.make_target("test", :direct_request, "mcollective", nil, "rspec").should eq({
+                :headers => { "reply-to" => "/exchange/mcollective_reply/rspec_#{$$}" },
+                :name => "/exchange/mcollective_directed/rspec",
+                :id => nil
+              })
+              @c.make_target("test", :directed, "mcollective").should eq({
+                :name => "/exchange/mcollective_directed/rspec",
+                :headers => {},
+                :id => "mcollective_rspec_directed_to_identity",
+              })
+              @c.make_target("test", :request, "mcollective", "/topic/rspec", "rspec").should eq({
+                :headers => { "reply-to" => "/topic/rspec" },
+                :name => "/exchange/mcollective_broadcast/test",
+                :id => "mcollective_broadcast_test",
+              })
+            end
+          end
         end
 
         it "should raise an error for unknown collectives" do

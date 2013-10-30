@@ -87,3 +87,24 @@ plugin.rabbitmq.max_reconnect_attempts = 0
 plugin.rabbitmq.randomize = false
 plugin.rabbitmq.timeout = -1
 {% endhighlight %}
+
+### Federation
+
+RabbitMQ federation only mirrors exchanges between nodes so replies need to be
+sent to an exchange instead of a queue.  In order to enable that add the
+following snippet to your client configuration:
+
+{% highlight ini %}
+plugin.rabbitmq.use_reply_exchange = true
+{% endhighlight %}
+
+You will also need to create an exchange called `mcollective_reply` in your
+rabbitmq vhost.  Assuming you are using the same vhost names from earlier in this
+guide you can create this with.
+
+{% highlight console %}
+rabbitmqadmin declare exchange --user=admin --password=changeme --vhost=/mcollective name=mcollective_reply type=direct
+{% endhighlight %}
+
+Note: the `rabbitmq.use_reply_exchange` feature is only in master currently,
+but will be released as part of MCollective 2.3.3 and 2.4.0.
