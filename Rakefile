@@ -37,7 +37,7 @@ def init
 end
 
 def safe_system *args
-  raise RuntimeError, "Failed: #{args.join(' ')}" unless system *args
+  raise RuntimeError, "Failed: #{args.join(' ')}" unless system(*args)
 end
 
 spec = Gem::Specification.new do |s|
