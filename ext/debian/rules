@@ -4,7 +4,6 @@ DEB_MAKE_CLEAN_TARGET    :=
 DEB_MAKE_INSTALL_TARGET  := install DESTDIR=$(CURDIR)/debian/tmp
 
 include /usr/share/cdbs/1/rules/debhelper.mk
-include /usr/share/cdbs/1/rules/dpatch.mk
 include /usr/share/cdbs/1/class/makefile.mk
 DEB_MAKE_INVOKE = $(DEB_MAKE_ENVVARS) make -f ext/Makefile.debian -C $(DEB_BUILDDIR)
 
