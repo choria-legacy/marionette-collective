@@ -223,9 +223,11 @@ def prepare_installation
     destdir = ''
   end
 
-  configdir = File.join(destdir, configdir)
-  bindir = File.join(destdir, bindir)
-  sitelibdir = File.join(destdir, sitelibdir)
+  configdir   = File.join(destdir, configdir)
+  bindir      = File.join(destdir, bindir)
+  sbindir     = File.join(destdir, sbindir)
+  sitelibdir  = File.join(destdir, sitelibdir)
+  plugindir   = File.join(destdir, plugindir)
 
   makedirs(configdir) if InstallOptions.configs
   makedirs(bindir)
