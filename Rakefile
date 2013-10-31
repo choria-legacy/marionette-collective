@@ -1,4 +1,5 @@
 # Rakefile to build a project using HUDSON
+RAKE_ROOT = File.expand_path(File.dirname(__FILE__))
 
 begin
   require 'rdoc/task'
@@ -25,6 +26,11 @@ ENV["BUILD_NUMBER"] ? CURRENT_RELEASE = ENV["BUILD_NUMBER"] : CURRENT_RELEASE = 
 ENV["DEB_DISTRIBUTION"] ? PKG_DEB_DISTRIBUTION = ENV["DEB_DISTRIBUTION"] : PKG_DEB_DISTRIBUTION = "unstable"
 
 CLEAN.include(["build", "doc"])
+
+begin
+  load File.join(RAKE_ROOT, 'ext', 'packaging.rake')
+rescue LoadError
+end
 
 def announce(msg='')
   STDERR.puts "================"
