@@ -25,6 +25,8 @@ URL:            http://puppetlabs.com/mcollective/introduction/
 Source0:        http://downloads.puppetlabs.com/mcollective/%{name}-%{realversion}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  ruby >= 1.8
+BuildRequires:  rubygems
+BuildRequires:  rubygem-stomp
 Requires:       mcollective-common = %{version}-%{release}
 Packager:       Puppet Labs <info@puppetlabs.com>
 BuildArch:      noarch
@@ -78,43 +80,23 @@ Client tools for the mcollective Application Server
 
 %install
 rm -rf %{buildroot}
-%{__install} -d -m0755  %{buildroot}/%{ruby_libdir}/mcollective
-%{__install} -d -m0755  %{buildroot}%{_bindir}
-%{__install} -d -m0755  %{buildroot}%{_sbindir}
+
+ruby install.rb --destdir=%{buildroot} --no-rdoc --sitelibdir=%{ruby_libdir} --plugindir=%{_libexecdir}/mcollective
+
 %if 0%{?_with_systemd}
 %{__install} -d -m0755  %{buildroot}%{_unitdir}
+%{__install} -m0644 ext/redhat/mcollective.service %{buildroot}%{_unitdir}/mcollective.service
 %else
 %{__install} -d -m0755  %{buildroot}%{_sysconfdir}/init.d
-%endif
-%{__install} -d -m0755  %{buildroot}%{_libexecdir}/mcollective/
-%{__install} -d -m0755  %{buildroot}%{_sysconfdir}/mcollective
-%{__install} -d -m0755  %{buildroot}%{_sysconfdir}/mcollective/plugin.d
-%{__install} -d -m0755  %{buildroot}%{_sysconfdir}/mcollective/ssl
-%{__install} -d -m0755  %{buildroot}%{_sysconfdir}/mcollective/ssl/clients
-%{__install} -m0755 bin/mcollectived %{buildroot}%{_sbindir}/mcollectived
-%{__install} -m0640 etc/server.cfg.dist %{buildroot}%{_sysconfdir}/mcollective/server.cfg
-%{__install} -m0644 etc/client.cfg.dist %{buildroot}%{_sysconfdir}/mcollective/client.cfg
-%{__install} -m0444 etc/facts.yaml.dist %{buildroot}%{_sysconfdir}/mcollective/facts.yaml
-%{__install} -m0444 etc/rpc-help.erb %{buildroot}%{_sysconfdir}/mcollective/rpc-help.erb
-%{__install} -m0444 etc/data-help.erb %{buildroot}%{_sysconfdir}/mcollective/data-help.erb
-%{__install} -m0444 etc/discovery-help.erb %{buildroot}%{_sysconfdir}/mcollective/discovery-help.erb
-%{__install} -m0444 etc/metadata-help.erb %{buildroot}%{_sysconfdir}/mcollective/metadata-help.erb
 %if 0%{?suse_version}
 %{__install} -m0755 mcollective.init %{buildroot}%{_sysconfdir}/init.d/mcollective
-%else
-%if 0%{?_with_systemd}
-%{__install} -m0755 ext/redhat/mcollective.service %{buildroot}%{_unitdir}/mcollective.service
 %else
 %{__install} -m0755 ext/redhat/mcollective.init %{buildroot}%{_sysconfdir}/init.d/mcollective
 %endif
 %endif
 
-
-cp -R lib/* %{buildroot}/%{ruby_libdir}/
-cp -R plugins/* %{buildroot}%{_libexecdir}/mcollective/
-cp bin/mc-* %{buildroot}%{_sbindir}/
-cp bin/mco %{buildroot}%{_bindir}/
-chmod 0755 %{buildroot}%{_sbindir}/*
+%{__install} -d -m0755  %{buildroot}%{_sysconfdir}/mcollective/plugin.d
+%{__install} -d -m0755  %{buildroot}%{_sysconfdir}/mcollective/ssl/clients
 
 %clean
 rm -rf %{buildroot}
@@ -157,6 +139,7 @@ fi
 %files common
 %defattr(-, root, root, 0755)
 %doc COPYING
+%doc doc
 %{ruby_libdir}/mcollective.rb
 %{ruby_libdir}/mcollective
 %{_libexecdir}/mcollective/mcollective
@@ -176,7 +159,7 @@ fi
 %files
 %defattr(-, root, root, 0755)
 %doc COPYING
-%{_sbindir}/mcollectived
+%attr(0755, root, root)%{_sbindir}/mcollectived
 %if 0%{?_with_systemd}
 %{_unitdir}/mcollective.service
 %else
