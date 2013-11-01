@@ -285,7 +285,7 @@ end
 # Change directory into the mcollective root so we don't get the wrong files for install.
 cd File.dirname(__FILE__) do
   # Set these values to what you want installed.
-  configs = glob(%w{etc/ssl/clients/PLACEHOLDER etc/*.dist })
+  configs = glob(%w{etc/*.dist})
   erbs = glob(%w{etc/*.erb})
   bins = glob(%w{bin/mco})
   sbins = glob(%w{bin/mcollectived bin/mc-call-agent})
