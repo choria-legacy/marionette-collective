@@ -86,6 +86,9 @@ module MCollective
           Log.info("Unexpected exception received while waiting for child process: #{e.class}: #{e}")
         end
       end
+      #kill the guardian thread when the process exited
+      @status.thread.kill
+      @status
     end
   end
 end
