@@ -1,0 +1,178 @@
+# Fedora 17 and later use vendorlibdir instead of sitelibdir (see https://fedoraproject.org/wiki/Packaging:Ruby?rd=Packaging/Ruby#Pure_Ruby_packages)
+%if 0%{?fedora} >= 17 || 0%{?rhel} >= 7
+%global         ruby_libdir %(ruby -rrbconfig -e 'puts RbConfig::CONFIG["vendorlibdir"]')
+%else
+%global         ruby_libdir %(ruby -rrbconfig -e "puts RbConfig::CONFIG['sitelibdir']")
+%endif
+
+%if 0%{?fedora} >= 17 || 0%{?rhel} >= 7
+%global         _with_systemd 1
+%else
+%global         _with_systemd 0
+%endif
+
+# VERSION is subbed out during rake package:srpm process
+%global         realversion <%= @version %>
+%global         rpmversion <%= @rpmversion %>
+
+Summary:        Application Server for hosting Ruby code on any capable middleware
+Name:           mcollective
+Version:        %{rpmversion}
+Release:        <%= @rpmrelease -%>%{?dist}
+Group:          System Environment/Daemons
+License:        ASL 2.0
+URL:            http://puppetlabs.com/mcollective/introduction/
+Source0:        http://downloads.puppetlabs.com/mcollective/%{name}-%{realversion}.tar.gz
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildRequires:  ruby >= 1.8
+BuildRequires:  rubygems
+BuildRequires:  rubygem-stomp
+Requires:       mcollective-common = %{version}-%{release}
+Packager:       Puppet Labs <info@puppetlabs.com>
+BuildArch:      noarch
+
+%if 0%{?_with_systemd}
+# Required for %%post, %%preun, %%postun
+Requires:       systemd
+%if 0%{?fedora} >= 18
+BuildRequires:  systemd
+%else
+BuildRequires:  systemd-units
+%endif
+%else
+# Required for %%post and %%preun
+Requires:       chkconfig
+# Required for %%preun and %%postun
+Requires:       initscripts
+%endif
+
+%description
+The Marionette Collective:
+
+Server for the mcollective Application Server
+
+%package common
+Summary:        Common libraries for the mcollective clients and servers
+Group:          System Environment/Libraries
+Requires:       ruby >= 1.8
+Requires:       rubygems
+Requires:       rubygem-stomp
+
+%description common
+The Marionette Collective:
+
+Common libraries for the mcollective clients and servers
+
+%package client
+Summary:        Client tools for the mcollective Application Server
+Requires:       mcollective-common = %{version}-%{release}
+Group:          Applications/System
+
+%description client
+The Marionette Collective:
+
+Client tools for the mcollective Application Server
+
+%prep
+%setup -q -n %{name}-%{realversion}
+
+%build
+
+%install
+rm -rf %{buildroot}
+
+ruby install.rb --destdir=%{buildroot} --no-rdoc --sitelibdir=%{ruby_libdir} --plugindir=%{_libexecdir}/mcollective
+
+%if 0%{?_with_systemd}
+%{__install} -d -m0755  %{buildroot}%{_unitdir}
+%{__install} -m0644 ext/redhat/mcollective.service %{buildroot}%{_unitdir}/mcollective.service
+%else
+%{__install} -d -m0755  %{buildroot}%{_sysconfdir}/init.d
+%if 0%{?suse_version}
+%{__install} -m0755 mcollective.init %{buildroot}%{_sysconfdir}/init.d/mcollective
+%else
+%{__install} -m0755 ext/redhat/mcollective.init %{buildroot}%{_sysconfdir}/init.d/mcollective
+%endif
+%endif
+
+%{__install} -d -m0755  %{buildroot}%{_sysconfdir}/mcollective/plugin.d
+%{__install} -d -m0755  %{buildroot}%{_sysconfdir}/mcollective/ssl/clients
+
+%clean
+rm -rf %{buildroot}
+
+%post
+%if 0%{?_with_systemd}
+if [ $1 -eq 1 ] ; then
+    /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+fi
+%else
+/sbin/chkconfig --add mcollective || :
+%endif
+
+%postun
+%if 0%{?_with_systemd}
+if [ $1 -ge 1 ] ; then
+    # Package upgrade, not uninstall
+    /bin/systemctl try-restart mcollective.service >/dev/null 2>&1 || :
+fi
+%else
+if [ "$1" -ge 1 ]; then
+  /sbin/service mcollective condrestart &>/dev/null || :
+fi
+%endif
+
+%preun
+%if 0%{?_with_systemd}
+if [ $1 -eq 0 ] ; then
+    # Package removal, not upgrade
+    /bin/systemctl --no-reload disable mcollective.service > /dev/null 2>&1 || :
+    /bin/systemctl stop mcollective.service > /dev/null 2>&1 || :
+fi
+%else
+if [ "$1" = 0 ] ; then
+  /sbin/service mcollective stop > /dev/null 2>&1
+  /sbin/chkconfig --del mcollective || :
+fi
+%endif
+
+%files common
+%defattr(-, root, root, 0755)
+%doc COPYING
+%doc doc
+%{ruby_libdir}/mcollective.rb
+%{ruby_libdir}/mcollective
+%{_libexecdir}/mcollective/mcollective
+%dir %{_sysconfdir}/mcollective
+%dir %{_sysconfdir}/mcollective/ssl
+%config %{_sysconfdir}/mcollective/*.erb
+
+%files client
+%defattr(-, root, root, 0755)
+%attr(0755, root, root)%{_sbindir}/mc-call-agent
+%attr(0755, root, root)%{_bindir}/mco
+%doc COPYING
+%config(noreplace)%{_sysconfdir}/mcollective/client.cfg
+%{_libexecdir}/mcollective/mcollective/application
+%{_libexecdir}/mcollective/mcollective/pluginpackager
+
+%files
+%defattr(-, root, root, 0755)
+%doc COPYING
+%attr(0755, root, root)%{_sbindir}/mcollectived
+%if 0%{?_with_systemd}
+%{_unitdir}/mcollective.service
+%else
+%{_sysconfdir}/init.d/mcollective
+%endif
+%config(noreplace)%{_sysconfdir}/mcollective/server.cfg
+%config(noreplace)%{_sysconfdir}/mcollective/facts.yaml
+%dir %{_sysconfdir}/mcollective/ssl/clients
+%config(noreplace)%{_sysconfdir}/mcollective/plugin.d
+
+%changelog
+* <%= Time.now.strftime("%a %b %d %Y") %> Puppet Labs Release <info@puppetlabs.com> -  <%= @rpmversion %>-<%= @rpmrelease %>
+- Build for <%= @version %>
+
+* Tue Nov 03 2009 R.I.Pienaar <rip@devco.net>
+- First release

@@ -75,6 +75,9 @@ case "$1" in
             $0 start
         fi
         ;;
+    force-reload)
+        echo "not implemented"
+        ;;
     status)
         status_of_proc -p ${pidfile} ${mcollectived} ${name} && exit 0 || exit $?
         ;;

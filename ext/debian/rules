@@ -1,18 +1,15 @@
 #!/usr/bin/make -f
 
-DEB_MAKE_CLEAN_TARGET    := 
-DEB_MAKE_INSTALL_TARGET  := install DESTDIR=$(CURDIR)/debian/tmp
-
 include /usr/share/cdbs/1/rules/debhelper.mk
-include /usr/share/cdbs/1/rules/dpatch.mk
-include /usr/share/cdbs/1/class/makefile.mk
-DEB_MAKE_INVOKE = $(DEB_MAKE_ENVVARS) make -f ext/Makefile.debian -C $(DEB_BUILDDIR)
+BUILD_ROOT=$(CURDIR)/debian/tmp
+RUBY_LIBDIR=$(shell /usr/bin/ruby -rrbconfig -e 'puts RbConfig::CONFIG["vendordir"]')
+PLUGINDIR=/usr/share/mcollective/plugins
+DOCDIR=$(BUILD_ROOT)/usr/share/doc/mcollective
 
 install/mcollective::
-	mv $(CURDIR)/debian/tmp/etc/mcollective/server.cfg.dist $(CURDIR)/debian/tmp/etc/mcollective/server.cfg
-	mv $(CURDIR)/debian/tmp/etc/mcollective/client.cfg.dist $(CURDIR)/debian/tmp/etc/mcollective/client.cfg
-	mv $(CURDIR)/debian/tmp/etc/mcollective/facts.yaml.dist $(CURDIR)/debian/tmp/etc/mcollective/facts.yaml
-#	dh_installinit -pmcollective -o
+	/usr/bin/ruby install.rb --destdir=$(CURDIR)/debian/tmp --no-rdoc --sitelibdir=$(RUBY_LIBDIR) --ruby=/usr/bin/ruby --plugindir=$(PLUGINDIR)
+	mkdir -p $(DOCDIR)
+	cp -a doc/* $(DOCDIR)
 
 binary-fixup/mcollective::
 	chmod 640 $(CURDIR)/debian/mcollective/etc/mcollective/server.cfg

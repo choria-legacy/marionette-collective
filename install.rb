@@ -223,9 +223,11 @@ def prepare_installation
     destdir = ''
   end
 
-  configdir = File.join(destdir, configdir)
-  bindir = File.join(destdir, bindir)
-  sitelibdir = File.join(destdir, sitelibdir)
+  configdir   = File.join(destdir, configdir)
+  bindir      = File.join(destdir, bindir)
+  sbindir     = File.join(destdir, sbindir)
+  sitelibdir  = File.join(destdir, sitelibdir)
+  plugindir   = File.join(destdir, plugindir)
 
   makedirs(configdir) if InstallOptions.configs
   makedirs(bindir)
@@ -283,7 +285,7 @@ end
 # Change directory into the mcollective root so we don't get the wrong files for install.
 cd File.dirname(__FILE__) do
   # Set these values to what you want installed.
-  configs = glob(%w{etc/ssl/clients/PLACEHOLDER etc/*.dist })
+  configs = glob(%w{etc/*.dist})
   erbs = glob(%w{etc/*.erb})
   bins = glob(%w{bin/mco})
   sbins = glob(%w{bin/mcollectived bin/mc-call-agent})

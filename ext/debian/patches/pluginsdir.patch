@@ -1,0 +1,24 @@
+diff --git a/etc/client.cfg.dist b/etc/client.cfg.dist
+index 1acffee..5c36486 100644
+--- a/etc/client.cfg.dist
++++ b/etc/client.cfg.dist
+@@ -1,6 +1,6 @@
+ main_collective = mcollective
+ collectives = mcollective
+-libdir = /usr/libexec/mcollective
++libdir = /usr/share/mcollective/plugins
+ logger_type = console
+ loglevel = warn
+ 
+diff --git a/etc/server.cfg.dist b/etc/server.cfg.dist
+index 2038324..c28a826 100644
+--- a/etc/server.cfg.dist
++++ b/etc/server.cfg.dist
+@@ -1,6 +1,6 @@
+ main_collective = mcollective
+ collectives = mcollective
+-libdir = /usr/libexec/mcollective
++libdir = /usr/share/mcollective/plugins
+ logfile = /var/log/mcollective.log
+ loglevel = info
+ daemonize = 1

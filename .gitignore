@@ -10,3 +10,4 @@ pkg
 .localeapp
 Gemfile.lock
 .bundle
+ext/packaging
