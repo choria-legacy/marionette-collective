@@ -80,8 +80,15 @@ module MCollective
         end
       end
 
+      before :each do
+        @systemu = mock
+        @thread = mock
+        @thread.stubs(:kill)
+        @systemu.stubs(:thread).returns(@thread)
+      end
+
       it "should run the command" do
-        Shell.any_instance.stubs("systemu").returns(true).once.with("date", "stdout" => '', "stderr" => '', "env" => {"LC_ALL" => "C"}, 'cwd' => Dir.tmpdir)
+        Shell.any_instance.stubs("systemu").returns(@systemu).once.with("date", "stdout" => '', "stderr" => '', "env" => {"LC_ALL" => "C"}, 'cwd' => Dir.tmpdir)
         s = Shell.new("date")
         s.runcommand
       end
@@ -169,7 +176,7 @@ module MCollective
 
         it "should terminate the systemu process after the specified timeout is exceeded" do
           s = Shell.new(%{ruby -e 'sleep 5'}, :timeout => 1)
-          s.stubs(:systemu).yields(1234)
+          s.stubs(:systemu).yields(1234).returns(@systemu)
           s.stubs(:sleep).with(2)
           s.expects(:sleep).with(1)
           Process.stubs(:kill).with(0, 1234).returns(1, nil)
@@ -178,7 +185,7 @@ module MCollective
 
         it "should kill an unresponsive systemu process on timeout" do
           s = Shell.new(%{ruby -e 'sleep 5'}, :timeout => 1)
-          s.stubs(:systemu).yields(1234)
+          s.stubs(:systemu).yields(1234).returns(@systemu)
           s.expects(:sleep).with(1)
           s.stubs(:sleep).with(2)
           Process.stubs(:kill).with(0, 1234).returns(1)
@@ -188,7 +195,7 @@ module MCollective
 
         it "should kill the systemu process if the parent thread exits and :on_thread_exit is specified" do
           s = Shell.new(%{ruby -e 'sleep 5'}, :timeout => :on_thread_exit)
-          s.stubs(:systemu).yields(1234)
+          s.stubs(:systemu).yields(1234).returns(@systemu)
           s.stubs(:sleep).with(2)
           Process.stubs(:kill).with(0, 1234).returns(1)
           Process.expects(:kill).with("KILL", 1234)
@@ -199,10 +206,19 @@ module MCollective
       it "should log a warning if the child process cannot be reaped" do
         s = Shell.new('ruby -e "sleep 2"', :timeout=> 1)
         Thread.stubs(:current)
-        s.stubs(:systemu).yields(1234)
+        s.stubs(:systemu).yields(1234).returns(@systemu)
         s.stubs(:sleep).with(1).raises(Errno::ECHILD)
         Log.expects(:warn).with("Could not reap process '1234'.")
         s.runcommand
+      end
+
+      it "should kill the guard thread when the process returns" do
+        s = Shell.new("echo hello world")
+        Thread.stubs(:current)
+        s.expects(:systemu).returns(@systemu)
+        @thread.expects(:kill)
+        result = s.runcommand
+        result.should == @systemu
       end
     end
   end
