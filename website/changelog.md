@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/11/6|Fix possible thread leak in Shell|23090|
 |2013/11/6|Add a timeout option for system commands|22114|
 |2013/11/5|Redo the packaging of mcollective|17067|
 |2013/10/30|Add rabbitmq federation support with `plugin.rabbitmq.use_reply_exchange`|22603|
