@@ -17,9 +17,12 @@ module MCollective
   #   stderr      - a variable that will receive stdin, must support <<
   #   environment - the shell environment, defaults to include LC_ALL=C
   #                 set to nil to clear the environment even of LC_ALL
+  #   timeout     - a timeout in seconds after which the subprocess is killed,
+  #                 the special value :on_thread_exit kills the subprocess
+  #                 when the invoking parent thread (agent) has ended 
   #
   class Shell
-    attr_reader :environment, :command, :status, :stdout, :stderr, :stdin, :cwd
+    attr_reader :environment, :command, :status, :stdout, :stderr, :stdin, :cwd, :timeout
 
     def initialize(command, options={})
       @environment = {"LC_ALL" => "C"}
@@ -29,6 +32,7 @@ module MCollective
       @stderr = ""
       @stdin = nil
       @cwd = Dir.tmpdir
+      @timeout = nil
 
       options.each do |opt, val|
         case opt.to_s
@@ -54,6 +58,9 @@ module MCollective
             else
               @environment.merge!(val.dup)
             end
+          when "timeout"
+            raise "timeout should be a positive integer or the symbol :on_thread_exit symbol" unless val.eql?(:on_thread_exit) || ( val.is_a?(Fixnum) && val>0 )
+            @timeout = val
         end
       end
     end
@@ -74,11 +81,28 @@ module MCollective
       thread = Thread.current
       @status = systemu(@command, opts) do |cid|
         begin
-          while(thread.alive?)
-            sleep 0.1
+          #wait for the specified timeout or until the parent thread exists
+          if timeout.is_a?(Fixnum)
+            sleep timeout
+          else
+            while(thread.alive?)
+              sleep 0.1
+            end
           end
 
-          Process.waitpid(cid) if Process.getpgid(cid)
+          if (Process.waitpid(cid, Process::WNOHANG).nil? rescue false)
+            #if the process is still running terminate if timeout was specified
+            if timeout
+              if Util.windows?
+                Process.kill('KILL', cid)
+              else
+                Process.kill('TERM', cid)
+                sleep 2
+                Process.kill('KILL', cid) if ( Process.waitpid(cid, Process::WNOHANG).nil? rescue false )
+              end
+            end
+            Process.waitpid(cid) unless thread.alive?  # only wait if the parent thread is dead
+          end
         rescue SystemExit
         rescue Errno::ESRCH
         rescue Errno::ECHILD
