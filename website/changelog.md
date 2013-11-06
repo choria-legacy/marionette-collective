@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/11/5|Redo the packaging of mcollective|17067|
 |2013/10/30|Add rabbitmq federation support with `plugin.rabbitmq.use_reply_exchange`|22603|
 |2013/10/30|Update rabbitmq connector documentation for recent version of rabbitmqadmin|19537|
 |2013/10/17|mcollective service does not gracefully exit on windows|20467|
