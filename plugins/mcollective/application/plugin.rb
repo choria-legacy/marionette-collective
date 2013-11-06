@@ -123,7 +123,7 @@ mco plugin package [options] <directory>
            :type        => Array
 
     option :keep_artifacts,
-           :dsecription => "Don't remove artifacts after building packages",
+           :description => "Don't remove artifacts after building packages",
            :arguments   => ['--keep-artifacts'],
            :type        => :boolean
 
