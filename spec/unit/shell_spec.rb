@@ -155,6 +155,55 @@ module MCollective
         Thread.any_instance.stubs(:alive?).raises(Errno::ESRCH)
         s.runcommand
       end
+
+      describe "timeout has been set" do
+        before do
+          thread = mock
+          thread.stubs(:alive?).returns(false)
+          Thread.stubs(:current).returns(thread)
+          Util.stubs(:windows?).returns(false)
+          Thread.stubs(:alive?).returns(false)
+          Process.expects(:kill).with("TERM", 1234)
+          Process.expects(:waitpid).with(1234)
+        end
+
+        it "should terminate the systemu process after the specified timeout is exceeded" do
+          s = Shell.new(%{ruby -e 'sleep 5'}, :timeout => 1)
+          s.stubs(:systemu).yields(1234)
+          s.stubs(:sleep).with(2)
+          s.expects(:sleep).with(1)
+          Process.stubs(:kill).with(0, 1234).returns(1, nil)
+          s.runcommand
+        end
+
+        it "should kill an unresponsive systemu process on timeout" do
+          s = Shell.new(%{ruby -e 'sleep 5'}, :timeout => 1)
+          s.stubs(:systemu).yields(1234)
+          s.expects(:sleep).with(1)
+          s.stubs(:sleep).with(2)
+          Process.stubs(:kill).with(0, 1234).returns(1)
+          Process.expects(:kill).with("KILL", 1234)
+          s.runcommand
+        end
+
+        it "should kill the systemu process if the parent thread exits and :on_thread_exit is specified" do
+          s = Shell.new(%{ruby -e 'sleep 5'}, :timeout => :on_thread_exit)
+          s.stubs(:systemu).yields(1234)
+          s.stubs(:sleep).with(2)
+          Process.stubs(:kill).with(0, 1234).returns(1)
+          Process.expects(:kill).with("KILL", 1234)
+          s.runcommand
+        end
+      end
+
+      it "should log a warning if the child process cannot be reaped" do
+        s = Shell.new('ruby -e "sleep 2"', :timeout=> 1)
+        Thread.stubs(:current)
+        s.stubs(:systemu).yields(1234)
+        s.stubs(:sleep).with(1).raises(Errno::ECHILD)
+        Log.expects(:warn).with("Could not reap process '1234'.")
+        s.runcommand
+      end
     end
   end
 end
