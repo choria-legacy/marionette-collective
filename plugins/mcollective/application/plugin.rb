@@ -127,6 +127,11 @@ mco plugin package [options] <directory>
            :arguments   => ['--keep-artifacts'],
            :type        => :boolean
 
+    option :module_template,
+           :description => "Path to the template used by the modulepackager",
+           :arguments   => ['--module-template PATH'],
+           :type        => String
+
     # Handle alternative format that optparser can't parse.
     def post_option_parser(configuration)
       if ARGV.length >= 1
@@ -197,7 +202,9 @@ mco plugin package [options] <directory>
       plugin = prepare_plugin
       (configuration[:pluginpath] = configuration[:pluginpath] + "/") if (configuration[:pluginpath] && !configuration[:pluginpath].match(/^.*\/$/))
       packager = PluginPackager["#{configuration[:format].capitalize}Packager"]
-      packager.new(plugin, configuration[:pluginpath], configuration[:sign], options[:verbose], configuration[:keep_artifacts]).create_packages
+      packager.new(plugin, configuration[:pluginpath], configuration[:sign],
+                   options[:verbose], configuration[:keep_artifacts],
+                   configuration[:module_template]).create_packages
     end
 
     # Agents are just called 'agent' but newer plugin types are

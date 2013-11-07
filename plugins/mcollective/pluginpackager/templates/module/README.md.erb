@@ -1,0 +1,37 @@
+# <%= @package_name %>
+
+#### Table of Contents
+
+1. [Overview](#overview)
+2. [Module Description - What the module does and why it is useful](#module-description)
+3. [Setup - The basics of getting started with <%= @package_name %>](#setup)
+    * [What the <%= @package_name %> module affects](#what-the-<%= @package_name %>-module-affects)
+    * [Setup requirements](#setup-requirements)
+4. [Usage - Configuration options and additional functionality](#usage)
+5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
+
+
+## Overview
+
+The <%= @package_name %> module is a module that wraps a source release of the
+<%= @plugin.metadata[:name] %> mcollective plugin for use with the
+[puppetlabs mcollective](http://forge.puppetlabs.com/puppetlabs/mcollective)
+module.
+
+## Module description
+
+## Usage
+
+<% @plugin.packagedata.keys.map { |x| x.to_s }.sort.each do |klass| -%>
+<%# Don't document common class -%>
+<% if klass != "common" -%>
+### class <%= @package_name %>::<%= klass %>
+
+Installs the <%= klass %> component of the <%= @plugin.metadata[:name] %> plugin.
+
+```puppet
+include <%= @package_name%>::<%= klass %>
+```
+<% end %>
+<% end %>
+

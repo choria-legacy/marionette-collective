@@ -3,7 +3,7 @@ module MCollective
     class DebpackagePackager
       require 'erb'
 
-      def initialize(plugin, pluginpath = nil, signature = nil, verbose = false, keep_artifacts = nil)
+      def initialize(plugin, pluginpath = nil, signature = nil, verbose = false, keep_artifacts = nil, module_template = nil)
         if PluginPackager.command_available?('debuild')
           @plugin = plugin
           @verbose = verbose

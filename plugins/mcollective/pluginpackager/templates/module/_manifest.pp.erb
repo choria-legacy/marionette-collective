@@ -1,0 +1,9 @@
+#
+class <%= @package_name %>::<%= @klass %> {
+  <% if @plugin.packagedata[:common] && @klass != 'common' %>
+  include ::<%= @package_name %>::common
+  <% end %>
+  mcollective::plugin { '<%= @package_name %>/<%= @klass %>':
+    source => 'puppet:///modules/<%= @package_name %>/<% @klass %>',
+  }
+}
