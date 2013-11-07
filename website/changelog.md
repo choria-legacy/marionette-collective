@@ -8,7 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
-|2013/11/7|Add a modulepackage target to the plugin packager|12597|
+|2013/11/7|Add a modulepackage target to the plugin packager|23099|
 |2013/11/6|Fix possible thread leak in Shell|23090|
 |2013/11/6|Add a timeout option for system commands|22114|
 |2013/11/5|Redo the packaging of mcollective|17067|
