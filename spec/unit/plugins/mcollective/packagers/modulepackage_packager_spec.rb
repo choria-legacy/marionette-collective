@@ -140,9 +140,8 @@ module MCollective
           File.stubs(:open).with('rspec_tmp/manifests/agent.pp', 'w').yields(file)
           File.stubs(:open).with('rspec_tmp/manifests/client.pp', 'w').yields(file)
           File.stubs(:open).with('rspec_tmp/Modulefile', 'w').yields(file)
-          File.stubs(:open).with('rspec_tmp/metadata.json', 'w').yields(file)
           File.stubs(:open).with('rspec_tmp/README.md', 'w').yields(file)
-          file.expects(:puts).times(6)
+          file.expects(:puts).times(5)
           @packager.send(:make_module)
         end
       end
