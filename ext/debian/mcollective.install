@@ -1,4 +1,3 @@
 usr/sbin/mcollectived
 etc/mcollective/facts.yaml
 etc/mcollective/server.cfg
-etc/mcollective/ssl
