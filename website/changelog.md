@@ -8,10 +8,11 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
-|2013/11/7|Add a modulepackage target to the plugin packager|23099|
-|2013/11/6|Fix possible thread leak in Shell|23090|
-|2013/11/6|Add a timeout option for system commands|22114|
-|2013/11/5|Redo the packaging of mcollective|17067|
+|*2013/11/07*|*Release 2.3.3*|23107|
+|2013/11/07|Add a modulepackage target to the plugin packager|23099|
+|2013/11/06|Fix possible thread leak in Shell|23090|
+|2013/11/06|Add a timeout option for system commands|22114|
+|2013/11/05|Redo the packaging of mcollective|17067|
 |2013/10/30|Add rabbitmq federation support with `plugin.rabbitmq.use_reply_exchange`|22603|
 |2013/10/30|Update rabbitmq connector documentation for recent version of rabbitmqadmin|19537|
 |2013/10/17|mcollective service does not gracefully exit on windows|20467|

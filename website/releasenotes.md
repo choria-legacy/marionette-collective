@@ -8,6 +8,70 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_3_3">&nbsp;</a>
+
+## 2.3.3 - 2013/11/07
+
+This is the fourth release in the new development series of MCollective. This
+release features enchancements and bug fixes.
+
+This release is for early adopters, production users should consider the 2.2.x
+series.
+
+### New Features and Improvements
+
+ * Support for version 1.1 of the Stomp protocol has been added to the ActiveMQ and RabbitMQ connectors
+ * A get_facts action has been added to the rpcutil agent that can retrieve a list of facts
+ * The plugin packager has been updated to only create a single source artifact when building packages
+ * The plugin packager can now express operating system specific dependencies
+ * An experimental module packager has been added that will output Puppet modules that can be used with the Puppet Labs MCollective module
+ * A stdin discovery plugin has been added
+ * Message publishing time is no longer part of the request timeout and is now configurable
+ * An experimental option has been added to enable threading in the client which should improve responsiveness when publishing large amounts of directed messages
+ * Experimental RabbitMQ federation support has been added
+ * A timeout option has been added to the Shell command runner
+ * Packaging has been updated to conform with other Puppet Labs projects
+
+### Bug Fixes
+
+ * Suppress Errno::ESRCH info messages when running shell commands
+ * Direct requests on sub-collectives will now work correctly when using the RabbitMQ connector
+ * The Plugin Packager now correctly sets the plugin version supplied by the --pluginversion flag
+ * The --nodes flag will no longer raise an error on Ruby 1.9.3
+ * Stopping the MCollective agent on Windows will now exit cleanly
+ * The systemu guard thread will now exit cleanly when Shell.runcommand() is called from a long running thread
+
+### Backwards Compatibility and Upgrading
+
+There should be no additional steps required when upgrading from 2.3.2 to 2.3.3. If you are upgrading from 2.3.1 or earlier please
+refer to the 2.3.2 compatibility notes.
+
+### Changes since 2.3.2
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2013/11/07|Add a modulepackage target to the plugin packager|23099|
+|2013/11/06|Fix possible thread leak in Shell|23090|
+|2013/11/06|Add a timeout option for system commands|22114|
+|2013/11/05|Redo the packaging of mcollective|17067|
+|2013/10/30|Add rabbitmq federation support with `plugin.rabbitmq.use_reply_exchange`|22603|
+|2013/10/30|Update rabbitmq connector documentation for recent version of rabbitmqadmin|19537|
+|2013/10/17|mcollective service does not gracefully exit on windows|20467|
+|2013/10/16|Add option to thread client|21910|
+|2013/10/16|Publishing time should not be part of the request time|21910|
+|2013/10/11|Add a stdin discovery method|22061|
+|2013/10/08|Plugin packager doesn't apply --pluginversion option|22790|
+|2013/10/07|Mcollective plugins cannot express dependencies|22361|
+|2013/10/03|Ability to retrieve multiple facts through rpcutil|21788|
+|2013/10/01|Fix packaging for debain/ubuntu with ruby 1.9|16572|
+|2013/09/27|Fix buildmacpkg|16786|
+|2013/09/27|Fix --nodes 'nodefile' on ruby 1.9.3|22720|
+|2013/09/25|MCO Plugin Packager produces more than one source artifact|22316|
+|2013/09/06|Fix directed request on subcollectives with rabbit connector|21755|
+|2013/08/19|add an install.rb file to mcollective|22220|
+|2013/08/02|Support Stomp 1.1 with RabbitMQ and ActiveMQ|15182|
+|2013/07/31|Surpress Errno::ESRCH info messages when running shell commands|21779|
+
 <a name="2_3_2">&nbsp;</a>
 
 ## 2.3.2 - 2013/07/11
