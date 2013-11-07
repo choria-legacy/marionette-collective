@@ -50,7 +50,7 @@ if (defined?(RbConfig) ? RbConfig : Config)::CONFIG['host_os'] =~ /mswin|win32|d
     exit(-1)
 end
 
-PREREQS = %w{rubygems stomp}
+PREREQS = %w{}
 
 InstallOptions = OpenStruct.new
 
