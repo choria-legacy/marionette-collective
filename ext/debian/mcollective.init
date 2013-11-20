@@ -34,6 +34,10 @@ daemonopts="--pid=${pidfile}  --config=/etc/mcollective/server.cfg"
 # Source function library.
 . /lib/lsb/init-functions
 
+if [ -f /etc/default/mcollective ]; then
+    . /etc/default/mcollective
+fi
+
 # Check that binary exists
 if ! [ -f $mcollectived ]
 then
