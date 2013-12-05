@@ -12,7 +12,7 @@ module MCollective
         end
 
         def on_connected(params=nil)
-          Log.info("Conncted to #{stomp_url(params)}")
+          Log.info("Connected to #{stomp_url(params)}")
         rescue
         end
 
