@@ -32,11 +32,13 @@ will create the exchanges we need later) and some permissions on the vhost:
 
 {% highlight console %}
 rabbitmqadmin declare vhost name=/mcollective
-rabbitmqadmin declare user name=mcollective password=changeme
+rabbitmqadmin declare user name=mcollective password=changeme tags=
 rabbitmqadmin declare user name=admin password=changeme tags=administrator
-rabbitmqadmin declare permission vhost=/mcollective user=mcollective configure=.* write=.* read=.*
-rabbitmqadmin declare permission vhost=/mcollective user=admin configure=.* write=.* read=.*
+rabbitmqadmin declare permission vhost=/mcollective user=mcollective configure='.*' write='.*' read='.*'
+rabbitmqadmin declare permission vhost=/mcollective user=admin configure='.*' write='.*' read='.*'
 {% endhighlight %}
+
+(Note that a `tags=` declaration may be required for the mcollective user, although it's allowed to be empty. Also note that your shell probably requires quotes to protect the `*` from glob expansion.)
 
 And then we need to create the exchanges that are needed for each collective:
 
