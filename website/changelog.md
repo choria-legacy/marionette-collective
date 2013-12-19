@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2013/12/19|Make audit plugin log output match standard format|MCO-142|
 |*2013/11/07*|*Release 2.3.3*|23107|
 |2013/11/07|Add a modulepackage target to the plugin packager|23099|
 |2013/11/06|Fix possible thread leak in Shell|23090|
