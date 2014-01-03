@@ -23,7 +23,7 @@ module MCollective
         fact_files.each do |file|
           begin
             if File.exist?(file)
-              facts.merge!(YAML.load_file(file))
+              facts.merge!(YAML.load(File.read(file)))
             else
               raise("Can't find YAML file to load: #{file}")
             end
