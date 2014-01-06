@@ -83,6 +83,10 @@ module MCollective
       # Sets the display preference to either :ok, :failed, :flatten or :always
       # operates on action level
       def display(pref)
+        if pref == :flatten
+          Log.warn("The display option :flatten is being deprecated and will be removed in the next minor release.")
+        end
+
         # defaults to old behavior, complain if its supplied and invalid
         unless [:ok, :failed, :flatten, :always].include?(pref)
           raise "Display preference #{pref} is not valid, should be :ok, :failed, :flatten or :always"

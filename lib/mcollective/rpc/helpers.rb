@@ -100,6 +100,7 @@ module MCollective
                     result_text << text_for_result(sender, status, message, result, ddl)
 
                   when :flatten
+                    Log.warn("The display option :flatten is being deprecated and will be removed in the next minor release")
                     result_text << text_for_flattened_result(status, result)
 
                 end
