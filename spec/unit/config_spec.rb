@@ -112,6 +112,21 @@ module MCollective
         Config.instance.loadconfig("/nonexisting")
         Config.instance.default_discovery_options.should == ["1", "2"]
       end
+
+      it "should not allow non integer values when expecting an integer value" do
+        PluginManager.stubs(:loadclass)
+        PluginManager.stubs("<<")
+
+        ["registerinterval", "max_log_size", "direct_addressing_threshold", "publish_timeout",
+         "fact_cache_time", "ttl"].each do |key|
+          File.expects(:readlines).with("/nonexisting").returns(["#{key} = nan"])
+          File.expects(:exists?).with("/nonexisting").returns(true)
+
+          expect{
+            Config.instance.loadconfig("/nonexisting")
+          }.to raise_error "Could not parse value for configuration option '#{key}' with value 'nan'"
+         end
+      end
     end
 
     describe "#read_plugin_config_dir" do

@@ -35,13 +35,14 @@ module MCollective
               key = $1.strip
               val = $2
 
-              case key
+              begin
+                case key
                 when "registration"
                   @registration = val.capitalize
                 when "registration_collective"
                   @registration_collective = val
                 when "registerinterval"
-                  @registerinterval = val.to_i
+                  @registerinterval = Integer(val)
                 when "collectives"
                   @collectives = val.split(",").map {|c| c.strip}
                 when "main_collective"
@@ -49,9 +50,9 @@ module MCollective
                 when "logfile"
                   @logfile = val
                 when "keeplogs"
-                  @keeplogs = val.to_i
+                  @keeplogs = Integer(val)
                 when "max_log_size"
-                  @max_log_size = val.to_i
+                  @max_log_size = Integer(val)
                 when "loglevel"
                   @loglevel = val
                 when "logfacility"
@@ -71,7 +72,7 @@ module MCollective
                 when "direct_addressing"
                   @direct_addressing = Util.str_to_bool(val)
                 when "direct_addressing_threshold"
-                  @direct_addressing_threshold = val.to_i
+                  @direct_addressing_threshold = Integer(val)
                 when "color"
                   @color = Util.str_to_bool(val)
                 when "daemonize"
@@ -87,7 +88,7 @@ module MCollective
                 when /^plugin.(.+)$/
                   @pluginconf[$1] = val
                 when "publish_timeout"
-                  @publish_timeout = val.to_i
+                  @publish_timeout = Integer(val)
                 when "rpcaudit"
                   @rpcaudit = Util.str_to_bool(val)
                 when "rpcauditprovider"
@@ -101,19 +102,22 @@ module MCollective
                 when "logger_type"
                   @logger_type = val
                 when "fact_cache_time"
-                  @fact_cache_time = val.to_i
+                  @fact_cache_time = Integer(val)
                 when "ssl_cipher"
                   @ssl_cipher = val
                 when "threaded"
                   @threaded = Util.str_to_bool(val)
                 when "ttl"
-                  @ttl = val.to_i
+                  @ttl = Integer(val)
                 when "default_discovery_options"
                   @default_discovery_options << val
                 when "default_discovery_method"
                   @default_discovery_method = val
                 else
                   raise("Unknown config parameter '#{key}'")
+                end
+              rescue ArgumentError => e
+                raise "Could not parse value for configuration option '#{key}' with value '#{val}'"
               end
             end
           end
