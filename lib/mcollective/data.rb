@@ -42,19 +42,19 @@ module MCollective
       name = ddl.meta[:name]
       query = ddl.entities[:data]
 
-      DDL.validation_fail!(:PLMC31, "No dataquery has been defined in the DDL for data plugin '%{plugin}'", :error, :plugin => name)  unless query
+      raise DDLValidationError, "No dataquery has been defined in the DDL for data plugin #{name}" unless query
 
       input = query.fetch(:input, {})
       output = query.fetch(:output, {})
 
-      DDL.validation_fail!(:PLMC32, "No output has been defined in the DDL for data plugin %{plugin}", :error, :plugin => name) if output.keys.empty?
+      raise DDLValidationError, "No output has been defined in the DDL for data plugin #{name}" if output.keys.empty?
 
       if input[:query]
         return true if argument.nil? && input[:query][:optional]
 
         ddl.validate_input_argument(input, :query, argument)
       else
-        DDL.validation_fail!(:PLMC33, "No data plugin argument was declared in the '%{plugin}' DDL but an input was supplied", :error, :plugin => name) if argument
+        raise("No data plugin argument was declared in the %s DDL but an input was supplied" % name) if argument
         return true
       end
     end

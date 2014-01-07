@@ -53,8 +53,6 @@ module MCollective
     autoload :DataDDL, "mcollective/ddl/dataddl"
     autoload :DiscoveryDDL, "mcollective/ddl/discoveryddl"
 
-    extend Translatable
-
     # There used to be only one big nasty DDL class with a bunch of mashed
     # together behaviors.  It's been around for ages and we would rather not
     # ask all the users to change their DDL.new calls to some other factory
@@ -99,7 +97,7 @@ module MCollective
       return true if ["true", "t", "yes", "y", "1"].include?(val.downcase)
       return false if ["false", "f", "no", "n", "0"].include?(val.downcase)
 
-      raise_code(:PLMC17, "%{value} does not look like a boolean argument", :debug, :value => val)
+      raise "#{val} does not look like a boolean argument"
     end
 
     # a generic string to number function, if a number looks like a float
@@ -109,16 +107,7 @@ module MCollective
       return val.to_f if val =~ /^\d+\.\d+$/
       return val.to_i if val =~ /^\d+$/
 
-      raise_code(:PLMC16, "%{value} does not look like a numeric value", :debug, :value => val)
-    end
-
-    # Various DDL implementations will validate and raise on error, this is a
-    # utility method to correctly setup a DDLValidationError exceptions and raise them
-    def self.validation_fail!(code, default, level, args={})
-      exception = DDLValidationError.new(code, default, level, args)
-      exception.set_backtrace caller
-
-      raise exception
+      raise "#{val} does not look like a number"
     end
   end
 end

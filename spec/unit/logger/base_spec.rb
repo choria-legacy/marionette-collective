@@ -23,18 +23,10 @@ module MCollective::Logger
       end
 
       it "should accept correct levels" do
-        logger = Base.new
-        logger.set_level :warn
-
-        logger.should_log?(:debug).should == false
-        logger.should_log?(:error).should == true
+        expect { Base.new }.to_not raise_error
       end
     end
 
-    describe "#should_log?" do
-      it "should correctly determine if a line should be logged" do
-      end
-    end
     describe "#valid_levels" do
       it "should report if valid_levels was not implimented" do
         Base.any_instance.unstub(:valid_levels)

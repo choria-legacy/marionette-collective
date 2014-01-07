@@ -11,9 +11,7 @@ require 'stringio'
 require 'rbconfig'
 require 'tempfile'
 require 'tmpdir'
-require 'mcollective/exception'
 require 'mcollective/monkey_patches'
-require "mcollective/translatable"
 require 'mcollective/cache'
 
 # == The Marionette Collective
@@ -24,9 +22,23 @@ require 'mcollective/cache'
 # and allow you to run agents matching discovery criteria.
 #
 # For an overview of the idea behind this and what it enables please see:
-#
 #   http://www.devco.net/archives/2009/10/18/middleware_for_systems_administration.php
 module MCollective
+  # Exceptions for the RPC system
+  class DDLValidationError<RuntimeError;end
+  class ValidatorError<RuntimeError; end
+  class MsgDoesNotMatchRequestID < RuntimeError; end
+  class MsgTTLExpired<RuntimeError;end
+  class NotTargettedAtUs<RuntimeError;end
+  class RPCError<StandardError;end
+  class SecurityValidationFailed<RuntimeError;end
+
+  class InvalidRPCData<RPCError;end
+  class MissingRPCData<RPCError;end
+  class RPCAborted<RPCError;end
+  class UnknownRPCAction<RPCError;end
+  class UnknownRPCError<RPCError;end
+
   autoload :Agent, "mcollective/agent"
   autoload :Agents, "mcollective/agents"
   autoload :Aggregate, "mcollective/aggregate"

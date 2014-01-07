@@ -17,8 +17,6 @@ module MCollective
     # plugin DDL then add a PlugintypeDDL class here and add your
     # specific behaviors to those.
     class Base
-      include Translatable
-
       attr_reader :meta, :entities, :pluginname, :plugintype, :usage, :requirements
 
       def initialize(plugin, plugintype=:agent, loadddl=true)
@@ -82,7 +80,7 @@ module MCollective
         if ddlfile = findddlfile
           instance_eval(File.read(ddlfile), ddlfile, 1)
         else
-          raise_code(:PLMC40, "Can't find DDL for %{type} plugin '%{name}'", :debug, :type => @plugintype, :name => @pluginname)
+          raise("Can't find DDL for #{@plugintype} plugin '#{@pluginname}'")
         end
       end
 
@@ -93,7 +91,7 @@ module MCollective
         @config.libdir.each do |libdir|
           ddlfile = File.join([libdir, "mcollective", ddltype.to_s, "#{ddlname}.ddl"])
           if File.exist?(ddlfile)
-            log_code(:PLMC18, "Found %{ddlname} ddl at %{ddlfile}", :debug, :ddlname => ddlname, :ddlfile => ddlfile)
+            Log.debug("Found #{ddlname} ddl at #{ddlfile}")
             return ddlfile
           end
         end
@@ -103,12 +101,12 @@ module MCollective
       def validate_requirements
         if requirement = @requirements[:mcollective]
           if Util.mcollective_version == "@DEVELOPMENT_VERSION@"
-            log_code(:PLMC19, "DDL requirements validation being skipped in development", :warn)
+            Log.warn("DDL requirements validation being skipped in development")
             return true
           end
 
           if Util.versioncmp(Util.mcollective_version, requirement) < 0
-            DDL.validation_fail!(:PLMC20, "%{type} plugin '%{name}' requires MCollective version %{requirement} or newer", :debug, :type => @plugintype.to_s.capitalize, :name => @pluginname, :requirement => requirement)
+            raise DDLValidationError, "%s plugin '%s' requires MCollective version %s or newer" % [@plugintype.to_s.capitalize, @pluginname, requirement]
           end
         end
 
@@ -144,19 +142,19 @@ module MCollective
 
         return true
       rescue => e
-        DDL.validation_fail!(:PLMC21, "Cannot validate input '%{input}': %{error}", :debug, :input => key, :error => e.to_s)
+        raise DDLValidationError, "Cannot validate input %s: %s" % [key, e.to_s]
       end
 
       # Registers an input argument for a given action
       #
       # See the documentation for action for how to use this
       def input(argument, properties)
-        raise_code(:PLMC22, "Cannot determine what entity input '%{entity}' belongs to", :error, :entity => @current_entity) unless @current_entity
+        raise "Cannot figure out what entity input #{argument} belongs to" unless @current_entity
 
         entity = @current_entity
 
         [:prompt, :description, :type].each do |arg|
-          raise_code(:PLMC23, "Input needs a :%{property} property", :debug, :property => arg) unless properties.include?(arg)
+          raise "Input needs a :#{arg} property" unless properties.include?(arg)
         end
 
         @entities[entity][:input][argument] = {:prompt => properties[:prompt],

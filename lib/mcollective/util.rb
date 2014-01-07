@@ -1,8 +1,6 @@
 module MCollective
   # Some basic utility helper methods useful to clients, agents, runner etc.
   module Util
-    extend Translatable
-
     # Finds out if this MCollective has an agent by the name passed
     #
     # If the passed name starts with a / it's assumed to be regex
@@ -481,16 +479,7 @@ module MCollective
       elsif clean_val =~ /^(0|no|false|n|f)$/i
         return false
       else
-        raise_code(:PLMC42, "Cannot convert string value '%{value}' into a boolean.", :error, :value => clean_val)
-      end
-    end
-
-    # Looks up and interprolate the hash values into a i18n string
-    def self.t(msgid, args={})
-      if msgid.is_a?(Symbol)
-        I18n.t("%s.pattern" % msgid, args)
-      else
-        I18n.t(msgid, args)
+        raise("Cannot convert string value '#{clean_val}' into a boolean.")
       end
     end
 

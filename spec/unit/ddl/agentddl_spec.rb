@@ -53,7 +53,7 @@ module MCollective
 
           expect {
             @ddl.validate_rpc_request(:fail, {})
-          }.to raise_code(:PLMC29, :action => :fail, :plugin => "rspec")
+          }.to raise_error("Attempted to call action fail for rspec but it's not declared in the DDL")
 
           @ddl.validate_rpc_request(:test, {})
         end
@@ -72,7 +72,7 @@ module MCollective
 
           expect {
             @ddl.validate_rpc_request(:test, {})
-          }.to raise_code(:PLMC30, :action => :test, :key => :required)
+          }.to raise_error("Action test needs a required argument")
 
           @ddl.validate_rpc_request(:test, {:required => "f"}).should == true
         end
@@ -191,26 +191,26 @@ module MCollective
         it "should raise an exception if aggregate format isn't a hash" do
           expect{
             @ddl.aggregate(:foo, :format)
-          }.to raise_code(:PLMC28)
+          }.to raise_error(DDLValidationError, "Formats supplied to aggregation functions should be a hash")
         end
 
         it "should raise an exception if format hash does not include a :format key" do
           expect{
             @ddl.aggregate(:foo, {})
-          }.to raise_code(:PLMC27)
+          }.to raise_error(DDLValidationError, "Formats supplied to aggregation functions must have a :format key")
         end
 
         it "should raise an exception if aggregate function is not a hash" do
           expect{
             @ddl.aggregate(:foo)
-          }.to raise_code(:PLMC26)
+          }.to raise_error(DDLValidationError, "Functions supplied to aggregate should be a hash")
         end
 
         it "should raise an exception if function hash does not include a :args key" do
           expect{
             @ddl.stubs(:entities).returns({nil => {:action => :foo}})
             @ddl.aggregate({})
-          }.to raise_code(:PLMC25, :action => :foo)
+          }.to raise_error(DDLValidationError, "aggregate method for action 'foo' missing a function parameter")
         end
 
         it "should correctly add an aggregate function to the function array" do

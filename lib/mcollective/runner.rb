@@ -3,8 +3,6 @@ module MCollective
   # and the background, keeps detailed stats and provides hooks to access
   # all this information
   class Runner
-    include Translatable
-
     def initialize(configfile)
       @config = Config.instance
       @config.loadconfig(configfile) unless @config.configured
@@ -22,13 +20,12 @@ module MCollective
 
       unless Util.windows?
         Signal.trap("USR1") do
-          log_code(:PLMC2, "Reloading all agents after receiving USR1 signal", :info)
+          Log.info("Reloading all agents after receiving USR1 signal")
           @agents.loadagents
         end
 
         Signal.trap("USR2") do
-          log_code(:PLMC3, "Cycling logging level due to USR2 signal", :info)
-
+          Log.info("Cycling logging level due to USR2 signal")
           Log.cycle_level
         end
       else
@@ -47,7 +44,7 @@ module MCollective
       begin
         PluginManager["registration_plugin"].run(@connection) unless @config.registerinterval == 0
       rescue Exception => e
-        logexception(:PLMC4, "Failed to start registration plugin: %{error}", :error, e)
+        Log.error("Failed to start registration plugin: #{e}")
       end
 
       loop do
@@ -57,21 +54,22 @@ module MCollective
           unless request.agent == "mcollective"
             agentmsg(request)
           else
-            log_code(:PLMC5, "Received a control message, possibly via 'mco controller' but this has been deprecated", :error)
+            Log.error("Received a control message, possibly via 'mco controller' but this has been deprecated")
           end
         rescue SignalException => e
-          logexception(:PLMC7, "Exiting after signal: %{error}", :warn, e)
+          Log.warn("Exiting after signal: #{e}")
           @connection.disconnect
           raise
 
         rescue MsgTTLExpired => e
-          logexception(:PLMC9, "Expired Message: %{error}", :warn, e)
+          Log.warn(e)
 
         rescue NotTargettedAtUs => e
-          log_code(:PLMC6, "Message does not pass filters, ignoring", :debug)
+          Log.debug("Message does not pass filters, ignoring")
 
         rescue Exception => e
-          logexception(:PLMC10, "Failed to handle message: %{error}", :warn, e, true)
+          Log.warn("Failed to handle message: #{e} - #{e.class}\n")
+          Log.warn(e.backtrace.join("\n\t"))
         end
       end
     end
@@ -79,7 +77,7 @@ module MCollective
     private
     # Deals with messages directed to agents
     def agentmsg(request)
-      log_code(:PLMC8, "Handling message for agent '%{agent}' on collective '%{collective} with requestid '%{requestid}'", :debug, :agent => request.agent, :collective => request.collective, :requestid => request.requestid)
+      Log.debug("Handling message for agent '#{request.agent}' on collective '#{request.collective}'")
 
       @agents.dispatch(request, @connection) do |reply_message|
         reply(reply_message, request) if reply_message
