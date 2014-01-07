@@ -123,7 +123,7 @@ module MCollective
         m.stubs(:expected_msgid=)
         m.stubs(:decode!)
         m.stubs(:requestid).returns("badmessage")
-        m  
+        m
       end
 
       it "should receive a message" do
@@ -259,7 +259,25 @@ module MCollective
         message = mock
         @client.stubs(:receive).with("erfs123").returns(message)
         message.stubs(:payload).returns("msg1", "msg2", "timeout")
+        Log.expects(:warn).with("Could not receive all responses. Expected : 3. Received : 2")
         responded = @client.start_receiver("erfs123", 3, 5) do |msg|
+          if msg == "timeout"
+            raise Timeout::Error
+          end
+          results << msg
+        end
+        results.should == ["msg1", "msg2"]
+        responded.should == 2
+      end
+
+      it "should not log a warning if a the response count is larger or equal to the expected number of responses" do
+        results = []
+        Timeout.stubs(:timeout).yields
+        message = mock
+        @client.stubs(:receive).with("erfs123").returns(message)
+        message.stubs(:payload).returns("msg1", "msg2", "timeout")
+        Log.expects(:warn).never
+        responded = @client.start_receiver("erfs123", 2, 5) do |msg|
           if msg == "timeout"
             raise Timeout::Error
           end
