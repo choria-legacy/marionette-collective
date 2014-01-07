@@ -214,7 +214,9 @@ module MCollective
           end while (waitfor == 0 || hosts_responded < waitfor)
         end
       rescue Timeout::Error => e
-        Log.warn("Could not receive all responses. Expected : #{waitfor}. Received : #{hosts_responded}")
+        if (waitfor > hosts_responded)
+          Log.warn("Could not receive all responses. Expected : #{waitfor}. Received : #{hosts_responded}")
+        end
       end
 
       hosts_responded
