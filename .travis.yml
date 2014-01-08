@@ -1,6 +1,3 @@
-before_install:
-  - gem update --system 2.1.11
-  - gem --version
 language: ruby
 script: "bundle exec rake test SPEC_OPTS='--color'"
 notifications:
