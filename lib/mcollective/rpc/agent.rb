@@ -31,9 +31,6 @@ module MCollective
     #
     # We also currently have the validation code in here, this will be moved to plugins soon.
     class Agent
-      include Translatable
-      extend Translatable
-
       attr_accessor :reply, :request, :agent_name
       attr_reader :logger, :config, :timeout, :ddl, :meta
 
@@ -58,7 +55,8 @@ module MCollective
         @timeout = @meta[:timeout] || 10
 
       rescue Exception => e
-        DDL.validation_fail!(:PLMC24, "Failed to load DDL for the '%{agent}' agent, DDLs are required: %{error_class}: %{error}", :error, :agent => @agent_name, :error_class => e.class, :error => e.to_s)
+        Log.error("Failed to load DDL for the '%s' agent, DDLs are required: %s: %s" % [@agent_name, e.class, e.to_s])
+        raise DDLValidationError
       end
 
       def handlemsg(msg, connection)
@@ -87,7 +85,6 @@ module MCollective
           if respond_to?("#{@request.action}_action")
             send("#{@request.action}_action")
           else
-            log_code(:PLMC36, "Unknown action '%{action}' for agent '%{agent}'", :warn, :action => @request.action, :agent => @request.agent)
             raise UnknownRPCAction, "Unknown action '#{@request.action}' for agent '#{@request.agent}'"
           end
         rescue RPCAborted => e
@@ -119,7 +116,7 @@ module MCollective
         if @request.should_respond?
           return @reply.to_hash
         else
-          log_code(:PLMC35, "Client did not request a response, surpressing reply", :debug)
+          Log.debug("Client did not request a response, surpressing reply")
           return nil
         end
       end
@@ -142,12 +139,12 @@ module MCollective
       def self.activate?
         agent_name = self.to_s.split("::").last.downcase
 
-        log_code(:PLMC37, "Starting default activation checks for the '%{agent}' agent", :debug, :agent => agent_name)
+        Log.debug("Starting default activation checks for #{agent_name}")
 
         should_activate = Util.str_to_bool(Config.instance.pluginconf.fetch("#{agent_name}.activate_agent", true))
 
         unless should_activate
-          log_code(:PLMC38, "Found plugin configuration '%{agent}.activate_agent' with value '%{should_activate}'", :debug, :agent => agent_name, :should_activate => should_activate)
+          Log.debug("Found plugin configuration '#{agent_name}.activate_agent' with value '#{should_activate}'")
         end
 
         return should_activate
@@ -237,7 +234,7 @@ module MCollective
       def self.metadata(data)
         agent = File.basename(caller.first).split(":").first
 
-        log_code(:PLMC34, "setting meta data in agents have been deprecated, DDL files are now being used for this information. Please update the '%{agent}' agent", :warn,  :agent => agent)
+        Log.warn("Setting metadata in agents has been deprecated, DDL files are now being used for this information.  Please update the '#{agent}' agent")
       end
 
       # Creates the needed activate? class in a manner similar to the other
@@ -364,7 +361,7 @@ module MCollective
       def audit_request(msg, connection)
         PluginManager["rpcaudit_plugin"].audit_request(msg, connection) if @config.rpcaudit
       rescue Exception => e
-        logexception(:PLMC39, "Audit failed with an error, processing the request will continue.", :warn, e)
+        Log.warn("Audit failed - #{e} - continuing to process message")
       end
     end
   end

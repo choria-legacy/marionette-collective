@@ -11,15 +11,6 @@ module MCollective
       PluginManager << {:type => "connector_plugin", :class => MCollective::Connector::Stomp.new}
     end
 
-    describe "#t" do
-      it "should correctly translate the message" do
-        I18n.expects(:t).with("PLMC1.pattern", {:rspec => "test"})
-        I18n.expects(:t).with("PLMC1.expanded", {:rspec => "test"})
-        Util.t(:PLMC1, :rspec => "test")
-        Util.t("PLMC1.expanded", :rspec => "test")
-      end
-    end
-
     describe "#windows?" do
       it "should correctly detect windows on unix platforms" do
         RbConfig::CONFIG.expects("[]").returns("linux")
@@ -515,8 +506,7 @@ module MCollective
 
       it "should raise an exception if the string does not match the boolean pattern" do
         ["yep", "nope", "yess", "noway", "rspec", "YES!", "NO?"].each do |val|
-          Util.expects(:raise_code).with(:PLMC42, "Cannot convert string value '%{value}' into a boolean.", :error, :value => val)
-          Util.str_to_bool(val).should be_false
+          expect { Util.str_to_bool(val) }.to raise_error("Cannot convert string value '#{val}' into a boolean.")
         end
       end
     end

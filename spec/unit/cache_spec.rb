@@ -10,16 +10,6 @@ module MCollective
       @cache = Cache.instance_variable_set("@cache", {})
     end
 
-    describe "#check_cache!" do
-      it "should correctly check for valid caches" do
-        Cache.expects(:has_cache?).with("rspec").returns(true)
-        Cache.expects(:has_cache?).with("fail").returns(false)
-
-        Cache.check_cache!("rspec")
-        expect { Cache.check_cache!("fail") }.to raise_code("Could not find a cache called '%{cache_name}'", :cache_name => "fail")
-      end
-    end
-
     describe "#setup" do
       it "should use a mutex to manage access to the cache" do
         @locks_mutex.expects(:synchronize).yields
@@ -47,18 +37,19 @@ module MCollective
 
     describe "#delete!" do
       it "should delete the cache and return true" do
-        Cache.expects(:check_cache!).with("rspec")
-
         Cache.setup("rspec")
         Cache.delete!("rspec").should == true
       end
     end
 
     describe "#write" do
+      it "should detect unknown caches" do
+        expect { Cache.write("rspec", :key, :val) }.to raise_error("No cache called 'rspec'")
+      end
+
       it "should write to the cache" do
         time = Time.now
         Time.expects(:now).returns(time)
-        Cache.expects(:check_cache!).with("rspec")
 
         Cache.setup("rspec")
         Cache.write("rspec", :key, :val).should == :val
@@ -72,10 +63,6 @@ module MCollective
       it "should read a written entry correctly" do
         Cache.setup("rspec")
         Cache.write("rspec", :key, :val)
-
-        Cache.expects(:check_cache!).with("rspec")
-        Cache.expects(:ttl).with("rspec", :key).returns(1)
-
         Cache.read("rspec", :key).should == :val
       end
 
@@ -85,63 +72,30 @@ module MCollective
 
         Cache.expects(:ttl).returns(0)
 
-        Cache.expects(:check_cache!).with("rspec")
-
-        expect { Cache.read("rspec", :key) }.to raise_code("Cache expired on '%{cache_name}' key '%{item}'", :cache_name => "rspec", :item => :key)
-      end
-    end
-
-    describe "#invalidate!" do
-      it "should return false for unknown keys" do
-        Cache.expects(:check_cache!).with("rspec")
-
-        @locks_mutex.expects(:synchronize).yields
-
-        Cache.setup("rspec")
-        Cache.invalidate!("rspec", "no_such_key").should == false
-      end
-
-      it "should delete the key" do
-        Cache.setup("rspec")
-        Cache.write("rspec", "valid_key", "rspec")
-
-        Cache.expects(:check_cache!).with("rspec")
-        @cache["rspec"].expects(:delete).with("valid_key")
-
-        Cache.invalidate!("rspec", "valid_key")
+        expect { Cache.read("rspec", :key) }.to raise_error(/has expired/)
       end
     end
 
     describe "#ttl" do
-      it "should detect invalid key names" do
-        Cache.expects(:check_cache!).with("rspec")
-        Cache.setup("rspec", 300)
-        expect { Cache.ttl("rspec", :key) }.to raise_code("No item called '%{item}' for cache '%{cache_name}'", :cache_name => "rspec", :item => :key)
-      end
-
-      it "should return >0 for valid" do
+      it "should return a positive value for an unexpired item" do
         Cache.setup("rspec", 300)
         Cache.write("rspec", :key, :val)
-
-        Cache.expects(:check_cache!).with("rspec")
         Cache.ttl("rspec", :key).should >= 0
       end
 
-      it "should return <0 for expired messages" do
+      it "should return <0 for an expired item" do
         Cache.setup("rspec", 300)
         Cache.write("rspec", :key, :val)
 
         time = Time.now + 600
         Time.expects(:now).returns(time)
 
-        Cache.expects(:check_cache!).with("rspec")
         Cache.ttl("rspec", :key).should <= 0
       end
     end
 
     describe "#synchronize" do
       it "should use the correct mutex" do
-        Cache.expects(:check_cache!).with("rspec")
         Cache.setup("rspec")
 
         rspec_lock = @cache_locks["rspec"]

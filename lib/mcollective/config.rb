@@ -125,9 +125,6 @@ module MCollective
 
         raise('The %s config file does not specify a libdir setting, cannot continue' % configfile) if @libdir.empty?
 
-        I18n.load_path = Dir[File.expand_path(File.join(File.dirname(__FILE__), "locales", "*.yml"))]
-        I18n.locale = :en
-
         read_plugin_config_dir("#{@configdir}/plugin.d")
 
         raise 'Identities can only match /\w\.\-/' unless @identity.match(/^[\w\.\-]+$/)
@@ -147,7 +144,7 @@ module MCollective
         PluginManager.loadclass("Mcollective::Audit::#{@rpcauditprovider}") if @rpcaudit
         PluginManager << {:type => "global_stats", :class => RunnerStats.new}
 
-        Log.logmsg(:PLMC1, "The Marionette Collective version %{version} started by %{name} using config file %{config}", :info, :version => MCollective::VERSION, :name => $0, :config => configfile)
+        Log.info("The Marionette Collective version #{MCollective::VERSION} started by #{$0} using config file #{configfile}")
       else
         raise("Cannot find config file '#{configfile}'")
       end

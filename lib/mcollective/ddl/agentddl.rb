@@ -68,12 +68,12 @@ module MCollective
 
       # Sets the aggregate array for the given action
       def aggregate(function, format = {:format => nil})
-        DDL.validation_fail!(:PLMC28, "Formats supplied to aggregation functions should be a hash", :error) unless format.is_a?(Hash)
-        DDL.validation_fail!(:PLMC27, "Formats supplied to aggregation functions must have a :format key", :error) unless format.keys.include?(:format)
-        DDL.validation_fail!(:PLMC26, "Functions supplied to aggregate should be a hash", :error) unless function.is_a?(Hash)
+        raise(DDLValidationError, "Formats supplied to aggregation functions should be a hash") unless format.is_a?(Hash)
+        raise(DDLValidationError, "Formats supplied to aggregation functions must have a :format key") unless format.keys.include?(:format)
+        raise(DDLValidationError, "Functions supplied to aggregate should be a hash") unless function.is_a?(Hash)
 
         unless (function.keys.include?(:args)) && function[:args]
-          DDL.validation_fail!(:PLMC25, "aggregate method for action '%{action}' missing a function parameter", :error, :action => entities[@current_entity][:action])
+          raise DDLValidationError, "aggregate method for action '%s' missing a function parameter" % entities[@current_entity][:action]
         end
 
         entities[@current_entity][:aggregate] ||= []
@@ -178,7 +178,7 @@ module MCollective
       def validate_rpc_request(action, arguments)
         # is the action known?
         unless actions.include?(action)
-          DDL.validation_fail!(:PLMC29, "Attempted to call action %{action} for %{plugin} but it's not declared in the DDL", :debug, :action => action, :plugin => @pluginname)
+          raise DDLValidationError, "Attempted to call action #{action} for #{@pluginname} but it's not declared in the DDL"
         end
 
         input = action_interface(action)[:input] || {}
@@ -186,7 +186,7 @@ module MCollective
         input.keys.each do |key|
           unless input[key][:optional]
             unless arguments.keys.include?(key)
-              DDL.validation_fail!(:PLMC30, "Action '%{action}' needs a '%{key}' argument", :debug, :action => action, :key => key)
+              raise DDLValidationError, "Action #{action} needs a #{key} argument"
             end
           end
 
