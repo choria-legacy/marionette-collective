@@ -17,6 +17,7 @@ module MCollective
 
         File.open(logfile, "a") do |f|
           f.puts("[#{now_iso8601}] reqid=#{request.uniqid}: reqtime=#{request.time} caller=#{request.caller}@#{request.sender} agent=#{request.agent} action=#{request.action} data=#{request.data.pretty_print_inspect}")
+        end
       end
     end
   end
