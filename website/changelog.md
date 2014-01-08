@@ -8,8 +8,8 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
-|2013/01/07|Config class does not parse fixnum config parameters correctly|MCO-97|
-|2013/01/06|deprecate and remove flattened output|MCO-84|
+|2014/01/07|Config class does not parse fixnum config parameters correctly|MCO-97|
+|2014/01/06|deprecate and remove flattened output|MCO-84|
 |2013/12/19|Make audit plugin log output match standard format|MCO-142|
 |*2013/11/07*|*Release 2.3.3*|23107|
 |2013/11/07|Add a modulepackage target to the plugin packager|23099|
