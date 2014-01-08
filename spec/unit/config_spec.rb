@@ -127,6 +127,20 @@ module MCollective
           }.to raise_error "Could not parse value for configuration option '#{key}' with value 'nan'"
          end
       end
+
+      it 'should log a warning when using a deprecated option' do
+        PluginManager.stubs(:loadclass)
+        PluginManager.stubs("<<")
+
+        ["topicprefix", "topicsep", "queueprefix", "rpchelptemplate", "helptemplatedir"].each do |key|
+          File.expects(:exists?).with("/nonexisting").returns(true)
+          File.expects(:readlines).with("/nonexisting").returns(["#{key} = nan", "libdir = /nonexistinglib"])
+
+          Log.stubs(:warn)
+          Log.expects(:warn).with("Use of deprecated '#{key}' option.  This option is ignored and should be removed from '/nonexisting'")
+          Config.instance.loadconfig("/nonexisting")
+        end
+      end
     end
 
     describe "#read_plugin_config_dir" do

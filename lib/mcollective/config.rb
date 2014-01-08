@@ -113,6 +113,8 @@ module MCollective
                   @default_discovery_options << val
                 when "default_discovery_method"
                   @default_discovery_method = val
+                when "topicprefix", "topicsep", "queueprefix", "rpchelptemplate", "helptemplatedir"
+                  Log.warn("Use of deprecated '#{key}' option.  This option is ignored and should be removed from '#{configfile}'")
                 else
                   raise("Unknown config parameter '#{key}'")
                 end
