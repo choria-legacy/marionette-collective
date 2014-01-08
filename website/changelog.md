@@ -8,6 +8,9 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2014/01/08|Turned use of removed options into warnings|MCO-151|
+|2014/01/08|Removed i18n spike (#18863)|MCO-138|
+|2014/01/07|Fixed a spurious warning in 'mco ping'|MCO-146|
 |2014/01/07|Config class does not parse fixnum config parameters correctly|MCO-97|
 |2014/01/06|deprecate and remove flattened output|MCO-84|
 |2013/12/19|Make audit plugin log output match standard format|MCO-142|
