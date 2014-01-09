@@ -109,7 +109,7 @@ The keystore contains the ActiveMQ broker's certificate and private key, which i
 
 In the working directory where you copied your PEM-format credentials, run the following commands. Substitute the names of your key and certificate files where necessary, and the common name of your ActiveMQ server's certificate for `activemq.example.com`.
 
-These commands use both an "export/source" password and a "destination" password. The export/source password is never used again after this series of commands.
+> **Note about passwords:** These commands refer to an "export" password, a "source" password, and a "destination" password. **All of these passwords must be the same.**
 
 {% highlight console %}
 $ sudo cat activemq_private.pem activemq_cert.pem > temp.pem
