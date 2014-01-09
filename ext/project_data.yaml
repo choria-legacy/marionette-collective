@@ -7,7 +7,6 @@ summary: 'Application Server for hosting Ruby code on any capable middleware'
 description: 'The Marionette Collective, e.g. mcollective, is a framework for building server orchestration or parallel job execution systems.'
 version_file: 'lib/mcollective.rb'
 update_version_file: true
-version_strategy: 'odd_even'
 # files and gem_files are space separated lists
 files: 'mcollective.init COPYING doc etc lib plugins ext bin install.rb'
 # List of packaging related templates to evaluate before the tarball is packed
