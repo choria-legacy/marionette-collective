@@ -4,6 +4,68 @@ title: Changelog
 toc: false
 ---
 
+## Version 2.4.x
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2014/01/09|*Release 2.4.0-rc1*|MCO-152|
+|2014/01/08|Turned use of removed options into warnings|MCO-151|
+|2014/01/08|Removed i18n spike (#18863)|MCO-138|
+|2014/01/07|Fixed a spurious warning in 'mco ping'|MCO-146|
+|2014/01/07|Config class does not parse fixnum config parameters correctly|MCO-97|
+|2014/01/06|deprecate and remove flattened output|MCO-84|
+|2013/12/19|Make audit plugin log output match standard format|MCO-142|
+|2013/11/07|Add a modulepackage target to the plugin packager|23099|
+|2013/11/06|Fix possible thread leak in Shell|23090|
+|2013/11/06|Add a timeout option for system commands|22114|
+|2013/11/05|Redo the packaging of mcollective|17067|
+|2013/10/30|Add rabbitmq federation support with `plugin.rabbitmq.use_reply_exchange`|22603|
+|2013/10/30|Update rabbitmq connector documentation for recent version of rabbitmqadmin|19537|
+|2013/10/17|mcollective service does not gracefully exit on windows|20467|
+|2013/10/16|Add option to thread client|21910|
+|2013/10/16|Publishing time should not be part of the request time|21910|
+|2013/10/11|Add a stdin discovery method|22061|
+|2013/10/08|Plugin packager doesn't apply --pluginversion option|22790|
+|2013/10/07|Mcollective plugins cannot express dependencies|22361|
+|2013/10/03|Ability to retrieve multiple facts through rpcutil|21788|
+|2013/10/01|Fix packaging for debain/ubuntu with ruby 1.9|16572|
+|2013/09/27|Fix buildmacpkg|16786|
+|2013/09/27|Fix --nodes 'nodefile' on ruby 1.9.3|22720|
+|2013/09/25|MCO Plugin Packager produces more than one source artifact|22316|
+|2013/09/06|Fix directed request on subcollectives with rabbit connector|21755|
+|2013/08/19|add an install.rb file to mcollective|22220|
+|2013/08/02|Support Stomp 1.1 with RabbitMQ and ActiveMQ|15182|
+|2013/07/31|Surpress Errno::ESRCH info messages when running shell commands|21779|
+|2013/07/03|Improve error reporting when requesting docs for a non existing plugin|21429|
+|2013/07/03|Support aggregate plugins in 'mco plugin doc'|18414|
+|2013/07/03|Allow the ActiveMQ and RabbitMQ SSL cert paths to be set using environment variables|20550|
+|2013/06/23|Gracefully handle whitespaces in the config file before config keys|21407|
+|2013/06/19|Ensure the line numbers are printed correctly on both Windows and Unix|20506|
+|2013/06/19|Remove the rpchelptemplate and helptemplatedir options|20714|
+|2013/06/18|Correctly detect Windows absolute paths|21251|
+|2013/06/10|Fix and centralize handling of boolean values for settings|19751|
+|2013/06/06|Clone the default values from the DDL to avoid accidental modifications to the cached DDL file|21104|
+|2013/06/05|Filter methods on the RPC Client are now idempotent|20233|
+|2013/06/04|run() call in an agent can return incorrect Process::Status|17667|
+|2013/06/03|Improve debian dependencies so packages can be rebuilt in a chroot|20950|
+|2013/05/28|Set expire headers in the ActiveMQ and RabbitMQ message headers|19905|
+|2013/05/10|Correctly detect version differences in semver version where the path level is greater 10|20661|
+|2013/05/01|Improve behaviour of data matchers when return values are nil|20059|
+|2013/04/29|Improve config defaults on windows machines|20388|
+|2013/04/18|Enforce valid identity names in the file discovery method|20282|
+|2013/04/11|Add direct addressing awareness to the fire and forget request mode|17930|
+|2013/03/22|Remove the topicprefix, queueprefix and topicsep options|19673|
+|2013/03/21|Remove the plugin.discovery.timeout setting as it's not relevant anymore|19694|
+|2013/03/21|Improve error reporting from the rpc application in the light of direct_addressing|19827|
+|2013/03/20|Fail with a friendly error message when no libdir is set|19752|
+|2013/03/14|Change default RabbitMQ and ActiveMQ ports to 61613|19734|
+|2013/03/13|Set correct reply-to headers in the RabbitMQ connector|17034|
+|2013/03/12|Pre-populate the data from data plugins like agent replies|19564|
+|2013/03/12|Explicitly include StringIO|19367|
+|2013/03/12|Enable direct addressing by default|19665|
+|2013/02/20|Fix error code collision on PLMC18|19366|
+|2013/02/15|Validate arguments supplied to the RPC application and raise errors sooner|19181|
+
 ## Version 2.3.x
 
 |Date|Description|Ticket|

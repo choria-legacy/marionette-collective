@@ -8,6 +8,257 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_4_0">&nbsp;</a>
+
+## 2.4.0 - 2014/01/09
+
+*Release candidate series started on 2014/01/09*
+
+
+*Note: From 2.4.0 MCollective is observing semver (http://semver.org/)*
+
+### New Features and Improvements from 2.2.4
+
+ * Correct reply-to headers are now set for both ActiveMQ and RabbitMQ
+ * Fire and forget requests are now direct addressing aware
+ * Boolean values in the config classes have now been standardised via a new Util#str_to_bool helper
+ * SSL certificate paths for ActiveMQ and RabbitMQ can now be set in the users shell environment
+ * Aggregate plugins are supported in the 'mco plugin doc' application and bundled plugins now have usage information
+ * Default ports for ActiveMQ and RabbitMQ have changed to 61613
+ * Data returned by data plugins are pre-populated with defaults from the DDL
+ * Direct addressing is now enabled by default
+ * Argument validation in the rpc application now happens before discovery to provide more timely user feedback
+ * plugin.discovery.timeout has been removed
+ * Certain paths have more platform appropriate defaults on Windows
+ * Filter methods on the RPC client are now idempotent
+ * The topicprefix, topicsep, queueprefix, rpchelptemplate, helptemplatedir options have been removed and will log a deprecation warning if used.
+ * Support for version 1.1 of the Stomp protocol has been added to the ActiveMQ and RabbitMQ connectors
+ * A get_facts action has been added to the rpcutil agent that can retrieve a list of facts
+ * The plugin packager has been updated to only create a single source artifact when building packages
+ * The plugin packager can now express operating system specific dependencies
+ * A Module packager has been added that will output Puppet modules that can be used with the Puppet Labs MCollective module
+ * A stdin discovery plugin has been added
+ * Message publishing time is no longer part of the request timeout and is now configurable
+ * An option has been added to enable threading in the client which improves responsiveness when publishing large amounts of directed messages
+ * RabbitMQ federation support has been added
+ * A timeout option has been added to the Shell command runner
+ * Packaging has been updated to conform with other Puppet Labs projects
+ * Test coverage has been improved
+ * Config values that are expected to be integers will no longer be incorrectly parsed
+ * The DDL action display preference, :flatten, has been deprecated and will be completely removed in the next minor release
+
+### Bug Fixes from 2.2.4
+
+ * Direct requests on sub-collectives will now work correctly when using the RabbitMQ connector
+ * The Plugin Packager now correctly sets the plugin version supplied by the --pluginversion flag
+ * The --nodes flag will no longer raise an error on Ruby 1.9.3
+ * Stopping the MCollective agent on Windows will now exit cleanly
+ * The systemu guard thread will now exit cleanly when Shell.runcommand() is called from a long running thread
+ * Correctly handle discovery where data plugins return nil for a specific item
+ * The flatfile discovery method validates identities using the same rules as the config class
+ * The Util#versioncmp function behaves correctly with semver versions where the minor is larger than 10
+ * Debian packages will now build correctly in a chroot
+ * The run() agent helper could sometimes return -1 and leave zombies, this has been improved
+ * Certain operations on a reply data item in an agent could alter the cached copy of the DDL thus affecting future agent invocations
+ * Absolute paths on Windows are detected correctly
+ * Line numbers are printed correctly in logs on Windows machines
+ * Whitespace before config keys in the config file are now ignored
+
+### Removed Functionality from 2.2.4
+
+ * The STOMP adapter has been deprecated and removed
+
+### Backwards Compatibility and Upgrading:
+
+With the removal of the Stomp connector, in this release we are deprecating a number of unused configuration options that was used by this
+connector and a few others that has become pointless over the years.
+
+If you have any of the following in your configuration files you should consider removing them as they no longer have any effect.
+
+ * topicprefix
+ * queueprefix
+ * rpchelptemplate
+ * helptemplatedir
+ * plugin.discovery.timeout
+ * topicsep
+
+### STOMP 1.1 support with RabbitMQ and ActiveMQ
+
+A common problem is that idle STOMP connections get expired by session tracking firewalls and NAT devices. Version 1.1 of the STOMP
+protocol combats this with protocol level heartbeats which can now be enabled when using version 1.2.10 and up of the stomp gem.
+
+```
+# Send heartbeats in 30 second intervals. This is the shortest supported period.
+plugin.activemq.heartbeat_interval = 30
+
+# By default if heartbeat_interval is set it will request STOMP 1.1 but support fallback
+# to 1.0, but you can enable strict STOMP 1.1 only operation by disabling 1.0 fallback
+plugin.activemq.stomp_1_0_fallback = 0
+
+# Maximum amount of heartbeat read failures before retrying. 0 means never retry.
+plugin.activemq.max_hbread_fails = 2
+
+# Maxium amount of heartbeat lock obtain failures before retrying. 0 means never retry.
+plugin.activemq.max_hbrlck_fails = 2
+```
+
+For the RabbitMQ connector the names of the options are as follows.
+
+```
+# Send heartbeats in 30 second intervals. This is the shortest supported period.
+plugin.rabbitmq.heartbeat_interval = 30
+
+# By default if heartbeat_interval is set it will request STOMP 1.1 but support fallback
+# to 1.0, but you can enable strict STOMP 1.1 only operation by disabling 1.0 fallback
+plugin.rabbitmq.stomp_1_0_fallback = 0
+
+# Maximum amount of heartbeat read failures before retrying. 0 means never retry.
+plugin.rabbitmq.max_hbread_fails = 2
+
+# Maxium amount of heartbeat lock obtain failures before retrying. 0 means never retry.
+plugin.rabbitmq.max_hbrlck_fails = 2
+```
+
+More information about STOMP heartbeats can be found http://stomp.github.io/stomp-specification-1.1.html#Heart-beating
+
+### RabbitMQ Federation
+
+RabbitMQ federation only mirrors exchanges between nodes so replies need to be
+sent to an exchange instead of a queue.  In order to enable that add the
+following snippet to your client configuration:
+
+```
+plugin.rabbitmq.use_reply_exchange = true
+```
+
+You will also need to create an exchange called `mcollective_reply` in your
+rabbitmq vhost.
+
+```
+$ rabbitmqadmin declare exchange --user=admin --password=changeme --vhost=/mcollective name=mcollective_reply type=direct
+```
+
+### Changes to the Client
+
+In this release we have made two changes to increase reliability when sending a large amount of messages. Firstly, we have
+added a customisable publishing timeout which is independant from the agent timeout. This can be set either in the client
+configuration file
+
+```
+#client.cfg
+publish_timeout = 2
+```
+
+or on the command line
+
+```
+$ mco rpc rpcutil ping --publish_timeout 2
+```
+
+The publishing timeout will default to 2 seconds.
+
+Secondly this release adds the ability to start the client in threaded mode. This will greatly increase the amount of
+messages that can be sent when using direct addressing. This can be enabled either in the client configuration file
+
+```
+#client.cfg
+threaded = true
+```
+
+or on the command line
+
+```
+$ mco rpc rpcutil ping --nodes large_node_file.txt --threaded
+```
+
+### Plugin Packager
+
+This release brings three improvements to the plugin packager.
+
+A module target has been added which allows you output Puppet modules that can be used with the new MCollective Puppet Module.
+
+```
+$ git clone https://github.com/puppetlabs/mcollective-service-agent
+$ cd mcollective-service-agent
+$ mco plugin package \
+     --format modulepackage \
+     --vendor puppetlabs
+```
+
+This will create a module for the forge named puppetlabs-mcollective_service_agent containing the source
+code and the class mcollective_service_agent::agent
+
+This release also adds the ability to specify system specific dependensies when building RPM's or Deb's.
+
+```
+$ mco plugin package --dependency="debian::ruby-net-ping" \
+                     --dependency="redhat::rubygem-net-ping"
+```
+
+Finally the plugin packager will no longer create multiple source artifacts when building packages.
+
+### Changes since 2.2.4
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2014/01/08|Turned use of removed options into warnings|MCO-151|
+|2014/01/08|Removed i18n spike (#18863)|MCO-138|
+|2014/01/07|Fixed a spurious warning in 'mco ping'|MCO-146|
+|2014/01/07|Config class does not parse fixnum config parameters correctly|MCO-97|
+|2014/01/06|deprecate and remove flattened output|MCO-84|
+|2013/12/19|Make audit plugin log output match standard format|MCO-142|
+|2013/11/07|Add a modulepackage target to the plugin packager|23099|
+|2013/11/06|Fix possible thread leak in Shell|23090|
+|2013/11/06|Add a timeout option for system commands|22114|
+|2013/11/05|Redo the packaging of mcollective|17067|
+|2013/10/30|Add rabbitmq federation support with `plugin.rabbitmq.use_reply_exchange`|22603|
+|2013/10/30|Update rabbitmq connector documentation for recent version of rabbitmqadmin|19537|
+|2013/10/17|mcollective service does not gracefully exit on windows|20467|
+|2013/10/16|Add option to thread client|21910|
+|2013/10/16|Publishing time should not be part of the request time|21910|
+|2013/10/11|Add a stdin discovery method|22061|
+|2013/10/08|Plugin packager doesn't apply --pluginversion option|22790|
+|2013/10/07|Mcollective plugins cannot express dependencies|22361|
+|2013/10/03|Ability to retrieve multiple facts through rpcutil|21788|
+|2013/10/01|Fix packaging for debain/ubuntu with ruby 1.9|16572|
+|2013/09/27|Fix buildmacpkg|16786|
+|2013/09/27|Fix --nodes 'nodefile' on ruby 1.9.3|22720|
+|2013/09/25|MCO Plugin Packager produces more than one source artifact|22316|
+|2013/09/06|Fix directed request on subcollectives with rabbit connector|21755|
+|2013/08/19|add an install.rb file to mcollective|22220|
+|2013/08/02|Support Stomp 1.1 with RabbitMQ and ActiveMQ|15182|
+|2013/07/31|Surpress Errno::ESRCH info messages when running shell commands|21779|
+|2013/07/03|Improve error reporting when requesting docs for a non existing plugin|21429|
+|2013/07/03|Support aggregate plugins in 'mco plugin doc'|18414|
+|2013/07/03|Allow the ActiveMQ and RabbitMQ SSL cert paths to be set using environment variables|20550|
+|2013/06/23|Gracefully handle whitespaces in the config file before config keys|21407|
+|2013/06/19|Ensure the line numbers are printed correctly on both Windows and Unix|20506|
+|2013/06/19|Remove the rpchelptemplate and helptemplatedir options|20714|
+|2013/06/18|Correctly detect Windows absolute paths|21251|
+|2013/06/10|Fix and centralize handling of boolean values for settings|19751|
+|2013/06/06|Clone the default values from the DDL to avoid accidental modifications to the cached DDL file|21104|
+|2013/06/05|Filter methods on the RPC Client are now idempotent|20233|
+|2013/06/04|run() call in an agent can return incorrect Process::Status|17667|
+|2013/06/03|Improve debian dependencies so packages can be rebuilt in a chroot|20950|
+|2013/05/28|Set expire headers in the ActiveMQ and RabbitMQ message headers|19905|
+|2013/05/10|Correctly detect version differences in semver version where the path level is greater 10|20661|
+|2013/05/01|Improve behaviour of data matchers when return values are nil|20059|
+|2013/04/29|Improve config defaults on windows machines|20388|
+|2013/04/18|Enforce valid identity names in the file discovery method|20282|
+|2013/04/11|Add direct addressing awareness to the fire and forget request mode|17930|
+|2013/03/22|Remove the topicprefix, queueprefix and topicsep options|19673|
+|2013/03/21|Remove the plugin.discovery.timeout setting as it's not relevant anymore|19694|
+|2013/03/21|Improve error reporting from the rpc application in the light of direct_addressing|19827|
+|2013/03/20|Fail with a friendly error message when no libdir is set|19752|
+|2013/03/14|Change default RabbitMQ and ActiveMQ ports to 61613|19734|
+|2013/03/13|Set correct reply-to headers in the RabbitMQ connector|17034|
+|2013/03/12|Pre-populate the data from data plugins like agent replies|19564|
+|2013/03/12|Explicitly include StringIO|19367|
+|2013/03/12|Enable direct addressing by default|19665|
+|2013/02/20|Fix error code collision on PLMC18|19366|
+|2013/02/15|Validate arguments supplied to the RPC application and raise errors sooner|19181|
+
+
 <a name="2_3_3">&nbsp;</a>
 
 ## 2.3.3 - 2013/11/07
