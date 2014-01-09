@@ -87,37 +87,36 @@ If you have any of the following in your configuration files you should consider
 A common problem is that idle STOMP connections get expired by session tracking firewalls and NAT devices. Version 1.1 of the STOMP
 protocol combats this with protocol level heartbeats which can now be enabled when using version 1.2.10 and up of the stomp gem.
 
-```
-# Send heartbeats in 30 second intervals. This is the shortest supported period.
-plugin.activemq.heartbeat_interval = 30
 
-# By default if heartbeat_interval is set it will request STOMP 1.1 but support fallback
-# to 1.0, but you can enable strict STOMP 1.1 only operation by disabling 1.0 fallback
-plugin.activemq.stomp_1_0_fallback = 0
+    # Send heartbeats in 30 second intervals. This is the shortest supported period.
+    plugin.activemq.heartbeat_interval = 30
 
-# Maximum amount of heartbeat read failures before retrying. 0 means never retry.
-plugin.activemq.max_hbread_fails = 2
+    # By default if heartbeat_interval is set it will request STOMP 1.1 but support fallback
+    # to 1.0, but you can enable strict STOMP 1.1 only operation by disabling 1.0 fallback
+    plugin.activemq.stomp_1_0_fallback = 0
 
-# Maxium amount of heartbeat lock obtain failures before retrying. 0 means never retry.
-plugin.activemq.max_hbrlck_fails = 2
-```
+    # Maximum amount of heartbeat read failures before retrying. 0 means never retry.
+    plugin.activemq.max_hbread_fails = 2
+
+    # Maxium amount of heartbeat lock obtain failures before retrying. 0 means never retry.
+    plugin.activemq.max_hbrlck_fails = 2
+
 
 For the RabbitMQ connector the names of the options are as follows.
 
-```
-# Send heartbeats in 30 second intervals. This is the shortest supported period.
-plugin.rabbitmq.heartbeat_interval = 30
 
-# By default if heartbeat_interval is set it will request STOMP 1.1 but support fallback
-# to 1.0, but you can enable strict STOMP 1.1 only operation by disabling 1.0 fallback
-plugin.rabbitmq.stomp_1_0_fallback = 0
+    # Send heartbeats in 30 second intervals. This is the shortest supported period.
+    plugin.rabbitmq.heartbeat_interval = 30
 
-# Maximum amount of heartbeat read failures before retrying. 0 means never retry.
-plugin.rabbitmq.max_hbread_fails = 2
+    # By default if heartbeat_interval is set it will request STOMP 1.1 but support fallback
+    # to 1.0, but you can enable strict STOMP 1.1 only operation by disabling 1.0 fallback
+    plugin.rabbitmq.stomp_1_0_fallback = 0
 
-# Maxium amount of heartbeat lock obtain failures before retrying. 0 means never retry.
-plugin.rabbitmq.max_hbrlck_fails = 2
-```
+    # Maximum amount of heartbeat read failures before retrying. 0 means never retry.
+    plugin.rabbitmq.max_hbread_fails = 2
+
+    # Maxium amount of heartbeat lock obtain failures before retrying. 0 means never retry.
+    plugin.rabbitmq.max_hbrlck_fails = 2
 
 More information about STOMP heartbeats can be found http://stomp.github.io/stomp-specification-1.1.html#Heart-beating
 
@@ -127,16 +126,16 @@ RabbitMQ federation only mirrors exchanges between nodes so replies need to be
 sent to an exchange instead of a queue.  In order to enable that add the
 following snippet to your client configuration:
 
-```
-plugin.rabbitmq.use_reply_exchange = true
-```
+
+    plugin.rabbitmq.use_reply_exchange = true
+
 
 You will also need to create an exchange called `mcollective_reply` in your
 rabbitmq vhost.
 
-```
-$ rabbitmqadmin declare exchange --user=admin --password=changeme --vhost=/mcollective name=mcollective_reply type=direct
-```
+
+    $ rabbitmqadmin declare exchange --user=admin --password=changeme --vhost=/mcollective name=mcollective_reply type=direct
+
 
 ### Changes to the Client
 
@@ -144,32 +143,24 @@ In this release we have made two changes to increase reliability when sending a 
 added a customisable publishing timeout which is independant from the agent timeout. This can be set either in the client
 configuration file
 
-```
-#client.cfg
-publish_timeout = 2
-```
+    #client.cfg
+    publish_timeout = 2
 
 or on the command line
 
-```
-$ mco rpc rpcutil ping --publish_timeout 2
-```
+    $ mco rpc rpcutil ping --publish_timeout 2
 
 The publishing timeout will default to 2 seconds.
 
 Secondly this release adds the ability to start the client in threaded mode. This will greatly increase the amount of
 messages that can be sent when using direct addressing. This can be enabled either in the client configuration file
 
-```
-#client.cfg
-threaded = true
-```
+    #client.cfg
+    threaded = true
 
 or on the command line
 
-```
-$ mco rpc rpcutil ping --nodes large_node_file.txt --threaded
-```
+    $ mco rpc rpcutil ping --nodes large_node_file.txt --threaded
 
 ### Plugin Packager
 
@@ -177,23 +168,21 @@ This release brings three improvements to the plugin packager.
 
 A module target has been added which allows you output Puppet modules that can be used with the new MCollective Puppet Module.
 
-```
-$ git clone https://github.com/puppetlabs/mcollective-service-agent
-$ cd mcollective-service-agent
-$ mco plugin package \
-     --format modulepackage \
-     --vendor puppetlabs
-```
+
+    $ git clone https://github.com/puppetlabs/mcollective-service-agent
+    $ cd mcollective-service-agent
+    $ mco plugin package \
+         --format modulepackage \
+         --vendor puppetlabs
+
 
 This will create a module for the forge named puppetlabs-mcollective_service_agent containing the source
 code and the class mcollective_service_agent::agent
 
 This release also adds the ability to specify system specific dependensies when building RPM's or Deb's.
 
-```
-$ mco plugin package --dependency="debian::ruby-net-ping" \
-                     --dependency="redhat::rubygem-net-ping"
-```
+    $ mco plugin package --dependency="debian::ruby-net-ping" \
+                         --dependency="redhat::rubygem-net-ping"
 
 Finally the plugin packager will no longer create multiple source artifacts when building packages.
 
