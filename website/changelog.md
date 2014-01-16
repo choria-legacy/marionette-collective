@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2014/01/16|MCollective service doesn't exit on Windows|MCO-158|
 |2014/01/09|*Release 2.4.0-rc1*|MCO-152|
 |2014/01/08|Turned use of removed options into warnings|MCO-151|
 |2014/01/08|Removed i18n spike (#18863)|MCO-138|
