@@ -7,7 +7,7 @@ module MCollective
       @config = Config.instance
       @config.loadconfig(configfile) unless @config.configured
       @config.mode = :server
-
+      @state = :running
       @stats = PluginManager["global_stats"]
 
       @security = PluginManager["security_plugin"]
@@ -71,7 +71,14 @@ module MCollective
           Log.warn("Failed to handle message: #{e} - #{e.class}\n")
           Log.warn(e.backtrace.join("\n\t"))
         end
+
+        return if @state == :stopping
       end
+    end
+
+    # Flag the runner to stop
+    def stop
+      @state = :stopping
     end
 
     private
