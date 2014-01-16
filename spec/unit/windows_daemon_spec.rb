@@ -18,16 +18,44 @@ module MCollective
         end
 
         it "should start the mainloop" do
+          Util.stubs(:windows?).returns(true)
           WindowsDaemon.expects(:mainloop)
           WindowsDaemon.daemonize_runner
         end
       end
 
-      describe "#service_stop" do
-        it "should log and exit" do
-          Log.expects(:info)
-
+      describe "#service_main" do
+        it "should start the runner" do
+          runner = mock
+          Runner.stubs(:new).returns(runner)
           d = WindowsDaemon.new
+          d.stubs(:running?).returns(true,false)
+          d.stubs(:state).returns(WindowsDaemon::RUNNING)
+          runner.expects(:run)
+          d.service_main
+        end
+
+        it "should kill any other living threads on exit" do
+          d = WindowsDaemon.new
+          d.stubs(:running?).returns(false)
+          other = mock
+          Thread.stubs(:list).returns([Thread.current, other])
+          Thread.current.expects(:kill).never
+          other.expects(:kill)
+          d.service_main
+        end
+      end
+
+      describe "#service_stop" do
+        it "should log, disconnect, stop the runner and exit" do
+          runner = mock
+          connector = mock
+          connector.expects(:disconnect)
+          Log.expects(:info)
+          PluginManager.stubs(:[]).with("connector_plugin").returns(connector)
+          d = WindowsDaemon.new
+          d.instance_variable_set(:@runner, runner)
+          runner.expects(:stop)
           d.service_stop
         end
       end
