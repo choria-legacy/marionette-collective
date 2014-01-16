@@ -10,10 +10,13 @@ will be highlighted here.
 
 <a name="2_4_0">&nbsp;</a>
 
-## 2.4.0 - 2014/01/09
+## 2.4.0
 
 *Release candidate series started on 2014/01/09*
 
+### 2.4.0-rc1 - 2014/01/09
+
+### 2.4.0-rc2 - 2014/01/16
 
 *Note: From 2.4.0 MCollective is observing semver (http://semver.org/)*
 
@@ -190,6 +193,7 @@ Finally the plugin packager will no longer create multiple source artifacts when
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2014/01/16|MCollective service doesn't exit on Windows|MCO-158|
 |2014/01/08|Turned use of removed options into warnings|MCO-151|
 |2014/01/08|Removed i18n spike (#18863)|MCO-138|
 |2014/01/07|Fixed a spurious warning in 'mco ping'|MCO-146|
