@@ -10,13 +10,7 @@ will be highlighted here.
 
 <a name="2_4_0">&nbsp;</a>
 
-## 2.4.0
-
-*Release candidate series started on 2014/01/09*
-
-### 2.4.0-rc1 - 2014/01/09
-
-### 2.4.0-rc2 - 2014/01/16
+## 2.4.0 - 2014/01/23
 
 *Note: From 2.4.0 MCollective is observing semver (http://semver.org/)*
 

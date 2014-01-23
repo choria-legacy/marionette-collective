@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2014/01/23|*Release 2.4.0*|MCO-168|
 |2014/01/16|*Release 2.4.0-rc2*|MCO-162|
 |2014/01/16|MCollective service doesn't exit on Windows|MCO-158|
 |2014/01/09|*Release 2.4.0-rc1*|MCO-152|
