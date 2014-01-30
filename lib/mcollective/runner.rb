@@ -4,32 +4,39 @@ module MCollective
   # all this information
   class Runner
     def initialize(configfile)
-      @config = Config.instance
-      @config.loadconfig(configfile) unless @config.configured
-      @config.mode = :server
-      @state = :running
-      @stats = PluginManager["global_stats"]
+      begin
+        @config = Config.instance
+        @config.loadconfig(configfile) unless @config.configured
+        @config.mode = :server
+        @state = :running
+        @stats = PluginManager["global_stats"]
 
-      @security = PluginManager["security_plugin"]
-      @security.initiated_by = :node
+        @security = PluginManager["security_plugin"]
+        @security.initiated_by = :node
 
-      @connection = PluginManager["connector_plugin"]
-      @connection.connect
+        @connection = PluginManager["connector_plugin"]
+        @connection.connect
 
-      @agents = Agents.new
+        @agents = Agents.new
 
-      unless Util.windows?
-        Signal.trap("USR1") do
-          Log.info("Reloading all agents after receiving USR1 signal")
-          @agents.loadagents
+        unless Util.windows?
+          Signal.trap("USR1") do
+            Log.info("Reloading all agents after receiving USR1 signal")
+            @agents.loadagents
+          end
+
+          Signal.trap("USR2") do
+            Log.info("Cycling logging level due to USR2 signal")
+            Log.cycle_level
+          end
+        else
+          Util.setup_windows_sleeper
         end
-
-        Signal.trap("USR2") do
-          Log.info("Cycling logging level due to USR2 signal")
-          Log.cycle_level
-        end
-      else
-        Util.setup_windows_sleeper
+      rescue => e
+        Log.error("Failed to start MCollective runner.")
+        Log.error(e)
+        Log.error(e.backtrace.join("\n\t"))
+        raise e
       end
     end
 
