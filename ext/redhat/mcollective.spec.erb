@@ -32,7 +32,7 @@ BuildArch:      noarch
 %if 0%{?_with_systemd}
 # Required for %%post, %%preun, %%postun
 Requires:       systemd
-%if 0%{?fedora} >= 18
+%if 0%{?fedora} >= 18 || 0%{?rhel} >= 7
 BuildRequires:  systemd
 %else
 BuildRequires:  systemd-units
