@@ -8,6 +8,24 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_4_1">&nbsp;</a>
+
+## 2.4.1 - 2014/02/10
+
+### Bug Fixes from 2.4.0
+
+ * Remove reference to package iteration in #package_information
+ * Improve logging when connector fails to connect
+ * Fix `plugin.rabbitmq.use_reply_exchange` subscription behavior
+
+### Changes since 2.4.0
+
+|2014/02/10|Remove reference to package iteration in #package_information|MCO-179|
+|2014/02/07|Update documentation to note that `plugin.rabbitmq.use_reply_exchange` should work from 2.4.1|MCO-174|
+|2014/01/30|Improve logging when connector fails to connect|MCO-173|
+|2014/01/29|Fix `plugin.rabbitmq.use_reply_exchange` subscription behavior|MCO-172|
+
+
 <a name="2_4_0">&nbsp;</a>
 
 ## 2.4.0 - 2014/01/23
