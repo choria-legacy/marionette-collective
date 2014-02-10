@@ -20,6 +20,8 @@ will be highlighted here.
 
 ### Changes since 2.4.0
 
+|Date|Description|Ticket|
+|----|-----------|------|
 |2014/02/10|Remove reference to package iteration in #package_information|MCO-179|
 |2014/02/07|Update documentation to note that `plugin.rabbitmq.use_reply_exchange` should work from 2.4.1|MCO-174|
 |2014/01/30|Improve logging when connector fails to connect|MCO-173|
