@@ -108,5 +108,4 @@ guide you can create this with.
 rabbitmqadmin declare exchange --user=admin --password=changeme --vhost=/mcollective name=mcollective_reply type=direct
 {% endhighlight %}
 
-Note: the `rabbitmq.use_reply_exchange` feature is only in master currently,
-but will be released as part of MCollective 2.3.3 and 2.4.0.
+Note: the `rabbitmq.use_reply_exchange` feature is available from version 2.4.1.

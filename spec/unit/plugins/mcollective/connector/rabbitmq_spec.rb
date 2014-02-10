@@ -383,6 +383,21 @@ module MCollective
           @subscription.expects("<<").with("rspec")
           @c.subscribe("test", :broadcast, "mcollective")
         end
+
+        it "should not normally subscribe to :reply messages" do
+          @connection.expects(:subscribe).never
+          @c.subscribe("test", :reply, "mcollective")
+        end
+
+        it "should subscribe to :reply messages when use_reply_exchange is set" do
+          @c.expects("make_target").with("test", :reply, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          @config.stubs(:pluginconf).returns({
+            'rabbitmq.use_reply_exchange' => '1',
+          })
+          @connection.expects(:subscribe).with("test", {}, "rspec").once
+
+          @c.subscribe("test", :reply, "mcollective")
+        end
       end
 
       describe "#unsubscribe" do
@@ -403,6 +418,21 @@ module MCollective
           @subscription.expects(:delete).with("rspec").once
 
           @c.unsubscribe("test", :broadcast, "mcollective")
+        end
+
+        it "should not normally unsubscribe from :reply messages" do
+          @connection.expects(:unsubscribe).never
+          @c.unsubscribe("test", :reply, "mcollective")
+        end
+
+        it "should unsubscribe from :reply messages when use_reply_exchange is set" do
+          @c.expects("make_target").with("test", :reply, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          @config.stubs(:pluginconf).returns({
+            'rabbitmq.use_reply_exchange' => '1',
+          })
+          @connection.expects(:unsubscribe).with("test", {}, "rspec").once
+
+          @c.unsubscribe("test", :reply, "mcollective")
         end
       end
 

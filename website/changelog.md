@@ -8,6 +8,9 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2014/02/07|Update documentation to note that `plugin.rabbitmq.use_reply_exchange` should work from 2.4.1|MCO-174|
+|2014/01/30|Improve logging when connector fails to connect|MCO-173|
+|2014/01/29|Fix `plugin.rabbitmq.use_reply_exchange` subscription behavior|MCO-172|
 |2014/01/23|*Release 2.4.0*|MCO-168|
 |2014/01/16|*Release 2.4.0-rc2*|MCO-162|
 |2014/01/16|MCollective service doesn't exit on Windows|MCO-158|

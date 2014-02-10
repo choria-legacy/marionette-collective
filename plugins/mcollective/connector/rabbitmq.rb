@@ -321,7 +321,22 @@ module MCollective
 
       # Subscribe to a topic or queue
       def subscribe(agent, type, collective)
-        return if type == :reply
+        if type == :reply
+          # On rabbitmq if you send a message with a reply-to: header set to
+          # '/temp-queue/*' it automatically creates a private queue, munges
+          # the reply-to: header to point to this private queue, and
+          # subscribes you to it.  As such you should never attempt to
+          # SUBSCRIBE or UNSUBSCRIBE to '/temp-queue/*' directly as that'll
+          # cause great pain and suffering.
+          # https://www.rabbitmq.com/stomp.html#d.tqd
+
+          # The exception to this is in 'use_reply_exchange' mode, when the
+          # reply-to will be set to a queue in an explicit exchange.
+          if !get_bool_option("rabbitmq.use_reply_exchange", false)
+            # We aren't in 'use_reply_exchange' mode, don't subscribe.
+            return
+          end
+        end
 
         source = make_target(agent, type, collective)
 
@@ -336,7 +351,13 @@ module MCollective
 
       # Subscribe to a topic or queue
       def unsubscribe(agent, type, collective)
-        return if type == :reply
+        if type == :reply
+          # For a more detailed discussion of this logic, please see #subscribe
+          if !get_bool_option("rabbitmq.use_reply_exchange", false)
+            # We shouldn't try to unsubscribe from a '/temp-queue/*' queue.
+            return
+          end
+        end
 
         source = make_target(agent, type, collective)
 
