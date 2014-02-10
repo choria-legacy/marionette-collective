@@ -37,7 +37,7 @@ module MCollective
         puts "%30s%s" % ["Plugin Type : ", @package.plugintype.capitalize]
         puts "%30s%s" % ["Package Output Format : ", @package_type]
         puts "%30s%s" % ["Version : ", @package.metadata[:version]]
-        puts "%30s%s" % ["Iteration : ", @package.iteration]
+        puts "%30s%s" % ["Revision : ", @package.revision]
         puts "%30s%s" % ["Vendor : ", @package.vendor]
         puts "%30s%s" % ["Post Install Script : ", @package.postinstall] if @package.postinstall
         puts "%30s%s" % ["Author : ", @package.metadata[:author]]
