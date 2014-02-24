@@ -142,6 +142,18 @@ module MCollective
         end
       end
 
+      describe "#stomp_version_supports_heartbeat?" do
+        it "should not be supported with stomp 1.2.9" do
+          @c.stubs(:stomp_version).returns("1.2.9")
+          @c.stomp_version_supports_heartbeat? == false
+        end
+
+        it "should be supported with stomp 1.2.10" do
+          @c.stubs(:stomp_version).returns("1.2.10")
+          @c.stomp_version_supports_heartbeat? == true
+        end
+      end
+
       describe "#connection_headers" do
         before do
           @c.stubs(:stomp_version).returns("1.2.10")
@@ -157,9 +169,16 @@ module MCollective
           @c.connection_headers.should == {:host => "rspec", :"accept-version" => "1.0"}
         end
 
-        it "should log a warning about not using Stomp 1.1" do
+        it "should log an informational message about not using Stomp 1.1" do
           @config.expects(:pluginconf).returns("activemq.heartbeat_interval" => "0").at_least_once
-          Log.expects(:warn).with(regexp_matches(/without STOMP 1.1 heartbeats/))
+          Log.expects(:info).with(regexp_matches(/without STOMP 1.1 heartbeats/))
+          @c.connection_headers
+        end
+
+        it "should not log an informational message about not using Stomp 1.1 if the gem won't support it" do
+          @config.expects(:pluginconf).returns("activemq.heartbeat_interval" => "0").at_least_once
+          @c.stubs(:stomp_version).returns("1.0.0")
+          Log.expects(:info).with(regexp_matches(/without STOMP 1.1 heartbeats/)).never
           @c.connection_headers
         end
 
