@@ -244,6 +244,10 @@ module MCollective
         ::Stomp::Version::STRING
       end
 
+      def stomp_version_supports_heartbeat?
+        return Util.versioncmp(stomp_version, "1.2.10") >= 0
+      end
+
       def connection_headers
         headers = {:"accept-version" => "1.0"}
 
@@ -253,7 +257,7 @@ module MCollective
         headers[:host] = get_option("activemq.vhost", "mcollective")
 
         if heartbeat_interval > 0
-          unless Util.versioncmp(stomp_version, "1.2.10") >= 0
+          unless stomp_version_supports_heartbeat?
             raise("Setting STOMP 1.1 properties like heartbeat intervals require at least version 1.2.10 of the STOMP gem")
           end
 
@@ -271,7 +275,9 @@ module MCollective
             headers[:"accept-version"] = "1.1"
           end
         else
-          Log.warn("Connecting without STOMP 1.1 heartbeats, if you are using ActiveMQ 5.8 or newer consider setting plugin.activemq.heartbeat_interval")
+          if stomp_version_supports_heartbeat?
+            Log.info("Connecting without STOMP 1.1 heartbeats, if you are using ActiveMQ 5.8 or newer consider setting plugin.activemq.heartbeat_interval")
+          end
         end
 
         headers
