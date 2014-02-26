@@ -40,7 +40,7 @@ The typical service agent is a good example, it has various actions that all mor
 First we need to define the meta data for the agent itself:
 
 {% highlight ruby linenos %}
-metadata :name        => "SimpleRPC Service Agent",
+metadata :name        => "service",
          :description => "Agent to manage services using the Puppet service provider",
          :author      => "R.I.Pienaar",
          :license     => "GPLv2",
@@ -120,8 +120,8 @@ You can view a human readable version of this using *mco plugin doc &lt;agent&gt
 
 {% highlight console %}
 % mco plugin doc service
-SimpleRPC Service Agent
-=======================
+service
+=======
 
 Agent to manage services using the Puppet service provider
 
@@ -238,7 +238,7 @@ pp ddl.action_interface("status")
 Meta Data:
 {:license=>"GPLv2",
  :author=>"R.I.Pienaar",
- :name=>"SimpleRPC Service Agent",
+ :name=>"service",
  :timeout=>60,
  :version=>"1.1",
  :url=>"http://projects.puppetlabs.com/projects/mcollective-plugins/wiki",
