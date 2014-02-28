@@ -241,7 +241,18 @@ module MCollective
           retry
         end
 
+        # In older stomp gems an attempt to receive after failed authentication can return nil
+        if msg.nil?
+          raise("No message received from RabbitMQ.")
+        end
+
         raise "Received a processing error from RabbitMQ: '%s'" % msg.body.chomp if msg.body =~ /Processing error/
+
+        # We expect all messages we get to be of STOMP frame type MESSAGE, log any outliers
+        if msg.command != 'MESSAGE'
+          Log.warn("Received frame of type '#{msg.command}' expected 'MESSAGE'")
+          Log.debug("Unexpected '#{msg.command}' frame.  Headers: #{msg.headers.inspect} Body: #{msg.body.inspect}")
+        end
 
         Message.new(msg.body, msg, :base64 => @base64, :headers => msg.headers)
       end

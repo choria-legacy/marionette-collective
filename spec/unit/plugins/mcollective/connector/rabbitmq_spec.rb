@@ -298,6 +298,7 @@ module MCollective
       describe "#receive" do
         it "should receive from the middleware" do
           payload = mock
+          payload.stubs(:command).returns("MESSAGE")
           payload.stubs(:body).returns("msg")
           payload.stubs(:headers).returns("headers")
 
@@ -312,6 +313,7 @@ module MCollective
 
         it "should sleep and retry if recieving while disconnected" do
           payload = mock
+          payload.stubs(:command).returns("MESSAGE")
           payload.stubs(:body).returns("msg")
           payload.stubs(:headers).returns("headers")
 
@@ -320,6 +322,28 @@ module MCollective
           @c.expects(:sleep).with(1)
 
           @c.receive.should == "rspec"
+        end
+
+        it "should raise an error on failure to receive a frame" do
+          @connection.expects(:receive).returns(nil)
+
+          expect { @c.receive }.to raise_error(/No message received/)
+        end
+
+        it "should log non-MESSAGE frames" do
+          payload = mock
+          payload.stubs(:command).returns("ERROR")
+          payload.stubs(:body).returns("Out of cheese exception")
+          payload.stubs(:headers).returns("headers")
+
+          @connection.expects(:receive).returns(payload)
+
+          Message.stubs(:new)
+
+          Log.expects(:debug).with('Waiting for a message from RabbitMQ')
+          Log.expects(:warn).with("Received frame of type 'ERROR' expected 'MESSAGE'")
+          Log.expects(:debug).with('Unexpected \'ERROR\' frame.  Headers: "headers" Body: "Out of cheese exception"')
+          @c.receive
         end
       end
 
