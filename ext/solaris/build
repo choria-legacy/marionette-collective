@@ -12,7 +12,7 @@ ifeq ($(VERSION),@DEVELOPMENT_VERSION@)
         VERSION = $(shell ggrep "PROJ_VERSION = "  ../../Rakefile | cut -d' ' -f3 | sed -e 's/"//g')
 endif
 RELEASE = 1
-PKGVERSION = ${VERSION}-${RELEASE}\,REV=$(shell date +%Y.%m.%d)
+PKGVERSION = ${VERSION}\,REV=$(shell date +%Y.%m.%d)
 RUBY_VERSION = 1.8
 RUBY_SITE = ${DESTDIR}/opt/csw/lib/ruby/site_ruby/${RUBY_VERSION}
 
