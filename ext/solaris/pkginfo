@@ -1,4 +1,4 @@
-NAME=mcollective- build server orchestration or parallel job execution systems
+NAME=mcollective
 CATEGORY=network
 DESC=The Marionette Collective aka. mcollective is a framework to build server orchestration or parallel job execution systems.
 ARCH=all
