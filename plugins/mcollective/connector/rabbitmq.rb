@@ -32,7 +32,7 @@ module MCollective
         end
 
         def on_ssl_connecting(params)
-          Log.info("Estblishing SSL session with #{stomp_url(params)}")
+          Log.info("Establishing SSL session with #{stomp_url(params)}")
         rescue
         end
 
