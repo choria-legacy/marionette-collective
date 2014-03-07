@@ -175,6 +175,12 @@ module MCollective
         @parser.instance_variable_get(:@options)[:publish_timeout].should == 5
       end
 
+      it 'should parse the --agent_reply_timeout option' do
+        ARGV << '--agent_reply_timeout=5'
+        @parser.parse
+        @parser.instance_variable_get(:@options)[:agent_reply_timeout].should == 5
+      end
+
       it 'should parse the --threaded option' do
         ARGV << '--threaded'
         @parser.parse

@@ -174,6 +174,10 @@ module MCollective
         @options[:publish_timeout] = pt
       end
 
+      @parser.on("--agent_reply_timeout TIMEOUT", Integer, "Timeout for publishing replies from agent actions to remote callers.") do |pt|
+        @options[:agent_reply_timeout] = pt
+      end
+
       @parser.on("--threaded", "Start publishing requests and receiving responses in threaded mode.") do |v|
         @options[:threaded] = true
       end
