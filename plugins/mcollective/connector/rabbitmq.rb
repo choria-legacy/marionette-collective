@@ -77,6 +77,11 @@ module MCollective
         @config = Config.instance
         @subscriptions = []
         @base64 = false
+        @use_exponential_back_off = get_bool_option("rabbitmq.use_exponential_back_off", "true")
+        @initial_reconnect_delay = Float(get_option("rabbitmq.initial_reconnect_delay", 0.01))
+        @back_off_multiplier = Integer(get_option("rabbitmq.back_off_multiplier", 2))
+        @max_reconnect_delay = Float(get_option("rabbitmq.max_reconnect_delay", 30.0))
+        @reconnect_delay = @initial_reconnect_delay
       end
 
       # Connects to the RabbitMQ middleware
@@ -89,7 +94,7 @@ module MCollective
         begin
           @base64 = get_bool_option("rabbitmq.base64", "false")
 
-          pools = @config.pluginconf["rabbitmq.pool.size"].to_i
+          pools = Integer(get_option("rabbitmq.pool.size"))
           hosts = []
 
           1.upto(pools) do |poolnum|
@@ -100,7 +105,11 @@ module MCollective
             host[:login] = get_env_or_option("STOMP_USER", "rabbitmq.pool.#{poolnum}.user")
             host[:passcode] = get_env_or_option("STOMP_PASSWORD", "rabbitmq.pool.#{poolnum}.password")
             host[:ssl] = get_bool_option("rabbitmq.pool.#{poolnum}.ssl", "false")
-            host[:ssl] = ssl_parameters(poolnum, get_bool_option("rabbitmq.pool.#{poolnum}.ssl.fallback", "false")) if host[:ssl]
+
+            # if ssl is enabled set :ssl to the hash of parameters
+            if host[:ssl]
+              host[:ssl] = ssl_parameters(poolnum, get_bool_option("rabbitmq.pool.#{poolnum}.ssl.fallback", "false"))
+            end
 
             Log.debug("Adding #{host[:host]}:#{host[:port]} to the connection pool")
             hosts << host
@@ -112,10 +121,10 @@ module MCollective
 
           # Various STOMP gem options, defaults here matches defaults for 1.1.6 the meaning of
           # these can be guessed, the documentation isn't clear
-          connection[:initial_reconnect_delay] = Float(get_option("rabbitmq.initial_reconnect_delay", 0.01))
-          connection[:max_reconnect_delay] = Float(get_option("rabbitmq.max_reconnect_delay", 30.0))
-          connection[:use_exponential_back_off] = get_bool_option("rabbitmq.use_exponential_back_off", "true")
-          connection[:back_off_multiplier] = Integer(get_option("rabbitmq.back_off_multiplier", 2))
+          connection[:use_exponential_back_off] = @use_exponential_back_off
+          connection[:initial_reconnect_delay] = @initial_reconnect_delay
+          connection[:back_off_multiplier] = @back_off_multiplier
+          connection[:max_reconnect_delay] = @max_reconnect_delay
           connection[:max_reconnect_attempts] = Integer(get_option("rabbitmq.max_reconnect_attempts", 0))
           connection[:randomize] = get_bool_option("rabbitmq.randomize", "false")
           connection[:backup] = get_bool_option("rabbitmq.backup", "false")
@@ -226,6 +235,25 @@ module MCollective
         ENV["MCOLLECTIVE_RABBITMQ_POOL%s_SSL_CERT" % poolnum] || get_option("rabbitmq.pool.#{poolnum}.ssl.cert", false)
       end
 
+      # Calculate the exponential backoff needed
+      def exponential_back_off
+        if !@use_exponential_back_off
+          return nil
+        end
+
+        backoff = @reconnect_delay
+
+        # calculate next delay
+        @reconnect_delay = @reconnect_delay * @back_off_multiplier
+
+        # cap at max reconnect delay
+        if @reconnect_delay > @max_reconnect_delay
+          @reconnect_delay = @max_reconnect_delay
+        end
+
+        return backoff
+      end
+
       # Receives a message from the RabbitMQ connection
       def receive
         Log.debug("Waiting for a message from RabbitMQ")
@@ -243,15 +271,16 @@ module MCollective
 
         # In older stomp gems an attempt to receive after failed authentication can return nil
         if msg.nil?
-          raise("No message received from RabbitMQ.")
+          raise MessageNotReceived.new(exponential_back_off), "No message received from RabbitMQ."
         end
 
         raise "Received a processing error from RabbitMQ: '%s'" % msg.body.chomp if msg.body =~ /Processing error/
 
-        # We expect all messages we get to be of STOMP frame type MESSAGE, log any outliers
+        # We expect all messages we get to be of STOMP frame type MESSAGE, raise on unexpected types
         if msg.command != 'MESSAGE'
-          Log.warn("Received frame of type '#{msg.command}' expected 'MESSAGE'")
           Log.debug("Unexpected '#{msg.command}' frame.  Headers: #{msg.headers.inspect} Body: #{msg.body.inspect}")
+          raise UnexpectedMessageType.new(exponential_back_off),
+            "Received frame of type '#{msg.command}' expected 'MESSAGE'"
         end
 
         Message.new(msg.body, msg, :base64 => @base64, :headers => msg.headers)

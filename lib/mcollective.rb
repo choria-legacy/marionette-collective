@@ -33,6 +33,17 @@ module MCollective
   class RPCError<StandardError;end
   class SecurityValidationFailed<RuntimeError;end
 
+  class BackoffSuggestion<StandardError
+    attr_reader :backoff
+
+    def initialize(backoff = nil)
+      @backoff = backoff
+    end
+  end
+
+  class MessageNotReceived<BackoffSuggestion; end
+  class UnexpectedMessageType<BackoffSuggestion; end
+
   class InvalidRPCData<RPCError;end
   class MissingRPCData<RPCError;end
   class RPCAborted<RPCError;end
