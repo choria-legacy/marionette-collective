@@ -72,7 +72,7 @@ case "$1" in
   status)
 	if [ -f ${lock} ]; then
 	    if [ -s ${pidfile} ]; then
-	       if [ -e /proc/`cat ${pidfile}` ]; then
+	       if [ -d /proc/`cat ${pidfile}` ]; then
                   echo "mcollectived (`cat ${pidfile}`) is running"
                   exit 0
                else
