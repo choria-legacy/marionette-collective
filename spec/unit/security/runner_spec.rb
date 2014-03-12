@@ -23,6 +23,7 @@ module MCollective
     let(:connector) do
       c = mock
       c.stubs(:connect)
+      c.stubs(:disconnect)
       c
     end
 
@@ -61,6 +62,73 @@ module MCollective
         expect {
           Runner.new(nil)
         }.to raise_error 'failure'
+      end
+    end
+
+    describe '#run' do
+      let(:runner) do
+        Runner.new(nil)
+      end
+
+      before :each do
+        Data.stubs(:load_data_sources)
+        Util.stubs(:make_subscriptions)
+        Util.stubs(:subscribe)
+        config.stubs(:direct_addressing).returns(false)
+      end
+
+      it 'should recieve a message' do
+        connector.expects(:receive)
+        runner.stop
+        runner.run
+      end
+
+      it 'should handle MessageNotReceived with a backoff value and sleep' do
+        # We raise twice currently we can't just have the run loop run once and exit without pretending to stop
+        connector.stubs(:receive).raises(MessageNotReceived.new(15)).then.raises(SignalException.new('INT'))
+        Log.expects(:warn).twice
+        runner.expects(:sleep).with(15)
+        expect { runner.run }.to raise_error(SignalException)
+      end
+
+      it 'should handle MessageNotReceived with a backoff value but not sleep if stopping' do
+        connector.stubs(:receive).raises(MessageNotReceived.new(15))
+        Log.expects(:warn)
+        runner.expects(:sleep).never
+        runner.stop
+        runner.run
+      end
+
+      it 'should handle MessageNotReceived without a backoff value' do
+        connector.stubs(:receive).raises(MessageNotReceived.new)
+        Log.expects(:warn)
+        runner.expects(:sleep).never
+        runner.stop
+        runner.run
+      end
+
+      it 'should handle UnexpectedMessageType with a backoff value' do
+        # We raise twice currently we can't just have the run loop run once and exit without pretending to stop
+        connector.stubs(:receive).raises(UnexpectedMessageType.new(25)).then.raises(SignalException.new('INT'))
+        Log.expects(:warn).twice
+        runner.expects(:sleep).with(25)
+        expect { runner.run }.to raise_error(SignalException)
+      end
+
+     it 'should handle UnexpectedMessageType with a backoff value and stopping' do
+        connector.stubs(:receive).raises(UnexpectedMessageType.new(25))
+        Log.expects(:warn)
+        runner.expects(:sleep).never
+        runner.stop
+        runner.run
+      end
+
+      it 'should handle UnexpectedMessageType without a backoff value' do
+        connector.stubs(:receive).raises(UnexpectedMessageType.new)
+        Log.expects(:warn)
+        runner.expects(:sleep).never
+        runner.stop
+        runner.run
       end
     end
   end

@@ -18,106 +18,140 @@ end
 module MCollective
   module Connector
     describe Activemq do
+
+      let(:config) do
+        conf = mock
+        conf.stubs(:configured).returns(true)
+        conf.stubs(:identity).returns("rspec")
+        conf.stubs(:collectives).returns(["mcollective"])
+        conf
+      end
+
+      let(:logger) do
+        log = mock
+        log.stubs(:log)
+        log.stubs(:start)
+        Log.configure(log)
+        log
+      end
+
+      let(:msg) do
+        m = mock
+        m.stubs(:base64_encode!)
+        m.stubs(:payload).returns("msg")
+        m.stubs(:agent).returns("agent")
+        m.stubs(:type).returns(:reply)
+        m.stubs(:collective).returns("mcollective")
+        m
+      end
+
+      let(:subscription) do
+        sub = mock
+        sub.stubs("<<").returns(true)
+        sub.stubs("include?").returns(false)
+        sub.stubs("delete").returns(false)
+        sub
+      end
+
+      let(:connection) do
+        con = mock
+        con.stubs(:subscribe).returns(true)
+        con.stubs(:unsubscribe).returns(true)
+        con
+      end
+
+      let(:connector) do
+        Activemq.any_instance.stubs(:get_bool_option).with("activemq.use_exponential_back_off", "true").returns(true)
+        Activemq.any_instance.stubs(:get_option).with("activemq.initial_reconnect_delay", 0.01).returns(0.01)
+        Activemq.any_instance.stubs(:get_option).with("activemq.back_off_multiplier", 2).returns(2)
+        Activemq.any_instance.stubs(:get_option).with("activemq.max_reconnect_delay", 30.0).returns(30.0)
+        c = Activemq.new
+        c.instance_variable_set("@subscriptions", subscription)
+        c.instance_variable_set("@connection", connection)
+        c
+      end
+
       before do
         unless ::Stomp::Error.constants.map{|c| c.to_s}.include?("NoCurrentConnection")
           class ::Stomp::Error::NoCurrentConnection < RuntimeError ; end
         end
 
-        @config = mock
-        @config.stubs(:configured).returns(true)
-        @config.stubs(:identity).returns("rspec")
-        @config.stubs(:collectives).returns(["mcollective"])
-
-        logger = mock
-        logger.stubs(:log)
-        logger.stubs(:start)
-        Log.configure(logger)
-
-        Config.stubs(:instance).returns(@config)
-
-        @msg = mock
-        @msg.stubs(:base64_encode!)
-        @msg.stubs(:payload).returns("msg")
-        @msg.stubs(:agent).returns("agent")
-        @msg.stubs(:type).returns(:reply)
-        @msg.stubs(:collective).returns("mcollective")
-
-        @subscription = mock
-        @subscription.stubs("<<").returns(true)
-        @subscription.stubs("include?").returns(false)
-        @subscription.stubs("delete").returns(false)
-
-        @connection = mock
-        @connection.stubs(:subscribe).returns(true)
-        @connection.stubs(:unsubscribe).returns(true)
-
-        @c = Activemq.new
-        @c.instance_variable_set("@subscriptions", @subscription)
-        @c.instance_variable_set("@connection", @connection)
+        logger
+        Config.stubs(:instance).returns(config)
       end
 
       describe "#initialize" do
+        before :each do
+          Activemq.any_instance.stubs(:get_bool_option).with("activemq.use_exponential_back_off", "true").returns(true)
+          Activemq.any_instance.stubs(:get_option).with("activemq.initial_reconnect_delay", 0.01).returns(0.01)
+          Activemq.any_instance.stubs(:get_option).with("activemq.back_off_multiplier", 2).returns(2)
+          Activemq.any_instance.stubs(:get_option).with("activemq.max_reconnect_delay", 30.0).returns(30.0)
+        end
+
         it "should set the @config variable" do
-          c = Activemq.new
-          c.instance_variable_get("@config").should == @config
+          connector_obj = Activemq.new
+          connector_obj.instance_variable_get("@config").should == config
         end
 
         it "should set @subscriptions to an empty list" do
-          c = Activemq.new
-          c.instance_variable_get("@subscriptions").should == []
+          connector_obj = Activemq.new
+          connector_obj.instance_variable_get("@subscriptions").should == []
         end
       end
 
       describe "#connect" do
+        before :each do
+          Activemq.any_instance.stubs(:get_option).with("activemq.heartbeat_interval", 0).returns(30)
+          Activemq.any_instance.stubs(:get_bool_option).with('activemq.stomp_1_0_fallback', true).returns(true)
+          Activemq.any_instance.stubs(:get_bool_option).with('activemq.base64', 'false').returns(false)
+          Activemq.any_instance.stubs(:get_option).with('activemq.vhost', 'mcollective').returns('rspec')
+          Activemq.any_instance.stubs(:get_option).with("activemq.max_reconnect_attempts", 0).returns(5)
+          Activemq.any_instance.stubs(:get_bool_option).with("activemq.randomize", "false").returns(true)
+          Activemq.any_instance.stubs(:get_bool_option).with("activemq.backup", "false").returns(true)
+          Activemq.any_instance.stubs(:get_option).with("activemq.timeout", -1).returns(1)
+          Activemq.any_instance.stubs(:get_option).with("activemq.connect_timeout", 30).returns(5)
+          Activemq.any_instance.stubs(:get_option).with("activemq.max_hbrlck_fails", 2).returns(2)
+          Activemq.any_instance.stubs(:get_option).with("activemq.max_hbread_fails", 2).returns(2)
+          Activemq.any_instance.stubs(:get_bool_option).with("activemq.base64", 'false').returns(false)
+          Activemq.any_instance.stubs(:get_option).with("activemq.priority", 0).returns(0)
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.size").returns(2)
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.host").returns("host1")
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.port", 61613).returns(6163)
+          Activemq.any_instance.stubs(:get_bool_option).with("activemq.pool.1.ssl", "false").returns(false)
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.2.host").returns("host2")
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.2.port", 61613).returns(6164)
+          Activemq.any_instance.stubs(:get_bool_option).with("activemq.pool.2.ssl", "false").returns(true)
+          Activemq.any_instance.stubs(:get_bool_option).with("activemq.pool.2.ssl.fallback", "false").returns(true)
+          Activemq.any_instance.stubs(:get_env_or_option).with("STOMP_USER", "activemq.pool.1.user").returns("user1")
+          Activemq.any_instance.stubs(:get_env_or_option).with("STOMP_USER", "activemq.pool.2.user").returns("user2")
+          Activemq.any_instance.stubs(:get_env_or_option).with("STOMP_PASSWORD", "activemq.pool.1.password").returns("password1")
+          Activemq.any_instance.stubs(:get_env_or_option).with("STOMP_PASSWORD", "activemq.pool.2.password").returns("password2")
+          Activemq.any_instance.instance_variable_set("@subscriptions", subscription)
+          Activemq.any_instance.instance_variable_set("@connection", connection)
+        end
+
         it "should not try to reconnect if already connected" do
           Log.expects(:debug).with("Already connection, not re-initializing connection").once
-          @c.connect
+          connector.connect
         end
 
         it "should support new style config" do
-          pluginconf = {"activemq.pool.size" => "2",
-                        "activemq.pool.1.host" => "host1",
-                        "activemq.pool.1.port" => "6163",
-                        "activemq.pool.1.user" => "user1",
-                        "activemq.pool.1.password" => "password1",
-                        "activemq.pool.1.ssl" => "false",
-                        "activemq.pool.2.host" => "host2",
-                        "activemq.pool.2.port" => "6164",
-                        "activemq.pool.2.user" => "user2",
-                        "activemq.pool.2.password" => "password2",
-                        "activemq.pool.2.ssl" => "true",
-                        "activemq.pool.2.ssl.fallback" => "true",
-                        "activemq.initial_reconnect_delay" => "0.02",
-                        "activemq.max_reconnect_delay" => "40",
-                        "activemq.use_exponential_back_off" => "false",
-                        "activemq.back_off_multiplier" => "3",
-                        "activemq.max_reconnect_attempts" => "5",
-                        "activemq.randomize" => "true",
-                        "activemq.backup" => "true",
-                        "activemq.timeout" => "1",
-                        "activemq.max_hbrlck_fails" => 3,
-                        "activemq.max_hbread_fails" => 3,
-                        "activemq.connect_timeout" => "5"}
-
-
           ENV.delete("STOMP_USER")
           ENV.delete("STOMP_PASSWORD")
 
-          @config.expects(:pluginconf).returns(pluginconf).at_least_once
-
           Activemq::EventLogger.expects(:new).returns("logger")
 
-          connector = mock
-          connector.expects(:new).with(:backup => true,
-                                       :back_off_multiplier => 3,
-                                       :max_reconnect_delay => 40.0,
+          connector_obj = mock
+          connector_obj.expects(:new).with(:backup => true,
+                                       :back_off_multiplier => 2,
+                                       :max_reconnect_delay => 30.0,
                                        :timeout => 1,
                                        :connect_timeout => 5,
-                                       :use_exponential_back_off => false,
+                                       :use_exponential_back_off => true,
                                        :max_reconnect_attempts => 5,
-                                       :initial_reconnect_delay => 0.02,
-                                       :max_hbread_fails => 3,
-                                       :max_hbrlck_fails => 3,
+                                       :initial_reconnect_delay => 0.01,
+                                       :max_hbread_fails => 2,
+                                       :max_hbrlck_fails => 2,
                                        :randomize => true,
                                        :reliable => true,
                                        :logger => "logger",
@@ -134,149 +168,142 @@ module MCollective
                                                    :login => 'user2'}
           ])
 
-          @c.expects(:ssl_parameters).with(2, true).returns(true)
-          @c.expects(:connection_headers).returns({})
+          connector.expects(:ssl_parameters).with(2, true).returns(true)
+          connector.expects(:connection_headers).returns({})
 
-          @c.instance_variable_set("@connection", nil)
-          @c.connect(connector)
+          connector.instance_variable_set("@connection", nil)
+          connector.connect(connector_obj)
         end
       end
 
       describe "#stomp_version_supports_heartbeat?" do
         it "should not be supported with stomp 1.2.9" do
-          @c.stubs(:stomp_version).returns("1.2.9")
-          @c.stomp_version_supports_heartbeat? == false
+          connector.stubs(:stomp_version).returns("1.2.9")
+          connector.stomp_version_supports_heartbeat? == false
         end
 
         it "should be supported with stomp 1.2.10" do
-          @c.stubs(:stomp_version).returns("1.2.10")
-          @c.stomp_version_supports_heartbeat? == true
+          connector.stubs(:stomp_version).returns("1.2.10")
+          connector.stomp_version_supports_heartbeat? == true
         end
       end
 
       describe "#connection_headers" do
         before do
-          @c.stubs(:stomp_version).returns("1.2.10")
+          connector.stubs(:stomp_version).returns("1.2.10")
+          Activemq.any_instance.stubs(:get_option).with("activemq.heartbeat_interval", 0).returns(1)
+          Activemq.any_instance.stubs(:get_bool_option).with('activemq.stomp_1_0_fallback', true).returns(true)
+          Activemq.any_instance.stubs(:get_option).with('activemq.vhost', 'mcollective').returns('rspec')
         end
 
         it "should default to stomp 1.0 only" do
-          @config.expects(:pluginconf).returns({}).at_least_once
-          @c.connection_headers[:"accept-version"] == "1.0"
+          Activemq.any_instance.stubs(:get_option).with("activemq.heartbeat_interval", 0).returns(0)
+          connector.connection_headers[:"accept-version"] == "1.0"
         end
 
         it "should support setting the vhost" do
-          @config.expects(:pluginconf).returns("activemq.vhost" => "rspec").at_least_once
-          @c.connection_headers.should == {:host => "rspec", :"accept-version" => "1.0"}
+          connector.connection_headers[:host].should == "rspec"
         end
 
         it "should log an informational message about not using Stomp 1.1" do
-          @config.expects(:pluginconf).returns("activemq.heartbeat_interval" => "0").at_least_once
+          Activemq.any_instance.stubs(:get_option).with("activemq.heartbeat_interval", 0).returns(0)
           Log.expects(:info).with(regexp_matches(/without STOMP 1.1 heartbeats/))
-          @c.connection_headers
+          connector.connection_headers
         end
 
         it "should not log an informational message about not using Stomp 1.1 if the gem won't support it" do
-          @config.expects(:pluginconf).returns("activemq.heartbeat_interval" => "0").at_least_once
-          @c.stubs(:stomp_version).returns("1.0.0")
+          Activemq.any_instance.stubs(:get_option).with("activemq.heartbeat_interval", 0).returns(0)
+          connector.stubs(:stomp_version).returns("1.0.0")
           Log.expects(:info).with(regexp_matches(/without STOMP 1.1 heartbeats/)).never
-          @c.connection_headers
+          connector.connection_headers
         end
 
         it "should not support stomp 1.1 with older versions of the stomp gem" do
-          @config.expects(:pluginconf).returns("activemq.heartbeat_interval" => "30").at_least_once
-          @c.expects(:stomp_version).returns("1.0.0").once
-          expect { @c.connection_headers }.to raise_error("Setting STOMP 1.1 properties like heartbeat intervals require at least version 1.2.10 of the STOMP gem")
+          Activemq.any_instance.stubs(:get_option).with("activemq.heartbeat_interval", 0).returns(1)
+          connector.expects(:stomp_version).returns("1.0.0").once
+          expect { connector.connection_headers }.to raise_error("Setting STOMP 1.1 properties like heartbeat intervals require at least version 1.2.10 of the STOMP gem")
         end
 
         it "should force the heartbeat to min 30 seconds" do
-          @config.expects(:pluginconf).returns("activemq.heartbeat_interval" => "10").at_least_once
-          @c.connection_headers[:"heart-beat"].should == "30500,29500"
+          Activemq.any_instance.stubs(:get_option).with("activemq.heartbeat_interval", 0).returns(1)
+          connector.connection_headers[:"heart-beat"].should == "30500,29500"
         end
 
         it "should default to 1.0 and 1.1 support" do
-          @config.expects(:pluginconf).returns("activemq.heartbeat_interval" => "30").at_least_once
-          @c.connection_headers[:"accept-version"].should == "1.1,1.0"
+          Activemq.any_instance.stubs(:get_option).with("activemq.heartbeat_interval", 0).returns(1)
+          connector.connection_headers[:"accept-version"].should == "1.1,1.0"
         end
 
         it "should support stomp 1.1 only operation" do
-          @config.expects(:pluginconf).returns("activemq.heartbeat_interval" => "30", "activemq.stomp_1_0_fallback" => 0).at_least_once
-          @c.connection_headers[:"accept-version"].should == "1.1"
+          Activemq.any_instance.stubs(:get_option).with("activemq.heartbeat_interval", 0).returns(1)
+          Activemq.any_instance.stubs(:get_bool_option).with("activemq.stomp_1_0_fallback", true).returns(false)
+          connector.connection_headers[:"accept-version"].should == "1.1"
         end
       end
 
       describe "#ssl_paramaters" do
+
+        before :each do
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.host").returns("host1")
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.port").returns("6164")
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.user").returns("user1")
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.password").returns("password1")
+          Activemq.any_instance.stubs(:get_bool_option).with("activemq.pool.1.ssl", false).returns(true)
+        end
+
         it "should ensure all settings are provided" do
-          pluginconf = {"activemq.pool.1.host" => "host1",
-                        "activemq.pool.1.port" => "6164",
-                        "activemq.pool.1.user" => "user1",
-                        "activemq.pool.1.password" => "password1",
-                        "activemq.pool.1.ssl" => "true",
-                        "activemq.pool.1.ssl.cert" => "rspec"}
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.cert", false).returns("rspec")
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.key", false).returns(nil)
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.ca", false).returns(nil)
 
-          @config.expects(:pluginconf).returns(pluginconf).at_least_once
-
-          expect { @c.ssl_parameters(1, false) }.to raise_error("cert, key and ca has to be supplied for verified SSL mode")
+          expect { connector.ssl_parameters(1, false) }.to raise_error("cert, key and ca has to be supplied for verified SSL mode")
         end
 
         it "should verify the ssl files exist" do
-          pluginconf = {"activemq.pool.1.host" => "host1",
-                        "activemq.pool.1.port" => "6164",
-                        "activemq.pool.1.user" => "user1",
-                        "activemq.pool.1.password" => "password1",
-                        "activemq.pool.1.ssl" => "true",
-                        "activemq.pool.1.ssl.cert" => "rspec.cert",
-                        "activemq.pool.1.ssl.key" => "rspec.key",
-                        "activemq.pool.1.ssl.ca" => "rspec1.ca,rspec2.ca"}
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.cert", false).returns("rspec")
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.key", false).returns('rspec.key')
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.ca", false).returns('rspec1.ca,rspec2.ca')
 
-          @config.expects(:pluginconf).returns(pluginconf).at_least_once
-          @c.expects(:get_key_file).returns("rspec.key").at_least_once
-          @c.expects(:get_cert_file).returns("rspec.cert").at_least_once
+          connector.expects(:get_key_file).returns("rspec.key").at_least_once
+          connector.expects(:get_cert_file).returns("rspec.cert").at_least_once
 
           File.expects(:exist?).with("rspec.cert").twice.returns(true)
           File.expects(:exist?).with("rspec.key").twice.returns(true)
           File.expects(:exist?).with("rspec1.ca").twice.returns(true)
           File.expects(:exist?).with("rspec2.ca").twice.returns(false)
 
-          expect { @c.ssl_parameters(1, false) }.to raise_error("Cannot find CA file rspec2.ca")
+          expect { connector.ssl_parameters(1, false) }.to raise_error("Cannot find CA file rspec2.ca")
 
-          @c.ssl_parameters(1, true).should == true
+          connector.ssl_parameters(1, true).should == true
         end
 
         it "should support fallback mode when there are errors" do
-          pluginconf = {"activemq.pool.1.host" => "host1",
-                        "activemq.pool.1.port" => "6164",
-                        "activemq.pool.1.user" => "user1",
-                        "activemq.pool.1.password" => "password1",
-                        "activemq.pool.1.ssl" => "true"}
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.cert", false).returns("rspec")
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.key", false).returns('rspec.key')
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.ca", false).returns('rspec1.ca,rspec2.ca')
 
-          @config.expects(:pluginconf).returns(pluginconf).at_least_once
-
-          @c.ssl_parameters(1, true).should == true
+          connector.ssl_parameters(1, true).should == true
         end
 
         it "should fail if fallback isnt enabled" do
-          pluginconf = {"activemq.pool.1.host" => "host1",
-                        "activemq.pool.1.port" => "6164",
-                        "activemq.pool.1.user" => "user1",
-                        "activemq.pool.1.password" => "password1",
-                        "activemq.pool.1.ssl" => "true"}
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.cert", false).returns("rspec")
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.key", false).returns('rspec.key')
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.ca", false).returns('rspec1.ca,rspec2.ca')
 
-          @config.expects(:pluginconf).returns(pluginconf).at_least_once
-
-          expect { @c.ssl_parameters(1, false) }.to raise_error
+          expect { connector.ssl_parameters(1, false) }.to raise_error
         end
       end
 
       describe "#get_key_file" do
         it "should return the filename from the environment variable" do
           ENV["MCOLLECTIVE_ACTIVEMQ_POOL2_SSL_KEY"] = "/path/to/rspec/env"
-          @c.get_key_file(2).should == "/path/to/rspec/env"
+          connector.get_key_file(2).should == "/path/to/rspec/env"
         end
 
         it "should return the filename defined in the config file if the environment varialbe doesn't exist" do
           ENV.delete("MCOLLECTIVE_ACTIVEMQ_POOL2_SSL_KEY")
-          @c.expects(:get_option).with("activemq.pool.2.ssl.key", false).returns("/path/to/rspec/conf")
-          @c.get_key_file(2).should == "/path/to/rspec/conf"
+          connector.expects(:get_option).with("activemq.pool.2.ssl.key", false).returns("/path/to/rspec/conf")
+          connector.get_key_file(2).should == "/path/to/rspec/conf"
         end
 
       end
@@ -284,13 +311,34 @@ module MCollective
       describe "#get_cert_file" do
         it "should return the filename from the environment variable" do
           ENV["MCOLLECTIVE_ACTIVEMQ_POOL2_SSL_CERT"] = "/path/to/rspec/env"
-          @c.get_cert_file(2).should == "/path/to/rspec/env"
+          connector.get_cert_file(2).should == "/path/to/rspec/env"
         end
 
         it "should return the filename defined in the config file if the environment varialbe doesn't exist" do
           ENV.delete("MCOLLECTIVE_ACTIVEMQ_POOL2_SSL_CERT")
-          @c.expects(:get_option).with("activemq.pool.2.ssl.cert", false).returns("/path/to/rspec/conf")
-          @c.get_cert_file(2).should == "/path/to/rspec/conf"
+          connector.expects(:get_option).with("activemq.pool.2.ssl.cert", false).returns("/path/to/rspec/conf")
+          connector.get_cert_file(2).should == "/path/to/rspec/conf"
+        end
+      end
+
+      describe '#exponential_back_off' do
+        it "should not do anything when use_exponential_back_off is off" do
+          connector.instance_variable_set(:@use_exponential_back_off, false)
+          connector.exponential_back_off.should == nil
+        end
+
+        it 'should return values of the expected sequence on subsequent calls' do
+          connector.instance_variable_set(:@use_exponential_back_off, true)
+          connector.instance_variable_set(:@initial_reconnect_delay, 5.0)
+          connector.instance_variable_set(:@back_off_multiplier, 2)
+          connector.instance_variable_set(:@max_reconnect_delay, 30.0)
+          connector.instance_variable_set(:@reconnect_delay, 5.0)
+
+          connector.exponential_back_off.should == 5
+          connector.exponential_back_off.should == 10
+          connector.exponential_back_off.should == 20
+          connector.exponential_back_off.should == 30
+          connector.exponential_back_off.should == 30
         end
       end
 
@@ -301,12 +349,12 @@ module MCollective
           payload.stubs(:body).returns("msg")
           payload.stubs(:headers).returns("headers")
 
-          @connection.expects(:receive).returns(payload)
+          connection.expects(:receive).returns(payload)
 
           Message.expects(:new).with("msg", payload, :base64 => true, :headers => "headers").returns("message")
-          @c.instance_variable_set("@base64", true)
+          connector.instance_variable_set("@base64", true)
 
-          received = @c.receive
+          received = connector.receive
           received.should == "message"
         end
 
@@ -317,67 +365,66 @@ module MCollective
           payload.stubs(:headers).returns("headers")
 
           Message.stubs(:new).returns("rspec")
-          @connection.expects(:receive).raises(::Stomp::Error::NoCurrentConnection).returns(payload).twice
-          @c.expects(:sleep).with(1)
+          connection.expects(:receive).raises(::Stomp::Error::NoCurrentConnection).returns(payload).twice
+          connector.expects(:sleep).with(1)
 
-          @c.receive.should == "rspec"
+          connector.receive.should == "rspec"
         end
 
         it "should raise an error on failure to receive a frame" do
-          @connection.expects(:receive).returns(nil)
+          connection.expects(:receive).returns(nil)
 
-          expect { @c.receive }.to raise_error(/No message received/)
+          expect { connector.receive }.to raise_error(MessageNotReceived, /No message received from ActiveMQ./)
         end
 
-        it "should log non-MESSAGE frames" do
+        it "should log and raise UnexpectedMessageType on non-MESSAGE frames" do
           payload = mock
           payload.stubs(:command).returns("ERROR")
           payload.stubs(:body).returns("Out of cheese exception")
           payload.stubs(:headers).returns("headers")
 
-          @connection.expects(:receive).returns(payload)
+          connection.expects(:receive).returns(payload)
 
           Message.stubs(:new)
 
-          Log.expects(:warn).with("Received frame of type 'ERROR' expected 'MESSAGE'")
           Log.stubs(:debug)
           Log.expects(:debug).with('Unexpected \'ERROR\' frame.  Headers: "headers" Body: "Out of cheese exception"')
 
-          @c.receive
+          expect { connector.receive }.to raise_error(UnexpectedMessageType, /Received frame of type 'ERROR' expected 'MESSAGE'/)
         end
       end
 
       describe "#publish" do
         before do
-          @connection.stubs(:publish).with("test", "msg", {}).returns(true)
+          connection.stubs(:publish).with("test", "msg", {}).returns(true)
         end
 
         it "should base64 encode a message if configured to do so" do
-          @c.instance_variable_set("@base64", true)
-          @c.expects(:headers_for).returns({})
-          @c.expects(:target_for).returns({:name => "test", :headers => {}})
-          @connection.expects(:publish).with("test", "msg", {})
-          @msg.expects(:base64_encode!)
+          connector.instance_variable_set("@base64", true)
+          connector.expects(:headers_for).returns({})
+          connector.expects(:target_for).returns({:name => "test", :headers => {}})
+          connection.expects(:publish).with("test", "msg", {})
+          msg.expects(:base64_encode!)
 
-          @c.publish(@msg)
+          connector.publish(msg)
         end
 
         it "should not base64 encode if not configured to do so" do
-          @c.instance_variable_set("@base64", false)
-          @c.expects(:headers_for).returns({})
-          @c.expects(:target_for).returns({:name => "test", :headers => {}})
-          @connection.expects(:publish).with("test", "msg", {})
-          @msg.expects(:base64_encode!).never
+          connector.instance_variable_set("@base64", false)
+          connector.expects(:headers_for).returns({})
+          connector.expects(:target_for).returns({:name => "test", :headers => {}})
+          connection.expects(:publish).with("test", "msg", {})
+          msg.expects(:base64_encode!).never
 
-          @c.publish(@msg)
+          connector.publish(msg)
         end
 
         it "should publish the correct message to the correct target with msgheaders" do
-          @connection.expects(:publish).with("test", "msg", {"test" => "test"}).once
-          @c.expects(:headers_for).returns({"test" => "test"})
-          @c.expects(:target_for).returns({:name => "test", :headers => {}})
+          connection.expects(:publish).with("test", "msg", {"test" => "test"}).once
+          connector.expects(:headers_for).returns({"test" => "test"})
+          connector.expects(:target_for).returns({:name => "test", :headers => {}})
 
-          @c.publish(@msg)
+          connector.publish(msg)
         end
 
         it "should publish direct messages based on discovered_hosts" do
@@ -389,65 +436,65 @@ module MCollective
           msg.stubs(:type).returns(:direct_request)
           msg.expects(:discovered_hosts).returns(["one", "two"])
 
-          @c.expects(:headers_for).with(msg, "one")
-          @c.expects(:headers_for).with(msg, "two")
-          @connection.expects(:publish).with('/queue/mcollective.nodes', 'msg', nil).twice
+          connector.expects(:headers_for).with(msg, "one")
+          connector.expects(:headers_for).with(msg, "two")
+          connection.expects(:publish).with('/queue/mcollective.nodes', 'msg', nil).twice
 
-          @c.publish(msg)
+          connector.publish(msg)
         end
       end
 
       describe "#subscribe" do
         it "should handle duplicate subscription errors" do
-          @connection.expects(:subscribe).raises(::Stomp::Error::DuplicateSubscription)
+          connection.expects(:subscribe).raises(::Stomp::Error::DuplicateSubscription)
           Log.expects(:error).with(regexp_matches(/already had a matching subscription, ignoring/))
-          @c.subscribe("test", :broadcast, "mcollective")
+          connector.subscribe("test", :broadcast, "mcollective")
         end
 
         it "should use the make_target correctly" do
-          @c.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}})
-          @c.subscribe("test", :broadcast, "mcollective")
+          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}})
+          connector.subscribe("test", :broadcast, "mcollective")
         end
 
         it "should check for existing subscriptions" do
-          @c.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
-          @subscription.expects("include?").with("rspec").returns(false)
-          @connection.expects(:subscribe).never
+          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          subscription.expects("include?").with("rspec").returns(false)
+          connection.expects(:subscribe).never
 
-          @c.subscribe("test", :broadcast, "mcollective")
+          connector.subscribe("test", :broadcast, "mcollective")
         end
 
         it "should subscribe to the middleware" do
-          @c.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
-          @connection.expects(:subscribe).with("test", {}, "rspec")
-          @c.subscribe("test", :broadcast, "mcollective")
+          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          connection.expects(:subscribe).with("test", {}, "rspec")
+          connector.subscribe("test", :broadcast, "mcollective")
         end
 
         it "should add to the list of subscriptions" do
-          @c.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
-          @subscription.expects("<<").with("rspec")
-          @c.subscribe("test", :broadcast, "mcollective")
+          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          subscription.expects("<<").with("rspec")
+          connector.subscribe("test", :broadcast, "mcollective")
         end
       end
 
       describe "#unsubscribe" do
         it "should use make_target correctly" do
-          @c.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}})
-          @c.unsubscribe("test", :broadcast, "mcollective")
+          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}})
+          connector.unsubscribe("test", :broadcast, "mcollective")
         end
 
         it "should unsubscribe from the target" do
-          @c.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
-          @connection.expects(:unsubscribe).with("test", {}, "rspec").once
+          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          connection.expects(:unsubscribe).with("test", {}, "rspec").once
 
-          @c.unsubscribe("test", :broadcast, "mcollective")
+          connector.unsubscribe("test", :broadcast, "mcollective")
         end
 
         it "should delete the source from subscriptions" do
-          @c.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
-          @subscription.expects(:delete).with("rspec").once
+          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          subscription.expects(:delete).with("rspec").once
 
-          @c.unsubscribe("test", :broadcast, "mcollective")
+          connector.unsubscribe("test", :broadcast, "mcollective")
         end
       end
 
@@ -461,7 +508,7 @@ module MCollective
 
           message.expects(:request).returns(request)
 
-          @c.target_for(message).should == {:name => "foo", :headers => {}}
+          connector.target_for(message).should == {:name => "foo", :headers => {}}
         end
 
         it "should create new request targets" do
@@ -470,8 +517,8 @@ module MCollective
           message.expects(:agent).returns("rspecagent")
           message.expects(:collective).returns("mcollective")
 
-          @c.expects(:make_target).with("rspecagent", :request, "mcollective")
-          @c.target_for(message)
+          connector.expects(:make_target).with("rspecagent", :request, "mcollective")
+          connector.target_for(message)
         end
 
         it "should support direct requests" do
@@ -480,8 +527,8 @@ module MCollective
           message.expects(:agent).returns("rspecagent")
           message.expects(:collective).returns("mcollective")
 
-          @c.expects(:make_target).with("rspecagent", :direct_request, "mcollective")
-          @c.target_for(message)
+          connector.expects(:make_target).with("rspecagent", :direct_request, "mcollective")
+          connector.target_for(message)
         end
 
         it "should fail for unknown message types" do
@@ -489,16 +536,16 @@ module MCollective
           message.stubs(:type).returns(:fail)
 
           expect {
-            @c.target_for(message)
+            connector.target_for(message)
           }.to raise_error("Don't now how to create a target for message type fail")
         end
       end
 
       describe "#disconnect" do
         it "should disconnect from the stomp connection" do
-          @connection.expects(:disconnect)
-          @c.disconnect
-          @c.connection.should == nil
+          connection.expects(:disconnect)
+          connector.disconnect
+          connector.connection.should == nil
         end
       end
 
@@ -510,8 +557,8 @@ module MCollective
 
           Time.expects(:now).twice.returns(Time.at(1368557431))
 
-          @c.instance_variable_set("@msgpriority", 0)
-          @c.headers_for(message).should_not includes("priority")
+          connector.instance_variable_set("@msgpriority", 0)
+          connector.headers_for(message).should_not includes("priority")
         end
 
         it "should return a priority if priority is non 0" do
@@ -521,8 +568,8 @@ module MCollective
 
           Time.expects(:now).twice.returns(Time.at(1368557431))
 
-          @c.instance_variable_set("@msgpriority", 1)
-          @c.headers_for(message)["priority"].should == 1
+          connector.instance_variable_set("@msgpriority", 1)
+          connector.headers_for(message)["priority"].should == 1
         end
 
         it "should set mc_identity for direct requests" do
@@ -535,10 +582,10 @@ module MCollective
 
           Time.expects(:now).twice.returns(Time.at(1368557431))
 
-          @c.instance_variable_set("@msgpriority", 0)
-          @c.expects(:make_target).with("rspecagent", :reply, "mcollective").returns({:name => "test"})
+          connector.instance_variable_set("@msgpriority", 0)
+          connector.expects(:make_target).with("rspecagent", :reply, "mcollective").returns({:name => "test"})
 
-          headers = @c.headers_for(message, "some.node")
+          headers = connector.headers_for(message, "some.node")
           headers["mc_identity"].should == "some.node"
           headers["reply-to"].should == "test"
         end
@@ -553,9 +600,9 @@ module MCollective
 
           Time.expects(:now).twice.returns(Time.at(1368557431))
 
-          @c.instance_variable_set("@msgpriority", 0)
-          @c.expects(:make_target).with("rspecagent", :reply, "mcollective").returns({:name => "test"})
-          @c.headers_for(message)["reply-to"].should == "test"
+          connector.instance_variable_set("@msgpriority", 0)
+          connector.expects(:make_target).with("rspecagent", :reply, "mcollective").returns({:name => "test"})
+          connector.headers_for(message)["reply-to"].should == "test"
         end
 
         it "should set reply-to correctly if the message defines it" do
@@ -568,7 +615,7 @@ module MCollective
 
           Time.expects(:now).twice.returns(Time.at(1368557431))
 
-          @c.headers_for(message)["reply-to"].should == "rspec"
+          connector.headers_for(message)["reply-to"].should == "rspec"
         end
 
         it "should set the timestamp and ttl based on the message object" do
@@ -578,7 +625,7 @@ module MCollective
 
           Time.expects(:now).twice.returns(Time.at(1368557431))
 
-          headers = @c.headers_for(message)
+          headers = connector.headers_for(message)
           headers["timestamp"].should == "1368557431000"
           headers["expires"].should == "1368557541000"
         end
@@ -586,22 +633,22 @@ module MCollective
 
       describe "#make_target" do
         it "should create correct targets" do
-          @c.make_target("test", :reply, "mcollective").should == {:name => "/queue/mcollective.reply.rspec_#{$$}", :headers => {}, :id => "/queue/mcollective.reply.rspec_#{$$}"}
-          @c.make_target("test", :broadcast, "mcollective").should == {:name => "/topic/mcollective.test.agent", :headers => {}, :id => "/topic/mcollective.test.agent"}
-          @c.make_target("test", :request, "mcollective").should == {:name => "/topic/mcollective.test.agent", :headers => {}, :id => "/topic/mcollective.test.agent"}
-          @c.make_target("test", :direct_request, "mcollective").should == {:headers=>{}, :name=>"/queue/mcollective.nodes", :id => "/queue/mcollective.nodes"}
-          @c.make_target("test", :directed, "mcollective").should == {:name => "/queue/mcollective.nodes", :headers=>{"selector"=>"mc_identity = 'rspec'"}, :id => "mcollective_directed_to_identity"}
+          connector.make_target("test", :reply, "mcollective").should == {:name => "/queue/mcollective.reply.rspec_#{$$}", :headers => {}, :id => "/queue/mcollective.reply.rspec_#{$$}"}
+          connector.make_target("test", :broadcast, "mcollective").should == {:name => "/topic/mcollective.test.agent", :headers => {}, :id => "/topic/mcollective.test.agent"}
+          connector.make_target("test", :request, "mcollective").should == {:name => "/topic/mcollective.test.agent", :headers => {}, :id => "/topic/mcollective.test.agent"}
+          connector.make_target("test", :direct_request, "mcollective").should == {:headers=>{}, :name=>"/queue/mcollective.nodes", :id => "/queue/mcollective.nodes"}
+          connector.make_target("test", :directed, "mcollective").should == {:name => "/queue/mcollective.nodes", :headers=>{"selector"=>"mc_identity = 'rspec'"}, :id => "mcollective_directed_to_identity"}
         end
 
         it "should raise an error for unknown collectives" do
           expect {
-            @c.make_target("test", :broadcast, "foo")
+            connector.make_target("test", :broadcast, "foo")
           }.to raise_error("Unknown collective 'foo' known collectives are 'mcollective'")
         end
 
         it "should raise an error for unknown types" do
           expect {
-            @c.make_target("test", :test, "mcollective")
+            connector.make_target("test", :test, "mcollective")
           }.to raise_error("Unknown target type test")
         end
       end
@@ -611,56 +658,68 @@ module MCollective
         it "should return the environment variable if set" do
           ENV["test"] = "rspec_env_test"
 
-          @c.get_env_or_option("test", nil, nil).should == "rspec_env_test"
+          connector.get_env_or_option("test", nil, nil).should == "rspec_env_test"
 
           ENV.delete("test")
         end
 
         it "should return the config option if set" do
-          @config.expects(:pluginconf).returns({"test" => "rspec_test"}).twice
-          @c.get_env_or_option("test", "test", "test").should == "rspec_test"
+          config.expects(:pluginconf).returns({"test" => "rspec_test"}).twice
+          connector.get_env_or_option("test", "test", "test").should == "rspec_test"
         end
 
         it "should return default if nothing else matched" do
-          @config.expects(:pluginconf).returns({}).once
-          @c.get_env_or_option("test", "test", "test").should == "test"
+          config.expects(:pluginconf).returns({}).once
+          connector.get_env_or_option("test", "test", "test").should == "test"
         end
 
         it "should raise an error if no default is supplied" do
-          @config.expects(:pluginconf).returns({}).once
+          config.expects(:pluginconf).returns({}).once
 
           expect {
-            @c.get_env_or_option("test", "test")
+            connector.get_env_or_option("test", "test")
           }.to raise_error("No test environment or plugin.test configuration option given")
         end
       end
 
       describe "#get_option" do
+        before :each do
+          # realize the connector let so that we can unstub it
+          connector
+          Activemq.any_instance.unstub(:get_option)
+        end
+
         it "should return the config option if set" do
-          @config.expects(:pluginconf).returns({"test" => "rspec_test"}).twice
-          @c.get_option("test").should == "rspec_test"
+          config.expects(:pluginconf).returns({"test" => "rspec_test"}).twice
+          connector.get_option("test").should == "rspec_test"
         end
 
         it "should return default option was not found" do
-          @config.expects(:pluginconf).returns({}).once
-          @c.get_option("test", "test").should == "test"
+          config.expects(:pluginconf).returns({}).once
+          connector.get_option("test", "test").should == "test"
         end
 
         it "should raise an error if no default is supplied" do
-          @config.expects(:pluginconf).returns({}).once
+          config.expects(:pluginconf).returns({}).once
 
           expect {
-            @c.get_option("test")
+            connector.get_option("test")
           }.to raise_error("No plugin.test configuration option given")
         end
       end
 
       describe "#get_bool_option" do
+        before :each do
+          # realize the connector let so that we can unstub it
+          connector
+          Activemq.any_instance.unstub(:get_bool_option)
+        end
+
         it "should use Util::str_to_bool to translate a boolean value found in the config" do
-          @config.expects(:pluginconf).returns({"rspec" => "true"})
+          config.expects(:pluginconf).returns({"rspec" => "true"})
           Util.expects(:str_to_bool).with("true").returns(true)
 
-          @c.get_bool_option("rspec", "true").should be_true
+          connector.get_bool_option("rspec", "true").should be_true
         end
       end
     end

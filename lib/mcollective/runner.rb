@@ -74,6 +74,13 @@ module MCollective
         rescue NotTargettedAtUs => e
           Log.debug("Message does not pass filters, ignoring")
 
+        rescue MessageNotReceived, UnexpectedMessageType => e
+          Log.warn(e)
+          if e.backoff && @state != :stopping
+            Log.info("sleeping for suggested #{e.backoff} seconds")
+            sleep e.backoff
+          end
+
         rescue Exception => e
           Log.warn("Failed to handle message: #{e} - #{e.class}\n")
           Log.warn(e.backtrace.join("\n\t"))
