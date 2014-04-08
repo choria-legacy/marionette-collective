@@ -118,7 +118,7 @@ module MCollective
         PluginManager.stubs("<<")
 
         ["registerinterval", "max_log_size", "direct_addressing_threshold", "publish_timeout",
-         "fact_cache_time", "ttl"].each do |key|
+         "fact_cache_time", "ttl", "agent_reply_timeout"].each do |key|
           File.expects(:readlines).with("/nonexisting").returns(["#{key} = nan"])
           File.expects(:exists?).with("/nonexisting").returns(true)
 

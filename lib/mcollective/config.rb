@@ -15,7 +15,7 @@ module MCollective
     attr_reader :main_collective, :ssl_cipher, :registration_collective
     attr_reader :direct_addressing, :direct_addressing_threshold, :ttl
     attr_reader :default_discovery_method, :default_discovery_options
-    attr_reader :publish_timeout, :threaded
+    attr_reader :publish_timeout, :threaded, :agent_reply_timeout
 
     def initialize
       @configured = false
@@ -115,6 +115,8 @@ module MCollective
                   @default_discovery_method = val
                 when "topicprefix", "topicsep", "queueprefix", "rpchelptemplate", "helptemplatedir"
                   Log.warn("Use of deprecated '#{key}' option.  This option is ignored and should be removed from '#{configfile}'")
+                when "agent_reply_timeout"
+                  @agent_reply_timeout = Integer(val)
                 else
                   raise("Unknown config parameter '#{key}'")
                 end
@@ -190,6 +192,7 @@ module MCollective
       @mode = :client
       @publish_timeout = 2
       @threaded = false
+      @agent_reply_timeout = 30
     end
 
     def read_plugin_config_dir(dir)

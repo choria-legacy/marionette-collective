@@ -122,9 +122,12 @@ module MCollective
         begin
           agent = PluginManager["#{request.agent}_agent"]
 
+          replies = nil
           Timeout::timeout(agent.timeout) do
             replies = agent.handlemsg(request.payload, connection)
+          end
 
+          Timeout::timeout(@config.agent_reply_timeout) do
             # Agents can decide if they wish to reply or not,
             # returning nil will mean nothing goes back to the
             # requestor
