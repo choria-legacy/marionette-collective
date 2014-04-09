@@ -39,11 +39,9 @@ if config.daemonize
 
   if MCollective::Util.windows?
     require 'mcollective/windows_daemon'
-
     MCollective::WindowsDaemon.daemonize_runner
   else
     require 'mcollective/unix_daemon'
-
     MCollective::UnixDaemon.daemonize_runner(pid)
   end
 else

@@ -18,7 +18,7 @@ module MCollective
         File.expects(:open).with("/nonexisting", "w").yields(f)
 
         r = mock
-        r.expects(:run)
+        r.expects(:main_loop)
 
         Runner.expects(:new).returns(r)
         UnixDaemon.expects(:daemonize).yields
@@ -28,7 +28,7 @@ module MCollective
 
       it "should not write a pid file unless requested", :unless => MCollective::Util.windows? do
         r = mock
-        r.expects(:run)
+        r.expects(:main_loop)
 
         UnixDaemon.expects(:daemonize).yields
         Runner.expects(:new).returns(r)

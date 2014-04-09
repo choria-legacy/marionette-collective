@@ -29,9 +29,7 @@ module MCollective
           runner = mock
           Runner.stubs(:new).returns(runner)
           d = WindowsDaemon.new
-          d.stubs(:running?).returns(true,false)
-          d.stubs(:state).returns(WindowsDaemon::RUNNING)
-          runner.expects(:run)
+          runner.expects(:main_loop)
           d.service_main
         end
 
@@ -49,12 +47,8 @@ module MCollective
       describe "#service_stop" do
         it "should log, disconnect, stop the runner and exit" do
           runner = mock
-          connector = mock
-          connector.expects(:disconnect)
           Log.expects(:info)
-          PluginManager.stubs(:[]).with("connector_plugin").returns(connector)
           d = WindowsDaemon.new
-          d.instance_variable_set(:@runner, runner)
           runner.expects(:stop)
           d.service_stop
         end
