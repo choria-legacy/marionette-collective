@@ -1,23 +1,30 @@
 module MCollective
-  # The main runner for the daemon, supports running in the foreground
-  # and the background, keeps detailed stats and provides hooks to access
-  # all this information
   class Runner
+    attr_reader :state
+
     def initialize(configfile)
       begin
         @config = Config.instance
         @config.loadconfig(configfile) unless @config.configured
         @config.mode = :server
-        @state = :running
         @stats = PluginManager["global_stats"]
+        @connection = PluginManager["connector_plugin"]
+
+        # @state describes the current contextual state of the MCollective runner.
+        # Valid states are:
+        #   :running   - MCollective is alive and receiving messages from the middleware
+        #   :stopping  - MCollective is shutting down and in the process of terminating
+        #   :stopped   - MCollective is not running
+        #   :pausing   - MCollective is going into it's paused state
+        #   :unpausing - MCollective is waking up from it's paused state
+        #   :paused    - MCollective is paused and not receiving messages but can be woken up
+        @state = :stopped
+        @exit_receiver_thread = false
+        @registration_thread = nil
+        @agent_threads = []
 
         @security = PluginManager["security_plugin"]
         @security.initiated_by = :node
-
-        @connection = PluginManager["connector_plugin"]
-        @connection.connect
-
-        @agents = Agents.new
 
         unless Util.windows?
           Signal.trap("USR1") do
@@ -33,41 +40,136 @@ module MCollective
           Util.setup_windows_sleeper
         end
       rescue => e
-        Log.error("Failed to start MCollective runner.")
+        Log.error("Failed to initialize MCollective runner.")
         Log.error(e)
         Log.error(e.backtrace.join("\n\t"))
         raise e
       end
     end
 
-    # Starts the main loop, before calling this you should initialize the MCollective::Config singleton.
-    def run
-      Data.load_data_sources
+    # The main runner loop
+    def main_loop
+      # Enter the main context
+      @receiver_thread = start_receiver_thread
+      loop do
+        begin
+          case @state
+          when :stopping
+            Log.debug("Stopping MCollective server")
 
+            # If soft_shutdown has been enabled we wait for all running agents to
+            # finish, one way or the other.
+            if @config.soft_shutdown
+              if Util.windows?
+                Log.warn("soft_shutdown specified. This feature is not available on Windows. Shutting down normally.")
+              else
+                Log.debug("Waiting for all running agents to finish or timeout.")
+                @agent_threads.each do |t|
+                  if t.alive?
+                    t.join
+                  end
+                end
+                Log.debug("All running agents have completed. Stopping.")
+              end
+            end
+
+            stop_threads
+            @state = :stopped
+            return
+
+          # When pausing we stop the receiver thread but keep everything else alive
+          # This means that running agents also run to completion.
+          when :pausing
+            Log.debug("Pausing MCollective server")
+            stop_threads
+            @state = :paused
+
+          when :unpausing
+            Log.debug("Unpausing MCollective server")
+            start_receiver_thread
+          end
+
+          # prune dead threads from the agent_threads array
+          @agent_threads.reject! { |t| !t.alive? }
+          sleep 0.1
+        rescue SignalException => e
+          Log.info("Exiting after signal: #{e}")
+          stop
+        rescue => e
+          Log.error("A failure occurred in the MCollective runner.")
+          Log.error(e)
+          Log.error(e.backtrace.join("\n\t"))
+          stop
+        end
+      end
+    end
+
+    def stop
+      @state = :stopping
+    end
+
+    def pause
+      if @state == :running
+        @state = :pausing
+      else
+        Log.error("Cannot pause MCollective while not in a running state")
+      end
+    end
+
+    def resume
+      if @state == :paused
+        @state = :unpausing
+      else
+        Log.error("Cannot unpause MCollective when it is not paused")
+      end
+    end
+
+    private
+
+    def start_receiver_thread
+      @state = :running
+      Thread.new { receiver_thread }
+    end
+
+    def stop_threads
+      @receiver_thread.kill if @receiver_thread.alive?
+      # Kill the registration thread if it was made and alive
+      if @registration_thread && @registration_thread.alive?
+        @registration_thread.kill
+      end
+    end
+
+    def receiver_thread
+      # Create internal connection in Connector
+      @connection.connect
+      # Create agents and let them subscribe
+      #   Load data sources
+      Data.load_data_sources
+      #   Subscribe to relevant topics and queues
       Util.subscribe(Util.make_subscriptions("mcollective", :broadcast))
       Util.subscribe(Util.make_subscriptions("mcollective", :directed)) if @config.direct_addressing
+      #   Create the agents and let them create their subscriptions
+      @agents ||= Agents.new
 
       # Start the registration plugin if interval isn't 0
       begin
-        PluginManager["registration_plugin"].run(@connection) unless @config.registerinterval == 0
+        if @config.registerinterval != 0
+          @registration_thread = PluginManager["registration_plugin"].run(@connection)
+        end
       rescue Exception => e
         Log.error("Failed to start registration plugin: #{e}")
       end
 
+      # Start the receiver loop
       loop do
         begin
           request = receive
 
           unless request.agent == "mcollective"
-            agentmsg(request)
+            @agent_threads << agentmsg(request)
           else
-            Log.error("Received a control message, possibly via 'mco controller' but this has been deprecated")
+            Log.error("Received a control message, possibly via 'mco controller' but this has been deprecated and removed")
           end
-        rescue SignalException => e
-          Log.warn("Exiting after signal: #{e}")
-          @connection.disconnect
-          raise
-
         rescue MsgTTLExpired => e
           Log.warn(e)
 
@@ -86,47 +188,16 @@ module MCollective
           Log.warn(e.backtrace.join("\n\t"))
         end
 
-        return if @state == :stopping
+        return if @exit_receiver_thread
       end
     end
 
-    # Flag the runner to stop
-    def stop
-      @state = :stopping
-    end
-
-    private
     # Deals with messages directed to agents
     def agentmsg(request)
       Log.debug("Handling message for agent '#{request.agent}' on collective '#{request.collective}'")
 
       @agents.dispatch(request, @connection) do |reply_message|
         reply(reply_message, request) if reply_message
-      end
-    end
-
-    # Deals with messages sent to our control topic
-    def controlmsg(request)
-      Log.debug("Handling message for mcollectived controller")
-
-      begin
-        case request.payload[:body]
-        when /^stats$/
-          reply(@stats.to_hash, request)
-
-        when /^reload_agent (.+)$/
-          reply("reloaded #{$1} agent", request) if @agents.loadagent($1)
-
-        when /^reload_agents$/
-
-          reply("reloaded all agents", request) if @agents.loadagents
-
-        else
-          Log.error("Received an unknown message to the controller")
-
-        end
-      rescue Exception => e
-        Log.error("Failed to handle control message: #{e}")
       end
     end
 
@@ -153,4 +224,3 @@ module MCollective
     end
   end
 end
-

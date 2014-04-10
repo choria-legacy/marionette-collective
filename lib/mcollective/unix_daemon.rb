@@ -27,7 +27,10 @@ module MCollective
 
         begin
           runner = Runner.new(nil)
-          runner.run
+          runner.main_loop
+        rescue => e
+          Log.warn(e.backtrace)
+          Log.warn(e)
         ensure
           File.unlink(pid) if pid && File.exist?(pid)
         end
