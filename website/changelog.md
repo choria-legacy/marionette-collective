@@ -4,10 +4,19 @@ title: Changelog
 toc: false
 ---
 
-## Version 2.4.x
+## Version 2.5.x
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2014/04/10|Release *2.5.0-rc1*|MCO-226|
+|2014/04/10|Refactor the runner class|MCO-221|
+|2014/04/04|Update rubygems requirement to 1.3.7 or greater|MCO-188|
+|2014/04/02|Move exception classes from lib/mcollective.rb to lib/mcollective/exceptions.rb|MCO-215|
+|2014/03/26|Plugin plugin - add dist macro to Release field|MCOP-17|
+|2014/03/12|Implements exponential back-off at the connector level|MCO-192|
+|2014/02/28|Log reciept and contents of non-MESSAGE STOMP frames|MCO-191|
+|2014/02/25|Connectors should not suggest STOMP 1.1 heartbeats if the gem cannot support them|MCO-198|
+|2014/02/13|Remove Fedora 18 from build targets|MCO-166|
 |2014/02/10|*Release 2.4.1*|MCO-180|
 |2014/02/10|Remove reference to package iteration in #package_information|MCO-179|
 |2014/02/07|Update documentation to note that `plugin.rabbitmq.use_reply_exchange` should work from 2.4.1|MCO-174|

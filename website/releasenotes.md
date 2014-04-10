@@ -8,6 +8,40 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_5_0-rc1">&nbsp;</a>
+
+2.5.0 Release candiate cycle started on 2014/04/10
+
+## 2.5.0-rc1 - 2014/04/10
+
+### New Features and Improvements
+
+ * MCollective should generally fail less problematically when dealing with middleware problems
+ * Added a new `soft_shutdown` option to allow agents to complete or timeout before exiting the daemon
+
+As part of the improvements we've made to connectors and their interaction
+with the middleware, we've made a few changes that under semver need us to
+bump the version number to 2.5.0.
+
+### The `soft_shutdown` option
+
+To make use of the new `soft_shutdown` feature add the following to your server.cfg
+
+    soft_shutdown = true
+
+### Changes since 2.4.1
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2014/04/10|Refactor the runner class|MCO-221|
+|2014/04/04|Update rubygems requirement to 1.3.7 or greater|MCO-188|
+|2014/04/02|Move exception classes from lib/mcollective.rb to lib/mcollective/exceptions.rb|MCO-215|
+|2014/03/26|Plugin plugin - add dist macro to Release field|MCOP-17|
+|2014/03/12|Implements exponential back-off at the connector level|MCO-192|
+|2014/02/28|Log reciept and contents of non-MESSAGE STOMP frames|MCO-191|
+|2014/02/25|Connectors should not suggest STOMP 1.1 heartbeats if the gem cannot support them|MCO-198|
+
+
 <a name="2_4_1">&nbsp;</a>
 
 ## 2.4.1 - 2014/02/10
