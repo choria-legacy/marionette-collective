@@ -17,6 +17,11 @@ toc: false
 |2014/02/28|Log reciept and contents of non-MESSAGE STOMP frames|MCO-191|
 |2014/02/25|Connectors should not suggest STOMP 1.1 heartbeats if the gem cannot support them|MCO-198|
 |2014/02/13|Remove Fedora 18 from build targets|MCO-166|
+
+## Version 2.4.x
+
+|Date|Description|Ticket|
+|----|-----------|------|
 |2014/02/10|*Release 2.4.1*|MCO-180|
 |2014/02/10|Remove reference to package iteration in #package_information|MCO-179|
 |2014/02/07|Update documentation to note that `plugin.rabbitmq.use_reply_exchange` should work from 2.4.1|MCO-174|
