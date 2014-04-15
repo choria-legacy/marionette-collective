@@ -58,7 +58,7 @@ future we will also do full replay protection.
 Both the AES+RSA and the SSL plugin secures these 2 properties cryptographically
 to make sure they are not tampered with.
 
-### The AES+RSA securith plugin
+### The AES+RSA security plugin
 When using the [AES security plugin] each user also gets a private and public
 key, like with SSH you need to ensure that the private keys remain private
 and not shared between users.
