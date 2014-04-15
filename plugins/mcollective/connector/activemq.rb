@@ -1,3 +1,4 @@
+require 'mcollective/exceptions'
 require 'stomp'
 
 module MCollective
