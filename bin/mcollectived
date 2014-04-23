@@ -47,5 +47,5 @@ if config.daemonize
 else
   MCollective::Log.debug("Starting in the foreground")
   runner = MCollective::Runner.new(configfile)
-  runner.run
+  runner.main_loop
 end
