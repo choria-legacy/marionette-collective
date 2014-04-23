@@ -47,6 +47,12 @@ module MCollective
       end
     end
 
+    # Deprecated
+    def run
+      Log.warn("The #run method has been deprecated. Use #main_loop instead.")
+      main_loop
+    end
+
     # The main runner loop
     def main_loop
       # Enter the main context
