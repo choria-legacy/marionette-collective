@@ -102,18 +102,6 @@ module MCollective
           @client.process_results_with_block("rspec", response, blk, nil)
         end
 
-        it "should raise correct exceptions on failure" do
-          blk = Proc.new {}
-
-          @client.stubs(:rpc_result_from_reply)
-
-          [[2, UnknownRPCAction], [3, MissingRPCData], [4, InvalidRPCData], [5, UnknownRPCError]].each do |err|
-            response = {:senderid => "rspec", :body => {:statuscode => err[0]}}
-
-            expect { @client.process_results_with_block("rspec", response, blk, nil) }.to raise_error(err[1])
-          end
-        end
-
         it "should pass raw results for single arity blocks" do
           response = {:senderid => "rspec", :body => {:statuscode => 1}}
           blk = Proc.new {|r| r.should == response}

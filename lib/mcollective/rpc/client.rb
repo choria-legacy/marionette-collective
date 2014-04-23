@@ -947,33 +947,18 @@ module MCollective
         result = rpc_result_from_reply(@agent, action, resp)
         aggregate = aggregate_reply(result, aggregate) if aggregate
 
-        if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
-          @stats.ok if resp[:body][:statuscode] == 0
-          @stats.fail if resp[:body][:statuscode] == 1
-          @stats.time_block_execution :start
+        @stats.ok if resp[:body][:statuscode] == 0
+        @stats.fail if resp[:body][:statuscode] != 0
+        @stats.time_block_execution :start
 
-          case block.arity
-            when 1
-              block.call(resp)
-            when 2
-              block.call(resp, result)
-          end
-
-          @stats.time_block_execution :end
-        else
-          @stats.fail
-
-          case resp[:body][:statuscode]
-            when 2
-              raise UnknownRPCAction, resp[:body][:statusmsg]
-            when 3
-              raise MissingRPCData, resp[:body][:statusmsg]
-            when 4
-              raise InvalidRPCData, resp[:body][:statusmsg]
-            when 5
-              raise UnknownRPCError, resp[:body][:statusmsg]
-          end
+        case block.arity
+          when 1
+            block.call(resp)
+          when 2
+            block.call(resp, result)
         end
+
+        @stats.time_block_execution :end
 
         return aggregate
       end
