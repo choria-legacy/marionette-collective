@@ -8,15 +8,13 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
-<a name="2_5_0-rc1">&nbsp;</a>
+<a name="2_5_0">&nbsp;</a>
 
-2.5.0 Release candiate cycle started on 2014/04/10
-
-## 2.5.0-rc1 - 2014/04/10
+## 2.5.0 - 2014/04/23
 
 ### New Features and Improvements
 
- * MCollective should generally fail less problematically when dealing with middleware problems
+ * MCollective should generally fail less awkwardly when dealing with middleware problems
  * Added a new `soft_shutdown` option to allow agents to complete or timeout before exiting the daemon
 
 As part of the improvements we've made to connectors and their interaction
@@ -33,6 +31,9 @@ To make use of the new `soft_shutdown` feature add the following to your server.
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2014/04/23|Deprecate Runner#run method|MCO-265|
+|2014/04/23|Drop ubuntu 13.04 (raring ringtail) from the supported package builds|MCO-263|
+|2014/04/17|Add ubuntu 14.04 (trusty tahir) to the supported package builds|MCO-189|
 |2014/04/10|Refactor the runner class|MCO-221|
 |2014/04/04|Update rubygems requirement to 1.3.7 or greater|MCO-188|
 |2014/04/02|Move exception classes from lib/mcollective.rb to lib/mcollective/exceptions.rb|MCO-215|

@@ -8,6 +8,10 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2014/04/23|Release *2.5.0*|MCO-246|
+|2014/04/23|Deprecate Runner#run method|MCO-265|
+|2014/04/23|Drop ubuntu 13.04 (raring ringtail) from the supported package builds|MCO-263|
+|2014/04/17|Add ubuntu 14.04 (trusty tahir) to the supported package builds|MCO-189|
 |2014/04/10|Release *2.5.0-rc1*|MCO-226|
 |2014/04/10|Refactor the runner class|MCO-221|
 |2014/04/04|Update rubygems requirement to 1.3.7 or greater|MCO-188|
