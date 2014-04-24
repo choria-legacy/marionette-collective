@@ -44,13 +44,19 @@ module MCollective
         end
 
         it "should fail for invalid identities" do
-          [" one", "two ", " three ", "four four"].each do |host|
+          ["four four", "foo$bar", "foo/bar"].each do |host|
             File.expects(:readlines).with("/nonexisting").returns([host])
 
             expect {
-              Flatfile.discover(Util.empty_filter, 0, 0, @client).should == ["one", "two", "three", "four"]
-            }.to raise_error('Identities can only match /\w\.\-/')
+              Flatfile.discover(Util.empty_filter, 0, 0, @client)
+            }.to raise_error(/Identities can only match/)
           end
+        end
+
+        it "should skip empty lines and comments" do
+          host = ["one", "#two", "", "four"]
+          File.expects(:readlines).with("/nonexisting").returns(host)
+          Flatfile.discover(Util.empty_filter, 0, 0, @client).should == ["one", "four"]
         end
       end
     end

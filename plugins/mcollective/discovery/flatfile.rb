@@ -14,16 +14,20 @@ module MCollective
         raise "Cannot read the file %s specified as discovery source" % file unless File.readable?(file)
 
         discovered = []
+        hosts = []
 
-        hosts = File.readlines(file).map do |host|
-          host = host.chomp
-          raise 'Identities can only match /\w\.\-/' unless host.match(/^[\w\.\-]+$/)
-          host
+        File.readlines(file).each do |host|
+          host = host.chomp.strip
+          if host.empty? || host.match(/^#/)
+            next
+          end
+          raise 'Identities can only match /^[\w\.\-]+$/' unless host.match(/^[\w\.\-]+$/)
+          hosts << host
         end
 
         # this plugin only supports identity filters, do regex matches etc against
         # the list found in the flatfile
-        unless filter["identity"].empty?
+        if !(filter["identity"].empty?)
           filter["identity"].each do |identity|
             identity = Regexp.new(identity.gsub("\/", "")) if identity.match("^/")
 
