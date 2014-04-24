@@ -277,7 +277,6 @@ lib/ruby/1.8/mcollective/vendor/systemu/samples/e.rb
 lib/ruby/1.8/mcollective/vendor/systemu/samples/f.rb
 lib/ruby/1.8/mcollective/vendor/systemu/systemu.gemspec
 lib/ruby/1.8/mcollective/windows_daemon.rb
-sbin/mc-call-agent
 sbin/mcollectived
 share/doc/mcollective/
 share/doc/mcollective/Array.html
@@ -385,7 +384,6 @@ share/doc/mcollective/Rakefile.html
 share/doc/mcollective/String.html
 share/doc/mcollective/Symbol.html
 share/doc/mcollective/bin/
-share/doc/mcollective/bin/mc-call-agent.html
 share/doc/mcollective/bin/mco.html
 share/doc/mcollective/bin/mcollectived.html
 share/doc/mcollective/created.rid

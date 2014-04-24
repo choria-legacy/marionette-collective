@@ -79,7 +79,6 @@ mkdir -p "$client_tmpdir/$BSBINDIR"
 
 cp $MPATH/etc/client.cfg.dist $client_tmpdir/$BETCDIR/client.cfg
 cp $MPATH/etc/rpc-help.erb    $client_tmpdir/$BETCDIR/
-cp $MPATH/bin/mc-call-agent   $client_tmpdir/$BSBINDIR/
 cp $MPATH/bin/mco             $client_tmpdir/$BSBINDIR/
 
 #Build our launchd property list file
