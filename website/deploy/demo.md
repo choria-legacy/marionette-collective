@@ -7,7 +7,7 @@ toc: false
 
 [mco_vagrant]: https://github.com/ripienaar/mcollective-vagrant
 [readme]: https://github.com/ripienaar/mcollective-vagrant/blob/master/README.md
-[vagrant_download]: http://downloads.vagrantup.com/
+[vagrant_download]: http://www.vagrantup.com/downloads.html
 [vagrant_install]: http://docs.vagrantup.com/v2/installation/index.html
 [vagrant_docs]: http://docs.vagrantup.com
 
