@@ -161,10 +161,10 @@ module MCollective
 
       describe '#move_packages' do
         it 'should copy all the build artifacts to the cwd' do
-          File.stubs(:join).with('rspec_rpm', 'noarch', 'mcollective-rspec-*-1.0-1.noarch.rpm').returns('rspec_rpm/noarch/mcollective-rspec-*-1.0-1.noarch.rpm')
-          File.stubs(:join).with('rspec_srpm', 'mcollective-rspec-1.0-1.src.rpm').returns('1.src.rpm')
+          File.stubs(:join).with('rspec_rpm', 'noarch', 'mcollective-rspec-*-1.0-1*.noarch.rpm').returns('rspec_rpm/noarch/mcollective-rspec-*-1.0-1.noarch.rpm')
+          File.stubs(:join).with('rspec_srpm', 'mcollective-rspec-1.0-1*.src.rpm').returns('rspec_srpm/mcollective-rspec-1.0-1*.src.rpm')
           Dir.stubs(:glob).with('rspec_rpm/noarch/mcollective-rspec-*-1.0-1.noarch.rpm').returns(['1.rpm', '2.rpm'])
-          Dir.stubs(:glob).with('rspec_srpm/mcollective-rspec-1.0-1.src.rpm').returns(['1.src.rpm'])
+          Dir.stubs(:glob).with('rspec_srpm/mcollective-rspec-1.0-1*.src.rpm').returns(['1.src.rpm'])
           FileUtils.expects(:cp).with(['1.rpm', '2.rpm', '1.src.rpm'], '.')
           @packager.send(:move_packages)
         end
