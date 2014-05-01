@@ -102,8 +102,9 @@ module MCollective
       # Move rpm's and srpm's to cwd
       def move_packages
         begin
-          files_to_copy = Dir.glob(File.join(@rpmdir, 'noarch', "#{@package_name}-*-#{@plugin.metadata[:version]}-#{@plugin.revision}.noarch.rpm"))
-          files_to_copy << File.join(@srpmdir, "#{@package_name}-#{@plugin.metadata[:version]}-#{@plugin.revision}.src.rpm")
+          files_to_copy = []
+          files_to_copy += Dir.glob(File.join(@rpmdir, 'noarch', "#{@package_name}-*-#{@plugin.metadata[:version]}-#{@plugin.revision}*.noarch.rpm"))
+          files_to_copy += Dir.glob(File.join(@srpmdir, "#{@package_name}-#{@plugin.metadata[:version]}-#{@plugin.revision}*.src.rpm"))
           FileUtils.cp(files_to_copy, '.')
         rescue => e
           puts 'Could not copy packages to working directory'
