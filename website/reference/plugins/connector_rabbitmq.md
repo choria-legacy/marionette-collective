@@ -6,6 +6,7 @@ toc: false
 [STOMP]: http://stomp.codehaus.org/
 [RabbitStomp]: http://www.rabbitmq.com/stomp.html
 [RabbitCLI]: http://www.rabbitmq.com/management-cli.html
+[RabbitClustering]: https://www.rabbitmq.com/clustering.html
 
 The RabbitMQ connector uses the [STOMP] rubygem to connect to RabbitMQ servers.
 
@@ -48,6 +49,23 @@ for collective in mcollective ; do
   rabbitmqadmin declare exchange --user=admin --password=changeme --vhost=/mcollective name=${collective}_directed type=direct
 done
 {% endhighlight %}
+
+### Clustering
+If you want to run multiple RabbitMQ's, say one per datacenter perhaps, you'll need to set them up as a cluster. If you don't you'll only receive the replies from the RabbitMQ that the broker you're talking to is connected to, instead of the whole network. Effectively, if you don't cluster you create a split-brain situation.
+
+If you're using the [puppetlabs-mcollective](https://github.com/puppetlabs/puppetlabs-mcollective) module see its documentation on how to configure RabbitMQ for clustering. Otherwise you'll have to make the following changes yourself:
+
+  * Shutdown the RabbitMQ nodes;
+  * Modify the Erlang cookie at ``/var/lib/rabbitmq/.erlang.cookie``. It needs to be identical for all the nodes in a cluster;
+  * Wipe the database: ``rm -rf /var/lib/rabbitmq/mnesia``;
+  * Add an entry to ``/etc/rabbitmq/rabbitmq.config`` in the ``rabit`` section:
+    {% highlight erlang %}
+    {cluster_nodes, {['rabbit@rabbitmq1.example.com', 'rabbit2@rabbitmq2.example.com'], disc}},
+    {cluster_partition_handling, ignore},
+    {% endhighlight %}
+  * Start up the nodes.
+
+Once these configuration changes are made you still need to join the nodes together. To do this follow the instructions on clustering [here][RabbitClustering].
 
 ## Configuring MCollective
 
