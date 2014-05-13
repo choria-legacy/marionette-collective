@@ -8,6 +8,12 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2014/05/14|Release *2.5.1*|MCO-295|
+|2014/05/12|Allow stomp login/passcode to be optional|MCO-316|
+|2014/05/02|Fix dependencies of rpms from `mco plugin package`|MCO-292|
+|2014/05/01|Fix rpmbuild error in `mco plugin package`|MCO-285|
+|2014/04/24|Stop install mc-call-agent|MCO-266|
+|2014/04/24|Improve line parsing in flatfile discovery|MCO-262|
 |2014/04/23|Release *2.5.0*|MCO-246|
 |2014/04/23|Deprecate Runner#run method|MCO-265|
 |2014/04/23|Drop ubuntu 13.04 (raring ringtail) from the supported package builds|MCO-263|
