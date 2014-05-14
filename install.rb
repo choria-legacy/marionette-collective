@@ -288,6 +288,7 @@ cd File.dirname(__FILE__) do
   configs = glob(%w{etc/*.dist})
   erbs = glob(%w{etc/*.erb})
   bins = glob(%w{bin/mco})
+  sbins = glob(%w{bin/mcollectived})
   rdoc = glob(%w{bin/* lib/**/*.rb README* })
   libs = glob(%w{lib/**/*})
   plugins = glob(%w{plugins/**/*})
