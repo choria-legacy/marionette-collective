@@ -11,7 +11,6 @@ install: install-bin install-lib install-conf install-plugins install-doc
 install-bin:
 	install -d $(DESTDIR)/usr/sbin
 	install -d $(DESTDIR)/usr/bin
-	cp bin/mc-* $(DESTDIR)/usr/sbin
 	cp bin/mco $(DESTDIR)/usr/bin
 	cp bin/mcollectived $(DESTDIR)/usr/sbin/mcollectived
 
