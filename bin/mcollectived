@@ -12,7 +12,7 @@ opts = GetoptLong.new(
 if MCollective::Util.windows?
   configfile = File.join(MCollective::Util.windows_prefix, "etc", "server.cfg")
 else
-  configfile = "/etc/mcollective/server.cfg"
+  configfile = File.join(MCollective::InstallOptions.configdir, "server.cfg")
 end
 pid = ""
 

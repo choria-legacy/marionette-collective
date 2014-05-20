@@ -282,6 +282,21 @@ def install_binfile(from, op_file, target)
   tmp_file.unlink
 end
 
+def save_install_options
+  install_options_file_path = File.join(InstallOptions.sitelibdir, '/mcollective/install_options.rb')
+  content = File.read(install_options_file_path)
+  content += <<-EOS
+
+# auto appended by install.rb
+module MCollective
+  EOS
+  [:sitelibdir, :configdir, :bindir, :sbindir, :plugindir].each { |x|
+    content << "  InstallOptions.#{x} = %q[#{InstallOptions.__send__(x)}]\n"
+  }
+  content += 'end'
+  File.write(install_options_file_path, content)
+end
+
 # Change directory into the mcollective root so we don't get the wrong files for install.
 cd File.dirname(__FILE__) do
   # Set these values to what you want installed.
@@ -303,4 +318,5 @@ cd File.dirname(__FILE__) do
   do_bins(sbins, InstallOptions.sbindir)
   do_libs(libs, InstallOptions.sitelibdir)
   do_libs(plugins, InstallOptions.plugindir, 'plugins/')
+  save_install_options
 end

@@ -14,6 +14,7 @@ require 'tmpdir'
 require 'mcollective/monkey_patches'
 require 'mcollective/cache'
 require 'mcollective/exceptions'
+require 'mcollective/install_options'
 
 # == The Marionette Collective
 #
