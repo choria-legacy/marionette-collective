@@ -17,7 +17,7 @@ Requirements, get them from opencsw:
 
 Run requirements
 - rubystomp library
-  http://stomp.codehaus.org/Ruby+Client
+  https://rubygems.org/gems/stomp
   Up and till version 1.0.4 it is a single file. Put in /opt/csw/lib/ruby/site_ruby/1.8/
 
 Configuration
