@@ -4,7 +4,7 @@ Here are a few instructions for people who wish to do early adopter testing. At 
 
 Assuming you are installing MCollective into `C:\marionette-collective`:
 
- * Install Ruby 1.8.7 from <http://rubyinstaller.org/>
+ * Install Ruby 1.9.3 from <http://rubyinstaller.org/>
       * check the boxes for "Add Ruby executables to your PATH" and "Associate .rb and .rbw files with the Ruby installation"
  * Run the following commands to install the required gems:
       * `gem install --no-rdoc --no-ri stomp win32-service sys-admin windows-api`
