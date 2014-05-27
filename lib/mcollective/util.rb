@@ -154,14 +154,14 @@ module MCollective
           if self.windows?
             config = File.join(self.windows_prefix, "etc", "client.cfg")
           else
-            config = File.join(InstallOptions.configdir, 'client.cfg')
+            config = File.join(InstallOptions.instance.configdir, 'client.cfg')
           end
         end
       rescue Exception => e
         if self.windows?
           config = File.join(self.windows_prefix, "etc", "client.cfg")
         else
-          config = File.join(InstallOptions.configdir, 'client.cfg')
+          config = File.join(InstallOptions.instance.configdir, 'client.cfg')
         end
       end
 
@@ -489,7 +489,7 @@ module MCollective
       template_path = File.join(config_dir, template_file)
       return template_path if File.exists?(template_path)
 
-      template_path = File.join(InstallOptions.configdir, template_file)
+      template_path = File.join(InstallOptions.instance.configdir, template_file)
       return template_path
     end
   end
