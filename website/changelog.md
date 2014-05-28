@@ -8,6 +8,8 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2014/05/29|Release *2.5.2*|MCO-331|
+|2014/05/27|Remove '.' from ruby `$LOAD_PATH` CVE-2014-3248|MCO-311|
 |2014/05/14|Release *2.5.1*|MCO-295|
 |2014/05/12|Allow stomp login/passcode to be optional|MCO-316|
 |2014/05/02|Fix dependencies of rpms from `mco plugin package`|MCO-292|

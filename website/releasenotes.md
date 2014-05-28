@@ -8,6 +8,20 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_5_2">&nbsp;</a>
+
+## 2.5.2 - 2015/05/29
+
+### Bug fixes since 2.5.1
+
+* Remove '.' from ruby `$LOAD_PATH` - CVE-2014-3248
+
+### Changes since 2.5.1
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2014/05/27|Remove '.' from ruby `$LOAD_PATH` CVE-2014-3248|MCO-311|
+
 <a name="2_5_1">&nbsp;</a>
 
 ## 2.5.1 - 2014/05/14
