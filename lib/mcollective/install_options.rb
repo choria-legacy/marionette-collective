@@ -15,9 +15,8 @@ module MCollective
         config = default_options
       end
 
-      ['configdir', 'plugindir'].each do |x|
-        instance_variable_set("@#{x}".to_sym, config[x])
-      end
+      @configdir = config['configdir']
+      @plugindir = config['plugindir']
     end
 
     def default_options

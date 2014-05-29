@@ -285,9 +285,9 @@ end
 
 def save_install_options
   install_options_file_path = File.join(InstallOptions.sitelibdir, '/mcollective/install_options.json')
-  config_hash = {}
-  [:configdir, :plugindir].each { |x|
-    config_hash[x.to_s] = InstallOptions.__send__(x)
+  config_hash = {
+    'configdir' => InstallOptions.configdir,
+    'plugindir' => InstallOptions.plugindir
   }
   File.write(install_options_file_path, config_hash.to_json)
 end

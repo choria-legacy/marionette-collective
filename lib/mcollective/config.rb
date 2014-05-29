@@ -124,13 +124,14 @@ module MCollective
           end
         end
         
-        @libdir << InstallOptions.instance.plugindir
+        unless @libdir.include?(InstallOptions.instance.plugindir)
+          @libdir << InstallOptions.instance.plugindir
+        end
         @libdir.each do |path|
           unless $LOAD_PATH.include?(path)
             $LOAD_PATH << path
           end
         end
-        raise('The %s config file does not specify a libdir setting, cannot continue' % configfile) if @libdir.empty?
 
         read_plugin_config_dir("#{@configdir}/plugin.d")
 
