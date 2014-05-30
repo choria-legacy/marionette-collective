@@ -148,14 +148,13 @@ module MCollective
     def receiver_thread
       # Create internal connection in Connector
       @connection.connect
-      # Create agents and let them subscribe
-      #   Load data sources
-      Data.load_data_sources
       #   Subscribe to relevant topics and queues
       Util.subscribe(Util.make_subscriptions("mcollective", :broadcast))
       Util.subscribe(Util.make_subscriptions("mcollective", :directed)) if @config.direct_addressing
       #   Create the agents and let them create their subscriptions
       @agents ||= Agents.new
+      #   Load data sources
+      Data.load_data_sources
 
       # Start the registration plugin if interval isn't 0
       begin
