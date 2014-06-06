@@ -332,7 +332,9 @@ module MCollective
 
         target = {:name => "", :headers => {}, :id => nil}
 
-        if get_bool_option("rabbitmq.use_reply_exchange", false)
+        if reply_to
+          reply_path = reply_to
+        elsif get_bool_option("rabbitmq.use_reply_exchange", false)
           reply_path = "/exchange/mcollective_reply/%s_%s" % [ @config.identity, $$ ]
         else
           reply_path = "/temp-queue/mcollective_reply_%s" % agent
