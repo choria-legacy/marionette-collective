@@ -10,7 +10,7 @@ will be highlighted here.
 
 <a name="2_5_2">&nbsp;</a>
 
-## 2.5.2 - 2015/05/29
+## 2.5.2 - 2015/06/10
 
 ### Bug fixes since 2.5.1
 
