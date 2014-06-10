@@ -205,12 +205,22 @@ module MCollective
 
         before :each do
           PluginManager.stubs(:[]).with("registration_plugin").returns(registration_agent)
-          Data.expects(:load_data_sources)
+          Data.stubs(:load_data_sources)
           Util.expects(:subscribe).twice
           Util.expects(:make_subscriptions).twice
         end
 
         it 'should receive a message and spawn an agent thread' do
+          runner.expects(:receive).returns(request)
+          runner.expects(:agentmsg).with(request)
+          runner.instance_variable_set(:@exit_receiver_thread, true)
+          runner.send(:receiver_thread)
+        end
+
+        it 'should load agents before data plugins' do
+          load_order = sequence('load_order')
+          Agents.expects(:new).in_sequence(load_order)
+          Data.expects(:load_data_sources).in_sequence(load_order)
           runner.expects(:receive).returns(request)
           runner.expects(:agentmsg).with(request)
           runner.instance_variable_set(:@exit_receiver_thread, true)
