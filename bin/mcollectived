@@ -8,10 +8,14 @@ require 'mcollective'
 require 'getoptlong'
 
 opts = GetoptLong.new(
+  [ '--daemonize', GetoptLong::NO_ARGUMENT],
+  [ '--no-daemonize', GetoptLong::NO_ARGUMENT],
   [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
   [ '--config', '-c', GetoptLong::REQUIRED_ARGUMENT],
   [ '--pidfile', '-p', GetoptLong::REQUIRED_ARGUMENT]
 )
+
+daemonize = nil
 
 if MCollective::Util.windows?
   configfile = File.join(MCollective::Util.windows_prefix, "etc", "server.cfg")
@@ -23,12 +27,16 @@ pid = ""
 opts.each do |opt, arg|
   case opt
     when '--help'
-      puts "Usage: mcollectived.rb [--config /path/to/config] [--pidfile /path/to/pid]"
+      puts "Usage: mcollectived.rb [--config /path/to/config] [--pidfile /path/to/pid] [--daemonize | --no-daemonize]"
       exit
     when '--config'
       configfile = arg
     when '--pidfile'
       pid = arg
+    when '--daemonize'
+      daemonize = true
+    when '--no-daemonize'
+      daemonize = false
   end
 end
 
@@ -36,9 +44,14 @@ config = MCollective::Config.instance
 
 config.loadconfig(configfile) unless config.configured
 
+# If daemonize has not been set on the cli, reach into the config file to decide
+if daemonize == nil
+  daemonize = config.daemonize
+end
+
 MCollective::Log.info("The Marionette Collective #{MCollective::VERSION} started logging at #{config.loglevel} level")
 
-if config.daemonize
+if daemonize
   MCollective::Log.debug("Starting in the background (#{config.daemonize})")
 
   if MCollective::Util.windows?
