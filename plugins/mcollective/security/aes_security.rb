@@ -47,8 +47,15 @@ module MCollective
     #    # Where to cache client keys or find manually distributed ones
     #    plugin.aes.client_cert_dir = /etc/mcollective/ssl/clients
     #
-    #    # Cache public keys promiscuously from the network
+    #    # Cache public keys promiscuously from the network (this requires either a ca_cert to be set
+    #      or insecure_learning to be enabled)
     #    plugin.aes.learn_pubkeys = 1
+    #
+    #    # Do not check if client certificate can be verified by a CA
+    #    plugin.aes.insecure_learning = 1
+    #
+    #    # CA cert used to verify public keys when in learning mode
+    #    plugin.aes.ca_cert = /etc/mcollective/ssl/ca.cert
     #
     #    # Log but accept messages that may have been tampered with
     #    plugin.aes.enforce_ttl = 0
@@ -62,22 +69,31 @@ module MCollective
         body = deserialize(msg.payload)
 
         should_process_msg?(msg, body[:requestid])
-
         # if we get a message that has a pubkey attached and we're set to learn
         # then add it to the client_cert_dir this should only happen on servers
         # since clients will get replies using their own pubkeys
-        if @config.pluginconf.include?("aes.learn_pubkeys") && @config.pluginconf["aes.learn_pubkeys"] == "1"
-          if body.include?(:sslpubkey)
-            if client_cert_dir
-              certname = certname_from_callerid(body[:callerid])
-              if certname
-                certfile = "#{client_cert_dir}/#{certname}.pem"
-                unless File.exist?(certfile)
-                  Log.debug("Caching client cert in #{certfile}")
-                  File.open(certfile, "w") {|f| f.print body[:sslpubkey]}
-                end
+        if Util.str_to_bool(@config.pluginconf.fetch("aes.learn_pubkeys", false)) && body.include?(:sslpubkey)
+          certname = certname_from_callerid(body[:callerid])
+          certfile = "#{client_cert_dir}/#{certname}.pem"
+          if !File.exist?(certfile)
+            if !Util.str_to_bool(@config.pluginconf.fetch("aes.insecure_learning", false))
+              if !@config.pluginconf.fetch("aes.ca_cert", nil)
+                raise "Cannot verify certificate for '#{certname}'. No CA certificate specified."
               end
+
+              if !validate_certificate(body[:sslpubkey], certname)
+                raise "Unable to validate certificate '#{certname}' against CA"
+              end
+
+              Log.debug("Verified certificate '#{certname}' against CA")
+            else
+              Log.warn("Insecure key learning is not a secure method of key distribution. Do NOT use this mode in sensitive environments.")
             end
+
+            Log.debug("Caching client cert in #{certfile}")
+            File.open(certfile, "w") {|f| f.print body[:sslpubkey]}
+          else
+            Log.debug("Not caching client cert. File #{certfile} already exists.")
           end
         end
 
@@ -86,6 +102,12 @@ module MCollective
         if @initiated_by == :client
           body[:body] = deserialize(decrypt(cryptdata, nil))
         else
+          certname = certname_from_callerid(body[:callerid])
+          certfile = "#{client_cert_dir}/#{certname}.pem"
+          # if aes.ca_cert is set every certificate is validated before we try and use it
+          if @config.pluginconf.fetch("aes.ca_cert", nil) && !validate_certificate(File.read(certfile), certname)
+            raise "Unable to validate certificate '#{certname}' against CA"
+          end
           body[:body] = deserialize(decrypt(cryptdata, body[:callerid]))
 
           # If we got a hash it's possible that this is a message with secure
@@ -212,14 +234,19 @@ module MCollective
       # sets the caller id to the md5 of the public key
       def callerid
         if @initiated_by == :client
-          id = "cert=#{File.basename(client_public_key).gsub(/\.pem$/, '')}"
-          raise "Invalid callerid generated from client public key" unless valid_callerid?(id)
+          key = client_public_key
         else
-          # servers need to set callerid as well, not usually needed but
-          # would be if you're doing registration or auditing or generating
-          # requests for some or other reason
-          id = "cert=#{File.basename(server_public_key).gsub(/\.pem$/, '')}"
-          raise "Invalid callerid generated from server public key" unless valid_callerid?(id)
+          key = server_public_key
+        end
+
+        # First try and create a X509 certificate object. If that is possible,
+        # we lift the callerid from the cert
+        begin
+          ssl_cert = OpenSSL::X509::Certificate.new(File.read(key))
+          id = "cert=#{certname_from_certificate(ssl_cert)}"
+        rescue
+          # If the public key is not a certificate, use the file name as callerid
+          id = "cert=#{File.basename(key).gsub(/\.pem$/, '')}"
         end
 
         return id
@@ -256,10 +283,40 @@ module MCollective
           return @ssl.decrypt_with_private(string)
         else
           Log.debug("Decrypting message using public key for #{certid}")
-
           ssl = SSL.new(public_key_path_for_client(certid))
           return ssl.decrypt_with_public(string)
         end
+      end
+
+      def validate_certificate(client_cert, certid)
+        cert_file = @config.pluginconf.fetch("aes.ca_cert", nil)
+
+        begin
+          ssl_cert = OpenSSL::X509::Certificate.new(client_cert)
+        rescue OpenSSL::X509::CertificateError
+          Log.warn("Received public key that is not a X509 certficate")
+          return false
+        end
+
+        ssl_certname = certname_from_certificate(ssl_cert)
+
+        if certid != ssl_certname
+          Log.warn("certname '#{certid}' doesn't match certificate '#{ssl_certname}'")
+          return false
+        end
+
+        Log.debug("Loading CA Cert for verification")
+        ca_cert = OpenSSL::X509::Store.new
+        ca_cert.add_file cert_file
+
+        if ca_cert.verify(ssl_cert)
+          Log.debug("Verified certificate '#{ssl_certname}' against CA")
+        else
+          # TODO add cert id
+          Log.warn("Unable to validate certificate '#{ssl_certname}'' against CA")
+          return false
+        end
+        return true
       end
 
       # On servers this will look in the aes.client_cert_dir for public
@@ -320,8 +377,16 @@ module MCollective
         if id =~ /^cert=([\w\.\-]+)/
           return $1
         else
-          Log.warn("Received a callerid in an unexpected format: '#{id}', ignoring")
-          return nil
+          raise("Received a callerid in an unexpected format: '#{id}', ignoring")
+        end
+      end
+
+      def certname_from_certificate(cert)
+        id = cert.subject
+        if id.to_s =~ /^\/CN=([\w\.\-]+)/
+          return $1
+        else
+          raise("Received a callerid in an unexpected format in an SSL certificate: '#{id}', ignoring")
         end
       end
     end
