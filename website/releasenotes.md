@@ -8,6 +8,23 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_5_3">&nbsp;</a>
+
+## 2.5.3 - 2014/07/15
+
+### Bug fixes since 2.5.2
+
+* Address potential flaw in aes security plugin - CVE-2014-3251
+* Fix data plugin load ordering
+
+### Changes since 2.5.2
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2014/06/20|Address potential flaw in aes security plugin.  CVE-2014-3251|MCO-329|
+|2014/05/30|Fix data plugin load ordering|MCO-346|
+
+
 <a name="2_5_2">&nbsp;</a>
 
 ## 2.5.2 - 2014/06/10
@@ -21,6 +38,7 @@ will be highlighted here.
 |Date|Description|Ticket|
 |----|-----------|------|
 |2014/05/27|Remove '.' from ruby `$LOAD_PATH` CVE-2014-3248|MCO-311|
+
 
 <a name="2_5_1">&nbsp;</a>
 

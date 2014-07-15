@@ -8,6 +8,9 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2014/07/15|Release *2.5.3*|MCO-368|
+|2014/06/20|Address potential flaw in aes security plugin.  CVE-2014-3251|MCO-329|
+|2014/05/30|Fix data plugin load ordering|MCO-346|
 |2014/06/10|Release *2.5.2*|MCO-331|
 |2014/05/27|Remove '.' from ruby `$LOAD_PATH` CVE-2014-3248|MCO-311|
 |2014/05/14|Release *2.5.1*|MCO-295|
