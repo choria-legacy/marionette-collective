@@ -148,9 +148,6 @@ module MCollective
     def receiver_thread
       # Create internal connection in Connector
       @connection.connect
-      #   Subscribe to relevant topics and queues
-      Util.subscribe(Util.make_subscriptions("mcollective", :broadcast))
-      Util.subscribe(Util.make_subscriptions("mcollective", :directed)) if @config.direct_addressing
       #   Create the agents and let them create their subscriptions
       @agents ||= Agents.new
       #   Load data sources
@@ -170,11 +167,7 @@ module MCollective
         begin
           request = receive
 
-          unless request.agent == "mcollective"
-            @agent_threads << agentmsg(request)
-          else
-            Log.error("Received a control message, possibly via 'mco controller' but this has been deprecated and removed")
-          end
+          @agent_threads << agentmsg(request)
         rescue MsgTTLExpired => e
           Log.warn(e)
 
