@@ -206,8 +206,10 @@ module MCollective
         before :each do
           PluginManager.stubs(:[]).with("registration_plugin").returns(registration_agent)
           Data.stubs(:load_data_sources)
-          Util.expects(:subscribe).twice
-          Util.expects(:make_subscriptions).twice
+          # Make sure the deprecated controller messages don't make their way
+          # back in
+          Util.expects(:subscribe).never
+          Util.expects(:make_subscriptions).never
         end
 
         it 'should receive a message and spawn an agent thread' do
@@ -223,14 +225,6 @@ module MCollective
           Data.expects(:load_data_sources).in_sequence(load_order)
           runner.expects(:receive).returns(request)
           runner.expects(:agentmsg).with(request)
-          runner.instance_variable_set(:@exit_receiver_thread, true)
-          runner.send(:receiver_thread)
-        end
-
-        it 'should discard controller messages with an error message' do
-          runner.expects(:receive).returns(request)
-          request.stubs(:agent).returns("mcollective")
-          Log.expects(:error).with("Received a control message, possibly via 'mco controller' but this has been deprecated and removed")
           runner.instance_variable_set(:@exit_receiver_thread, true)
           runner.send(:receiver_thread)
         end

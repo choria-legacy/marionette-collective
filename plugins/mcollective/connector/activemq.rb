@@ -424,7 +424,7 @@ module MCollective
         Log.error("Received subscription request for #{source.inspect.chomp} but already had a matching subscription, ignoring")
       end
 
-      # Subscribe to a topic or queue
+      # UnSubscribe to a topic or queue
       def unsubscribe(agent, type, collective)
         source = make_target(agent, type, collective)
 
