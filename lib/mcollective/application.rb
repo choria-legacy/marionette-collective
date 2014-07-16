@@ -314,12 +314,27 @@ module MCollective
                        :okcount => 0,
                        :failcount => 0}.merge(stats.to_hash)
 
-      return 4 if request_stats[:discoverytime] == 0 && request_stats[:responses] == 0
-      return 3 if request_stats[:discovered] > 0 && request_stats[:responses] == 0
-      return 2 if request_stats[:discovered] > 0 && request_stats[:failcount] > 0
-      return 1 if request_stats[:discovered] == 0
-      return 0 if request_stats[:discoverytime] == 0 && request_stats[:discovered] == request_stats[:okcount]
-      return 0 if request_stats[:discovered] == request_stats[:okcount]
+      if (request_stats[:discoverytime] == 0 && request_stats[:responses] == 0)
+        return 4
+      end
+
+      if (request_stats[:discovered] > 0)
+        if (request_stats[:responses] == 0)
+          return 3
+        elsif (request_stats[:failcount] > 0)
+          return 2
+        end
+      end
+
+      if (request_stats[:discovered] == 0)
+        if (request_stats[:responses] && request_stats[:responses] > 0)
+          return 0
+        else
+          return 1
+        end
+      end
+
+      return 0
     end
 
     # A helper that creates a consistent exit code for applications by looking at an
