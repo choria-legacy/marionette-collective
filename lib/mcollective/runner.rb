@@ -148,6 +148,12 @@ module MCollective
     def receiver_thread
       # Create internal connection in Connector
       @connection.connect
+
+      # Subscribe to the direct addressing queue if direct_addressing is enabled
+      if @config.direct_addressing
+        Util.subscribe_to_direct_addressing_queue
+      end
+
       #   Create the agents and let them create their subscriptions
       @agents ||= Agents.new
       #   Load data sources
