@@ -17,6 +17,8 @@ module MCollective
   module Connector
     class Base
       def self.inherited(klass)
+        plugin_name = klass.to_s.split("::").last.downcase
+        ddl = DDL.new(plugin_name, :connector)
         PluginManager << {:type => "connector_plugin", :class => klass.to_s}
       end
     end

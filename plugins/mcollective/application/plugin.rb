@@ -224,7 +224,9 @@ mco plugin package [options] <directory>
 
     # Show application list and plugin help
     def doc_command
-      known_plugin_types = [["Agents", :agent], ["Aggregate", :aggregate], ["Data Queries", :data], ["Discovery Methods", :discovery], ["Validator Plugins", :validator]]
+      known_plugin_types = [["Agents", :agent], ["Aggregate", :aggregate],
+                            ["Connectors", :connector], ["Data Queries", :data],
+                            ["Discovery Methods", :discovery], ["Validator Plugins", :validator]]
 
       if configuration.include?(:target) && configuration[:target] != "."
         if configuration[:target] =~ /^(.+?)\/(.+)$/
