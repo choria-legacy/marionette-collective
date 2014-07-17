@@ -247,7 +247,130 @@ module MCollective
         Util.has_fact?("foo", "b", "!=").should == false
         Util.has_fact?("foo", "a", "!=").should == true
       end
+
+      context 'structured facts (array)' do
+        it "should handle regex in a backward compatible way" do
+          MCollective::Facts.expects("[]").with("foo").returns(["foo", "baz"]).times(6)
+          Util.has_fact?("foo", "foo", "=~").should == true
+          Util.has_fact?("foo", "/foo/", "=~").should == true
+          Util.has_fact?("foo", "foo", "=~").should == true
+          Util.has_fact?("foo", "bar", "=~").should == false
+          Util.has_fact?("foo", "/bar/", "=~").should == false
+          Util.has_fact?("foo", "bar", "=~").should == false
+        end
+
+        it "should evaluate equality" do
+          MCollective::Facts.expects("[]").with("foo").returns(["foo", "baz"]).twice
+          Util.has_fact?("foo", "foo", "==").should == true
+          Util.has_fact?("foo", "bar", "==").should == false
+        end
+
+        it "should handle numeric comparisons correctly" do
+          MCollective::Facts.expects("[]").with("foo").returns(["1"]).times(8)
+          Util.has_fact?("foo", "2", ">=").should == false
+          Util.has_fact?("foo", "1", ">=").should == true
+          Util.has_fact?("foo", "2", "<=").should == true
+          Util.has_fact?("foo", "1", "<=").should == true
+          Util.has_fact?("foo", "1", "<").should == false
+          Util.has_fact?("foo", "1", ">").should == false
+          Util.has_fact?("foo", "1", "!=").should == false
+          Util.has_fact?("foo", "2", "!=").should == true
+        end
+
+        it "should handle alphabetic comparisons correctly" do
+          MCollective::Facts.expects("[]").with("foo").returns(["b"]).times(8)
+          Util.has_fact?("foo", "c", ">=").should == false
+          Util.has_fact?("foo", "a", ">=").should == true
+          Util.has_fact?("foo", "a", "<=").should == false
+          Util.has_fact?("foo", "b", "<=").should == true
+          Util.has_fact?("foo", "b", "<").should == false
+          Util.has_fact?("foo", "b", ">").should == false
+          Util.has_fact?("foo", "b", "!=").should == false
+          Util.has_fact?("foo", "a", "!=").should == true
+        end
+      end
+
+      context 'structured facts (hash)' do
+        it "should handle regex in a backward compatible way" do
+          MCollective::Facts.expects("[]").with("foo").returns({"foo" => 1, "baz" => 2}).times(6)
+          Util.has_fact?("foo", "foo", "=~").should == true
+          Util.has_fact?("foo", "/foo/", "=~").should == true
+          Util.has_fact?("foo", "foo", "=~").should == true
+          Util.has_fact?("foo", "bar", "=~").should == false
+          Util.has_fact?("foo", "/bar/", "=~").should == false
+          Util.has_fact?("foo", "bar", "=~").should == false
+        end
+
+        it "should evaluate equality" do
+          MCollective::Facts.expects("[]").with("foo").returns({"foo" => 1, "baz" => 2}).twice
+          Util.has_fact?("foo", "foo", "==").should == true
+          Util.has_fact?("foo", "bar", "==").should == false
+        end
+
+        it "should handle numeric comparisons correctly" do
+          MCollective::Facts.expects("[]").with("foo").returns({"1" => "one"}).times(8)
+          Util.has_fact?("foo", "2", ">=").should == false
+          Util.has_fact?("foo", "1", ">=").should == true
+          Util.has_fact?("foo", "2", "<=").should == true
+          Util.has_fact?("foo", "1", "<=").should == true
+          Util.has_fact?("foo", "1", "<").should == false
+          Util.has_fact?("foo", "1", ">").should == false
+          Util.has_fact?("foo", "1", "!=").should == false
+          Util.has_fact?("foo", "2", "!=").should == true
+        end
+
+        it "should handle alphabetic comparisons correctly" do
+          MCollective::Facts.expects("[]").with("foo").returns({"b" => 2}).times(8)
+          Util.has_fact?("foo", "c", ">=").should == false
+          Util.has_fact?("foo", "a", ">=").should == true
+          Util.has_fact?("foo", "a", "<=").should == false
+          Util.has_fact?("foo", "b", "<=").should == true
+          Util.has_fact?("foo", "b", "<").should == false
+          Util.has_fact?("foo", "b", ">").should == false
+          Util.has_fact?("foo", "b", "!=").should == false
+          Util.has_fact?("foo", "a", "!=").should == true
+        end
+      end
     end
+
+    describe 'test_fact_value' do
+      it "should handle regex in a backward compatible way" do
+        Util.send(:test_fact_value, "foo", "foo", "=~").should == true
+        Util.send(:test_fact_value, "foo", "/foo/", "=~").should == true
+        Util.send(:test_fact_value, "foo", "foo", "=~").should == true
+        Util.send(:test_fact_value, "foo", "bar", "=~").should == false
+        Util.send(:test_fact_value, "foo", "/bar/", "=~").should == false
+        Util.send(:test_fact_value, "foo", "bar", "=~").should == false
+      end
+
+      it "should evaluate equality" do
+        Util.send(:test_fact_value, "foo", "foo", "==").should == true
+        Util.send(:test_fact_value, "foo", "bar", "==").should == false
+      end
+
+      it "should handle numeric comparisons correctly" do
+        Util.send(:test_fact_value, "1", "2", ">=").should == false
+        Util.send(:test_fact_value, "1", "1", ">=").should == true
+        Util.send(:test_fact_value, "1", "2", "<=").should == true
+        Util.send(:test_fact_value, "1", "1", "<=").should == true
+        Util.send(:test_fact_value, "1", "1", "<").should == false
+        Util.send(:test_fact_value, "1", "1", ">").should == false
+        Util.send(:test_fact_value, "1", "1", "!=").should == false
+        Util.send(:test_fact_value, "1", "2", "!=").should == true
+      end
+
+      it "should handle alphabetic comparisons correctly" do
+        Util.send(:test_fact_value, "b", "c", ">=").should == false
+        Util.send(:test_fact_value, "b", "a", ">=").should == true
+        Util.send(:test_fact_value, "b", "a", "<=").should == false
+        Util.send(:test_fact_value, "b", "b", "<=").should == true
+        Util.send(:test_fact_value, "b", "b", "<").should == false
+        Util.send(:test_fact_value, "b", "b", ">").should == false
+        Util.send(:test_fact_value, "b", "b", "!=").should == false
+        Util.send(:test_fact_value, "b", "a", "!=").should == true
+      end
+    end
+
 
     describe "#parse_fact_string" do
       it "should parse old style regex fact matches" do
