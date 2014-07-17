@@ -492,5 +492,10 @@ module MCollective
       template_path = File.join("/etc/mcollective", template_file)
       return template_path
     end
+
+    # subscribe to the direct addressing queue
+    def self.subscribe_to_direct_addressing_queue
+      subscribe(make_subscriptions("mcollective", :directed))
+    end
   end
 end

@@ -9,7 +9,7 @@ module MCollective
       c.stubs(:loadconfig)
       c.stubs(:configured).returns(true)
       c.stubs(:mode=)
-      c.stubs(:direct_addressing).returns(true)
+      c.stubs(:direct_addressing).returns(false)
       c.stubs(:registerinterval).returns(1)
       c.stubs(:soft_shutdown).returns(false)
       c
@@ -206,15 +206,21 @@ module MCollective
         before :each do
           PluginManager.stubs(:[]).with("registration_plugin").returns(registration_agent)
           Data.stubs(:load_data_sources)
-          # Make sure the deprecated controller messages don't make their way
-          # back in
-          Util.expects(:subscribe).never
-          Util.expects(:make_subscriptions).never
+          Util.stubs(:subscribe_to_direct_addressing_queue)
         end
 
         it 'should receive a message and spawn an agent thread' do
           runner.expects(:receive).returns(request)
           runner.expects(:agentmsg).with(request)
+          runner.instance_variable_set(:@exit_receiver_thread, true)
+          runner.send(:receiver_thread)
+        end
+
+        it 'should subscribe to the direct addressing queue if direct_addressing is configured' do
+          runner.expects(:receive).returns(request)
+          runner.expects(:agentmsg).with(request)
+          config.stubs(:direct_addressing).returns(true)
+          Util.expects(:subscribe_to_direct_addressing_queue)
           runner.instance_variable_set(:@exit_receiver_thread, true)
           runner.send(:receiver_thread)
         end
