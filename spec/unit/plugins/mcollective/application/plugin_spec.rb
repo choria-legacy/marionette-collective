@@ -22,6 +22,7 @@ module MCollective
           PluginManager.stubs(:find).with(:data, "ddl").returns([""])
           PluginManager.stubs(:find).with(:discovery, "ddl").returns([""])
           PluginManager.stubs(:find).with(:validator, "ddl").returns([""])
+          PluginManager.stubs(:find).with(:connector, "ddl").returns([""])
           @app.stubs(:load_plugin_ddl).with('rspec', :agent).returns(ddl)
           ddl.expects(:help).with("rspec-helptemplate.erb").returns("agent_template")
           @app.expects(:puts).with("agent_template")

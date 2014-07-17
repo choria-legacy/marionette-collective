@@ -2,10 +2,11 @@
 
 require 'spec_helper'
 
+class MCollective::Connector::Stomp<MCollective::Connector::Base; end
+
 module MCollective
   describe Util do
     before do
-      class MCollective::Connector::Stomp<MCollective::Connector::Base; end
 
       PluginManager.clear
       PluginManager << {:type => "connector_plugin", :class => MCollective::Connector::Stomp.new}
