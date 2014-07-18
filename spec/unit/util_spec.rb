@@ -357,6 +357,10 @@ module MCollective
         Util.send(:test_fact_value, "1", "1", ">").should == false
         Util.send(:test_fact_value, "1", "1", "!=").should == false
         Util.send(:test_fact_value, "1", "2", "!=").should == true
+        Util.send(:test_fact_value, "100", "2", ">").should == true
+        Util.send(:test_fact_value, "100", "2", ">=").should == true
+        Util.send(:test_fact_value, "100", "2", "<").should == false
+        Util.send(:test_fact_value, "100", "2", "<=").should == false
       end
 
       it "should handle alphabetic comparisons correctly" do
