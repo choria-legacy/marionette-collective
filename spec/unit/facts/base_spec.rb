@@ -114,5 +114,40 @@ module MCollective::Facts
       end
     end
 
+    describe '#normalize_facts' do
+      it 'should make symbols that are keys be strings' do
+        Testfacts.new.send(:normalize_facts, {
+          :foo  => "1",
+          "bar" => "2",
+        }).should == {
+          "foo" => "1",
+          "bar" => "2",
+        }
+      end
+
+      it 'should make values that are not strings be strings' do
+        Testfacts.new.send(:normalize_facts, {
+          "foo" => 1,
+          "bar" => :baz,
+        }).should == {
+          "foo" => "1",
+          "bar" => "baz",
+        }
+      end
+
+      it 'should not flatten arrays or hashes' do
+        Testfacts.new.send(:normalize_facts, {
+          "foo" => [ "1", "quux", 2 ],
+          "bar" => {
+            :baz => "quux",
+          },
+        }).should == {
+          "foo" => [ "1", "quux", "2" ],
+          "bar" => {
+            "baz" => "quux",
+          },
+        }
+      end
+    end
   end
 end
