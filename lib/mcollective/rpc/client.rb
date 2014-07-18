@@ -783,8 +783,9 @@ module MCollective
           end
 
           @stats.requestid = nil
+          processed_nodes = 0
 
-          discovered.in_groups_of(batch_size) do |hosts, last_batch|
+          discovered.in_groups_of(batch_size) do |hosts|
             message = Message.new(req, nil, {:agent => @agent, :type => :direct_request, :collective => @collective, :filter => opts[:filter], :options => opts})
 
             # first time round we let the Message object create a request id
@@ -814,7 +815,10 @@ module MCollective
             @stats.totaltime += @client.stats[:totaltime]
             @stats.discoverytime += @client.stats[:discoverytime]
 
-            sleep sleep_time unless last_batch
+            processed_nodes += hosts.length
+            if (discovered.length > processed_nodes)
+              sleep sleep_time
+            end
           end
 
           @stats.aggregate_summary = aggregate.summarize if aggregate
