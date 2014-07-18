@@ -19,14 +19,14 @@ toc: false
 [Subcollectives]: reference/basic/subcollectives.html
 
 
-Due to the [broadcast paradigm] of mcollective security is a complex topic to
+Due to the [broadcast paradigm][] of mcollective security is a complex topic to
 discuss.
 
 This discussion will focus on strong SSL and AES+RSA based security plugins,
 these are not the default or only option but is currently the most secure.
-Both the [SSL security plugin] and [AES security plugin] provide strong caller
-identification, this is used by the [SimpleRPC] framework for [Authorization]
-and [Auditing].
+Both the [SSL security plugin][] and [AES security plugin][] provide strong caller
+identification, this is used by the [SimpleRPC][] framework for [Authorization][]
+and [Auditing][].
 
 As every organisation has its own needs almost all aspects of the security
 system is pluggable.  This is an overview of the current state of SSL based
@@ -43,7 +43,7 @@ differ between middleware systems.
 ## Client Connections and Credentials
 
 Every STOMP connection has a username and password, this is used to gain basic
-access to the ActiveMQ system.  We have a [ActiveMQ Security] sample setup
+access to the ActiveMQ system.  We have a [ActiveMQ Security][] sample setup
 documented.
 
 ActiveMQ can use LDAP and other security providers, details of this is out of
@@ -59,7 +59,7 @@ Both the AES+RSA and the SSL plugin secures these 2 properties cryptographically
 to make sure they are not tampered with.
 
 ### The AES+RSA security plugin
-When using the [AES security plugin] each user also gets a private and public
+When using the [AES security plugin][] each user also gets a private and public
 key, like with SSH you need to ensure that the private keys remain private
 and not shared between users.
 
@@ -83,7 +83,7 @@ This plugin comes with a significant setup, maintenance and performance overhead
 if all you need is to securely identify users use the SSL security plugin instead.
 
 ### The SSL security plugin
-When using the [SSL security plugin] each user also gets a private and public
+When using the [SSL security plugin][] each user also gets a private and public
 certificate, like with SSH you need to ensure that the private keys remain
 private and not be shared between users.  The public part needs to be
 distributed to all nodes.
@@ -108,8 +108,8 @@ signed using the SSL keys above.  [ActiveMQ supports TLS][ActiveMQ TLS] and the
 [stomp connector][ActiveMQ STOMP] supports this including full CA based
 certificate verification.
 
-The [MCollective STOMP Connector] also supports TLS, to configure MCollective
-to speak TLS to your nodes please follow our notes about [ActiveMQ SSL].
+The [MCollective STOMP Connector][] also supports TLS, to configure MCollective
+to speak TLS to your nodes please follow our notes about [ActiveMQ SSL][].
 
 Enabling TLS throughout will secure your connections from any kind of sniffing
 and Man in The Middle attacks.
@@ -125,10 +125,10 @@ ActiveMQ infrastructure and allow your developers access to just the development
 collective using these controls.  They are not very fine grained but should be a
 import step to configure for any real setup.
 
-We have a sample [ActiveMQ Security] setup documented that has this kind of
+We have a sample [ActiveMQ Security][] setup documented that has this kind of
 control.
 
-By combining this topic level restrictions with [Subcollectives] you can create
+By combining this topic level restrictions with [Subcollectives][] you can create
 virtually isolated groups of nodes and give certain users access to only those
 subcollectives.  Effectively partitioning out a subset of machines and giving
 secure access to just those.
@@ -143,19 +143,19 @@ connection since generally nodes do not make new requests.  You can enable
 registration features that will see your nodes make connections, you should
 restrict this as outlined in the previous section.
 
-When using the [SSL security plugin] all the nodes share a same SSL private
+When using the [SSL security plugin][] all the nodes share a same SSL private
 and public key, all replies are signed using this key.  It would not be
 impossible to add a per node certificate setup but I do not think this will
 add a significant level of security over what we have today.
 
-When using the [AES security plugin] nodes can have their own sets of keys
+When using the [AES security plugin][] nodes can have their own sets of keys
 and registration data can be secured.  Replies are encrypted using the clients
 key and so only the client who made the request can read the replies.
 
 ## SimpleRPC Authorization
 
-The RPC framework has a pluggable [Authorization] system, you can create very
-fine grain control over requests, for example using the [ActionPolicy] setup you
+The RPC framework has a pluggable [Authorization][] system, you can create very
+fine grain control over requests, for example using the [ActionPolicy][] setup you
 can create a policy like this:
 
 {% highlight text %}
@@ -178,7 +178,7 @@ they can be specific to an agent or apply to the entire collective.
 
 ## SimpleRPC Auditing
 
-The RPC layer can keep detailed [Auditing] records of every request received,
+The RPC layer can keep detailed [Auditing][] records of every request received,
 the audit log shows the - SSL signature or RSA verified - caller, what agent, action
 and any arguments that was sent for every request.
 

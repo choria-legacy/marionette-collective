@@ -6,13 +6,13 @@ title: SimpleRPC Message Format
 [ErrorCodes]: clients.html#dealing-with-the-results-directly
 
 SimpleRPC has a specific message structure that builds on the core
-[MessageFormat].  As such SimpleRPC is simply a plugin developed
+[MessageFormat][].  As such SimpleRPC is simply a plugin developed
 ontop of The Marionette Collective rather than an integrated part.
 
 The core messages has a _:body_ structure where agents and clients
 can send any data between nodes and clients.  All the SimpleRPC
 structures below goes in this body.  Filters, targets etc all use the
-standard core [MessageFormat].
+standard core [MessageFormat][].
 
 # Requests
 
@@ -64,7 +64,7 @@ should not send a response at all if this is true.
 
 # Replies
 
-As with requests the replies just build on the core [MessageFormat] and would be
+As with requests the replies just build on the core [MessageFormat][] and would be
 in the body of the standard message.
 
 A typical rely would look like:

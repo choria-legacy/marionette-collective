@@ -7,9 +7,9 @@ toc: false
 [ConnectorActiveMQ]: /mcollective/reference/plugins/connector_activemq.html
 [ConnectorRabbitMQ]: /mcollective/reference/plugins/connector_rabbitmq.html
 
-*NOTE:* This connector is being deprecated and will not be supported in versions newer than 2.2.x.  Please move to one of the [ConnectorActiveMQ] or [ConnectorRabbitMQ].
+*NOTE:* This connector is being deprecated and will not be supported in versions newer than 2.2.x.  Please move to one of the [ConnectorActiveMQ][] or [ConnectorRabbitMQ][].
 
-The stomp connector uses the [STOMP] rubygem to connect to compatible servers.  This is known to work with ActiveMQ and Stompserver.  Anecdotal evidence suggests it works with RabbitMQ's Stomp plugin.
+The stomp connector uses the [STOMP][] rubygem to connect to compatible servers.  This is known to work with ActiveMQ and Stompserver.  Anecdotal evidence suggests it works with RabbitMQ's Stomp plugin.
 
 This code will only work with version _1.1_ and _1.1.6_ or newer of the Stomp gem, the in between versions have threading issues.
 

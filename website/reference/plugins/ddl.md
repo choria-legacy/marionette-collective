@@ -18,12 +18,12 @@ In addition to the usual procedure definitions we also keep meta data about auth
 
 The DDL is used in various scenarios:
 
- * The user can access it in the form of a human readable help page
- * User interfaces can access it in a way that facilitate auto generation of user interfaces
- * The RPC client auto configures and use appropriate timeouts in waiting for responses
- * Before sending a call over the network inputs get validated so we do not send unexpected data to remote nodes.
- * Module repositories can use the meta data to display a standard view of available modules to assist a user in picking the right ones.
- * The server will validate incoming requests prior to sending it to agents
+* The user can access it in the form of a human readable help page
+* User interfaces can access it in a way that facilitate auto generation of user interfaces
+* The RPC client auto configures and use appropriate timeouts in waiting for responses
+* Before sending a call over the network inputs get validated so we do not send unexpected data to remote nodes.
+* Module repositories can use the meta data to display a standard view of available modules to assist a user in picking the right ones.
+* The server will validate incoming requests prior to sending it to agents
 
 We've created [a screencast showing the capabilities of the DDL][DDLScreenCast] that might help give you a better overview.
 

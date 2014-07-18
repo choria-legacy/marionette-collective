@@ -37,10 +37,10 @@ action "query" do
 end
 {% endhighlight %}
 
-*NOTE:* As opposed to the [DiscoveryPlugins] which are used by the client   
-to communicate to the nodes using direct addressing, data plugins on the other   
-hand refer to data that the nodes can provide, and hence this uses the normal  
-broadcast discovery paradigm.   
+*NOTE:* As opposed to the [DiscoveryPlugins][] which are used by the client
+to communicate to the nodes using direct addressing, data plugins on the other
+hand refer to data that the nodes can provide, and hence this uses the normal
+broadcast discovery paradigm.
 
 These new data sources are plugins so you can provide via the plugin
 system and they require DDL documents.  The DDL will be used on both the
@@ -49,16 +49,16 @@ client and the server to provide strict validation and configuration.
 The DDL for these plugins will affect the client libraries in the
 following ways:
 
- * You will get errors if you try to discover using unknown functions
- * Your input argument values will be validated against the DDL
- * You will only be able to use output properties that are known in the DDL
- * If a plugin DDL says it needs 5 seconds to run your discovery and maximum run times will increase by 5 seconds automatically
+* You will get errors if you try to discover using unknown functions
+* Your input argument values will be validated against the DDL
+* You will only be able to use output properties that are known in the DDL
+* If a plugin DDL says it needs 5 seconds to run your discovery and maximum run times will increase by 5 seconds automatically
 
 On the servers the DDL will:
 
- * be used to validate known plugins
- * be used to validate input arguments
- * be used to validate requests for known output values
+* be used to validate known plugins
+* be used to validate input arguments
+* be used to validate requests for known output values
 
 ## Viewing or retrieving results from a data plugin
 
@@ -101,9 +101,9 @@ want to affect the status of the system you should write Agents.
 These plugins are kept simple as they will be typed on the command line
 so the following restrictions are present:
 
- * They can only take 1 input argument
- * They can only return simple String, Numeric or Booleans no Hashes or complex data types
- * They should be fast as these will impact discovery times and agent run times.
+* They can only take 1 input argument
+* They can only return simple String, Numeric or Booleans no Hashes or complex data types
+* They should be fast as these will impact discovery times and agent run times.
 
 Writing data plugins is easy and mimic the basics of writing agents,
 below we have a simple *sysctl* plugin that was used in the examples
@@ -217,7 +217,7 @@ These have to match everywhere, you cannot reference undeclared data and
 you cannot use input that does not validate against the DDL declared
 validations.
 
-Refer to the full [DDL] documentation for details on all possible values
+Refer to the full [DDL][] documentation for details on all possible values
 of the *metadata*, *input* and *output* blocks.
 
 ## Auto generated documentation

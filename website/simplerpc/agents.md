@@ -18,7 +18,7 @@ We've recorded a [tutorial that will give you a quick look at what is involved i
 
 ## Conventions regarding Incoming Data
 
-As you've seen in [SimpleRPCClients] our clients will send requests like:
+As you've seen in [SimpleRPCClients][] our clients will send requests like:
 
 {% highlight ruby %}
 mc.echo(:msg => "Welcome to MCollective Simple RPC")
@@ -65,7 +65,7 @@ The agent name is derived from the class name, the example code creates *MCollec
 <a name="Meta_Data_and_Initialization">&nbsp;</a>
 
 ### Meta Data and Initialization
-Simple RPC agents still need meta data like in [WritingAgents], without it you'll just have some defaults assigned, code below adds the meta data to our agent:
+Simple RPC agents still need meta data like in [WritingAgents][], without it you'll just have some defaults assigned, code below adds the meta data to our agent:
 
 **NOTE**: As of version 2.1.1 the `metadata` section is deprecated, all agents must have DDL files with this information in them.
 
@@ -180,12 +180,12 @@ end
 
 As you can see the DDL file expand on the basic syntax adding a lot of markup, help and other important validation data.  This information - when available - helps in making more robust clients and also potentially auto generating user interfaces.
 
-The DDL is a complex topic, read all about it in [DDL].
+The DDL is a complex topic, read all about it in [DDL][].
 
 ## Validating Input
 If you've followed the conventions and put the incoming data in a Hash structure then you can use a few of the provided validators to make sure your data that you received is what you expected.
 
-If you didn't use Hashes for input the validators would not be usable to you.  In future validation will happen automatically based on the [DDL] so I strongly suggest you follow the agent design pattern shown here using hashes.
+If you didn't use Hashes for input the validators would not be usable to you.  In future validation will happen automatically based on the [DDL][] so I strongly suggest you follow the agent design pattern shown here using hashes.
 
 In the sample action above we validate the *:msg* input to be of type *String*, here are a few more examples:
 
@@ -343,7 +343,7 @@ reply[:msg] = request[:msg]
 {% endhighlight %}
 
 ### Reply Status
-As pointed out in the [ResultsandExceptions] page results all include status messages and the reply object has a helper to create those.
+As pointed out in the [ResultsandExceptions][] page results all include status messages and the reply object has a helper to create those.
 
 {% highlight ruby %}
 def rmmsg_action
@@ -359,7 +359,7 @@ end
 
 {% endhighlight %}
 
-The number in `reply.fail` corresponds to the codes in [ResultsandExceptions] it would default to `1` so you could just say:
+The number in `reply.fail` corresponds to the codes in [ResultsandExceptions][] it would default to `1` so you could just say:
 
 {% highlight ruby %}
 reply.fail "No such message #{request[:msg]}" unless have_msg?(request[:msg])
@@ -391,7 +391,7 @@ You can also access these 2 file paths in the `MCOLLECTIVE_REPLY_FILE` and `MCOL
 
 Simply write your reply as a JSON hash into the reply file.
 
-The exit code of your script should correspond to the ones in [ResultsandExceptions].  Any text in STDERR will be
+The exit code of your script should correspond to the ones in [ResultsandExceptions][].  Any text in STDERR will be
 logged on the server at `error` level and used in the text for the fail text.
 
 Any text to STDOUT will be logged on the server at level `info`.
@@ -435,10 +435,10 @@ helpers.dosomething
 {% endhighlight %}
 
 ## Authorization
-You can write a fine grained Authorization system to control access to actions and agents, please see [SimpleRPCAuthorization] for full details.
+You can write a fine grained Authorization system to control access to actions and agents, please see [SimpleRPCAuthorization][] for full details.
 
 ## Auditing
-The actions that agents perform can be Audited by code you provide, potentially creating a centralized audit log of all actions.  See [SimpleRPCAuditing] for full details.
+The actions that agents perform can be Audited by code you provide, potentially creating a centralized audit log of all actions.  See [SimpleRPCAuditing][] for full details.
 
 ## Logging
 You can write to the server log file using the normal logger class:

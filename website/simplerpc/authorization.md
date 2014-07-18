@@ -14,7 +14,7 @@ Combined with [Connection Security][SecurityWithActiveMQ], [Centralized Auditing
 
 The clients will include the `uid` of the process running the client library in the requests and the authorization function will have access to that on the requests.
 
-There is a sample full featured plugin called [ActionPolicy] that you can use or get some inspiration from.
+There is a sample full featured plugin called [ActionPolicy][] that you can use or get some inspiration from.
 
 ## Writing Authorization Plugins
 

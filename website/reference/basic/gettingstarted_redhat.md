@@ -41,7 +41,7 @@ Getting started using Red Hat based distribution like Red Hat Enterprise Linux a
 ## Requirements
 We try to keep the requirements on external Gems to a minimum, you only need:
 
- * A Stomp server, tested against [ActiveMQ]
+ * A Stomp server, tested against [ActiveMQ][]
  * Ruby
  * Rubygems
  * [Ruby Stomp Client][Stomp]
@@ -53,8 +53,8 @@ We strongly recommend you set up a local Yum repository that will host all the p
  * [ActiveMQ][MCDownloads] - `activemq-5.4.0-2.el5.noarch.rpm`, `activemq-info-provider-5.4.0-2.el5.noarch.rpm`, `tanukiwrapper-3.2.3-1jpp.*.rpm`
  * Java - OpenJDK that is included with your distribution
  * Ruby - included with your distribution
- * RubyGems - [EPEL]
- * Stomp Ruby Gem - [EPEL]
+ * RubyGems - [EPEL][]
+ * Stomp Ruby Gem - [EPEL][]
  * [MCollective][MCDownloads] - `mcollective-2.2.x-1.el5.noarch.rpm`, `mcollective-common-2.2.x-1.el5.noarch.rpm`, `mcollective-client-2.2.x-1.el5.noarch.rpm`
 
 The rest of this guide will assume you set up a Yum repository.  Puppet Labs hosts a Yum repository with all these dependencies at _yum.puppetlabs.com_.
@@ -247,9 +247,9 @@ find various plugins to manage packages, services etc.
 ### Further Reading
 From here you should look at the rest of the wiki pages some key pages are:
 
- * [Screencasts] - Get a hands-on look at what is possible
- * [Terminology]
+ * [Screencasts][] - Get a hands-on look at what is possible
+ * [Terminology][]
  * [Introduction to Simple RPC][SimpleRPCIntroduction] - a simple to use framework for writing clients and agents
- * [ControllingTheDaemon] - Controlling a running daemon
- * [AESSecurityPlugin] - Using AES+RSA for secure message encryption and authentication of clients
- * [SSLSecurityPlugin] - Using SSL for secure message signing and authentication of clients
+ * [ControllingTheDaemon][] - Controlling a running daemon
+ * [AESSecurityPlugin][] - Using AES+RSA for secure message encryption and authentication of clients
+ * [SSLSecurityPlugin][] - Using SSL for secure message signing and authentication of clients
