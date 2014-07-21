@@ -15,22 +15,22 @@ Please review the [Security Overview][SecurityOverview] for a general discussion
 
 The design goals of this plugin are:
 
- * Each actor - clients and servers - can have their own set of public and private keys
- * All actors are uniquely and cryptographically identified
- * Requests are encrypted using the clients private key and anyone that has
-   the public key can see the request.  Thus an atacker may see the requests
-   given access to a public key of the requester.
- * Request TTLs and Message Times are cryptographically secured and tampered
-   messages are not accepted by default. This is a first line defence in message
-   replaying and tampering.
- * Replies are encrypted using the calling clients public key.  Thus no-one but
-   the caller can view the contents of replies.
- * Servers can all have their own SSL keys, or share one, or reuse keys created
-   by other PKI using software like Puppet
- * Requests from servers - like registration data - can be secured even to external
-   eavesdropping depending on the level of configuration you are prepared to do
- * Given a network where you can ensure third parties are not able to access the
-   middleware public key distribution can happen automatically
+* Each actor - clients and servers - can have their own set of public and private keys
+* All actors are uniquely and cryptographically identified
+* Requests are encrypted using the clients private key and anyone that has
+  the public key can see the request.  Thus an atacker may see the requests
+  given access to a public key of the requester.
+* Request TTLs and Message Times are cryptographically secured and tampered
+  messages are not accepted by default. This is a first line defence in message
+  replaying and tampering.
+* Replies are encrypted using the calling clients public key.  Thus no-one but
+  the caller can view the contents of replies.
+* Servers can all have their own SSL keys, or share one, or reuse keys created
+  by other PKI using software like Puppet
+* Requests from servers - like registration data - can be secured even to external
+  eavesdropping depending on the level of configuration you are prepared to do
+* Given a network where you can ensure third parties are not able to access the
+  middleware public key distribution can happen automatically
 
 During the design of this system we considered the replies back to clients to be most
 important piece of information on the network.  This is secured in a way that only
@@ -42,11 +42,11 @@ will be preserved from client to server and reverse.
 
 ## Compared to the SSL plugin
 
-The earlier [SSLSecurity] only provided message signing and identification of clients, this
+The earlier [SSLSecurity][] only provided message signing and identification of clients, this
 new plugin builds on this adding payload encryption, identification of servers and optional
 automatic key distribution.
 
-The [SSLSecurity] plugin puts less drain on resources, if you do not specifically need encryption
+The [SSLSecurity][] plugin puts less drain on resources, if you do not specifically need encryption
 you should consider using that one instead.
 
 ## Deployment Scenarios
@@ -59,14 +59,14 @@ the sections below discuss the possible deployment scenarios to help you choose 
 
 In all of the below setups the following components are needed:
 
- * Each user making requests - the client - needs a public and private key pair
- * Each server receiving requests need the public key of each client
+* Each user making requests - the client - needs a public and private key pair
+* Each server receiving requests need the public key of each client
 
-In cases where you wish to use [Registration] or initiate requests from the server for any
+In cases where you wish to use [Registration][] or initiate requests from the server for any
 reason the following are needed:
 
- * Each server needs a public and private key pair
- * Each other server that wish to receive these requests need the public key of the sending server
+* Each server needs a public and private key pair
+* Each other server that wish to receive these requests need the public key of the sending server
 
 In this scenario each server will act as a client making RPC requests to the collective network
 for any agent called `registration`.  So in this scenario the server acts as a client and therefore
@@ -243,10 +243,10 @@ Clients will still need their own keys made and distributed.
 
 ## Future Roadmap
 
- * Depending on performance of the initial system we might validate request certificates are
-   signed by a known CA this will provide an additional level of security preventing attackers
-   from creating their own keys and using those on the network without also compromising the CA.
- * Private keys will be secured with a password
+* Depending on performance of the initial system we might validate request certificates are
+  signed by a known CA this will provide an additional level of security preventing attackers
+  from creating their own keys and using those on the network without also compromising the CA.
+* Private keys will be secured with a password
 
 
 ## Configuration Options

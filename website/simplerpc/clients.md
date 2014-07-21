@@ -10,7 +10,7 @@ title: Writing SimpleRPC Clients
 [OptionParser]: http://github.com/puppetlabs/marionette-collective/blob/master/lib/mcollective/optionparser.rb
 [AppPlugin]: ../reference/plugins/application.html
 
-As pointed out in the [SimpleRPCIntroduction] page you can use the `mco rpc` CLI
+As pointed out in the [SimpleRPCIntroduction][] page you can use the `mco rpc` CLI
 to call agents and it will do it's best to print results in a sane way.  When
 this is not enough you can write your own clients.
 
@@ -35,17 +35,17 @@ We'll walk through building a ever more complex example of Hello World here.
 The client is mostly a bunch of helper methods that you use as a [Ruby
 Mixin][RubyMixin] in your own code, it provides:
 
- * Standard command line option parsing with help output
- * Ability to add your own command line options
- * Simple access to agents and actions
- * Tools to help you print results
- * Tools to print stats
- * Tools to construct your own filters
- * While retaining full power of `MCollective::Client` if you need the additional feature sets
- * And being as simple or as complex to match your level of code proficiency
+* Standard command line option parsing with help output
+* Ability to add your own command line options
+* Simple access to agents and actions
+* Tools to help you print results
+* Tools to print stats
+* Tools to construct your own filters
+* While retaining full power of `MCollective::Client` if you need the additional feature sets
+* And being as simple or as complex to match your level of code proficiency
 
 We'll write a client for the `Helloworld` agent that you saw in the
-[SimpleRPCIntroduction].
+[SimpleRPCIntroduction][].
 
 ## Call an Agent and print the result
 A basic hello world client can be seen below:
@@ -314,7 +314,7 @@ printrpc mc.echo(:msg => "Welcome to MCollective Simple RPC")
 The above code will force a `:random` selection, you can also set it to `:first`
 
 ## Gaining access to the full MCollective::Client
-If you wanted to work with the Client directly as in [WritingAgents] after perhaps setting up some queries or gathering data first you can gain access to the client, you might also need access to the options array that was parsed out from the command line and any subsequent filters that you added.
+If you wanted to work with the Client directly as in [WritingAgents][] after perhaps setting up some queries or gathering data first you can gain access to the client, you might also need access to the options array that was parsed out from the command line and any subsequent filters that you added.
 
 {% highlight ruby %}
 mc = rpcclient("helloworld")
@@ -323,7 +323,7 @@ client = mc.client
 options = mc.options
 {% endhighlight %}
 
-The first call will set up the CLI option parsing, create clients etc, you can then just grab the client and options and go on as per [WritingAgents].  This is a much quicker way to write full power clients, by just by short-circuiting the options parsing etc.
+The first call will set up the CLI option parsing, create clients etc, you can then just grab the client and options and go on as per [WritingAgents][].  This is a much quicker way to write full power clients, by just by short-circuiting the options parsing etc.
 
 ## Dealing with the results directly
 The biggest reason that you'd write custom clients is probably if you wanted to do custom processing of the results, there are 2 options to do it.

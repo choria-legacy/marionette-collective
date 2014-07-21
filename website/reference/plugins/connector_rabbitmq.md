@@ -8,7 +8,7 @@ toc: false
 [RabbitCLI]: http://www.rabbitmq.com/management-cli.html
 [RabbitClustering]: https://www.rabbitmq.com/clustering.html
 
-The RabbitMQ connector uses the [STOMP] rubygem to connect to RabbitMQ servers.
+The RabbitMQ connector uses the [STOMP][] rubygem to connect to RabbitMQ servers.
 
 This code will only work with version _1.2.2_ or newer of the Stomp gem.
 
@@ -55,15 +55,15 @@ If you want to run multiple RabbitMQ's, say one per datacenter perhaps, you'll n
 
 If you're using the [puppetlabs-mcollective](https://github.com/puppetlabs/puppetlabs-mcollective) module see its documentation on how to configure RabbitMQ for clustering. Otherwise you'll have to make the following changes yourself:
 
-  * Shutdown the RabbitMQ nodes;
-  * Modify the Erlang cookie at ``/var/lib/rabbitmq/.erlang.cookie``. It needs to be identical for all the nodes in a cluster;
-  * Wipe the database: ``rm -rf /var/lib/rabbitmq/mnesia``;
-  * Add an entry to ``/etc/rabbitmq/rabbitmq.config`` in the ``rabit`` section:
-    {% highlight erlang %}
-    {cluster_nodes, {['rabbit@rabbitmq1.example.com', 'rabbit2@rabbitmq2.example.com'], disc}},
-    {cluster_partition_handling, ignore},
-    {% endhighlight %}
-  * Start up the nodes.
+* Shutdown the RabbitMQ nodes;
+* Modify the Erlang cookie at ``/var/lib/rabbitmq/.erlang.cookie``. It needs to be identical for all the nodes in a cluster;
+* Wipe the database: ``rm -rf /var/lib/rabbitmq/mnesia``;
+* Add an entry to ``/etc/rabbitmq/rabbitmq.config`` in the ``rabit`` section:
+  {% highlight erlang %}
+  {cluster_nodes, {['rabbit@rabbitmq1.example.com', 'rabbit2@rabbitmq2.example.com'], disc}},
+  {cluster_partition_handling, ignore},
+  {% endhighlight %}
+* Start up the nodes.
 
 Once these configuration changes are made you still need to join the nodes together. To do this follow the instructions on clustering [here][RabbitClustering].
 

@@ -36,7 +36,7 @@ your nodes.
 
 ## Fact Filters
 
-Filtering on facts require that you've correctly set up a [FactPlugin].  The examples below
+Filtering on facts require that you've correctly set up a [FactPlugin][].  The examples below
 show common fact filters.
 
 Install the ZSH package on machines with the fact _country=de_:

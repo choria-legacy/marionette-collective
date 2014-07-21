@@ -7,9 +7,6 @@ layout: default
 [middleware]: /mcollective/deploy/middleware/
 [filters]: /mcollective/reference/ui/filters.html
 [plugin_directory]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki
-[facter_plugin]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/FactsFacter
-[ohai_plugin]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/FactsOhai
-[chef_classfile]: /mcollective/reference/integration/chef.html#class-filters
 [subcollectives]: /mcollective/reference/basic/subcollectives.html
 [registration]: /mcollective/reference/plugins/registration.html
 [puppetdb]: /puppetdb/
@@ -406,7 +403,7 @@ MCollective clients use filters to discover nodes and limit commands. (See [Disc
 
 * **Facts:** A collection of key/value data about a server's hardware and software. (E.g. `memorytotal = 8.00 GB`, `kernel = Darwin`, etc.)
 * **Identity:** The name of the node.
-* **Classes:** The Puppet classes (or Chef cookbooks, etc.) applied to this node. Classes are useful as metadata because they describe what _roles_ a server fills at your site.
+* **Classes:** The Puppet classes  applied to this node. Classes are useful as metadata because they describe what _roles_ a server fills at your site.
 
 None of these settings are mandatory, but MCollective is less useful without them.
 
@@ -422,7 +419,7 @@ The node's name or identity. This **should** be unique for each node, but does n
 
 A file with a list of classes applied by your configuration management system. This should be a plain text file containing one class name per line.
 
-Puppet automatically writes a class file, which can be found by running `sudo puppet apply --configprint classfile`. [Chef can be made to write a class file][chef_classfile].
+Puppet automatically writes a class file, which can be found by running `sudo puppet apply --configprint classfile`. Other configuration tools may be able to write a similar file; see their documentation for details.
 
 - _Default:_ `/var/lib/puppet/state/classes.txt`
 
@@ -433,7 +430,7 @@ Which fact plugin to use.
 
 MCollective includes a fact plugin called `yaml`. Most users should use this default, set [the `plugin.yaml` setting (see below)](#pluginyaml), and arrange to fill the file it relies on.
 
-Other fact plugins (including [Facter][facter_plugin] and [Ohai][ohai_plugin] ones) are available in the [plugin directory][plugin_directory]. These may require settings of their own.
+Other fact plugins are available in the [plugin directory][plugin_directory]. These may require settings of their own.
 
 - _Default:_ `yaml`
 - _Allowed values:_ The name of any installed fact plugin, with the `_facts` suffix trimmed off. {{ pluginname }}

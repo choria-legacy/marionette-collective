@@ -41,7 +41,7 @@ Getting started using Debian based distribution like Debian squeeze and Ubuntu i
 ## Requirements
 We try to keep the requirements on external Gems to a minimum, you only need:
 
- * A Stomp server, tested against [ActiveMQ]
+ * A Stomp server, tested against [ActiveMQ][]
  * Ruby
  * RubyGems
  * [Ruby Stomp Client][Stomp]
@@ -50,10 +50,10 @@ We try to keep the requirements on external Gems to a minimum, you only need:
 
 We strongly recommend you set up a local Apt repository that will host all the packages on your LAN, you can get the prerequisite packages here:
 
- * [ActiveMQ]
+ * [ActiveMQ][]
  * Java - OpenJDK that is included with your distribution
  * Ruby - included with your distribution
- * [RubyGems]
+ * [RubyGems][]
  * Stomp Ruby Gem
  * [MCollective][MCDownloads] - mcollective-2.2.x-1_all.deb, mcollective-common-2.2.x-1_all.deb, mcollective-client-2.2.x-1_all.deb
 
@@ -251,9 +251,9 @@ find various plugins to manage packages, services etc.
 ### Further Reading
 From here you should look at the rest of the wiki pages some key pages are:
 
- * [Screencasts] - Get a hands-on look at what is possible
- * [Terminology]
+ * [Screencasts][] - Get a hands-on look at what is possible
+ * [Terminology][]
  * [Introduction to Simple RPC][SimpleRPCIntroduction] - a simple to use framework for writing clients and agents
- * [ControllingTheDaemon] - Controlling a running daemon
- * [AESSecurityPlugin] - Using AES+RSA for secure message encryption and authentication of clients
- * [SSLSecurityPlugin] - Using SSL for secure message signing and authentication of clients
+ * [ControllingTheDaemon][] - Controlling a running daemon
+ * [AESSecurityPlugin][] - Using AES+RSA for secure message encryption and authentication of clients
+ * [SSLSecurityPlugin][] - Using SSL for secure message signing and authentication of clients

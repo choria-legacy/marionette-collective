@@ -18,7 +18,7 @@ In general this is all hidden from the developers, especially if you use [Simple
 There is also a [screencast][ScreenCast] that shows this process and message format, recommend you watch that.
 
 ## Message Flow
-For details of the flow of messages and how requests / replies travel around the network see the [MessageFlow] page.
+For details of the flow of messages and how requests / replies travel around the network see the [MessageFlow][] page.
 
 ## History
 

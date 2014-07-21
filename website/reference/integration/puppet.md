@@ -23,20 +23,20 @@ If you're a Puppet user you are supported in both facts and classes filters.
 
 There are a number of community plugins related to Puppet:
 
- * Manage the Puppetd, request runs, enable and disable - [AgentPuppetd]
- * Manage the Puppet CA, sign, list and revoke certificates - [AgentPuppetca]
- * Use the Puppet Ral to create resources on demand, a distributed *ralsh* - [AgentPuppetRal]
- * Schedule your puppetd's controlling concurrency and resource usage - [PuppetCommander]
- * The [ServiceAgent] and [PackageAgent] use the Puppet RAL to function on many operating systems
+ * Manage the Puppetd, request runs, enable and disable - [AgentPuppetd][]
+ * Manage the Puppet CA, sign, list and revoke certificates - [AgentPuppetca][]
+ * Use the Puppet Ral to create resources on demand, a distributed *ralsh* - [AgentPuppetRal][]
+ * Schedule your puppetd's controlling concurrency and resource usage - [PuppetCommander][]
+ * The [ServiceAgent][] and [PackageAgent][] use the Puppet RAL to function on many operating systems
 
 There are also several blog posts related to Puppet and MCollective:
 
- * Running puppet on a number of nodes as quick as possible - [RapidRuns]
- * Bootstrapping a Puppet + EC2 environment with Puppet - [EC2Bootstrap]
- * Using the Puppet RAL with MCollective - [PuppetRalBlog]
- * General scheduling of Puppet Runs - [SchedulingPuppet]
- * Managing Puppetd - [ManagingPuppetd]
- * Bootstrapping your cloud environment - [CloudBootstrap]
+ * Running puppet on a number of nodes as quick as possible - [RapidRuns][]
+ * Bootstrapping a Puppet + EC2 environment with Puppet - [EC2Bootstrap][]
+ * Using the Puppet RAL with MCollective - [PuppetRalBlog][]
+ * General scheduling of Puppet Runs - [SchedulingPuppet][]
+ * Managing Puppetd - [ManagingPuppetd][]
+ * Bootstrapping your cloud environment - [CloudBootstrap][]
 
 ## Facts
 There is a [community plugin to enable Facter][FactsRLFacter] as a fact source.

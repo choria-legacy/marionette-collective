@@ -7,7 +7,7 @@ title: Aggregate Plugins
 
 ## Overview
 MCollective Agents return data and we try to provide as much usable user
-interface for free. To aid in this we require agents to have [DDL] files that
+interface for free. To aid in this we require agents to have [DDL][] files that
 describe the data that the agent returns.
 
 DDL files are used to configure the client but also to assist with user

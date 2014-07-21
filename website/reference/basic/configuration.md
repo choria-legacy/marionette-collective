@@ -25,7 +25,7 @@ Configuration is a simple *key = val* style configuration file.
 
 |Key|Sample|Description|
 |---|------|-----------|
-|collectives|mcollective,subcollective|A list of [Subcollectives] to join - 1.1.3 and newer only|
+|collectives|mcollective,subcollective|A list of [Subcollectives][] to join - 1.1.3 and newer only|
 |main_collective|mcollective|The main collective to target - 1.1.3 and newer only|
 |logfile|/var/log/mcollective.log|Where to log|
 |loglevel|debug|Can be info, warn, debug, fatal, error|
@@ -53,7 +53,7 @@ The server configuration file should be root only readable
 |---|------|-----------|
 |daemonize|1|Runs the server in the background|
 |factsource|Facter|Which fact plugin to use|
-|registration|Agentlist|[Registration] plugin to use|
+|registration|Agentlist|[Registration][] plugin to use|
 |registerinterval|120|How many seconds to sleep between registration messages, setting this to zero disables registration|
 |registration_collective|development|Which sub-collective to send registration messages to|
 |classesfile|/var/lib/puppet/classes.txt|Where to find a list of classes configured by your configuration management system|

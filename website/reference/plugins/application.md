@@ -124,7 +124,7 @@ example.com
 Finished processing 1 / 1 hosts in 68.53 ms
 {% endhighlight %}
 
-Most of the techniques documented in SimpleRPC [Clients] can be reused here, we've just simplified a lot of the common used patterns like CLI arguments and incorporated it all in a single framework.
+Most of the techniques documented in SimpleRPC [Clients][] can be reused here, we've just simplified a lot of the common used patterns like CLI arguments and incorporated it all in a single framework.
 
 ## Reference
 

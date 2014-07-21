@@ -20,16 +20,16 @@ MCollective Simple RPC is a framework on top of the standard client that abstrac
 
 SimpleRPC is a framework that provides the following:
 
- * Provide simple conventions for writing [agents][SimpleRPCAgents] and [clients][SimpleRPCClients], favoring convention over custom design
- * Very easy to write agents including input validation and a sensible feedback mechanism in case of error
- * Provide [audit logging][SimpleRPCAuditing] abilities of calls to agents
- * Provide the ability to do [fine grain Authorization][SimpleRPCAuthorization] of calls to agents and actions.
- * Has a [Data Definition Language][DDL] used to describe agents and assist in giving hints to auto generating user interfaces.
- * The provided generic calling tool should be able to speak to most compliant agents
- * Should you need to you can still write your own clients, this should be very easy too
- * Return data should be easy to print, in most cases the framework should be able to print a sensible output with a single, provided, function.  The [DDL] is used here to improve the standard one-size-fits-all methods.
- * The full capabilities of the standard Client classes should still be exposed in case you want to write advanced agents and clients
- * A documented [standard message format][SimpleRPCMessageFormat] built ontop of the core format.
+* Provide simple conventions for writing [agents][SimpleRPCAgents] and [clients][SimpleRPCClients], favoring convention over custom design
+* Very easy to write agents including input validation and a sensible feedback mechanism in case of error
+* Provide [audit logging][SimpleRPCAuditing] abilities of calls to agents
+* Provide the ability to do [fine grain Authorization][SimpleRPCAuthorization] of calls to agents and actions.
+* Has a [Data Definition Language][DDL] used to describe agents and assist in giving hints to auto generating user interfaces.
+* The provided generic calling tool should be able to speak to most compliant agents
+* Should you need to you can still write your own clients, this should be very easy too
+* Return data should be easy to print, in most cases the framework should be able to print a sensible output with a single, provided, function.  The [DDL][] is used here to improve the standard one-size-fits-all methods.
+* The full capabilities of the standard Client classes should still be exposed in case you want to write advanced agents and clients
+* A documented [standard message format][SimpleRPCMessageFormat] built ontop of the core format.
 
 
 We've provided full tutorials on [Writing Simple RPC Agents][SimpleRPCAgents] and [Clients][SimpleRPCClients].  There is also a [screencast that will give you a quick look at what is involved in writing agents][WritingAgentsScreenCast].
@@ -81,7 +81,7 @@ You could also use *mco rpc* like this and achieve the same result:
 
 For multiple options just add more *key=val* pairs at the end
 
-But you can still write your own clients, it's incredibly simple, full details of a client is out of scope for the introduction - see the [SimpleRPCClients] page instead for full details - but here is some sample code to do the same call as above including full discovery and help output:
+But you can still write your own clients, it's incredibly simple, full details of a client is out of scope for the introduction - see the [SimpleRPCClients][] page instead for full details - but here is some sample code to do the same call as above including full discovery and help output:
 
 {% highlight ruby linenos %}
 #!/usr/bin/ruby

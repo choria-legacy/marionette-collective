@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Screen Casts
+title: Screencasts
 toc: false
 ---
 [YouTube]: https://www.youtube.com/playlist?list=PL74D254ABDFD6CA47&amp;feature=view_all
@@ -12,8 +12,8 @@ toc: false
 We believe screen casts give the best introduction to new concepts, so we've recorded
 several to complement the documentation.
 
-There's a [YouTube] playlist that has all the videos, you can subscribe and follow there.
-There is also a [slideshare] site where presentations will go that we do at conferences and events.
+There's a [YouTube][] playlist that has all the videos, you can subscribe and follow there.
+There is also a [slideshare][] site where presentations will go that we do at conferences and events.
 
 ## Introductions and Guides
 <ol>
@@ -47,7 +47,7 @@ This video introduces the messaging concepts you need to know about when using M
 It shows how the components talk with each other and what software needs to be installed where
 on your network.  Viewing this prior to starting your deployment is recommended.
 
-We also have a page detailing the [Terminology]
+We also have a page detailing the [Terminology][]
 
 <iframe width="640" height="480" src="http://www.youtube-nocookie.com/embed/fIHW41W8jas" frameborder="0" allowfullscreen></iframe>
 
@@ -66,7 +66,7 @@ See the [SimpleRPC Introduction][SimpleRPCIntroduction] for reference wiki pages
 ### The SimpleRPC DDL
 The Data Definition Language helps your clients produce more user friendly output, it ensures
 input gets validated while showing online help, and it enables dynamic generation of user interfaces.
-After you have watched the video, you can refer to the [DDL] wiki page for more information.
+After you have watched the video, you can refer to the [DDL][] wiki page for more information.
 
 <iframe width="640" height="480" src="http://www.youtube-nocookie.com/embed/xikjjXvN6nA" frameborder="0" allowfullscreen></iframe>
 

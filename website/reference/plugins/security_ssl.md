@@ -15,9 +15,9 @@ Please review the [Security Overview][SecurityOverview] for a general discussion
 
 The design goal of the plugin are two fold:
 
- * give different security credentials to clients and servers to avoid a compromised server from sending new client requests.
- * create a token that uniquely identify the client - based on the filename of the public key.  This creates a strong identity token for [SimpleRPCAuthorization].
- * As of 1.3.2 it cryptographically protect the TTL and Message Time properties of requests.  Aiding in securing against replay atacks.
+* give different security credentials to clients and servers to avoid a compromised server from sending new client requests.
+* create a token that uniquely identify the client - based on the filename of the public key.  This creates a strong identity token for [SimpleRPCAuthorization][].
+* As of 1.3.2 it cryptographically protect the TTL and Message Time properties of requests.  Aiding in securing against replay atacks.
 
 Serialization uses Marshal or YAML, which means data types in and out of mcollective
 will be preserved from client to server and reverse.
@@ -89,7 +89,7 @@ in a file called:
   /etc/mcollective/ssl/clients/john-public.pem
 {% endhighlight %}
 
-If you wish to use [Registration] or auditing that sends connections over MC to a
+If you wish to use [Registration][] or auditing that sends connections over MC to a
 central host you will need also put the *server-public.pem* in the clients directory.
 
 You should be aware if you do add the node public key to the clients dir you will in
