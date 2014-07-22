@@ -34,11 +34,7 @@ module MCollective
               # Force reset to last known good state on empty facts
               raise "Got empty facts" if tfacts.empty?
 
-              @facts.clear
-
-              tfacts.each_pair do |key,value|
-                @facts[key.to_s] = value.to_s
-              end
+              @facts = normalize_facts(tfacts)
 
               @last_good_facts = @facts.clone
               @last_facts_load = Time.now.to_i
@@ -80,6 +76,23 @@ module MCollective
       # Plugins can override this to provide forced fact invalidation
       def force_reload?
         false
+      end
+
+      private
+
+      def normalize_facts(value)
+        case value
+        when Array
+          return value.map { |v| normalize_facts(v) }
+        when Hash
+          new_hash = {}
+          value.each do |k,v|
+            new_hash[k.to_s] = normalize_facts(v)
+          end
+          return new_hash
+        else
+          return value.to_s
+        end
       end
     end
   end
