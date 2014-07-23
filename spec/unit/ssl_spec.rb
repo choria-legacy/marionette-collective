@@ -139,6 +139,11 @@ module MCollective
         @ssl.base64_decode("Zm9v").should == "foo"
         SSL.base64_decode("Zm9v").should == "foo"
       end
+
+      it 'should raise an error when decoding invalid base64' do
+        expect { @ssl.base64_decode('.') }.to raise_error ArgumentError
+        expect { SSL.base64_decode('.') }.to raise_error ArgumentError
+      end
     end
 
     describe "#aes_encrypt" do
