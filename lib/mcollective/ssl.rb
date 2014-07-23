@@ -193,6 +193,11 @@ module MCollective
     end
 
     def self.base64_decode(string)
+      # The Base 64 character set is A-Z a-z 0-9 + / =
+      # Also allow for whitespace, but raise if we get anything else
+      if string !~ /^[A-Za-z0-9+\/=\s]+$/
+        raise ArgumentError, 'invalid base64'
+      end
       Base64.decode64(string)
     end
 
