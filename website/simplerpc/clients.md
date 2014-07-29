@@ -381,16 +381,16 @@ The `each` in the above code just loops through the array of results.  Results a
 The `:statuscode` matches the table above so you can make decisions based on each result's status.
 
 ### Gaining access to MCollective::Client#req results
-You can get access to each result in real time, in this case you will need to handle the exceptions in the table above and you'll get a different style of result set.  The result set will be exactly as from the full blown client.
+You can get access to each result in real time, in this case you will supply a block that will be invoked for each result as it comes in.  The result set will be exactly as from the full blown client.
 
 In this mode there will be no progress indicator, you'll deal with results as and when they come in not after the fact as in the previous example.
 
 {% highlight ruby %}
 mc.echo(:msg => "hello world") do |resp|
-   begin
+   if resp[:body][:statuscode] == 0
       printf("%-40s: %s\n", resp[:senderid], resp[:body][:data])
-   rescue RPCError => e
-      puts "The RPC agent returned an error: #{e}"
+   else
+      puts "The RPC agent returned an error: #{resp[:body][:statusmsg]}"
    end
 end
 {% endhighlight %}
@@ -409,16 +409,14 @@ In this mode the results you get will be like this:
  :senderagent=>"helloworld"}
 {% endhighlight %}
 
-Note how here we need to catch the exceptions, just handing `:statuscode` will not be enough as the RPC client will raise exceptions - all descendant from `RPCError` so you can easily catch just those.
-
 You can additionally gain access to a SimpleRPC style result in addition to the more complex native client results:
 
 {% highlight ruby %}
 mc.echo(:msg => "hello world") do |resp, simpleresp|
-   begin
+   if resp[:body][:statuscode] == 0
       printf("%-40s: %s\n", simpleresp[:sender], simpleresp[:data][:msg])
-   rescue RPCError => e
-      puts "The RPC agent returned an error: #{e}"
+   else
+      puts "The RPC agent returned an error: #{resp[:body][:statusmsg]}"
    end
 end
 {% endhighlight %}
@@ -427,15 +425,11 @@ You can still use printrpc to print these style of results and gain advantage of
 
 {% highlight ruby %}
 mc.echo(:msg => "hello world") do |resp, simpleresp|
-   begin
-      printrpc simpleresp
-   rescue RPCError => e
-      puts "The RPC agent returned an error: #{e}"
-   end
+   printrpc simpleresp
 end
 {% endhighlight %}
 
-You will need to handle exceptions yourself but you have a simpler result set to deal with
+This should give you a simpler result set to deal with
 
 ## Adding custom command line options
 You can look at the `mco rpc` script for a big sample, here I am just adding a simple `--msg` option to our script so you can customize the message that will be sent and received.
