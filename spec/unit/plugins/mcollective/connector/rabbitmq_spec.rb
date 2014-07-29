@@ -432,8 +432,8 @@ module MCollective
           msg.stubs(:ttl).returns(60)
           msg.expects(:discovered_hosts).returns(["one", "two"])
 
-          connection.expects(:publish).with('/exchange/mcollective_directed/one', 'msg', {'reply-to' => '/temp-queue/mcollective_reply_agent', 'expiration' => '70000'})
-          connection.expects(:publish).with('/exchange/mcollective_directed/two', 'msg', {'reply-to' => '/temp-queue/mcollective_reply_agent', 'expiration' => '70000'})
+          connection.expects(:publish).with('/exchange/mcollective_directed/one', 'msg', {'reply-to' => '/topic/mcollective', 'expiration' => '70000'})
+          connection.expects(:publish).with('/exchange/mcollective_directed/two', 'msg', {'reply-to' => '/topic/mcollective', 'expiration' => '70000'})
 
           connector.publish(msg)
         end
