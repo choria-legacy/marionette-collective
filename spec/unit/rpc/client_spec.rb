@@ -548,10 +548,20 @@ module MCollective
           @client.limit_targets.should == 1
         end
 
-        it "should not invalid limits to be set" do
+        it "should not allow invalid limits to be set" do
           expect { @client.limit_targets = "a" }.to raise_error(/Invalid/)
           expect { @client.limit_targets = "%1" }.to raise_error(/Invalid/)
           expect { @client.limit_targets = "1.1" }.to raise_error(/Invalid/)
+        end
+
+        it "should reset @limit_targets" do
+          @client.limit_targets = 10
+          @client.limit_targets.should == 10
+          @client.limit_targets = nil
+          @client.limit_targets.should == nil
+          @client.limit_targets = 10
+          @client.limit_targets = false
+          @client.limit_targets.should == nil
         end
       end
 

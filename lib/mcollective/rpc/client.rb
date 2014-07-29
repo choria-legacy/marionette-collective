@@ -580,7 +580,13 @@ module MCollective
 
       # Sets and sanity checks the limit_targets variable
       # used to restrict how many nodes we'll target
+      # Limit targets can be reset by passing nil or false
       def limit_targets=(limit)
+        if !limit
+          @limit_targets = nil
+          return
+        end
+
         if limit.is_a?(String)
           raise "Invalid limit specified: #{limit} valid limits are /^\d+%*$/" unless limit =~ /^\d+%*$/
 
