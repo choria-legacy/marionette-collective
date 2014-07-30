@@ -121,7 +121,7 @@ or not:
 plugin.helloworld.activate_agent = false
 {% endhighlight %}
 
-You can also place the following in `/etc/mcollective/plugins.d/helloworld.cfg`:
+You can also place the following in `/etc/mcollective/plugin.d/helloworld.cfg`:
 
 {% highlight ini %}
 activate_agent = false
