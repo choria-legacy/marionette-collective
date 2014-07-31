@@ -815,6 +815,10 @@ module MCollective
               end
             end
 
+            if @initial_options[:sort]
+              results.sort!
+            end
+
             @stats.noresponsefrom.concat @client.stats[:noresponsefrom]
             @stats.responses += @client.stats[:responses]
             @stats.blocktime += @client.stats[:blocktime] + sleep_time
@@ -906,6 +910,10 @@ module MCollective
 
               results << result
             end
+          end
+
+          if @initial_options[:sort]
+            results.sort!
           end
 
           @stats.aggregate_summary = aggregate.summarize if aggregate

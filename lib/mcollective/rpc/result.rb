@@ -40,6 +40,10 @@ module MCollective
          :statusmsg => @results[:statusmsg],
          :data => @results[:data]}.to_json(*a)
       end
+
+      def <=>(other)
+        self[:sender] <=> other[:sender]
+      end
     end
   end
 end
