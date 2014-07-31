@@ -61,7 +61,7 @@ case "$1" in
 
         rm -f ${pidfile}
 
-        ${mcollectived} --pid=${pidfile} --config="/etc/mcollective/server.cfg"
+        ${mcollectived} --pid=${pidfile} --config="/etc/mcollective/server.cfg" --daemonize
         if [ $? = 0 ]; then
             log_success_msg
             touch $lock

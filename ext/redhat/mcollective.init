@@ -50,7 +50,7 @@ start() {
     echo -n "Starting mcollective: "
     # Only try to start if not already started
     if ! rh_status_q; then
-      daemon ${daemonopts} ${mcollectived} --pid=${pidfile} --config="/etc/mcollective/server.cfg"
+      daemon ${daemonopts} ${mcollectived} --pid=${pidfile} --config="/etc/mcollective/server.cfg" --daemonize
     fi
     # This will be 0 if mcollective is already running
     RETVAL=$?
