@@ -36,6 +36,12 @@ module MCollective
             Log.info("Cycling logging level due to USR2 signal")
             Log.cycle_level
           end
+
+          Signal.trap("WINCH") do
+            Log.info("Reopening logfiles due to WINCH signal")
+            Log.reopen
+            Log.info("Reopened logfiles due to WINCH signal")
+          end
         else
           Util.setup_windows_sleeper
         end

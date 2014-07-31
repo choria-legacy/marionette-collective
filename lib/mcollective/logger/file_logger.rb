@@ -41,6 +41,13 @@ module MCollective
         # STDERR it as last resort
         STDERR.puts("#{level}: #{msg}")
       end
+
+      def reopen
+        level = @logger.level
+        @logger.close
+        start
+        @logger.level = level
+      end
     end
   end
 end

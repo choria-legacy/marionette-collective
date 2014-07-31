@@ -53,6 +53,15 @@ module MCollective
       end
     end
 
+    describe '#reopen' do
+      it 'should delegate the the logger' do
+        @logger.expects(:reopen)
+
+        Log.configure(@logger)
+        Log.reopen
+      end
+    end
+
     describe "#from" do
       let(:execution_stack) do
         if Util.windows?

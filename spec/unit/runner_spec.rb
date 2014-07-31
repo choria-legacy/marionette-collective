@@ -50,6 +50,7 @@ module MCollective
         Util.stubs(:windows).returns(false)
         Signal.expects(:trap).with('USR1')
         Signal.expects(:trap).with('USR2')
+        Signal.expects(:trap).with('WINCH')
         Runner.new(nil)
       end
 
@@ -57,6 +58,7 @@ module MCollective
         Util.stubs(:windows?).returns(true)
         Signal.expects(:trap).with('USR1').never
         Signal.expects(:trap).with('USR2').never
+        Signal.expects(:trap).with('WINCH').never
 
         Util.expects(:setup_windows_sleeper)
         Runner.new(nil)
