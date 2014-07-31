@@ -68,6 +68,27 @@ module MCollective
           JSON.load(result.to_json).should == {"agent" => "tester", "action" => "test", "statuscode" => 0, "statusmsg" => "OK", "sender" => "rspec", "data" => {"foo" => "bar", "bar" => "baz"}}
         end
       end
+
+      describe "#<=>" do
+        it "should implement the Combined Comparison operator based on sender name" do
+          result_a = Result.new("tester", 
+                                "test", 
+                                { :statuscode => 0, 
+                                  :statusmsg => "OK", 
+                                  :sender => "a_rspec",  
+                                  :data => {}})
+          result_b = Result.new("tester", 
+                                "test", 
+                                { :statuscode => 0, 
+                                  :statusmsg => "OK", 
+                                  :sender => "b_rspec",  
+                                  :data => {}})
+
+          (result_a <=> result_b).should == -1
+          (result_b <=> result_a).should == 1
+          (result_a <=> result_a).should == 0
+        end
+      end
     end
   end
 end

@@ -177,6 +177,10 @@ module MCollective
       @parser.on("--threaded", "Start publishing requests and receiving responses in threaded mode.") do |v|
         @options[:threaded] = true
       end
+
+      @parser.on("--sort", "Sort the output of an RPC call before processing.") do |v|
+        @options[:sort] = true
+      end
     end
 
     private
