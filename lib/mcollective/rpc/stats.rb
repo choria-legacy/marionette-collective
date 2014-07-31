@@ -242,8 +242,12 @@ module MCollective
           result_text.puts Util.colorize(:red, "No response from:")
           result_text.puts
 
-          @noresponsefrom.sort.in_groups_of(3) do |c|
-            result_text.puts "   %-30s%-30s%-30s" % c
+          field_size = Util.field_size(@noresponsefrom, 30)
+          fields_num = Util.field_number(field_size)
+          format = "   " + ( " %-#{field_size}s" * fields_num )
+
+          @noresponsefrom.sort.in_groups_of(fields_num) do |c|
+            result_text.puts format % c
           end
 
           result_text.puts
