@@ -28,6 +28,37 @@ module MCollective
         end
       end
 
+      describe 'reopen' do
+        let(:logger) {
+          logger = File_logger.new
+          logger.instance_variable_set(:@logger, mock_logger)
+          logger
+        }
+
+        before :each do
+          mock_logger.stubs(:level)
+          mock_logger.stubs(:close)
+          logger.stubs(:start)
+          mock_logger.stubs(:level=)
+        end
+
+        it 'should close the current handle' do
+          mock_logger.expects(:close)
+          logger.reopen
+        end
+
+        it 'should open a new handle' do
+          logger.expects(:start)
+          logger.reopen
+        end
+
+        it 'should preserve the level' do
+          mock_logger.expects(:level).returns(12252)
+          mock_logger.expects(:level=).with(12252)
+          logger.reopen
+        end
+      end
+
       describe '#set_logging_level' do
         it 'should set the level' do
           logger = File_logger.new
