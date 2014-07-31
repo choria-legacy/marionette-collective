@@ -163,8 +163,12 @@ class MCollective::Application::Inventory<MCollective::Application
 
           puts "   Configuration Management Classes:"
           if data[:classes].size > 0
-            data[:classes].sort.in_groups_of(2, "") do |klasses|
-              puts "      %-30s %-30s" % klasses
+            field_size = MCollective::Util.field_size(data[:classes], 30)
+            fields_num = MCollective::Util.field_number(field_size)
+            format = "   " + (" %-#{field_size}s" * fields_num)
+
+            data[:classes].sort.in_groups_of(fields_num, "") do |klasses|
+              puts format % klasses
             end
           else
             puts "      No classes applied"

@@ -12,8 +12,9 @@ class MCollective::Application::Facts<MCollective::Application
   def show_single_fact_report(fact, facts, verbose=false)
     puts("Report for fact: #{fact}\n\n")
 
+    field_size = MCollective::Util.field_size(facts.keys)
     facts.keys.sort.each do |k|
-      printf("        %-40sfound %d times\n", k, facts[k].size)
+      printf("        %-#{field_size}s found %d times\n", k, facts[k].size)
 
       if verbose
         puts
