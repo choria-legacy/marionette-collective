@@ -15,7 +15,7 @@ module MCollective
     attr_reader :main_collective, :ssl_cipher, :registration_collective
     attr_reader :direct_addressing, :direct_addressing_threshold, :ttl
     attr_reader :default_discovery_method, :default_discovery_options
-    attr_reader :publish_timeout, :threaded, :soft_shutdown
+    attr_reader :publish_timeout, :threaded, :soft_shutdown, :activate_agents
 
     def initialize
       @configured = false
@@ -115,6 +115,8 @@ module MCollective
                   @default_discovery_method = val
                 when "soft_shutdown"
                   @soft_shutdown = Util.str_to_bool(val)
+                when "activate_agents"
+                  @activate_agents = Util.str_to_bool(val)
                 when "topicprefix", "topicsep", "queueprefix", "rpchelptemplate", "helptemplatedir"
                   Log.warn("Use of deprecated '#{key}' option.  This option is ignored and should be removed from '#{configfile}'")
                 else
@@ -193,6 +195,7 @@ module MCollective
       @publish_timeout = 2
       @threaded = false
       @soft_shutdown = false
+      @activate_agents = true
     end
 
     def read_plugin_config_dir(dir)

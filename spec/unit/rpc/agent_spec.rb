@@ -151,6 +151,43 @@ module MCollective
         end
       end
 
+      describe "#activate?" do
+        class Test < MCollective::RPC::Agent;end
+
+        let(:config) do
+          conf = mock
+          conf.stubs(:pluginconf).returns({})
+          conf
+        end
+
+        before(:each) do
+          Config.stubs(:instance).returns(config)
+          Log.stubs(:debug)
+        end
+
+        it "should return true if plugins are globally enabled" do
+          config.stubs(:activate_agents).returns(true)
+          Test.activate?.should == true
+        end
+
+        it "should return true if plugins are globally disabled but locally enabled" do
+          config.stubs(:activate_agents).returns(false)
+          config.pluginconf['test.activate_agent'] = true
+          Test.activate?.should == true
+        end
+
+        it "should return false if plugins are globally disabled" do
+          config.stubs(:activate_agents).returns(false)
+          Test.activate?.should == false
+        end
+
+        it "should return false if plugins are globally enabled but locally disabled" do
+          config.stubs(:activate_agents).returns(true)
+          config.pluginconf['test.activate_agent'] = false
+          Test.activate?.should == false
+        end
+      end
+
       describe "#load_ddl" do
         it "should load the correct DDL" do
           ddl = stub

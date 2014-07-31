@@ -141,6 +141,16 @@ module MCollective
           Config.instance.loadconfig("/nonexisting")
         end
       end
+
+      it 'should enable agents by default' do
+        File.expects(:readlines).with("/nonexisting").returns(["libdir=/nonexistinglib"])
+        File.expects(:exists?).with("/nonexisting").returns(true)
+        PluginManager.stubs(:loadclass)
+        PluginManager.stubs("<<")
+
+        Config.instance.loadconfig("/nonexisting")
+        Config.instance.activate_agents.should == true
+      end
     end
 
     describe "#read_plugin_config_dir" do
