@@ -42,7 +42,7 @@ module MCollective::Logger
         logger = Base.new
 
         expect {
-          logger.send(:log, nil, nil, nil)
+          logger.log(nil, nil, nil)
         }.to raise_error("The logging class did not supply a log method")
       end
     end
@@ -52,7 +52,7 @@ module MCollective::Logger
         logger = Base.new
 
         expect {
-          logger.send(:start)
+          logger.start
         }.to raise_error("The logging class did not supply a start method")
       end
     end

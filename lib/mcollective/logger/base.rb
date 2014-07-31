@@ -34,6 +34,14 @@ module MCollective
         @active_level = level.to_sym
       end
 
+      def start
+        raise "The logging class did not supply a start method"
+      end
+
+      def log(level, from, msg)
+        raise "The logging class did not supply a log method"
+      end
+
       private
       def map_level(level)
         raise "Logger class do not know how to handle #{level} messages" unless valid_levels.include?(level.to_sym)
@@ -59,14 +67,6 @@ module MCollective
       # Abstract methods to ensure the logging implimentations supply what they should
       def valid_levels
         raise "The logging class did not supply a valid_levels method"
-      end
-
-      def log(level, from, msg)
-        raise "The logging class did not supply a log method"
-      end
-
-      def start
-        raise "The logging class did not supply a start method"
       end
     end
   end
