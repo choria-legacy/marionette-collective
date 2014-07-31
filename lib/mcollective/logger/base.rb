@@ -42,6 +42,10 @@ module MCollective
         raise "The logging class did not supply a log method"
       end
 
+      def reopen
+        # reopen may not make sense to all Loggers, but we expect it of the API
+      end
+
       private
       def map_level(level)
         raise "Logger class do not know how to handle #{level} messages" unless valid_levels.include?(level.to_sym)

@@ -57,6 +57,16 @@ module MCollective::Logger
       end
     end
 
+    describe '#reopen' do
+      it 'should do nothing' do
+        logger = Base.new
+
+        expect {
+          logger.reopen
+        }.to_not raise_error
+      end
+    end
+
     describe "#map_level" do
       it "should map levels correctly" do
         logger = Base.new
