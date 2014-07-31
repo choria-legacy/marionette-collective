@@ -138,10 +138,16 @@ module MCollective
       # end
       def self.activate?
         agent_name = self.to_s.split("::").last.downcase
+        config = Config.instance
 
         Log.debug("Starting default activation checks for #{agent_name}")
 
-        should_activate = Util.str_to_bool(Config.instance.pluginconf.fetch("#{agent_name}.activate_agent", true))
+        # Check global state to determine if agent should be loaded
+        should_activate = config.activate_agents
+
+        # Check agent specific state to determine if agent should be loaded
+        should_activate = Util.str_to_bool(config.pluginconf.fetch("#{agent_name}.activate_agent", 
+                                           should_activate))
 
         unless should_activate
           Log.debug("Found plugin configuration '#{agent_name}.activate_agent' with value '#{should_activate}'")
