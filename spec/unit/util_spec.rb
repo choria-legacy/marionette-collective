@@ -657,5 +657,39 @@ module MCollective
 
       end
     end
+
+    describe "#field_size" do
+      context "when elements are smaller than min_size" do
+        it "should return min_size" do
+          Util.field_size(['abc', 'def']).should == 40
+        end
+      end
+
+      context "when elements are bigger than min_size" do
+        it "should return the size of the biggest element" do
+          Util.field_size(['abc', 'def'], 2).should == 3
+        end
+      end
+    end
+
+    describe "#field_number" do
+      context "when field size is smaller than max_size" do
+        it "should return field number" do
+          Util.field_number(30).should == 3
+        end
+      end
+
+      context "when field size is smaller than max_size" do
+        it "should return 1" do
+          Util.field_number(100).should == 1
+        end
+      end
+
+      context "when specifying max_size" do
+        it "should adapt to max_size" do
+          Util.field_number(30, 70).should == 2
+        end
+      end
+    end
   end
 end

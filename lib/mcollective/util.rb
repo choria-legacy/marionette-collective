@@ -508,5 +508,17 @@ module MCollective
     def self.subscribe_to_direct_addressing_queue
       subscribe(make_subscriptions("mcollective", :directed))
     end
+
+    # Get field size for printing
+    def self.field_size(elements, min_size=40)
+      max_length = elements.max_by { |e| e.length }.length
+      max_length > min_size ? max_length : min_size
+    end
+
+    # Calculate number of fields for printing
+    def self.field_number(field_size, max_size=90)
+      number = (max_size/field_size).to_i
+      (number == 0) ? 1 : number
+    end
   end
 end
