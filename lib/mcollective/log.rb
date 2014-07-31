@@ -44,6 +44,13 @@ module MCollective
         @logger.cycle_level if @configured
       end
 
+      # reopen log files
+      def reopen
+        if @configured
+          @logger.reopen
+        end
+      end
+
       # logs a message at a certain level
       def log(level, msg)
         configure unless @configured
