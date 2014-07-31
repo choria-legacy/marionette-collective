@@ -264,9 +264,14 @@ module MCollective
         parser.on('--one', '-1', 'Send request to only one discovered nodes') do |v|
           options[:mcollective_limit_targets] = 1
         end
-
-        parser.on('--batch SIZE', Integer, 'Do requests in batches') do |v|
-          options[:batch_size] = v
+    
+        parser.on('--batch SIZE', 'Do requests in batches') do |v|
+          # validate batch string. Is it x% where x > 0 or is it an integer
+          if ((v =~ /^(\d+)%$/ && Integer($1) != 0) || v =~ /^(\d+)$/)
+            options[:batch_size] = v
+          else
+            raise(::OptionParser::InvalidArgument.new(v))
+          end
         end
 
         parser.on('--batch-sleep SECONDS', Float, 'Sleep time between batches') do |v|

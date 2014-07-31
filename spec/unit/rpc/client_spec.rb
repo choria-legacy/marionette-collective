@@ -684,12 +684,12 @@ module MCollective
           }.to raise_error("Cannot bypass result processing for batched requests")
         end
 
-        it "should only accept integer batch sizes" do
+        it "should only accept valid batch sizes" do
           client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
 
           expect {
             client.send(:call_agent_batched, "foo", {}, {}, "foo", 1)
-          }.to raise_error(/invalid value for Integer/)
+          }.to raise_error("batch_size must be an integer or match a percentage string (e.g. '24%'")
         end
 
         it "should only accept float sleep times" do
@@ -821,6 +821,12 @@ module MCollective
           client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
 
           expect { client.batch_size = 5 }.to raise_error("Can only set batch size if direct addressing is supported")
+        end
+
+        it "should accept batch sizes as percentage strings" do
+          client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
+          client.batch_size = "50%"
+          client.batch_size.should == "50%"
         end
 
         it "should support disabling batch mode when supplied a batch size of 0" do
@@ -1007,6 +1013,55 @@ module MCollective
 
           RPC.expects(:discovered).with(["foo"]).once
           rpcclient.discover
+        end
+      end
+
+      describe "#determine_batch_mode" do
+        let(:rpcclient) do
+          rpcclient = Client.new("foo", 
+                                 {:options => {:filter => Util.empty_filter, 
+                                               :config => "/nonexisting", 
+                                               :verbose => false, 
+                                               :disctimeout => 2}})
+        end
+
+        it "should return true when batch_mode should be set" do
+          rpcclient.send(:determine_batch_mode, "1").should == true
+          rpcclient.send(:determine_batch_mode, 1).should == true    
+          rpcclient.send(:determine_batch_mode, "1%").should == true    
+        end
+
+        it "should return false when batch_mode shouldn't be set" do
+          rpcclient.send(:determine_batch_mode, "0").should == false
+          rpcclient.send(:determine_batch_mode, 0).should == false   
+        end
+      end
+
+      describe "#validate_batch_size" do
+        let(:rpcclient) do
+          rpcclient = Client.new("foo", 
+                                 {:options => {:filter => Util.empty_filter, 
+                                               :config => "/nonexisting", 
+                                               :verbose => false, 
+                                               :disctimeout => 2}})
+        end
+
+        it "should fail when batch size is an invalid string" do
+          expect {
+            rpcclient.send(:validate_batch_size, "foo")
+          }.to raise_error
+        end
+
+        it "should fail when batch size is 0%" do
+          expect {
+            rpcclient.send(:validate_batch_size, "0%")
+          }.to raise_error
+        end
+
+        it "should fail when batch size is not a valid string or integer" do
+          expect {
+            rpcclient.send(:validate_batch_size, true)
+          }.to raise_error
         end
       end
     end
