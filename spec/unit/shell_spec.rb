@@ -21,6 +21,11 @@ module MCollective
         s.environment.should == {"LC_ALL" => "TEST", "foo" => "bar"}
       end
 
+      it "should allow locale to be cleared" do
+        s = Shell.new("date", :environment => {"LC_ALL" => nil, "foo" => "bar"})
+        s.environment.should == {"foo" => "bar"}
+      end
+
       it "should set no environment when given nil" do
         s = Shell.new("date", :environment => nil)
         s.environment.should == {}

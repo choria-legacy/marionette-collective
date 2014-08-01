@@ -57,7 +57,9 @@ module MCollective
               @environment = {}
             else
               @environment.merge!(val.dup)
+              @environment = @environment.delete_if { |k,v| v.nil? }
             end
+
           when "timeout"
             raise "timeout should be a positive integer or the symbol :on_thread_exit symbol" unless val.eql?(:on_thread_exit) || ( val.is_a?(Fixnum) && val>0 )
             @timeout = val
