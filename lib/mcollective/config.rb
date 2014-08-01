@@ -16,7 +16,7 @@ module MCollective
     attr_reader :direct_addressing, :direct_addressing_threshold, :ttl
     attr_reader :default_discovery_method, :default_discovery_options
     attr_reader :publish_timeout, :threaded, :soft_shutdown, :activate_agents
-    attr_reader :registration_splay
+    attr_reader :registration_splay, :discovery_timeout
 
     def initialize
       @configured = false
@@ -90,6 +90,8 @@ module MCollective
                   @classesfile = val
                 when /^plugin.(.+)$/
                   @pluginconf[$1] = val
+                when "discovery_timeout"
+                  @discovery_timeout = Integer(val)
                 when "publish_timeout"
                   @publish_timeout = Integer(val)
                 when "rpcaudit"
