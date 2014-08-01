@@ -16,7 +16,7 @@ module MCollective
     attr_reader :direct_addressing, :direct_addressing_threshold, :ttl
     attr_reader :default_discovery_method, :default_discovery_options
     attr_reader :publish_timeout, :threaded, :soft_shutdown, :activate_agents
-    attr_reader :registration_splay, :discovery_timeout
+    attr_reader :registration_splay, :discovery_timeout, :soft_shutdown_timeout
 
     def initialize
       @configured = false
@@ -120,6 +120,8 @@ module MCollective
                   @default_discovery_method = val
                 when "soft_shutdown"
                   @soft_shutdown = Util.str_to_bool(val)
+                when "soft_shutdown_timeout"
+                  @soft_shutdown_timeout = Integer(val)
                 when "activate_agents"
                   @activate_agents = Util.str_to_bool(val)
                 when "topicprefix", "topicsep", "queueprefix", "rpchelptemplate", "helptemplatedir"
@@ -201,6 +203,7 @@ module MCollective
       @publish_timeout = 2
       @threaded = false
       @soft_shutdown = false
+      @soft_shutdown_timeout = nil
       @activate_agents = true
     end
 

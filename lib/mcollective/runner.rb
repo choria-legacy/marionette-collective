@@ -72,17 +72,7 @@ module MCollective
             # If soft_shutdown has been enabled we wait for all running agents to
             # finish, one way or the other.
             if @config.soft_shutdown
-              if Util.windows?
-                Log.warn("soft_shutdown specified. This feature is not available on Windows. Shutting down normally.")
-              else
-                Log.debug("Waiting for all running agents to finish or timeout.")
-                @agent_threads.each do |t|
-                  if t.alive?
-                    t.join
-                  end
-                end
-                Log.debug("All running agents have completed. Stopping.")
-              end
+              soft_shutdown
             end
 
             stop_threads
@@ -231,6 +221,72 @@ module MCollective
       msg.publish
 
       @stats.sent
+    end
+
+    # Waits for all agent threads to complete
+    # If soft_shutdown_timeout has been defined it will wait for the
+    # configured grace period before killing all the threads
+    def soft_shutdown
+      timeout = @config.soft_shutdown_timeout
+
+      if timeout && timeout <= 0
+        Log.warn("soft_shutdown_timeout has been set to '#{timeout}'. soft_shutdown_timeout must be > 0")
+        Log.warn("Shutting down normally.")
+        return
+      end
+
+      if Util.windows?
+        windows_soft_shutdown(timeout)
+        return
+      end
+
+      posix_soft_shutdown(timeout)
+    end
+
+    # Implements soft shutdown on the Windows platform
+    # Logs and returns without doing anything if a timeout
+    # hasn't been specified since waiting for long running threads
+    # to exit on Windows can put the MCollective service in a broken state
+    def windows_soft_shutdown(timeout)
+      if !timeout
+        Log.warn("soft_shutdown specified but not soft_shutdown_timeout specified.")
+        Log.warn("To enable soft_shutdown on windows a soft_shutdown_timeout must be specified.")
+        Log.warn("Shutting down normally.")
+        return
+      end
+
+      shutdown_with_timeout(timeout)
+    end
+
+    # Implements soft shutdown on posix systems
+    def posix_soft_shutdown(timeout)
+      if timeout
+        shutdown_with_timeout(timeout)
+        return
+      end
+
+      stop_agent_threads
+    end
+
+    def shutdown_with_timeout(timeout)
+      Log.debug("Shutting down agents with a timeout of '#{timeout}' seconds")
+      begin
+        Timeout.timeout(timeout) do
+          stop_agent_threads
+        end
+      rescue Timeout::Error
+        Log.warn("soft_shutdown_timeout reached. Terminating all running agent threads.")
+      end
+    end
+
+    def stop_agent_threads
+      Log.debug("Waiting for all running agents to finish or timeout.")
+      @agent_threads.each do |t|
+        if t.alive?
+          t.join
+        end
+      end
+      Log.debug("All running agents have completed. Stopping.")
     end
   end
 end
