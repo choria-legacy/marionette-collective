@@ -16,6 +16,7 @@ module MCollective
     attr_reader :direct_addressing, :direct_addressing_threshold, :ttl
     attr_reader :default_discovery_method, :default_discovery_options
     attr_reader :publish_timeout, :threaded, :soft_shutdown, :activate_agents
+    attr_reader :registration_splay
 
     def initialize
       @configured = false
@@ -43,6 +44,8 @@ module MCollective
                   @registration_collective = val
                 when "registerinterval"
                   @registerinterval = Integer(val)
+                when "registration_splay"
+                  @registration_splay = Util.str_to_bool(val)
                 when "collectives"
                   @collectives = val.split(",").map {|c| c.strip}
                 when "main_collective"
@@ -167,6 +170,7 @@ module MCollective
       @registration = "Agentlist"
       @registerinterval = 0
       @registration_collective = nil
+      @registration_splay = false
       @classesfile = "/var/lib/puppet/state/classes.txt"
       @rpcaudit = false
       @rpcauditprovider = ""

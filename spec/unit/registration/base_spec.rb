@@ -5,6 +5,9 @@ require 'spec_helper'
 module MCollective
   module Registration
     describe Base do
+
+      let(:connection) { mock }
+
       before do
         @config = mock
         @config.stubs(:identity).returns("rspec")
@@ -18,7 +21,20 @@ module MCollective
         it "should provide access the main configuration class" do
           @reg.config.should == @config
         end
+      end
 
+      describe "#run" do
+        it "should not start the publish_thread if the registration interval is 0" do
+          @reg.stubs(:interval).returns(0)
+          Thread.expects(:new).never
+          @reg.run(connection).should == false
+        end
+
+        it "should start the publish_thread" do
+          @reg.stubs(:interval).returns(1)
+          Thread.expects(:new).returns(true)
+          @reg.run(connection).should be_true
+        end
       end
 
       describe "#identity" do
@@ -70,6 +86,36 @@ module MCollective
           @reg.expects(:target_collective).returns("mcollective")
 
           @reg.publish("message")
+        end
+      end
+
+      describe "#body" do
+        it "should fail if body hasn't been implemented" do
+          expect {
+            @reg.body
+          }.to raise_error
+        end
+      end
+
+      describe "#publish_thread" do
+        before(:each) do
+          @reg.expects(:loop).returns("looping")
+        end
+
+        it "should splay if splay is set" do
+          @reg.stubs(:interval).returns(1)
+          @config.stubs(:registration_splay).returns(true)
+          Log.expects(:debug)
+          @reg.expects(:sleep)
+          @reg.send(:publish_thread, connection)
+        end
+
+        it "should not splay if splay isn't set" do
+          @reg.stubs(:interval).returns(1)
+          @config.stubs(:registration_splay).returns(false)
+          Log.expects(:debug).never
+          @reg.expects(:sleep).never
+          @reg.send(:publish_thread, connection)
         end
       end
     end
