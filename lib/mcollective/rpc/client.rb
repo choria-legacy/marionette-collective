@@ -78,7 +78,7 @@ module MCollective
 
         agent_filter agent
 
-        @discovery_timeout = @initial_options.fetch(:disctimeout, nil)
+        @discovery_timeout = @initial_options.fetch(:disctimeout, nil) || Config.instance.discovery_timeout
 
         @collective = @client.collective
         @ttl = initial_options[:ttl] || Config.instance.ttl
