@@ -20,16 +20,7 @@ module MCollective
         return false if interval == 0
 
         Thread.new do
-          loop do
-            begin
-              publish(body)
-
-              sleep interval
-            rescue Exception => e
-              Log.error("Sending registration message failed: #{e}")
-              sleep interval
-            end
-          end
+          publish_thread(connection)
         end
       end
 
@@ -71,6 +62,29 @@ module MCollective
 
           req.publish
         end
+      end
+
+      def body
+        raise "Registration Plugins must implement the #body method"
+      end
+
+      private
+      def publish_thread(connnection)
+        if config.registration_splay
+            splay_delay = rand(interval)
+            Log.debug("registration_splay enabled. Registration will start in #{splay_delay} seconds")
+            sleep splay_delay
+          end
+
+          loop do
+            begin
+              publish(body)
+              sleep interval
+            rescue Exception => e
+              Log.error("Sending registration message failed: #{e}")
+              sleep interval
+            end
+          end
       end
     end
   end
