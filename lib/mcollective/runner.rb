@@ -28,19 +28,25 @@ module MCollective
 
         unless Util.windows?
           Signal.trap("USR1") do
-            Log.info("Reloading all agents after receiving USR1 signal")
-            @agents.loadagents
+            Thread.new do
+              Log.info("Reloading all agents after receiving USR1 signal")
+              @agents.loadagents
+            end
           end
 
           Signal.trap("USR2") do
-            Log.info("Cycling logging level due to USR2 signal")
-            Log.cycle_level
+            Thread.new do
+              Log.info("Cycling logging level due to USR2 signal")
+              Log.cycle_level
+            end
           end
 
           Signal.trap("WINCH") do
-            Log.info("Reopening logfiles due to WINCH signal")
-            Log.reopen
-            Log.info("Reopened logfiles due to WINCH signal")
+            Thread.new do
+              Log.info("Reopening logfiles due to WINCH signal")
+              Log.reopen
+              Log.info("Reopened logfiles due to WINCH signal")
+            end
           end
         else
           Util.setup_windows_sleeper
