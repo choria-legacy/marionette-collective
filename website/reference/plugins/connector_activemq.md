@@ -5,6 +5,7 @@ toc: false
 ---
 
 [STOMP]: http://stomp.codehaus.org/
+[heartbeat]: http://stomp.github.io/stomp-specification-1.1.html#Heart-beating
 [wildcard]: http://activemq.apache.org/wildcards.html
 [subcollectives]: /mcollective/reference/basic/subcollectives.html
 [activemq_config]: /mcollective/deploy/middleware/activemq.html
@@ -93,3 +94,30 @@ ActiveMQ messages support priorities, you can pass in the needed priority header
 {% highlight ini %}
 plugin.activemq.priority = 4
 {% endhighlight %}
+
+### STOMP 1.1 Heartbeats
+
+A common problem is that idle STOMP connections get expired by session
+tracking firewalls and NAT devices.  Version 1.1 of the STOMP protocol
+combats this with protocol level heartbeats, which can be configured
+with these settings:
+
+{% highlight ini %}
+# Send heartbeats in 30 second intervals. This is the shortest supported period.
+plugin.activemq.heartbeat_interval = 30
+
+# By default if heartbeat_interval is set it will request STOMP 1.1 but support fallback
+# to 1.0, but you can enable strict STOMP 1.1 only operation by disabling 1.0 fallback
+plugin.activemq.stomp_1_0_fallback = 0
+
+# Maximum amount of heartbeat read failures before retrying. 0 means never retry.
+plugin.activemq.max_hbread_fails = 2
+
+# Maxium amount of heartbeat lock obtain failures before retrying. 0 means never retry.
+plugin.activemq.max_hbrlck_fails = 2
+{% endhighlight %}
+
+This feature is avaiable from version 2.4.0 and requires version
+1.2.10 or newer of the stomp gem.
+
+More information about STOMP heartbeats can be found [in the STOMP specification][heartbeat]
