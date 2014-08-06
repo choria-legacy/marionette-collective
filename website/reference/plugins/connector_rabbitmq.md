@@ -4,6 +4,7 @@ title: RabbitMQ Connector
 toc: false
 ---
 [STOMP]: http://stomp.codehaus.org/
+[heartbeat]: http://stomp.github.io/stomp-specification-1.1.html#Heart-beating
 [RabbitStomp]: http://www.rabbitmq.com/stomp.html
 [RabbitCLI]: http://www.rabbitmq.com/management-cli.html
 [RabbitClustering]: https://www.rabbitmq.com/clustering.html
@@ -127,3 +128,30 @@ rabbitmqadmin declare exchange --user=admin --password=changeme --vhost=/mcollec
 {% endhighlight %}
 
 Note: the `rabbitmq.use_reply_exchange` feature is available from version 2.4.1.
+
+### STOMP 1.1 Heartbeats
+
+A common problem is that idle STOMP connections get expired by session
+tracking firewalls and NAT devices.  Version 1.1 of the STOMP protocol
+combats this with protocol level heartbeats, which can be configured
+with these settings:
+
+{% highlight ini %}
+# Send heartbeats in 30 second intervals. This is the shortest supported period.
+plugin.rabbitmq.heartbeat_interval = 30
+
+# By default if heartbeat_interval is set it will request STOMP 1.1 but support fallback
+# to 1.0, but you can enable strict STOMP 1.1 only operation by disabling 1.0 fallback
+plugin.rabbitmq.stomp_1_0_fallback = 0
+
+# Maximum amount of heartbeat read failures before retrying. 0 means never retry.
+plugin.rabbitmq.max_hbread_fails = 2
+
+# Maxium amount of heartbeat lock obtain failures before retrying. 0 means never retry.
+plugin.rabbitmq.max_hbrlck_fails = 2
+{% endhighlight %}
+
+This feature is avaiable from version 2.4.0 and requires version
+1.2.10 or newer of the stomp gem.
+
+More information about STOMP heartbeats can be found [in the STOMP specification][heartbeat]
