@@ -87,7 +87,6 @@ module MCollective
       let(:agent_thread) do
         at = mock
         at.stubs(:alive?).returns(true)
-        at.expects(:join)
         at
       end
 
@@ -107,19 +106,13 @@ module MCollective
           runner.main_loop
         end
 
-        it 'should not do a soft_shutdown on windows' do
-          config.stubs(:soft_shutdown).returns(true)
-          Util.stubs(:windows?).returns(true)
-          Log.expects(:warn).with("soft_shutdown specified. This feature is not available on Windows. Shutting down normally.")
-          runner.instance_variable_set(:@state, :stopping)
-          runner.main_loop
-        end
-
         it 'should do a soft_shutdown' do
           config.stubs(:soft_shutdown).returns(true)
           Util.stubs(:windows?).returns(false)
           runner.instance_variable_set(:@state, :stopping)
           runner.instance_variable_set(:@agent_threads, [agent_thread])
+          runner.expects(:soft_shutdown)
+          runner.expects(:stop_threads)
           runner.main_loop
         end
       end
@@ -258,6 +251,89 @@ module MCollective
           Log.expects(:info).with("sleeping for suggested 1 seconds")
           runner.expects(:sleep).with(1)
           runner.send(:receiver_thread)
+        end
+      end
+    end
+
+    context "soft_shutdown" do
+      let(:runner) do
+        Runner.new(nil)
+      end
+
+      before(:each) do
+        config.stubs(:soft_shutdown).returns(true)
+      end
+
+      describe "#soft_shutdown" do
+        it "should not shutdown if the timeout is set and <= 0" do
+          config.stubs(:soft_shutdown_timeout).returns(0)
+          Log.expects(:warn).twice
+          runner.expects(:windows_soft_shutdown).never
+          runner.expects(:posix_soft_shutdown).never
+          runner.send(:soft_shutdown)
+        end
+
+        it "should call the windows soft_shutdown on Windows" do
+          config.stubs(:soft_shutdown_timeout).returns(1)
+          Util.stubs(:windows?).returns(true)
+          runner.expects(:windows_soft_shutdown)
+          runner.expects(:posix_soft_shutdown).never
+          runner.send(:soft_shutdown)
+        end
+
+        it "should call the posix soft_shutdown when not on windows" do
+          config.stubs(:soft_shutdown_timeout).returns(1)
+          Util.stubs(:windows?).returns(false)
+          runner.expects(:windows_soft_shutdown).never
+          runner.expects(:posix_soft_shutdown)
+          runner.send(:soft_shutdown)
+        end
+      end
+
+      describe "#windows_soft_shutdown" do
+        it "should not shutdown if no timeout is set" do
+          runner.expects(:shutdown_with_timeout).never
+          Log.expects(:warn).times(3)
+          runner.send(:windows_soft_shutdown, nil)
+        end
+
+        it "should shutdown in a timeout" do
+          runner.expects(:shutdown_with_timeout)
+          runner.send(:windows_soft_shutdown, 1)
+        end
+      end
+
+      describe "#posix_soft_shutdown" do
+        it "should shutdown without a timeout" do
+          runner.expects(:stop_agent_threads)
+          runner.send(:posix_soft_shutdown, nil)
+        end
+
+        it "should shutdown with a timeout" do
+          runner.expects(:shutdown_with_timeout)
+          runner.send(:posix_soft_shutdown, 1)
+        end
+      end
+
+      describe "#shutdown_with_timeout" do
+        it "should timeout if it can't stop agent threads in time" do
+          Timeout.expects(:timeout).with(1)
+          runner.send(:shutdown_with_timeout, 1)
+        end
+      end
+
+      describe "#stop_agent_threads" do
+        let(:agent_thread) do
+          at = mock
+          at.stubs(:alive?).returns(true)
+          at
+        end
+
+        it "should stop all agent threads" do
+          runner.instance_variable_set(:@agent_threads, [agent_thread])
+          Log.stubs(:debug)
+          agent_thread.expects(:join)
+          runner.send(:stop_agent_threads)
         end
       end
     end
