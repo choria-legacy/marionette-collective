@@ -87,6 +87,7 @@ plugin.psk = j9q8kx7fnuied9e
 
 <a href="#directaddressingthreshold">direct_addressing_threshold</a> = 10
 <a href="#ttl">ttl</a> = 60
+<a href="#publish_timeout">publish_timeout</a> = 2
 <a href="#threaded">threaded</a> = false
 
 # <a href="#miscellaneous">Miscellaneous settings:</a>
@@ -392,6 +393,14 @@ The default TTL for requests. You can specify TTL per command with the `--ttl` o
 Any server that receives a request after its TTL has expired will reject it. Since the recommend SSL security plugin signs the TTL, it cannot be altered or spoofed; this provides some protection from replay attacks.
 
 - _Default:_ `60`
+- _Allowed values:_ Any positive integer
+
+#### `publish_timeout`
+
+Increase the timeout for how long the request publishing step can
+take.  This can be useful to increase for larger environments.
+
+- _Default:_ `2`
 - _Allowed values:_ Any positive integer
 
 #### `threaded`
