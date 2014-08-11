@@ -8,6 +8,194 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+
+<a name="2_6_0">&nbsp;</a>
+
+## 2.6.0 - 2014/08/28
+
+
+
+### New Features and Improvements from 2.5.3
+
+ * `mcollectived` now supports the command line options `--no-daemonize` and `--daemonize`
+ * Connector plugins now require DDL files
+ * The base64_decode method is now stricter, and will report errors from the correct place in the calling hierarchy
+ * Structured facts are now supported in simple discovery and compound filters
+ * Several actions now choose the number of display columns dynamically based on the values they are presenting
+ * rpc clients now respect a `--sort` option
+ * `mcollectived` now responds to the SIGWINCH signal to perform log rotation
+ * The `--batch` flag can now by used to specify percentages
+ * Agent loading can now be globally defaulted to false
+ * A new option `registration_splay` has been added to defer registration on startup
+ * `discovery_timeout` can now be specified in the client.cfg
+ * `soft_shutdown` is now configurable with a `soft_shutdown_timeout` option
+ * We now use a distinct reply queue per request, which should perform better at scale
+
+### Structured fact support
+
+We have added two mechanisms for dealing with structured facts when
+filtering nodes.
+
+For the simple form of fact matching, --with-fact (-F) will now match
+to array elements or hash keys where the value of a fact is a hash or
+array.
+
+Given the set of facts:
+
+    {
+      "baz": [ "a", "b" ],
+      "quux": { "foo": "flirble" },
+    }
+
+These mco ping invocations would match:
+
+    mco ping --with-fact 'baz=a'
+    mco ping --with-fact 'quux=foo'
+
+And the following would not:
+
+    mco ping --with-fact 'baz=c'
+    mco ping --with-fact 'quux=flirble'
+
+
+There is more complex and powerful mechanism available via the fact
+data plugin which is exposed by the compound filter language use by
+the `--select` (`-S) switch.  It allows you to navigate the structured
+facts with a path delimited by periods.
+
+Given these facts:
+
+    {
+      "foo": "bar",
+      "baz": [ "a", "b" ],
+      "numbers": [ 6, 2, 1 ],
+      "quux": { "foo": "flirble" },
+    }
+
+The following invocations would match:
+
+    mco ping --select 'fact("foo").value=bar'
+    mco ping --select 'fact("baz.0").value=a'
+    mco ping --select 'fact("quux.foo").exists=true' # checks for existence of the key
+    mco ping --select 'fact("quux.foo").value=flirble'
+
+
+### `registration_splay`
+
+Registration can now be delayed from sending the initial registration
+message (splayed) with the `registration_splay` option.  In the
+following configuration the first registration message will be sent
+after a random delay of up to 600 seconds, and then subsequent
+registration messages will be every 600 seconds.
+
+    # server.cfg
+    registration = 600
+    registration_splay = true
+
+This can reduce load spikes on your middleware if you choose to
+restart your agents in batches.
+
+### Changes to agent loading
+
+It is now possible to change the default behavior for agent loading
+with the `activate_agents` option which complements the
+`plugin.$plugin_name.activate_agent` settings.  It defaults to `true`
+which is the behavior in previous versions of MCollective.
+
+In this example we only enable the service and package agents, rather
+than all agents installed:
+
+    # server.cfg
+    activate_agents = false
+    plugin.service.activate_agent = true
+    plugin.package.activate_agent = true
+
+### mco rpc actions now have a '--sort' option
+
+It is now possible to order the results in an rpc result set with the
+`--sort` flag.  This adds a small overhead, and so is off by default.
+
+
+{% highlight shell %}
+$ mco rpc rpcutil ping --sort
+Discovering hosts using the mc method for 2 second(s) .... 5
+
+* [ ============================================================> ] 5 / 5
+
+
+server-0
+   Timestamp: 1408313208
+
+server-1
+   Timestamp: 1408313208
+
+server-2
+   Timestamp: 1408313208
+
+server-3
+   Timestamp: 1408313208
+
+server-4
+   Timestamp: 1408313208
+
+
+
+Finished processing 5 / 5 hosts in 10.29 ms
+{% endhighlight %}
+
+
+
+### Bug fixes since 2.5.3
+
+ * Fixed the exitcode of `mco ping`
+ * Fixed the flow of rpc response processing
+ * Fixed reply-to behavior in the rabbitmq connector
+ * Fixed `call_agent_batched` to work with activerecord
+ * It is now possible to reset `limit_targets`
+ * Fixes to signal handling were made for ruby 2 compatibility
+ * It is now possible to unset `LC_ALL` when using the shell helper
+ * Fixed a race condition in validation plugin loader
+
+
+### Backwards Compatibility and Upgrading
+
+If you are using a non-standard connector plugin, you will need to
+ensure it has a DDL file or MCollective will refuse to use it.
+
+### Changes since 2.5.3
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2014/08/20|Fix a race condition in type validator plugin loader|MCO-453|
+|2014/08/12|Use a distinct reply queue per request|MCO-443|
+|2014/08/07|Add `soft_shutdown_timeout` option|MCO-243|
+|2014/08/06|Add documentation of heartbeat options to the connector pages|MCO-175|
+|2014/08/01|Move signal handling into threads (ruby 2 compatibility)|MCO-421|
+|2014/08/01|Allow LC\_ALL environment variable to be unset|MCO-156|
+|2014/08/01|Add `discovery_timeout` to the configuration file|MCO-193|
+|2014/08/01|Add `registration_splay` configuration option|MCO-272|
+|2014/07/31|Allow for agent loading to be globally defaulted|MCO-408|
+|2014/07/31|Change the 'expired message' message to indicate the message is being discarded|MCO-418|
+|2014/07/31|Allow the --batch flag to specify percentages|MCO-68|
+|2014/07/31|Reopen logfiles on SIGWINCH|MCO-328|
+|2014/07/31|Add --sort option to rpc clients|MCO-83|
+|2014/07/31|Dynamically decide number of columns for output|PR#215|
+|2014/07/31|Specify the --daemonize option in sample init scripts|MCO-416|
+|2014/07/29|Allow `limit_targets` to be reset|MCO-93|
+|2014/07/29|Fixed rabbitmq reply-to under `use_reply_exchange`|MCO-351|
+|2014/07/29|Reworked examples of catching uncatchable errors|MCO-411|
+|2014/07/23|Make the base64 decoder more strict|MCO-293|
+|2014/07/22|Add support for structured facts|MCO-363|
+|2014/07/18|Fix `call_agent_batched` to work with activerecord|MCO-205|
+|2014/07/18|Fix rpc response processing for bad replies|MCO-264|
+|2014/07/17|Fix direct addressing regression introduced in MCO-360|MCO-410|
+|2014/07/17|Require connector plugins to have ddls|MCO-407|
+|2014/07/17|Add ddls to `activemq` and `rabbitmq` connectors|MCO-406|
+|2014/07/16|Fix halt\_code to return the correct exitcode for `mco ping`|MCO-199|
+|2014/07/16|Remove all reference to the 'mcollective' agent|MCO-360|
+|2014/07/01|Add --no-daemonize and --daemonize option to mcollectived|MCO-181|
+|2014/05/21|Fix a url in the solaris readme|MCO-186|
+
 <a name="2_5_3">&nbsp;</a>
 
 ## 2.5.3 - 2014/07/15
