@@ -60,6 +60,10 @@ plugin.activemq.pool.1.ssl.ca = /var/lib/puppet/ssl/certs/ca.pem
 plugin.activemq.pool.1.ssl.cert = /var/lib/puppet/ssl/certs/web01.example.com.pem
 plugin.activemq.pool.1.ssl.key = /var/lib/puppet/ssl/private_keys/web01.example.com.pem
 plugin.activemq.pool.1.ssl.fallback = 0
+plugin.activemq.stomp_1_0_fallback = 0
+plugin.activemq.heartbeat_interval = 30
+plugin.activemq.max_hbread_fails = 2
+plugin.activemq.max_hbrlck_fails = 2
 
 # <a href="#rabbitmq-connector-settings">RabbitMQ connector settings:</a>
 plugin.rabbitmq.vhost = /mcollective
@@ -256,6 +260,11 @@ plugin.activemq.pool.1.ssl.ca = /var/lib/puppet/ssl/certs/ca.pem
 plugin.activemq.pool.1.ssl.cert = /var/lib/puppet/ssl/certs/web01.example.com.pem
 plugin.activemq.pool.1.ssl.key = /var/lib/puppet/ssl/private_keys/web01.example.com.pem
 plugin.activemq.pool.1.ssl.fallback = 0
+# STOMP 1.1 heartbeat settings
+plugin.activemq.stomp_1_0_fallback = 0
+plugin.activemq.heartbeat_interval = 30
+plugin.activemq.max_hbread_fails = 2
+plugin.activemq.max_hbrlck_fails = 2
 
 # <a href="#rabbitmq-connector-settings">RabbitMQ connector settings:</a>
 plugin.rabbitmq.vhost = /mcollective
@@ -306,6 +315,18 @@ ActiveMQ is the main middleware we recommend for MCollective. The ActiveMQ conne
 - **`plugin.activemq.pool.1.ssl.ca`** --- _(When `ssl == 1`)_ The CA certificate to use when verifying ActiveMQ's certificate. Must be the path to a `.pem` file. _Default:_ (nothing)
 - **`plugin.activemq.pool.1.ssl.cert`** --- _(When `ssl == 1`)_ The certificate to present when connecting to ActiveMQ. Must be the path to a `.pem` file. _Default:_ (nothing)
 - **`plugin.activemq.pool.1.ssl.key`** --- _(When `ssl == 1`)_ The private key corresponding to this node's certificate. Must be the path to a `.pem` file. _Default:_ (nothing)
+- **`plugin.activemq.stomp_1_0_fallback`** --- Whether to fall back to STOMP 1.0 when attempting a STOMP 1.1 connection.  _Default:_ true; _allowed_: boolean
+- **`plugin.activemq.heartbeat_interval`** --- The minimum period to heartbeat the connection.  _Default_: (nothing); _allowed_: positive integer.
+
+> **Note:** We recommend that everyone using the ActiveMQ or RabbitMQ connector configure `plugin.activemq.heartbeat_interval` and disable `plugin.activemq.stomp_1_0_fallback`
+>
+> We do this to work around potential problems in the underlying network protocols:
+>
+> * STOMP 1.0 connections are idle when no messages are being sent.
+> * Many firewalls will kill idle TCP connections after a while, which can cause nodes to drop out of the deployment at seemingly random times.
+> * MCollective sets the keep-alive flag on its TCP connections, but most default OS configurations only send the first keep-alive packet after about two hours, so this doesn’t really fix the problem. Nodes may still disappear for an hour or so, then come back.
+>
+> We used to recommend using `registerinterval` for this, but the support for STOMP 1.1 heartbeats is now mature enough to use this is preference.  Heartbeats are also a good deal lighter in terms of network traffic and server load in comparison to sending a registration message.
 
 #### RabbitMQ Connector Settings
 
@@ -481,17 +502,6 @@ How long (in seconds) to cache fact results before refreshing from source. This 
 <a href="#registrationcollective">registration_collective</a> = mcollective
 </code>
 </pre>
-
-> **Note:** We recommend that everyone using the ActiveMQ or RabbitMQ connector set a `registerinterval` of about 600 seconds (10m). You do not need to set a non-default registration plugin or configure a receiver for the registration messages. (If you do, you might want to extend the interval a bit to reduce load.)
->
-> We do this to work around a set of annoyances in the underlying network protocols:
->
-> * Stomp connections are completely idle when no messages are being sent.
-> * Many firewalls will kill idle TCP connections after a while, which can cause nodes to drop out of the deployment at seemingly random times.
-> * MCollective sets the keep-alive flag on its TCP connections, but most default OS configurations only send the first keep-alive packet after about two hours, so this doesn't really fix the problem. Nodes may still disappear for an hour or so, then come back.
-> * Stomp 1.1 fixes this with protocol-level heartbeats, but the implementations haven't quite caught up and have had some bugs, so we can't rely on it yet.
->
-> Thus, we work around all this by sending an irrelevant registration message every ten minutes, which keeps the connection alive (and will recover if it _does_ die) with a very lightweight amount of traffic.
 
 By default, registration is disabled, due to [`registerinterval`](#registerinterval) being set to 0.
 
