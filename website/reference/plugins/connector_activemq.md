@@ -113,7 +113,7 @@ plugin.activemq.stomp_1_0_fallback = 0
 # Maximum amount of heartbeat read failures before retrying. 0 means never retry.
 plugin.activemq.max_hbread_fails = 2
 
-# Maxium amount of heartbeat lock obtain failures before retrying. 0 means never retry.
+# Maximum amount of heartbeat lock obtain failures before retrying. 0 means never retry.
 plugin.activemq.max_hbrlck_fails = 2
 {% endhighlight %}
 
