@@ -131,6 +131,7 @@ plugin.psk = j9q8kx7fnuied9e
 # -----------------
 
 <a href="#daemonize">daemonize</a> = 1
+<a href="#soft_shutdown">soft_shutdown</a> = false
 <a href="#libdir">libdir</a> = /usr/libexec/mcollective
 <a href="#sslcipher">ssl_cipher</a> = aes-256-cbc
 </code>
@@ -715,6 +716,7 @@ The syslog facility to use.
 ### Platform Defaults
 
 <pre><code><a href="#daemonize">daemonize</a> = 1
+<a href="#soft_shutdown">soft_shutdown</a> = false
 <a href="#libdir">libdir</a> = /usr/libexec/mcollective
 <a href="#sslcipher">ssl_cipher</a> = aes-256-cbc
 </code>
@@ -730,6 +732,14 @@ This depends on your platform's init system. For example, newer Ubuntu releases 
 
 - _Default:_ `0` <!-- Actually nil but acts like false -->
 - _Allowed values:_ `1`, `0`, `y`, `n` --- {{ badbool }}
+
+#### `soft_shutdown`
+
+When set to true, soft_shutdown will delay the exit of the daemon
+until all running agents have either ran to completion or timed out.
+
+- _Default:_ false
+- _Allowed values:_ Any boolean value
 
 #### `libdir`
 

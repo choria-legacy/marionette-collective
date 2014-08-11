@@ -87,6 +87,8 @@ plugin.psk = j9q8kx7fnuied9e
 
 <a href="#directaddressingthreshold">direct_addressing_threshold</a> = 10
 <a href="#ttl">ttl</a> = 60
+<a href="#publish_timeout">publish_timeout</a> = 2
+<a href="#threaded">threaded</a> = false
 
 # <a href="#miscellaneous">Miscellaneous settings:</a>
 
@@ -393,6 +395,25 @@ Any server that receives a request after its TTL has expired will reject it. Sin
 - _Default:_ `60`
 - _Allowed values:_ Any positive integer
 
+#### `publish_timeout`
+
+Increase the timeout for how long the request publishing step can
+take.  This can be useful to increase for larger environments.
+
+- _Default:_ `2`
+- _Allowed values:_ Any positive integer
+
+#### `threaded`
+
+If [threaded](#threaded) mode is enabled, the client will spawn a
+receiving thread independent of the thread that sends requests,
+allowing responses to be handled as the are available, rather than
+after making the requests.  This can greatly increase the number of
+nodes that can be addressed at one time when using direct addressing.
+
+- _Default_: `false`
+- _Allowed values:_ Any boolean value
+
 ### Miscellaneous
 
 #### `color`
@@ -568,4 +589,3 @@ The cipher to use for encryption. This is currently only relevant if you are usi
 This setting should be a standard OpenSSL cipher string. See `man enc` for a list.
 
 - _Default:_ `aes-256-cbc`
-
