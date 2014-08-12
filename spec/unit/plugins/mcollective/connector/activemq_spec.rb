@@ -47,9 +47,9 @@ module MCollective
 
       let(:subscription) do
         sub = mock
-        sub.stubs("<<").returns(true)
-        sub.stubs("include?").returns(false)
-        sub.stubs("delete").returns(false)
+        sub.stubs(:<<).returns(true)
+        sub.stubs(:include?).returns(false)
+        sub.stubs(:delete).returns(false)
         sub
       end
 
@@ -452,46 +452,46 @@ module MCollective
         end
 
         it "should use the make_target correctly" do
-          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}})
+          connector.expects(:make_target).with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}})
           connector.subscribe("test", :broadcast, "mcollective")
         end
 
         it "should check for existing subscriptions" do
-          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
-          subscription.expects("include?").with("rspec").returns(false)
+          connector.expects(:make_target).with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          subscription.expects(:include?).with("rspec").returns(false)
           connection.expects(:subscribe).never
 
           connector.subscribe("test", :broadcast, "mcollective")
         end
 
         it "should subscribe to the middleware" do
-          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          connector.expects(:make_target).with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
           connection.expects(:subscribe).with("test", {}, "rspec")
           connector.subscribe("test", :broadcast, "mcollective")
         end
 
         it "should add to the list of subscriptions" do
-          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
-          subscription.expects("<<").with("rspec")
+          connector.expects(:make_target).with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          subscription.expects(:<<).with("rspec")
           connector.subscribe("test", :broadcast, "mcollective")
         end
       end
 
       describe "#unsubscribe" do
         it "should use make_target correctly" do
-          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}})
+          connector.expects(:make_target).with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}})
           connector.unsubscribe("test", :broadcast, "mcollective")
         end
 
         it "should unsubscribe from the target" do
-          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          connector.expects(:make_target).with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
           connection.expects(:unsubscribe).with("test", {}, "rspec").once
 
           connector.unsubscribe("test", :broadcast, "mcollective")
         end
 
         it "should delete the source from subscriptions" do
-          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          connector.expects(:make_target).with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
           subscription.expects(:delete).with("rspec").once
 
           connector.unsubscribe("test", :broadcast, "mcollective")
@@ -633,11 +633,38 @@ module MCollective
 
       describe "#make_target" do
         it "should create correct targets" do
-          connector.make_target("test", :reply, "mcollective").should == {:name => "/queue/mcollective.reply.rspec_#{$$}", :headers => {}, :id => "/queue/mcollective.reply.rspec_#{$$}"}
-          connector.make_target("test", :broadcast, "mcollective").should == {:name => "/topic/mcollective.test.agent", :headers => {}, :id => "/topic/mcollective.test.agent"}
-          connector.make_target("test", :request, "mcollective").should == {:name => "/topic/mcollective.test.agent", :headers => {}, :id => "/topic/mcollective.test.agent"}
-          connector.make_target("test", :direct_request, "mcollective").should == {:headers=>{}, :name=>"/queue/mcollective.nodes", :id => "/queue/mcollective.nodes"}
-          connector.make_target("test", :directed, "mcollective").should == {:name => "/queue/mcollective.nodes", :headers=>{"selector"=>"mc_identity = 'rspec'"}, :id => "mcollective_directed_to_identity"}
+          Client.stubs(:request_sequence).returns(42)
+          connector.make_target("test", :reply, "mcollective").should == {
+            :name => "/queue/mcollective.reply.rspec_#{$$}.42",
+            :headers => {},
+            :id => "/queue/mcollective.reply.rspec_#{$$}.42",
+          }
+
+          connector.make_target("test", :broadcast, "mcollective").should == {
+            :name => "/topic/mcollective.test.agent",
+            :headers => {},
+            :id => "/topic/mcollective.test.agent",
+          }
+
+          connector.make_target("test", :request, "mcollective").should == {
+            :name => "/topic/mcollective.test.agent",
+            :headers => {},
+            :id => "/topic/mcollective.test.agent",
+          }
+
+          connector.make_target("test", :direct_request, "mcollective").should == {
+            :name => "/queue/mcollective.nodes",
+            :headers => {},
+            :id => "/queue/mcollective.nodes",
+          }
+
+          connector.make_target("test", :directed, "mcollective").should == {
+            :name => "/queue/mcollective.nodes",
+            :headers => {
+              "selector" => "mc_identity = 'rspec'",
+            },
+            :id => "mcollective_directed_to_identity",
+          }
         end
 
         it "should raise an error for unknown collectives" do

@@ -18,6 +18,11 @@ module MCollective
       @connection.connect
     end
 
+    @@request_sequence = 0
+    def self.request_sequence
+      @@request_sequence
+    end
+
     # Returns the configured main collective if no
     # specific collective is specified as options
     def collective
@@ -54,6 +59,8 @@ module MCollective
         request = Message.new(msg, nil, {:agent => agent, :type => :request, :collective => collective, :filter => filter, :ttl => ttl})
         request.reply_to = @options[:reply_to] if @options[:reply_to]
       end
+
+      @@request_sequence += 1
 
       request.encode!
       subscribe(agent, :reply) unless request.reply_to

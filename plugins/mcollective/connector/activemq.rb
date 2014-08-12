@@ -486,7 +486,7 @@ module MCollective
 
         case type
           when :reply
-            target[:name] = ["/queue/" + collective, :reply, "#{Config.instance.identity}_#{$$}"].join(".")
+            target[:name] = ["/queue/" + collective, :reply, "#{Config.instance.identity}_#{$$}", Client.request_sequence].join(".")
 
           when :broadcast
             target[:name] = ["/topic/" + collective, agent, :agent].join(".")
