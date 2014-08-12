@@ -47,9 +47,9 @@ module MCollective
 
       let(:subscription) do
         sub = mock
-        sub.stubs("<<").returns(true)
-        sub.stubs("include?").returns(false)
-        sub.stubs("delete").returns(false)
+        sub.stubs(:<<).returns(true)
+        sub.stubs(:include?).returns(false)
+        sub.stubs(:delete).returns(false)
         sub
       end
 
@@ -447,12 +447,12 @@ module MCollective
         end
 
         it "should use the make_target correctly" do
-          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}})
+          connector.expects(:make_target).with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}})
           connector.subscribe("test", :broadcast, "mcollective")
         end
 
         it "should check for existing subscriptions" do
-          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          connector.expects(:make_target).with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
           subscription.expects("include?").with("rspec").returns(false)
           connection.expects(:subscribe).never
 
@@ -460,14 +460,14 @@ module MCollective
         end
 
         it "should subscribe to the middleware" do
-          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          connector.expects(:make_target).with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
           connection.expects(:subscribe).with("test", {}, "rspec")
           connector.subscribe("test", :broadcast, "mcollective")
         end
 
         it "should add to the list of subscriptions" do
-          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
-          subscription.expects("<<").with("rspec")
+          connector.expects(:make_target).with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          subscription.expects(:<<).with("rspec")
           connector.subscribe("test", :broadcast, "mcollective")
         end
 
@@ -478,7 +478,7 @@ module MCollective
 
         it "should subscribe to :reply messages when use_reply_exchange is set" do
           Rabbitmq.any_instance.stubs(:get_bool_option).with("rabbitmq.use_reply_exchange", false).returns(true)
-          connector.expects("make_target").with("test", :reply, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          connector.expects(:make_target).with("test", :reply, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
           connection.expects(:subscribe).with("test", {}, "rspec").once
 
           connector.subscribe("test", :reply, "mcollective")
@@ -487,19 +487,19 @@ module MCollective
 
       describe "#unsubscribe" do
         it "should use make_target correctly" do
-          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}})
+          connector.expects(:make_target).with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}})
           connector.unsubscribe("test", :broadcast, "mcollective")
         end
 
         it "should unsubscribe from the target" do
-          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          connector.expects(:make_target).with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
           connection.expects(:unsubscribe).with("test", {}, "rspec").once
 
           connector.unsubscribe("test", :broadcast, "mcollective")
         end
 
         it "should delete the source from subscriptions" do
-          connector.expects("make_target").with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          connector.expects(:make_target).with("test", :broadcast, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
           subscription.expects(:delete).with("rspec").once
 
           connector.unsubscribe("test", :broadcast, "mcollective")
@@ -512,7 +512,7 @@ module MCollective
 
         it "should unsubscribe from :reply messages when use_reply_exchange is set" do
           Rabbitmq.any_instance.stubs(:get_bool_option).with("rabbitmq.use_reply_exchange", false).returns(true)
-          connector.expects("make_target").with("test", :reply, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
+          connector.expects(:make_target).with("test", :reply, "mcollective").returns({:name => "test", :headers => {}, :id => "rspec"})
           connection.expects(:unsubscribe).with("test", {}, "rspec").once
 
           connector.unsubscribe("test", :reply, "mcollective")
