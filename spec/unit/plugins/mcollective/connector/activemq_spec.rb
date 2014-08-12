@@ -633,11 +633,37 @@ module MCollective
 
       describe "#make_target" do
         it "should create correct targets" do
-          connector.make_target("test", :reply, "mcollective").should == {:name => "/queue/mcollective.reply.rspec_#{$$}", :headers => {}, :id => "/queue/mcollective.reply.rspec_#{$$}"}
-          connector.make_target("test", :broadcast, "mcollective").should == {:name => "/topic/mcollective.test.agent", :headers => {}, :id => "/topic/mcollective.test.agent"}
-          connector.make_target("test", :request, "mcollective").should == {:name => "/topic/mcollective.test.agent", :headers => {}, :id => "/topic/mcollective.test.agent"}
-          connector.make_target("test", :direct_request, "mcollective").should == {:headers=>{}, :name=>"/queue/mcollective.nodes", :id => "/queue/mcollective.nodes"}
-          connector.make_target("test", :directed, "mcollective").should == {:name => "/queue/mcollective.nodes", :headers=>{"selector"=>"mc_identity = 'rspec'"}, :id => "mcollective_directed_to_identity"}
+          connector.make_target("test", :reply, "mcollective").should == {
+            :name => "/queue/mcollective.reply.rspec_#{$$}",
+            :headers => {},
+            :id => "/queue/mcollective.reply.rspec_#{$$}",
+          }
+
+          connector.make_target("test", :broadcast, "mcollective").should == {
+            :name => "/topic/mcollective.test.agent",
+            :headers => {},
+            :id => "/topic/mcollective.test.agent",
+          }
+
+          connector.make_target("test", :request, "mcollective").should == {
+            :name => "/topic/mcollective.test.agent",
+            :headers => {},
+            :id => "/topic/mcollective.test.agent",
+          }
+
+          connector.make_target("test", :direct_request, "mcollective").should == {
+            :name => "/queue/mcollective.nodes",
+            :headers => {},
+            :id => "/queue/mcollective.nodes",
+          }
+
+          connector.make_target("test", :directed, "mcollective").should == {
+            :name => "/queue/mcollective.nodes",
+            :headers => {
+              "selector" => "mc_identity = 'rspec'",
+            },
+            :id => "mcollective_directed_to_identity",
+          }
         end
 
         it "should raise an error for unknown collectives" do
