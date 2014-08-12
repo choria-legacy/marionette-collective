@@ -6,4 +6,4 @@ metadata    :name        => "ActiveMQ Connector",
             :url         => "http://projects.puppetlabs.com/projects/mcollective-plugins/wiki",
             :timeout     => 60
 
-requires :mcollective => "2.5.0"
+requires :mcollective => "2.6.0"
