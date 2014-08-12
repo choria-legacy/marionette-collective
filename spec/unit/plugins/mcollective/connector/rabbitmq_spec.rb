@@ -618,23 +618,24 @@ module MCollective
             end
 
             it "should create correct targets" do
+              Client.stubs(:request_sequence).returns(42)
               connector.make_target("test", :reply, "mcollective").should eq({
-                :name => "/exchange/mcollective_reply/rspec_#{$$}",
+                :name => "/exchange/mcollective_reply/rspec_#{$$}_42",
                 :headers => {},
                 :id => "mcollective_test_replies",
               })
               connector.make_target("test", :broadcast, "mcollective").should eq({
                 :name => "/exchange/mcollective_broadcast/test",
-                :headers => { "reply-to" => "/exchange/mcollective_reply/rspec_#{$$}" },
+                :headers => { "reply-to" => "/exchange/mcollective_reply/rspec_#{$$}_42" },
                 :id => "mcollective_broadcast_test"
               })
               connector.make_target("test", :request, "mcollective").should eq({
                 :name => "/exchange/mcollective_broadcast/test",
-                :headers => { "reply-to" => "/exchange/mcollective_reply/rspec_#{$$}" },
+                :headers => { "reply-to" => "/exchange/mcollective_reply/rspec_#{$$}_42" },
                 :id => "mcollective_broadcast_test",
               })
               connector.make_target("test", :direct_request, "mcollective", nil, "rspec").should eq({
-                :headers => { "reply-to" => "/exchange/mcollective_reply/rspec_#{$$}" },
+                :headers => { "reply-to" => "/exchange/mcollective_reply/rspec_#{$$}_42" },
                 :name => "/exchange/mcollective_directed/rspec",
                 :id => nil
               })

@@ -633,10 +633,11 @@ module MCollective
 
       describe "#make_target" do
         it "should create correct targets" do
+          Client.stubs(:request_sequence).returns(42)
           connector.make_target("test", :reply, "mcollective").should == {
-            :name => "/queue/mcollective.reply.rspec_#{$$}",
+            :name => "/queue/mcollective.reply.rspec_#{$$}.42",
             :headers => {},
-            :id => "/queue/mcollective.reply.rspec_#{$$}",
+            :id => "/queue/mcollective.reply.rspec_#{$$}.42",
           }
 
           connector.make_target("test", :broadcast, "mcollective").should == {
