@@ -135,6 +135,7 @@ plugin.psk = j9q8kx7fnuied9e
 # -----------------
 
 <a href="#daemonize">daemonize</a> = 1
+<a href="#activate_agents">activate_agents</a> = true
 <a href="#soft_shutdown">soft_shutdown</a> = false
 <a href="#libdir">libdir</a> = /usr/libexec/mcollective
 <a href="#sslcipher">ssl_cipher</a> = aes-256-cbc
@@ -726,6 +727,7 @@ The syslog facility to use.
 ### Platform Defaults
 
 <pre><code><a href="#daemonize">daemonize</a> = 1
+<a href="#activate_agents">activate_agents</a> = true
 <a href="#soft_shutdown">soft_shutdown</a> = false
 <a href="#libdir">libdir</a> = /usr/libexec/mcollective
 <a href="#sslcipher">ssl_cipher</a> = aes-256-cbc
@@ -742,6 +744,14 @@ This depends on your platform's init system. For example, newer Ubuntu releases 
 
 - _Default:_ `0` <!-- Actually nil but acts like false -->
 - _Allowed values:_ `1`, `0`, `y`, `n` --- {{ badbool }}
+
+#### `activate_agents`
+
+When set to false, requires each agent be enabled individually with
+their `plugin.$plugin_name.activate_agent` setting.
+
+- _Default:_ true
+- _Allowed values:_ Any boolean value
 
 #### `soft_shutdown`
 
