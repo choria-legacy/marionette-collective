@@ -99,6 +99,7 @@ plugin.psk = j9q8kx7fnuied9e
 # -----------------------
 
 <a href="#registerinterval">registerinterval</a> = 600
+<a href="#registration_splay">registration_splay</a> = true
 <a href="#registration">registration</a> = agentlist
 <a href="#registrationcollective">registration_collective</a> = mcollective
 
@@ -499,6 +500,7 @@ How long (in seconds) to cache fact results before refreshing from source. This 
 ### Node Registration
 
 <pre><code><a href="#registerinterval">registerinterval</a> = 600
+<a href="#registration_splay">registration_splay</a> = true
 <a href="#registration">registration</a> = agentlist
 <a href="#registrationcollective">registration_collective</a> = mcollective
 </code>
@@ -517,6 +519,15 @@ Some registration plugins (e.g. `redis`) can insert data directly into the inven
 How long (in seconds) to wait between registration messages. Setting this to 0 disables registration.
 
 - _Default:_ `0`
+
+#### `registration_splay`
+
+Whether to delay up to `registerinterval` when sending the initial
+registration message.  This can reduce load spikes on your middleware
+if you choose to restart your agents in batches.
+
+- _Default:_ false
+- _Allowed values:_ A boolean value
 
 #### `registration`
 
