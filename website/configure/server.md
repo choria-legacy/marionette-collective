@@ -138,6 +138,7 @@ plugin.psk = j9q8kx7fnuied9e
 <a href="#daemonize">daemonize</a> = 1
 <a href="#activate_agents">activate_agents</a> = true
 <a href="#soft_shutdown">soft_shutdown</a> = false
+<a href="#soft_shutdown_timeout">soft_shutdown_timeout</a> = 5
 <a href="#libdir">libdir</a> = /usr/libexec/mcollective
 <a href="#sslcipher">ssl_cipher</a> = aes-256-cbc
 </code>
@@ -740,6 +741,7 @@ The syslog facility to use.
 <pre><code><a href="#daemonize">daemonize</a> = 1
 <a href="#activate_agents">activate_agents</a> = true
 <a href="#soft_shutdown">soft_shutdown</a> = false
+<a href="#soft_shutdown_timeout">soft_shutdown_timeout</a> = 5
 <a href="#libdir">libdir</a> = /usr/libexec/mcollective
 <a href="#sslcipher">ssl_cipher</a> = aes-256-cbc
 </code>
@@ -771,6 +773,14 @@ until all running agents have either ran to completion or timed out.
 
 - _Default:_ false
 - _Allowed values:_ Any boolean value
+
+#### `soft_shutdown_timeout`
+
+When set, soft_shutdown will terminate outstanding agents after this
+amount of time has elapsed.
+
+- _Default:_ unset
+- _Allowed values:_ A positive integer
 
 #### `libdir`
 
