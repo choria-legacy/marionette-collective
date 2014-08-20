@@ -4,6 +4,43 @@ title: Changelog
 toc: false
 ---
 
+
+## Version 2.6.x
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2014/08/28|Release *2.6.0*|MCO-422|
+|2014/08/20|Fix a race condition in type validator plugin loader|MCO-453|
+|2014/08/12|Use a distinct reply queue per request|MCO-443|
+|2014/08/07|Add `soft_shutdown_timeout` option|MCO-243|
+|2014/08/06|Add documentation of heartbeat options to the connector pages|MCO-175|
+|2014/08/01|Move signal handling into threads (ruby 2 compatibility)|MCO-421|
+|2014/08/01|Allow LC\_ALL environment variable to be unset|MCO-156|
+|2014/08/01|Add `discovery_timeout` to the configuration file|MCO-193|
+|2014/08/01|Add `registration_splay` configuration option|MCO-272|
+|2014/07/31|Allow for agent loading to be globally defaulted|MCO-408|
+|2014/07/31|Change the 'expired message' message to indicate the message is being discarded|MCO-418|
+|2014/07/31|Allow the --batch flag to specify percentages|MCO-68|
+|2014/07/31|Reopen logfiles on SIGWINCH|MCO-328|
+|2014/07/31|Add --sort option to rpc clients|MCO-83|
+|2014/07/31|Dynamically decide number of columns for output|PR#215|
+|2014/07/31|Specify the --daemonize option in sample init scripts|MCO-416|
+|2014/07/29|Allow `limit_targets` to be reset|MCO-93|
+|2014/07/29|Fixed rabbitmq reply-to under `use_reply_exchange`|MCO-351|
+|2014/07/29|Reworked examples of catching uncatchable errors|MCO-411|
+|2014/07/23|Make the base64 decoder more strict|MCO-293|
+|2014/07/22|Add support for structured facts|MCO-363|
+|2014/07/18|Fix `call_agent_batched` to work with activerecord|MCO-205|
+|2014/07/18|Fix rpc response processing for bad replies|MCO-264|
+|2014/07/17|Fix direct addressing regression introduced in MCO-360|MCO-410|
+|2014/07/17|Require connector plugins to have ddls|MCO-407|
+|2014/07/17|Add ddls to `activemq` and `rabbitmq` connectors|MCO-406|
+|2014/07/16|Fix halt\_code to return the correct exitcode for `mco ping`|MCO-199|
+|2014/07/16|Remove all reference to the 'mcollective' agent|MCO-360|
+|2014/07/01|Add --no-daemonize and --daemonize option to mcollectived|MCO-181|
+|2014/05/21|Fix a url in the solaris readme|MCO-186|
+
+
 ## Version 2.5.x
 
 |Date|Description|Ticket|

@@ -115,7 +115,7 @@ all agents were activated regardless of dependencies.
 
 To make deployment simpler agents support the ability to determine if they should run
 on a particular platform.  By default SimpleRPC agents can be configured to activate
-or not:
+or not with the `activate_agents` and plugin specific `activate_agent` setting:
 
 {% highlight ini %}
 plugin.helloworld.activate_agent = false

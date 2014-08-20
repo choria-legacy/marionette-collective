@@ -99,6 +99,7 @@ plugin.psk = j9q8kx7fnuied9e
 # -----------------------
 
 <a href="#registerinterval">registerinterval</a> = 600
+<a href="#registration_splay">registration_splay</a> = true
 <a href="#registration">registration</a> = agentlist
 <a href="#registrationcollective">registration_collective</a> = mcollective
 
@@ -135,7 +136,9 @@ plugin.psk = j9q8kx7fnuied9e
 # -----------------
 
 <a href="#daemonize">daemonize</a> = 1
+<a href="#activate_agents">activate_agents</a> = true
 <a href="#soft_shutdown">soft_shutdown</a> = false
+<a href="#soft_shutdown_timeout">soft_shutdown_timeout</a> = 5
 <a href="#libdir">libdir</a> = /usr/libexec/mcollective
 <a href="#sslcipher">ssl_cipher</a> = aes-256-cbc
 </code>
@@ -498,6 +501,7 @@ How long (in seconds) to cache fact results before refreshing from source. This 
 ### Node Registration
 
 <pre><code><a href="#registerinterval">registerinterval</a> = 600
+<a href="#registration_splay">registration_splay</a> = true
 <a href="#registration">registration</a> = agentlist
 <a href="#registrationcollective">registration_collective</a> = mcollective
 </code>
@@ -516,6 +520,15 @@ Some registration plugins (e.g. `redis`) can insert data directly into the inven
 How long (in seconds) to wait between registration messages. Setting this to 0 disables registration.
 
 - _Default:_ `0`
+
+#### `registration_splay`
+
+Whether to delay up to `registerinterval` when sending the initial
+registration message.  This can reduce load spikes on your middleware
+if you choose to restart your agents in batches.
+
+- _Default:_ false
+- _Allowed values:_ A boolean value
 
 #### `registration`
 
@@ -726,7 +739,9 @@ The syslog facility to use.
 ### Platform Defaults
 
 <pre><code><a href="#daemonize">daemonize</a> = 1
+<a href="#activate_agents">activate_agents</a> = true
 <a href="#soft_shutdown">soft_shutdown</a> = false
+<a href="#soft_shutdown_timeout">soft_shutdown_timeout</a> = 5
 <a href="#libdir">libdir</a> = /usr/libexec/mcollective
 <a href="#sslcipher">ssl_cipher</a> = aes-256-cbc
 </code>
@@ -743,6 +758,14 @@ This depends on your platform's init system. For example, newer Ubuntu releases 
 - _Default:_ `0` <!-- Actually nil but acts like false -->
 - _Allowed values:_ `1`, `0`, `y`, `n` --- {{ badbool }}
 
+#### `activate_agents`
+
+When set to false, requires each agent be enabled individually with
+their `plugin.$plugin_name.activate_agent` setting.
+
+- _Default:_ true
+- _Allowed values:_ Any boolean value
+
 #### `soft_shutdown`
 
 When set to true, soft_shutdown will delay the exit of the daemon
@@ -750,6 +773,14 @@ until all running agents have either ran to completion or timed out.
 
 - _Default:_ false
 - _Allowed values:_ Any boolean value
+
+#### `soft_shutdown_timeout`
+
+When set, soft_shutdown will terminate outstanding agents after this
+amount of time has elapsed.
+
+- _Default:_ unset
+- _Allowed values:_ A positive integer
 
 #### `libdir`
 
