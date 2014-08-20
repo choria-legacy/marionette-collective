@@ -1,12 +1,18 @@
 module MCollective
   module Validator
     @last_load = nil
+    @@validator_mutex = Mutex.new
 
     # Loads the validator plugins. Validators will only be loaded every 5 minutes
     def self.load_validators
-      if load_validators?
-        @last_load = Time.now.to_i
-        PluginManager.find_and_load("validator")
+      begin
+        @@validator_mutex.lock
+        if load_validators?
+          @last_load = Time.now.to_i
+          PluginManager.find_and_load("validator")
+        end
+      ensure
+        @@validator_mutex.unlock
       end
     end
 
@@ -44,7 +50,6 @@ module MCollective
 
     def self.load_validators?
       return true if @last_load.nil?
-
       (@last_load - Time.now.to_i) > 300
     end
 
