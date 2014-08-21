@@ -12,6 +12,8 @@ and it will reload its agents.
 You can send *USR2* to cycle the log level through DEBUG to FATAL and back again, just keep sending
 the signal and look at the logs.
 
+You can send *WINCH* to flush and reopen logfiles, for logrotation purposes.
+
 Reloading agents work in most cases though we recommend a full daemon restart in production use
 due to the nature of the ruby class loading system.  If you are changing agent contents and relying
 on the reload behavior you might end up with agents not being in a consistent state.
