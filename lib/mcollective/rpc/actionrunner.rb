@@ -129,7 +129,7 @@ module MCollective
       def path_to_command(command)
         unless command[0,1] == File::SEPARATOR
           Config.instance.libdir.each do |libdir|
-            command_file = File.join(libdir, "agent", agent, command)
+            command_file = File.join(libdir, "mcollective", "agent", agent, command)
 
             return command_file if File.exist?(command_file)
           end

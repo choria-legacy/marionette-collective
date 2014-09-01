@@ -188,8 +188,8 @@ module MCollective
         it "should find the first match in the libdir" do
           Config.instance.expects(:libdir).returns(["#{File::SEPARATOR}libdir1", "#{File::SEPARATOR}libdir2"])
 
-          action_in_first_dir = File.join(File::SEPARATOR, "libdir1", "agent", "spectester", "action.sh")
-          action_in_last_dir = File.join(File::SEPARATOR, "libdir2", "agent", "spectester", "action.sh")
+          action_in_first_dir = File.join(File::SEPARATOR, "libdir1", "mcollective", "agent", "spectester", "action.sh")
+          action_in_last_dir = File.join(File::SEPARATOR, "libdir2", "mcollective", "agent", "spectester", "action.sh")
 
           File.expects("exist?").with(action_in_first_dir).returns(true)
           File.expects("exist?").with(action_in_last_dir).never
@@ -200,8 +200,8 @@ module MCollective
         it "should find the match even in the last libdir" do
           Config.instance.expects(:libdir).returns(["#{File::SEPARATOR}libdir1", "#{File::SEPARATOR}libdir2"])
 
-          action_in_first_dir = File.join(File::SEPARATOR, "libdir1", "agent", "spectester", "action.sh")
-          action_in_last_dir = File.join(File::SEPARATOR, "libdir2", "agent", "spectester", "action.sh")
+          action_in_first_dir = File.join(File::SEPARATOR, "libdir1", "mcollective", "agent", "spectester", "action.sh")
+          action_in_last_dir = File.join(File::SEPARATOR, "libdir2", "mcollective", "agent", "spectester", "action.sh")
 
           File.expects("exist?").with(action_in_first_dir).returns(false)
           File.expects("exist?").with(action_in_last_dir).returns(true)
