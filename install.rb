@@ -35,6 +35,7 @@ require 'fileutils'
 require 'tempfile'
 require 'optparse'
 require 'ostruct'
+require 'json'
 include FileUtils
 
 begin
@@ -282,6 +283,15 @@ def install_binfile(from, op_file, target)
   tmp_file.unlink
 end
 
+def save_install_options
+  install_options_file_path = File.join(InstallOptions.sitelibdir, '/mcollective/install_options.json')
+  config_hash = {
+    'configdir' => InstallOptions.configdir,
+    'plugindir' => InstallOptions.plugindir
+  }
+  File.write(install_options_file_path, config_hash.to_json)
+end
+
 # Change directory into the mcollective root so we don't get the wrong files for install.
 cd File.dirname(__FILE__) do
   # Set these values to what you want installed.
@@ -303,4 +313,5 @@ cd File.dirname(__FILE__) do
   do_bins(sbins, InstallOptions.sbindir)
   do_libs(libs, InstallOptions.sitelibdir)
   do_libs(plugins, InstallOptions.plugindir, 'plugins/')
+  save_install_options
 end

@@ -66,9 +66,6 @@ module MCollective
                     raise("libdir paths should be absolute paths but '%s' is relative" % path) unless Util.absolute_path?(path)
 
                     @libdir << path
-                    unless $LOAD_PATH.include?(path)
-                      $LOAD_PATH << path
-                    end
                   end
                 when "identity"
                   @identity = val
@@ -135,8 +132,15 @@ module MCollective
             end
           end
         end
-
-        raise('The %s config file does not specify a libdir setting, cannot continue' % configfile) if @libdir.empty?
+        
+        unless @libdir.include?(InstallOptions.instance.plugindir)
+          @libdir << InstallOptions.instance.plugindir
+        end
+        @libdir.each do |path|
+          unless $LOAD_PATH.include?(path)
+            $LOAD_PATH << path
+          end
+        end
 
         read_plugin_config_dir("#{@configdir}/plugin.d")
 
