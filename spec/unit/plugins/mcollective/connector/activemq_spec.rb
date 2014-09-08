@@ -255,6 +255,7 @@ module MCollective
           Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.cert", false).returns("rspec")
           Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.key", false).returns(nil)
           Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.ca", false).returns(nil)
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.use_ruby_ciphers", false).returns(nil)
 
           expect { connector.ssl_parameters(1, false) }.to raise_error("cert, key and ca has to be supplied for verified SSL mode")
         end
@@ -263,6 +264,7 @@ module MCollective
           Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.cert", false).returns("rspec")
           Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.key", false).returns('rspec.key')
           Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.ca", false).returns('rspec1.ca,rspec2.ca')
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.use_ruby_ciphers", false).returns(nil)
 
           connector.expects(:get_key_file).returns("rspec.key").at_least_once
           connector.expects(:get_cert_file).returns("rspec.cert").at_least_once
