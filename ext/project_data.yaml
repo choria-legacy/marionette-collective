@@ -22,7 +22,7 @@ gem_test_files: 'spec/**/*'
 gem_require_path: 'lib'
 gem_executables: 'mco'
 gem_default_executables: 'mco'
-gem_excludes: "bin/mcollectived lib/mcollective/runner.rb lib/mcollective/vendor/json lib/mcollective/vendor/load_json.rb lib/mcollective/vendor/systemu lib/mcollective/vendor/load_systemu.rb"
+gem_excludes: "bin/mcollectived lib/mcollective/runner.rb lib/mcollective/vendor/systemu lib/mcollective/vendor/load_systemu.rb"
 gem_runtime_dependencies:
   systemu:
   json:
