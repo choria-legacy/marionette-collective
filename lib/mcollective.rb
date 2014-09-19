@@ -1,4 +1,5 @@
 require 'rubygems'
+require 'json'
 require 'stomp'
 require 'timeout'
 require 'digest/md5'
