@@ -82,6 +82,8 @@ module MCollective
         @back_off_multiplier = Integer(get_option("rabbitmq.back_off_multiplier", 2))
         @max_reconnect_delay = Float(get_option("rabbitmq.max_reconnect_delay", 30.0))
         @reconnect_delay = @initial_reconnect_delay
+
+        Log.info("RabbitMQ connector initialized.  Using stomp-gem #{stomp_version}")
       end
 
       # Connects to the RabbitMQ middleware
