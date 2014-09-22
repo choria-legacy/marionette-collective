@@ -148,7 +148,7 @@ module MCollective
 
     describe "#discover" do
       it "should delegate to the discovery plugins" do
-        @discoverer.expects(:discover).with({}, 1, 0).returns([])
+        @discoverer.expects(:discover).with({'collective' => 'mcollective'}, 1, 0).returns([])
         @client.discover({}, 1).should == []
       end
     end
@@ -291,7 +291,7 @@ module MCollective
     describe "#update_stat" do
       let(:before) do
         { :starttime     => Time.now.to_f,
-          :discoverytime => 0, 
+          :discoverytime => 0,
           :blocktime     => 0,
           :totaltime     => 0 }
       end
