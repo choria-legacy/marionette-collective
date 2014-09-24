@@ -143,7 +143,8 @@ module MCollective
        "cf_class" => [],
        "agent"    => [],
        "identity" => [],
-       "compound" => []}
+       "compound" => [],
+       "collective" => nil}
     end
 
     # Returns the PuppetLabs mcollective path for windows

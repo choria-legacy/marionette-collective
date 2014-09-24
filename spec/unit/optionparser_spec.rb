@@ -108,6 +108,13 @@ module MCollective
         Config.instance.expects(:main_collective).returns(:rspec).once
         parser.parse[:collective].should == :rspec
       end
+
+      it "should propogate the active collective into the filter" do
+        parser = Optionparser.new({:collective => "rspec"})
+        parser.stubs(:add_required_options)
+        parser.stubs(:add_common_options)
+        parser.parse[:filter]["collective"].should == "rspec"
+      end
     end
 
     describe '#add_common_options' do
