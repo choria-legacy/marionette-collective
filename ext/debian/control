@@ -24,7 +24,7 @@ Package: mcollective-common
 Replaces: mcollective (<< 2.0.0-1)
 Breaks: mcollective (<< 2.0.0-1), mcollective-client (<< 2.0.0-1)
 Architecture: all
-Depends: ruby (>= 1.8.1) , rubygems1.8 | rubygems1.9.1 | libruby (>= 1:1.9.3.4), ruby-stomp | libstomp-ruby
+Depends: ruby (>= 1.8.1) , rubygems1.8 | rubygems1.9.1 | libruby (>= 1:1.9.3.4), ruby-stomp | libstomp-ruby, libjson-ruby | ruby-json
 Description: build server orchestration or parallel job execution systems
  The Marionette Collective aka. mcollective is a framework
  to build server orchestration or parallel job execution systems.

@@ -1,2 +1,1 @@
 require 'systemu'
-require 'json'
