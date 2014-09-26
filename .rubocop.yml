@@ -57,6 +57,25 @@ Lint/AmbiguousOperator:
 Lint/AssignmentInCondition:
   Enabled: false
 
+Metrics/BlockNesting:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Metrics/LineLength:
+  Enabled: false
+
+# DISABLED - not useful
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ParameterLists:
+  Enabled: false
+
 # DISABLED - not useful
 Style/SpaceBeforeComment:
   Enabled: false
@@ -75,10 +94,6 @@ Style/RedundantSelf:
   Enabled: false
 
 # DISABLED - not useful
-Style/MethodLength:
-  Enabled: false
-
-# DISABLED - not useful
 Style/WhileUntilModifier:
   Enabled: false
 
@@ -89,6 +104,7 @@ Lint/AmbiguousRegexpLiteral:
 # DISABLED
 Lint/Eval:
   Enabled: false
+
 # DISABLED
 Lint/BlockAlignment:
   Enabled: false
@@ -155,9 +171,6 @@ Style/AlignHash:
 Style/AlignParameters:
   Enabled: false
 
-Style/BlockNesting:
-  Enabled: false
-
 Style/AsciiComments:
   Enabled: false
 
@@ -188,9 +201,6 @@ Style/ClassAndModuleChildren:
 Style/ClassCheck:
   Enabled: false
 
-Style/ClassLength:
-  Enabled: false
-
 Style/ClassMethods:
   Enabled: false
 
@@ -199,7 +209,6 @@ Style/ClassVars:
 
 Style/WhenThen:
   Enabled: false
-
 
 # DISABLED - not useful
 Style/WordArray:
@@ -265,7 +274,6 @@ Style/SpaceBeforeBlockBraces:
 Style/SpaceBeforeComma:
   Enabled: false
 
-
 Style/CollectionMethods:
   Enabled: false
 
@@ -276,9 +284,6 @@ Style/ColonMethodCall:
   Enabled: false
 
 Style/CommentAnnotation:
-  Enabled: false
-
-Style/CyclomaticComplexity:
   Enabled: false
 
 Style/ConstantName:
@@ -330,9 +335,6 @@ Style/EmptyLinesAroundBody:
 Style/EmptyLiteral:
   Enabled: false
 
-Style/LineLength:
-  Enabled: false
-
 Style/MethodCallParentheses:
   Enabled: false
 
@@ -380,7 +382,6 @@ Style/SingleLineMethods:
 
 Style/SpecialGlobalVars:
   Enabled: false
-
 
 Style/TrivialAccessors:
   Enabled: false
@@ -469,7 +470,6 @@ Style/RedundantException:
 Style/SelfAssignment:
   Enabled: false
 
-
 Style/Proc:
   Enabled: false
 
@@ -486,9 +486,6 @@ Style/RegexpLiteral:
   Enabled: false
 
 Lint/UnderscorePrefixedVariableName:
-  Enabled: false
-
-Style/ParameterLists:
   Enabled: false
 
 Lint/RequireParentheses:
