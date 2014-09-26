@@ -101,7 +101,7 @@ end
 @showdetails = true
 
 Thread.new(@conn) do |amq|
-    while true
+    loop do
         msg = amq.receive
         dest = msg.headers["destination"]
         time = Time.now.strftime('%H:%M:%S')
