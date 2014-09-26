@@ -2,7 +2,7 @@
 # 1.8.5 and 1.8.6
 class String
   def start_with?(str)
-    return self[0 .. (str.length-1)] == str
+    return self[0..(str.length-1)] == str
   end unless method_defined?("start_with?")
 end
 
