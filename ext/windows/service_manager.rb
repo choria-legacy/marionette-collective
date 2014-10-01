@@ -3,7 +3,6 @@ require 'optparse'
 opt = OptionParser.new
 
 ruby_path = ENV["RUBY"].gsub('"','')
-basedir = ENV["BASEDIR"]
 libdir = ENV["RUBYLIB"]
 mcollectived = ENV["MCOLLECTIVED"]
 configfile = ENV["SERVER_CONFIG"]
@@ -24,7 +23,7 @@ abort("Can't find ruby.ext in the path") unless ruby_path
 options = {:name    => "mcollectived",
            :display_name => "The Marionette Collective",
            :description => "Puppet Labs server orchestration framework",
-           :command => '%s -I"%s" -- "%s" --config "%s"' % [ ruby_path, libdir, mcollectived, configfile ]}
+           :command => '%s -I"%s" -- "%s" --config "%s" --daemonize' % [ ruby_path, libdir, mcollectived, configfile ]}
 
 action = false
 
