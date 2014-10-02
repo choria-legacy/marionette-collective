@@ -181,6 +181,24 @@ module MCollective
         end
       end
 
+      describe '#start_receiver_thread' do
+        let(:current) do
+          mock('current thread')
+        end
+
+        before :each do
+          Thread.stubs(:new).yields
+          Thread.stubs(:current).returns(current)
+        end
+
+        it 'should reraise exceptions' do
+          runner.instance_variable_set(:@state, :running)
+          runner.stubs(:receiver_thread).raises('test error')
+          current.expects(:raise).once
+          runner.send(:start_receiver_thread)
+        end
+      end
+
       describe '#receiver_thread' do
         let(:runner) do
           Runner.new(nil)
