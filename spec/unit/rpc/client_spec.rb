@@ -934,25 +934,9 @@ module MCollective
           @stderr.expects(:print).with("Discovering hosts using the mc method for 2 second(s) .... ")
           @stderr.expects(:puts).with(1)
 
-          rpcclient = Client.new("foo", {
-            :options => {
-              :filter => Util.empty_filter,
-              :config => "/nonexisting",
-              :verbose => true,
-              :disctimeout => 2,
-              :stderr => @stderr,
-              :stdout => @stdout,
-            },
-          })
+          rpcclient = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => true, :disctimeout => 2, :stderr => @stderr, :stdout => @stdout}})
 
-          rpcclient.client.expects(:discover).with({
-            'identity' => [],
-            'compound' => [],
-            'fact' => [],
-            'agent' => ['foo'],
-            'cf_class' => [],
-            'collective' => nil,
-          }, 2).returns(["foo"])
+          rpcclient.client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
 
           rpcclient.discover
         end
@@ -961,24 +945,8 @@ module MCollective
           @stderr.expects(:print).never
           @stderr.expects(:puts).never
 
-          rpcclient = Client.new("foo", {
-            :options => {
-              :filter => Util.empty_filter,
-              :config => "/nonexisting",
-              :verbose => false,
-              :disctimeout => 2,
-              :stderr => @stderr,
-              :stdout => @stdout,
-            },
-          })
-          rpcclient.client.expects(:discover).with({
-            'identity' => [],
-            'compound' => [],
-            'fact' => [],
-            'agent' => ['foo'],
-            'cf_class' => [],
-            'collective' => nil,
-          }, 2).returns(["foo"])
+          rpcclient = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2, :stderr => @stderr, :stdout => @stdout}})
+          rpcclient.client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
 
           rpcclient.discover
         end
@@ -987,44 +955,16 @@ module MCollective
           Stats.any_instance.expects(:time_discovery).with(:start)
           Stats.any_instance.expects(:time_discovery).with(:end)
 
-          rpcclient = Client.new("foo", {
-            :options => {
-              :filter => Util.empty_filter,
-              :config => "/nonexisting",
-              :verbose => false,
-              :disctimeout => 2,
-            },
-          })
-          rpcclient.client.expects(:discover).with({
-            'identity' => [],
-            'compound' => [],
-            'fact' => [],
-            'agent' => ['foo'],
-            'cf_class' => [],
-            'collective' => nil,
-          }, 2).returns(["foo"])
+          rpcclient = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
+          rpcclient.client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
 
           rpcclient.discover
         end
 
         it "should discover using limits in :first rpclimit mode given a number" do
           Config.instance.stubs(:rpclimitmethod).returns(:first)
-          rpcclient = Client.new("foo", {
-            :options => {
-              :filter => Util.empty_filter,
-              :config => "/nonexisting",
-              :verbose => false,
-              :disctimeout => 2,
-            },
-          })
-          rpcclient.client.expects(:discover).with({
-            'identity' => [],
-            'compound' => [],
-            'fact' => [],
-            'agent' => ['foo'],
-            'cf_class' => [],
-            'collective' => nil,
-          }, 2, 1).returns(["foo"])
+          rpcclient = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
+          rpcclient.client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2, 1).returns(["foo"])
 
           rpcclient.limit_targets = 1
 
@@ -1033,22 +973,8 @@ module MCollective
 
         it "should not discover using limits in :first rpclimit mode given a string" do
           Config.instance.stubs(:rpclimitmethod).returns(:first)
-          rpcclient = Client.new("foo", {
-            :options => {
-              :filter => Util.empty_filter,
-              :config => "/nonexisting",
-              :verbose => false,
-              :disctimeout => 2,
-            },
-          })
-          rpcclient.client.expects(:discover).with({
-            'identity' => [],
-            'compound' => [],
-            'fact' => [],
-            'agent' => ['foo'],
-            'cf_class' => [],
-            'collective' => nil,
-          }, 2).returns(["foo"])
+          rpcclient = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
+          rpcclient.client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
           rpcclient.limit_targets = "10%"
 
           rpcclient.discover
@@ -1057,44 +983,16 @@ module MCollective
         it "should not discover using limits when not in :first mode" do
           Config.instance.stubs(:rpclimitmethod).returns(:random)
 
-          rpcclient = Client.new("foo", {
-            :options => {
-              :filter => Util.empty_filter,
-              :config => "/nonexisting",
-              :verbose => false,
-              :disctimeout => 2,
-            },
-          })
-          rpcclient.client.expects(:discover).with({
-            'identity' => [],
-            'compound' => [],
-            'fact' => [],
-            'agent' => ['foo'],
-            'cf_class' => [],
-            'collective' => nil,
-          }, 2).returns(["foo"])
+          rpcclient = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
+          rpcclient.client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
 
           rpcclient.limit_targets = 1
           rpcclient.discover
         end
 
         it "should ensure force_direct mode is false when doing traditional discovery" do
-          rpcclient = Client.new("foo", {
-            :options => {
-              :filter => Util.empty_filter,
-              :config => "/nonexisting",
-              :verbose => false,
-              :disctimeout => 2,
-            },
-          })
-          rpcclient.client.expects(:discover).with({
-            'identity' => [],
-            'compound' => [],
-            'fact' => [],
-            'agent' => ['foo'],
-            'cf_class' => [],
-            'collective' => nil,
-          }, 2).returns(["foo"])
+          rpcclient = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
+          rpcclient.client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
 
           rpcclient.instance_variable_set("@force_direct_request", true)
           rpcclient.discover
@@ -1102,44 +1000,16 @@ module MCollective
         end
 
         it "should store discovered nodes in stats" do
-          rpcclient = Client.new("foo", {
-            :options => {
-              :filter => Util.empty_filter,
-              :config => "/nonexisting",
-              :verbose => false,
-              :disctimeout => 2,
-            },
-          })
-          rpcclient.client.expects(:discover).with({
-            'identity' => [],
-            'compound' => [],
-            'fact' => [],
-            'agent' => ['foo'],
-            'cf_class' => [],
-            'collective' => nil,
-          }, 2).returns(["foo"])
+          rpcclient = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
+          rpcclient.client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
 
           rpcclient.discover
           rpcclient.stats.discovered_nodes.should == ["foo"]
         end
 
         it "should save discovered nodes in RPC" do
-          rpcclient = Client.new("foo", {
-            :options => {
-              :filter => Util.empty_filter,
-              :config => "/nonexisting",
-              :verbose => false,
-              :disctimeout => 2,
-            },
-          })
-          rpcclient.client.expects(:discover).with({
-            'identity' => [],
-            'compound' => [],
-            'fact' => [],
-            'agent' => ['foo'],
-            'cf_class' => [],
-            'collective' => nil,
-          }, 2).returns(["foo"])
+          rpcclient = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :verbose => false, :disctimeout => 2}})
+          rpcclient.client.expects(:discover).with({'identity' => [], 'compound' => [], 'fact' => [], 'agent' => ['foo'], 'cf_class' => []}, 2).returns(["foo"])
 
           RPC.expects(:discovered).with(["foo"]).once
           rpcclient.discover

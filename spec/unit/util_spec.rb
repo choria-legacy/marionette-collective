@@ -189,14 +189,7 @@ module MCollective
 
     describe "#empty_filter" do
       it "should create correct empty filters" do
-        Util.empty_filter.should == {
-          "fact" => [],
-          "cf_class" => [],
-          "agent" => [],
-          "identity" => [],
-          "compound" => [],
-          "collective" => nil,
-        }
+        Util.empty_filter.should == {"fact" => [], "cf_class" => [], "agent" => [], "identity" => [], "compound" => []}
       end
     end
 

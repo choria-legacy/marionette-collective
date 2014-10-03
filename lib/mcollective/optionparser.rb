@@ -64,7 +64,6 @@ module MCollective
       @parser.parse!
 
       @options[:collective] = Config.instance.main_collective unless @options[:collective]
-      @options[:filter]["collective"] = @options[:collective]
 
       @options
     end
