@@ -629,6 +629,15 @@ module MCollective
           headers["timestamp"].should == "1368557431000"
           headers["expires"].should == "1368557541000"
         end
+
+        it "should set mc_sender based on the identity" do
+          message = mock
+          message.expects(:type).returns(:foo)
+          message.stubs(:ttl).returns(100)
+
+          headers = connector.headers_for(message)
+          headers['mc_sender'].should == 'rspec'
+        end
       end
 
       describe "#make_target" do

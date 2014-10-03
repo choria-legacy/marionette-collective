@@ -300,6 +300,36 @@ module MCollective
           m.decode!
         }.to raise_error('callerid in request is not valid, surpressing reply to potentially forged request')
       end
+
+      it 'should handle the securityprovider failing to decodemsg - log for reply' do
+        security = mock('securityprovider')
+        security.expects(:decodemsg).raises('squirrel attack')
+
+        PluginManager.expects("[]").with("security_plugin").returns(security).once
+
+        m = Message.new("payload", "message", :type => :reply)
+        m.stubs(:headers).returns({'mc_sender' => 'trees'})
+        Log.expects(:warn).with("Failed to decode a message from 'trees': squirrel attack")
+
+        expect {
+          m.decode!
+        }.to_not raise_error
+      end
+
+      it 'should handle the securityprovider failing to decodemsg' do
+        security = mock('securityprovider')
+        security.expects(:decodemsg).raises('squirrel attack')
+
+        PluginManager.expects("[]").with("security_plugin").returns(security).once
+
+        m = Message.new("payload", "message", :type => :request)
+        Log.expects(:warn).never
+
+        expect {
+          m.decode!
+        }.to raise_error(/squirrel attack/)
+      end
+
     end
 
     describe "#validate_compound_filter" do

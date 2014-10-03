@@ -432,8 +432,18 @@ module MCollective
           msg.stubs(:ttl).returns(60)
           msg.expects(:discovered_hosts).returns(["one", "two"])
 
-          connection.expects(:publish).with('/exchange/mcollective_directed/one', 'msg', {'reply-to' => '/topic/mcollective', 'expiration' => '70000'})
-          connection.expects(:publish).with('/exchange/mcollective_directed/two', 'msg', {'reply-to' => '/topic/mcollective', 'expiration' => '70000'})
+          connection.expects(:publish).with('/exchange/mcollective_directed/one',
+                                            'msg',
+                                            { 'reply-to'    => '/topic/mcollective',
+                                              'expiration'  => '70000',
+                                              'mc_sender'   => 'rspec',
+                                            })
+          connection.expects(:publish).with('/exchange/mcollective_directed/two',
+                                            'msg',
+                                            { 'reply-to'    => '/topic/mcollective',
+                                              'expiration'  => '70000',
+                                              'mc_sender'   => 'rspec',
+                                            })
 
           connector.publish(msg)
         end
@@ -530,7 +540,14 @@ module MCollective
 
           message.expects(:request).returns(request)
 
-          connector.target_for(message).should == {:name => "foo", :headers => {"expiration" => "70000"}, :id => ""}
+          connector.target_for(message).should == {
+            :name => "foo",
+            :headers => {
+              "expiration" => "70000",
+              'mc_sender'  => 'rspec',
+            },
+            :id => "",
+          }
         end
 
         it "should create new request targets" do
