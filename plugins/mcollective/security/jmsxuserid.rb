@@ -1,5 +1,3 @@
-require 'pp'
-
 module MCollective
   module Security
     # Use ActiveMQ authenticated JMSXUserID for auhtorization. This enables to 
