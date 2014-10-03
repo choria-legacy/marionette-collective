@@ -325,6 +325,8 @@ module MCollective
         # rather than in make_target as this should only be set on publish
         target[:headers]["expiration"] = ((msg.ttl + 10) * 1000).to_s
 
+        target[:headers]["mc_sender"] = Config.instance.identity
+
         return target
       end
 

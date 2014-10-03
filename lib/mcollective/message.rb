@@ -175,7 +175,21 @@ module MCollective
     def decode!
       raise "Cannot decode message type #{type}" unless [:request, :reply].include?(type)
 
-      @payload = PluginManager["security_plugin"].decodemsg(self)
+      begin
+        @payload = PluginManager["security_plugin"].decodemsg(self)
+      rescue Exception => e
+        if type == :request
+          # If we're a server receiving a request, reraise
+          raise(e)
+        else
+          # We're in the client, log and carry on as best we can
+
+          # Note: mc_sender is unverified.  The verified identity is in the
+          # payload we just failed to decode
+          Log.warn("Failed to decode a message from '#{headers["mc_sender"]}': #{e}")
+          return
+        end
+      end
 
       if type == :request
         raise 'callerid in request is not valid, surpressing reply to potentially forged request' unless PluginManager["security_plugin"].valid_callerid?(payload[:callerid])
@@ -203,7 +217,6 @@ module MCollective
           raise(MsgTTLExpired, "message #{requestid} from #{cid} created at #{msgtime} is #{msg_age} seconds old, TTL is #{ttl}.  Rejecting message.")
         end
       end
-
       raise(NotTargettedAtUs, "Received message is not targetted to us") unless PluginManager["security_plugin"].validate_filter?(payload[:filter])
 
       @validated = true

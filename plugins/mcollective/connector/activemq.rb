@@ -477,6 +477,8 @@ module MCollective
           headers["mc_identity"] = identity if msg.type == :direct_request
         end
 
+        headers["mc_sender"] = Config.instance.identity
+
         return headers
       end
 
