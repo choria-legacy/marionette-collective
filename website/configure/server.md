@@ -294,9 +294,9 @@ Which connector plugin to use. This is determined by your [choice of middleware]
 
 #### `direct_addressing`
 
-Whether your middleware supports direct point-to-point messages. **This should usually be turned on,** although it is off by default. The built-in `activemq` and `rabbitmq` connectors both support direct addressing, as does the external `redis` connector. (The older `stomp` connector, however, does not.)
+Whether your middleware supports direct point-to-point messages. **This should usually be turned on,** and is enabled by default. The built-in `activemq` and `rabbitmq` connectors both support direct addressing, as does the external `redis` connector. (The older `stomp` connector, however, does not.)
 
-- _Default:_ `0`
+- _Default:_ `1`
 - _Allowed values:_ `1`, `0`, `y`, `n` --- {{ badbool }}
 
 #### ActiveMQ Connector Settings
