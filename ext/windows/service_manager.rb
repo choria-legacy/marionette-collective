@@ -7,18 +7,26 @@ libdir = ENV["RUBYLIB"]
 mcollectived = ENV["MCOLLECTIVED"]
 configfile = ENV["SERVER_CONFIG"]
 
-unless File.exist?(ruby_path)
+# Find ruby in $PATH
+# @return [String, nil]
+def find_ruby_in_path
   ENV["PATH"].split(File::PATH_SEPARATOR).each do |path|
     ruby = File.join(path, "ruby.exe")
 
     if File.exist?(ruby)
-      ruby_path = ruby
-      break
+      return ruby
     end
   end
+  return nil
 end
 
-abort("Can't find ruby.ext in the path") unless ruby_path
+unless File.exist?(ruby_path)
+  ruby_path = find_ruby_in_path
+
+  unless ruby_path
+    abort("Can't find ruby.exe in the path")
+  end
+end
 
 options = {:name    => "mcollectived",
            :display_name => "The Marionette Collective",
