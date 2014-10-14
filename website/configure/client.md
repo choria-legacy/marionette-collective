@@ -396,7 +396,7 @@ Any server that receives a request after its TTL has expired will reject it. Sin
 - _Default:_ `60`
 - _Allowed values:_ Any positive integer
 
-#### `discovery_timout`
+#### `discovery_timeout`
 
 Control the timeout for how long to discover nodes.  This can be
 useful to increase for larger environments.
