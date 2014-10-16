@@ -149,15 +149,12 @@ ActiveMQ must listen over the network for Stomp connections; otherwise, MCollect
 
 * Note that the protocol/port/arguments for Stomp URIs can differ:
     * Unencrypted: `stomp+nio://0.0.0.0:61613`
-    * CA-verified TLS: `stomp+ssl://0.0.0.0:61614?needClientAuth=true`
-    * Anonymous TLS: `stomp+ssl://0.0.0.0:61614`
+    * CA-verified TLS (ActiveMQ ≥ 5.9): `stomp+nio+ssl://0.0.0.0:61614?needClientAuth=true&amp;transport.enabledProtocols=TLSv1,TLSv1.1,TLSv1.2`
+    * CA-verified TLS: `stomp+ssl://0.0.0.0:61614?needClientAuth=true&amp;transport.enabledProtocols=TLSv1,TLSv1.1,TLSv1.2`
+    * Anonymous TLS (ActiveMQ ≥ 5.9): `stomp+nio+ssl://0.0.0.0:61614?needClientAuth=true&amp;transport.enabledProtocols=TLSv1,TLSv1.1,TLSv1.2`
+    * Anonymous TLS: `stomp+ssl://0.0.0.0:61614?transport.enabledProtocols=TLSv1,TLSv1.1,TLSv1.2`
 * You can choose to restrict the interface/hostname to use instead of listening on `0.0.0.0`.
 
-
-<!-- uncomment and move into place when activemq 5.9 comes out and we can verify that the bug is fixed.
-    * CA-verified TLS (ActiveMQ ≥ 5.9): `stomp+nio+ssl://0.0.0.0:61614?needClientAuth=true`
-(The stomp+nio+ssl protocol didn't exist in ActiveMQ 5.5, had a major bug on 5.6, and would drop about half of replies from more than 300 nodes through 5.8, but provides better performance on 5.9+.)
- -->
 
 > **If you are using TLS,** note that you must also:
 >
@@ -169,13 +166,13 @@ ActiveMQ must listen over the network for Stomp connections; otherwise, MCollect
 If you are using a network of brokers instead of just one ActiveMQ server, they talk to each other over OpenWire, and will all need a transport connector for that protocol too:
 
 {% highlight xml %}
-    <transportConnector name="openwire+ssl" uri="ssl://0.0.0.0:61617?needClientAuth=true"/>
+    <transportConnector name="openwire+ssl" uri="ssl://0.0.0.0:61617?needClientAuth=true&amp;transport.enabledProtocols=TLSv1,TLSv1.1,TLSv1.2"/>
 {% endhighlight %}
 
 * Note that the protocol/port/arguments for OpenWire URIs can differ:
     * Unencrypted: `tcp://0.0.0.0:61616`
-    * CA-verified TLS: `ssl://0.0.0.0:61617?needClientAuth=true`
-    * Anonymous TLS: `ssl://0.0.0.0:61617`
+    * CA-verified TLS: `ssl://0.0.0.0:61617?needClientAuth=true&amp;transport.enabledProtocols=TLSv1,TLSv1.1,TLSv1.2`
+    * Anonymous TLS: `ssl://0.0.0.0:61617&amp;transport.enabledProtocols=TLSv1,TLSv1.1,TLSv1.2`
 * You can choose to restrict the interface/hostname to use instead of listening on `0.0.0.0`.
 
 
