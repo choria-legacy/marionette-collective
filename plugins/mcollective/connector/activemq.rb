@@ -40,6 +40,7 @@ module MCollective
     #    plugin.activemq.pool.1.ssl.key = /path/to/your.key
     #    plugin.activemq.pool.1.ssl.ca = /path/to/your.ca
     #    plugin.activemq.pool.1.ssl.fallback = true
+    #    plugin.activemq.pool.1.ssl.ciphers = TLSv1:!MD5:!LOW:!EXPORT
     #
     #    plugin.activemq.pool.2.host = stomp2.your.net
     #    plugin.activemq.pool.2.port = 61613
@@ -295,9 +296,12 @@ module MCollective
 
       # Sets the SSL paramaters for a specific connection
       def ssl_parameters(poolnum, fallback)
-        params = {:cert_file => get_cert_file(poolnum),
-                  :key_file => get_key_file(poolnum),
-                  :ts_files  => get_option("activemq.pool.#{poolnum}.ssl.ca", false)}
+        params = {
+          :cert_file => get_cert_file(poolnum),
+          :key_file  => get_key_file(poolnum),
+          :ts_files  => get_option("activemq.pool.#{poolnum}.ssl.ca", false),
+          :ciphers   => get_option("activemq.pool.#{poolnum}.ssl.ciphers", false),
+        }
 
         raise "cert, key and ca has to be supplied for verified SSL mode" unless params[:cert_file] && params[:key_file] && params[:ts_files]
 
@@ -309,7 +313,7 @@ module MCollective
         end
 
         begin
-          Stomp::SSLParams.new(params)
+          ::Stomp::SSLParams.new(params)
         rescue NameError
           raise "Stomp gem >= 1.2.2 is needed"
         end
