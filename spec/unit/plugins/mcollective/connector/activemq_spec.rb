@@ -249,6 +249,7 @@ module MCollective
           Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.user").returns("user1")
           Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.password").returns("password1")
           Activemq.any_instance.stubs(:get_bool_option).with("activemq.pool.1.ssl", false).returns(true)
+          Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.ciphers", false).returns(false)
         end
 
         it "should ensure all settings are provided" do
@@ -292,6 +293,27 @@ module MCollective
 
           expect { connector.ssl_parameters(1, false) }.to raise_error
         end
+
+        context 'ciphers' do
+          before :each do
+            Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.cert", false).returns("rspec")
+            Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.key", false).returns('rspec.key')
+            Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.ca", false).returns('rspec1.ca,rspec2.ca')
+            File.stubs(:exist?).returns(true)
+          end
+
+          it 'should not set ciphers by default' do
+            parameters = connector.ssl_parameters(1, false)
+            parameters.ciphers.should == false
+          end
+
+          it 'should support setting of ciphers' do
+            Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.ssl.ciphers", false).returns('TLSv127:!NUTS')
+            parameters = connector.ssl_parameters(1, false)
+            parameters.ciphers.should == 'TLSv127:!NUTS'
+          end
+        end
+
       end
 
       describe "#get_key_file" do
