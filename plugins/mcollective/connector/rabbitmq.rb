@@ -190,9 +190,12 @@ module MCollective
 
       # Sets the SSL paramaters for a specific connection
       def ssl_parameters(poolnum, fallback)
-        params = {:cert_file => get_cert_file(poolnum),
-                  :key_file  => get_key_file(poolnum),
-                  :ts_files  => get_option("rabbitmq.pool.#{poolnum}.ssl.ca", false)}
+        params = {
+          :cert_file => get_cert_file(poolnum),
+          :key_file  => get_key_file(poolnum),
+          :ts_files  => get_option("rabbitmq.pool.#{poolnum}.ssl.ca", false),
+          :ciphers   => get_option("rabbitmq.pool.#{poolnum}.ssl.ciphers", false),
+        }
 
         raise "cert, key and ca has to be supplied for verified SSL mode" unless params[:cert_file] && params[:key_file] && params[:ts_files]
 
@@ -204,7 +207,7 @@ module MCollective
         end
 
         begin
-          Stomp::SSLParams.new(params)
+          ::Stomp::SSLParams.new(params)
         rescue NameError
           raise "Stomp gem >= 1.2.2 is needed"
         end

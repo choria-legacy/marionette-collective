@@ -248,6 +248,7 @@ module MCollective
           Rabbitmq.any_instance.stubs(:get_option).with("rabbitmq.pool.1.user").returns("user1")
           Rabbitmq.any_instance.stubs(:get_option).with("rabbitmq.pool.1.password").returns("password1")
           Rabbitmq.any_instance.stubs(:get_bool_option).with("rabbitmq.pool.1.ssl", false).returns(true)
+          Rabbitmq.any_instance.stubs(:get_option).with("rabbitmq.pool.1.ssl.ciphers", false).returns(false)
         end
 
         it "should ensure all settings are provided" do
@@ -290,6 +291,26 @@ module MCollective
           Rabbitmq.any_instance.stubs(:get_option).with("rabbitmq.pool.1.ssl.ca", false).returns('rspec1.ca,rspec2.ca')
 
           expect { connector.ssl_parameters(1, false) }.to raise_error
+        end
+
+        context 'ciphers' do
+          before :each do
+            Rabbitmq.any_instance.stubs(:get_option).with("rabbitmq.pool.1.ssl.cert", false).returns("rspec")
+            Rabbitmq.any_instance.stubs(:get_option).with("rabbitmq.pool.1.ssl.key", false).returns('rspec.key')
+            Rabbitmq.any_instance.stubs(:get_option).with("rabbitmq.pool.1.ssl.ca", false).returns('rspec1.ca,rspec2.ca')
+            File.stubs(:exist?).returns(true)
+          end
+
+          it 'should not set ciphers by default' do
+            parameters = connector.ssl_parameters(1, false)
+            parameters.ciphers.should == false
+          end
+
+          it 'should support setting of ciphers' do
+            Rabbitmq.any_instance.stubs(:get_option).with("rabbitmq.pool.1.ssl.ciphers", false).returns('TLSv127:!NUTS')
+            parameters = connector.ssl_parameters(1, false)
+            parameters.ciphers.should == 'TLSv127:!NUTS'
+          end
         end
       end
 
