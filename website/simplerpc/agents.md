@@ -12,7 +12,7 @@ title: Writing SimpleRPC Agents
 [RPCUtil]: /mcollective/reference/plugins/rpcutil.html
 [ValidatorPlugins]: /mcollective/reference/plugins/validator.html
 
-Simple RPC works because it makes a lot of assumptions about how you write agents, we'll try to capture those assumptions here and show you how to apply them to our Helloworld agent.
+Simple RPC works because it makes a lot of assumptions about how you write agents, we'll try to capture those assumptions here and show you how to apply them to our Echo agent.
 
 We've recorded a [tutorial that will give you a quick look at what is involved in writing agents][WritingAgentsScreenCast].
 
@@ -30,217 +30,147 @@ A more complex example might be:
 exim.setsender(:msgid => "1NOTVx-00028U-7G", :sender => "foo@bar.com")
 {% endhighlight %}
 
-Effectively this creates a hash with the members `:msgid` and `:sender`.
+Effectively this creates a hash with the members `:msgid` and
+`:sender` and invokes the `setsender` action.
 
-Your data types should be preserved if your Security plugin supports that - the default one does - so you can pass in Arrays, Hashes, OpenStructs, Hashes of Hashes but you should always pass something in and it should be key/value pairs like a Hash expects.
-
-You cannot use the a data item called `:process_results` as this has special meaning to the agent and client.  This will indicate to the agent that the client is'nt going to be waiting to process results.  You might choose not to send back a reply based on this.
+You cannot use the a data item called `:process_results` as this
+has special meaning to the agent and client.  This will indicate
+to the agent that the client isn't going to be waiting to process
+results.  You might choose not to send back a reply based on this.
 
 ## Sample Agent
-Here's our sample *Helloworld* agent:
+Here's our sample *Echo* agent:
 
 {% highlight ruby linenos %}
-module MCollective
-  module Agent
-    class Helloworld<RPC::Agent
-      # Basic echo server
-      action "echo" do
-        validate :msg, String
-
-        reply[:msg] = request[:msg]
-      end
-    end
-  end
-end
-
-{% endhighlight %}
-
-Strictly speaking this Agent will work but isn't considered complete - there's no meta data and no help.
-
-A helper agent called [`rpcutil`][RPCUtil] is included that helps you gather stats, inventory etc about the running daemon.  It's a full SimpleRPC agent including DDL, you can look at it for an example.
-
-### Agent Name
-The agent name is derived from the class name, the example code creates *MCollective::Agent::Helloworld* and the agent name would be *helloworld*.
-
-<a name="Meta_Data_and_Initialization">&nbsp;</a>
-
-### Meta Data and Initialization
-Simple RPC agents still need meta data like in [WritingAgents][], without it you'll just have some defaults assigned, code below adds the meta data to our agent:
-
-**NOTE**: As of version 2.1.1 the `metadata` section is deprecated, all agents must have DDL files with this information in them.
-
-{% highlight ruby linenos %}
-module MCollective
-  module Agent
-    class Helloworld<RPC::Agent
-      metadata :name        => "helloworld",
-               :description => "Echo service for MCollective",
-               :author      => "R.I.Pienaar",
-               :license     => "GPLv2",
-               :version     => "1.1",
-               :url         => "http://projects.puppetlabs.com/projects/mcollective-plugins/wiki",
-               :timeout     => 60
-
-      # Basic echo server
-      action "echo" do
-        validate :msg, String
-
-        reply[:msg] = request[:msg]
-      end
-    end
-  end
-end
-{% endhighlight %}
-
-The added code sets our creator info, license and version as well as a timeout.  The timeout is how long MCollective will let your agent run for before killing them, this is a very important number and should be given careful consideration.  If you set it too low your agents will be terminated before their work is done.
-
-The default timeout for SimpleRPC agents is *10*.
-
-### Writing Actions
-Actions are the individual tasks that your agent can do:
-
-{% highlight ruby linenos %}
-action "echo" do
-  validate :msg, String
-
-  reply[:msg] = request[:msg]
-end
-{% endhighlight %}
-
-Creates an action called "echo".  They don't and can't take any arguments.
-
-## Agent Activation
-In the past you had to copy an agent only to machines that they should be running on as
-all agents were activated regardless of dependencies.
-
-To make deployment simpler agents support the ability to determine if they should run
-on a particular platform.  By default SimpleRPC agents can be configured to activate
-or not with the `activate_agents` and plugin specific `activate_agent` setting:
-
-{% highlight ini %}
-plugin.helloworld.activate_agent = false
-{% endhighlight %}
-
-You can also place the following in `/etc/mcollective/plugin.d/helloworld.cfg`:
-
-{% highlight ini %}
-activate_agent = false
-{% endhighlight %}
-
-This is a simple way to enable or disable an agent on your machine, agents can also
-declare their own logic that will get called each time an agent gets loaded from disk.
-
-{% highlight ruby %}
-module MCollective
-  module Agent
-    class Helloworld<RPC::Agent
-
-      activate_when do
-        File.executable?("/usr/bin/puppet")
-      end
-    end
-  end
-end
-{% endhighlight %}
-
-If this block returns false or raises an exception then the agent will not be active on
-this machine and it will not be discovered.
-
-When the agent gets loaded it will test if `/usr/bin/puppet` exist and only if it does
-will this agent be enabled.
-
-## Help and the Data Description Language
-We have a separate file that goes together with an agent and is used to describe the agent in detail, a DDL file for the above echo agent can be seen below:
-
-**NOTE**: As of version 2.1.1 the DDL files are required to be on the the nodes before an agent will be activated
-
-{% highlight ruby linenos %}
-metadata :name        => "echo",
-         :description => "Echo service for MCollective",
-         :author      => "R.I.Pienaar",
-         :license     => "GPLv2",
-         :version     => "1.1",
-         :url         => "http://projects.puppetlabs.com/projects/mcollective-plugins/wiki",
+# $libdir/mcollective/agent/echo.ddl
+metadata :name        => 'echo',
+         :description => 'Echo service for MCollective',
+         :author      => 'R.I.Pienaar',
+         :license     => 'GPLv2',
+         :version     => '1.1',
+         :url         => 'https://docs.puppetlabs.com/mcollective/simplerpc/agents.html',
          :timeout     => 60
 
-action "echo", :description => "Echos back any message it receives" do
-   input :msg,
-         :prompt      => "Service Name",
-         :description => "The service to get the status for",
-         :type        => :string,
-         :validation  => '^[a-zA-Z\-_\d]+$',
-         :optional    => false,
-         :maxlength   => 30
+action 'echo', :description => 'Echos back any message it receives' do
+    display :always
 
-   output :msg,
-          :description => "The message we received",
-          :display_as  => "Message"
+    input :msg,
+          :prompt      => 'Message',
+          :description => 'Your message',
+          :type        => :string,
+          :validation  => '.*',
+          :optional    => false,
+          :maxlength   => 1024
+
+    output :msg,
+        :description => 'Your message',
+        :display_as  => 'Message',
+        :default     => ''
 end
 {% endhighlight %}
 
-As you can see the DDL file expand on the basic syntax adding a lot of markup, help and other important validation data.  This information - when available - helps in making more robust clients and also potentially auto generating user interfaces.
-
-The DDL is a complex topic, read all about it in [DDL][].
-
-## Validating Input
-If you've followed the conventions and put the incoming data in a Hash structure then you can use a few of the provided validators to make sure your data that you received is what you expected.
-
-If you didn't use Hashes for input the validators would not be usable to you.  In future validation will happen automatically based on the [DDL][] so I strongly suggest you follow the agent design pattern shown here using hashes.
-
-In the sample action above we validate the *:msg* input to be of type *String*, here are a few more examples:
 
 {% highlight ruby linenos %}
-   validate :msg, /[a-zA-Z]+/
-   validate :ipaddr, :ipv4address
-   validate :ipaddr, :ipv6address
-   validate :commmand, :shellsafe
-   validate :mode, ["all", "packages"]
+# $libdir/mcollective/agent/echo.rb
+module MCollective
+  module Agent
+    class Echo<RPC::Agent
+      # Basic echo server
+      action "echo" do
+        reply[:msg] = request[:msg]
+      end
+    end
+  end
+end
 {% endhighlight %}
 
-The table below shows the validators we support currently
+You'll notice it comes in two parts, the agent definition in the DDL
+file, and the implementation in the ruby class.
 
-|Type of Check|Description|Example|
-|-------------|-----------|-------|
-|Regular Expressions|Matches the input against the supplied regular expression|validate :msg, /\[a-zA-Z\]+/|
-|Type Checks|Verifies that input is of a given ruby data type|validate :msg, String|
-|IPv4 Checks|Validates an ip v4 address, note 5.5.5.5 is technically a valid address|validate :ipaddr, :ipv4address|
-|IPv6 Checks|Validates an ip v6 address|validate :ipaddr, :ipv6address|
-|system call safety checks|Makes sure the input is a string and has no &gt;&lt;backtick, semi colon, dollar, ambersand or pipe characters in it|validate :command, :shellsafe|
-|Boolean|Ensures a input value is either real boolean true or false|validate :enable, :bool|
-|List of valid options|Ensures the input data is one of a list of known good values|validate :mode, \["all", "packages"\]|
+### Agent Name
 
-All of these checks will raise an InvalidRPCData exception, you shouldn't catch this exception as the Simple RPC framework catches those and handles them appropriately.
+The agent name is derived from the class name, the example code
+creates the ruby class *MCollective::Agent::Echo*, the agent name for
+this would be *echo*.
 
-We'll make input validators plugins so you can provide your own types of validation easily.
 
-Additionally if can escape strings being passed to a shell, escaping is done in line with the `Shellwords#shellescape` method that is in newer version of Ruby:
+## Help and the Data Description Language
+
+We have a file that goes together with an agent implementation which
+is used to describe the agent in detail.  This is referred to as the
+ddl file, `$libdir/mcollective/agent/echo.ddl` in the previous
+example.
+
+The DDL file can be used to generate help texts, and to declare the
+validation that arguments must pass.  This information helps us in
+making more robust clients and can be used to auto generate user
+interfaces.
+
+We'll not say much more about the DDL here, for more details read the
+[DDL][] reference.
+
+
+## Actions
+
+Actions are the individual tasks that your agent can do, we declare
+them in the DDL file, and put their implementation in the ruby class
+named for the agent (ie *MCollective::Agent::Echo* for the *echo*
+agent).
+
+
+### Declaring Actions
+
+Actions with their inputs and outputs are declared in the DDL for the
+agent.  From our echo example here's the declaration of the echo
+action again:
 
 {% highlight ruby linenos %}
-   safe = shellescape(request[:foo])
+# $libdir/mcollective/agent/echo.ddl - incomplete fragment
+action 'echo', :description => 'Echos back any message it receives' do
+    display :always
+
+    input :msg,
+          :prompt      => 'Message',
+          :description => 'Your message',
+          :type        => :string,
+          :validation  => '.*',
+          :optional    => false,
+          :maxlength   => 1024
+
+    output :msg,
+        :description => 'Your message',
+        :display_as  => 'Message',
+        :default     => ''
+end
 {% endhighlight %}
 
-As of version 2.2.0 you can add your own types of validation using [Validator Plugins][ValidatorPlugins].
 
-## Agent Configuration
+### Implementing Actions
 
-You can save configuration for your agents in the main server config file:
+The implementation of an action is added to the agent class:
 
-{% highlight ini %}
- plugin.helloworld.setting = foo
+{% highlight ruby linenos %}
+# $libdir/mcollective/agent/echo.rb
+module MCollective
+  module Agent
+    class Echo<RPC::Agent
+      action "echo" do
+        reply[:msg] = request[:msg]
+      end
+    end
+  end
+end
 {% endhighlight %}
 
-In your code you can retrieve the config setting like this:
 
-{% highlight ini %}
- setting = config.pluginconf["helloworld.setting"] || ""
-{% endhighlight %}
+#### Accessing the Input
 
-This will set the setting to whatever is the config file of "" if unset.
+As you see from the echo example our input is easy to get to by just
+looking in *request*, this would be a Hash of exactly what was sent in
+by the client in the original request.
 
-## Accessing the Input
-As you see from the echo example our input is easy to get to by just looking in *request*, this would be a Hash of exactly what was sent in by the client in the original request.
-
-The request object is in instance of *MCollective::RPC::Request*, you can also gain access to the following:
+The request object is in instance of *MCollective::RPC::Request*, you
+can also gain access to the following:
 
 |Property|Description|
 |--------|-----------|
@@ -253,18 +183,19 @@ The request object is in instance of *MCollective::RPC::Request*, you can also g
 Since data is the actual Hash you can gain access to your input like:
 
 {% highlight ruby %}
- request.data[:msg]
+  request.data[:msg]
 {% endhighlight %}
 
-OR
+Accessing via `.data` will give you full access to all the normal
+Hash methods, eg `request.data.keys`.
 
 {% highlight ruby %}
-request[:msg]
+  request[:msg]
 {% endhighlight %}
 
-Accessing it via the first will give you full access to all the normal Hash methods where the 2nd will only give you access to *include?*.
+Accesing via `request[]` will only give you access to *include?*.
 
-## Running Shell Commands
+#### Running Shell Commands
 
 A helper function exist that makes it easier to run shell commands and gain
 access to their `STDOUT` and `STDERR`.
@@ -333,6 +264,42 @@ You have to set the cwd and environment through these options, do not simply
 call `chdir` or adjust the `ENV` hash in an agent as that will not be safe in
 the context of a multi threaded Ruby application.
 
+### Actions in external scripts
+
+Actions can also be implemented using other programming languages as
+long as they support JSON.
+
+{% highlight ruby %}
+action "test" do
+  implemented_by "/some/external/script"
+end
+{% endhighlight %}
+
+The script `/some/external/script` will be called with 2 arguments:
+
+ * The path to a file with the request in JSON format
+ * The path to a file where you should write your response as a JSON hash
+
+You can also access these 2 file paths in the `MCOLLECTIVE_REPLY_FILE` and `MCOLLECTIVE_REQUEST_FILE` environment variables
+
+Simply write your reply as a JSON hash into the reply file.
+
+The exit code of your script should correspond to the ones in [ResultsandExceptions][].  Any text in STDERR will be
+logged on the server at `error` level and used in the text for the fail text.
+
+Any text to STDOUT will be logged on the server at level `info`.
+
+These scripts can be placed in a standard location:
+
+{% highlight ruby %}
+action "test" do
+  implemented_by "script.py"
+end
+{% endhighlight %}
+
+This will search each configured libdir for `libdir/agent/agent_name/script.py`. If you specified a full path it will not try to find the file in libdirs.
+
+
 ## Constructing Replies
 
 ### Reply Data
@@ -373,38 +340,6 @@ It won't actually raise exceptions or exit your action though you should do that
 
 There is also a `fail!` instead of just `fail` it does the same basic function but also raises exceptions.  This lets you abort processing of the agent immediately without performing your own checks on `statuscode` as above later on.
 
-## Actions in external scripts
-Actions can be implemented using other programming languages as long as they support JSON.
-
-{% highlight ruby %}
-action "test" do
-  implemented_by "/some/external/script"
-end
-{% endhighlight %}
-
-The script `/some/external/script` will be called with 2 arguments:
-
- * The path to a file with the request in JSON format
- * The path to a file where you should write your response as a JSON hash
-
-You can also access these 2 file paths in the `MCOLLECTIVE_REPLY_FILE` and `MCOLLECTIVE_REQUEST_FILE` environment variables
-
-Simply write your reply as a JSON hash into the reply file.
-
-The exit code of your script should correspond to the ones in [ResultsandExceptions][].  Any text in STDERR will be
-logged on the server at `error` level and used in the text for the fail text.
-
-Any text to STDOUT will be logged on the server at level `info`.
-
-These scripts can be placed in a standard location:
-
-{% highlight ruby %}
-action "test" do
-  implemented_by "script.py"
-end
-{% endhighlight %}
-
-This will search each configured libdir for `libdir/agent/agent_name/script.py`. If you specified a full path it will not try to find the file in libdirs.
 
 ## Sharing code between agents
 Sometimes you have code that is needed by multiple agents or shared between the agent and client.  MCollective has
@@ -444,7 +379,7 @@ The actions that agents perform can be Audited by code you provide, potentially 
 You can write to the server log file using the normal logger class:
 
 {% highlight ruby %}
-Log.debug ("Hello from your agent")
+Log.debug("Hello from your agent")
 {% endhighlight %}
 
 You can log at levels `info`, `warn`, `debug`, `fatal` or `error`.
@@ -478,7 +413,7 @@ We then try to read a cached customer record for `request[:customerid]` and if i
 before or if it expired I create a new customer record using a method called `get_customer` and then save it
 into the cache.
 
-If you have critical code in an agent that can only ever be run once you can use the Mutex from the same cache
+If you have critical code in an agent that is not reentrant you can use the Mutex from the same cache
 to synchronize the code:
 
 {% highlight ruby %}
@@ -500,7 +435,7 @@ your customer data.
 If the lock is held too long by anyone the mcollectived will kill the threads in line with the Agent timeout.
 
 ## Processing Hooks
-We provide a few hooks into the processing of a message, you've already used this earlier to <a href="#Meta_Data_and_Initialization">set meta data</a>.
+We provide a few hooks into the processing of a message, you've already used this earlier to <a href="#Meta_Data_and_Initialization">set metadata</a>.
 
 You'd use these hooks to add some functionality into the processing chain of agents, maybe you want to add extra logging for audit purposes of the raw incoming message and replies, these hooks will let you do that.
 
@@ -511,12 +446,12 @@ Hook Function Name                        | Description
 `after_processing_hook`                   | Just before the message is dispatched to the client
 
 ### `startup_hook`
-Called at the end of the `RPC::Agent` standard initialize method use this to adjust meta parameters, timeouts and any setup you need to do.
+Called at the end of the `RPC::Agent` standard initialize method.  Use this to adjust meta parameters, timeouts and any setup you need to do.
 
 This will not be called right when the daemon starts up, we use lazy loading and initialization so it will only be called the first time a request for this agent arrives.
 
 ### `before_processing_hook`
-Called just after a message was received from the middleware before it gets passed to the handlers.  `request` and `reply` will already be set, the msg passed is the message as received from the normal mcollective runner and the connection is the actual connector.
+Called just after a message was received from the middleware before it gets passed to the handlers.  `request` and `reply` will already be set, the msg passed is the message as received from the normal MCollective runner and the connection is the actual connector.
 
 You can in theory send off new messages over the connector maybe for auditing or something, probably limited use case in simple agents.
 
@@ -524,3 +459,60 @@ You can in theory send off new messages over the connector maybe for auditing or
 Called at the end of processing just before the response gets sent to the middleware.
 
 This gets run outside of the main exception handling block of the agent so you should handle any exceptions you could raise yourself.  The reason  it is outside of the block is so you'll have access to even status codes set by the exception handlers.  If you do raise an exception it will just be passed onto the runner and processing will fail.
+
+## Agent Configuration
+
+You can save configuration for your agents in the main server config file:
+
+{% highlight ini %}
+plugin.helloworld.setting = foo
+{% endhighlight %}
+
+In your code you can retrieve the config setting like this:
+
+{% highlight ruby %}
+  setting = config.pluginconf.fetch("helloworld.setting", "")
+{% endhighlight %}
+
+This will set the setting to whatever is in the config file or "" if unset.
+
+
+## Agent Activation
+In the past you had to copy an agent only to machines that they should be running on as
+all agents were activated regardless of dependencies.
+
+To make deployment simpler agents support the ability to determine if they should run
+on a particular platform.  By default SimpleRPC agents can be configured to activate
+or not with the `activate_agents` and plugin specific `activate_agent` setting:
+
+{% highlight ini %}
+plugin.helloworld.activate_agent = false
+{% endhighlight %}
+
+You can also place the following in `/etc/mcollective/plugin.d/helloworld.cfg`:
+
+{% highlight ini %}
+activate_agent = false
+{% endhighlight %}
+
+This is a simple way to enable or disable an agent on your machine, agents can also
+declare their own logic that will get called each time an agent gets loaded from disk.
+
+{% highlight ruby %}
+module MCollective
+  module Agent
+    class Echo<RPC::Agent
+
+      activate_when do
+        File.executable?("/usr/bin/puppet")
+      end
+    end
+  end
+end
+{% endhighlight %}
+
+If this block returns false or raises an exception then the agent will not be active on
+this machine and it will not be discovered.
+
+When the agent gets loaded it will test if `/usr/bin/puppet` exist and only if it does
+will this agent be enabled.
