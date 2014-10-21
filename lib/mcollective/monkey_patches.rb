@@ -130,11 +130,11 @@ class OpenSSL::SSL::SSLContext
   end
   DEFAULT_PARAMS[:ciphers] << ':!SSLv2'
 
-  alias __original_initialize initialize
-  private :__original_initialize
+  alias __mcollective_original_initialize initialize
+  private :__mcollective_original_initialize
 
   def initialize(*args)
-    __original_initialize(*args)
+    __mcollective_original_initialize(*args)
     params = {
       :options => DEFAULT_PARAMS[:options],
       :ciphers => DEFAULT_PARAMS[:ciphers],
