@@ -25,11 +25,11 @@ module MCollective
           initial_options = Marshal.load(@@initial_options)
 
         else
-          oparser = MCollective::Optionparser.new({ :verbose => false, 
-                                                    :progress_bar => true, 
-                                                    :mcollective_limit_targets => false, 
-                                                    :batch_size => nil, 
-                                                    :batch_sleep_time => 1 }, 
+          oparser = MCollective::Optionparser.new({ :verbose => false,
+                                                    :progress_bar => true,
+                                                    :mcollective_limit_targets => false,
+                                                    :batch_size => nil,
+                                                    :batch_sleep_time => 1 },
                                                   "filter")
 
           initial_options = oparser.parse do |parser, opts|
@@ -247,7 +247,7 @@ module MCollective
         # TODO(ploubser): The logic here seems poor. It implies that it is valid to
         # pass arguments where batch_mode is set to false and batch_mode > 0.
         # If this is the case we completely ignore the supplied value of batch_mode
-        # and do our own thing. 
+        # and do our own thing.
 
         # if a global batch size is set just use that else set it
         # in the case that it was passed as an argument
@@ -542,10 +542,11 @@ module MCollective
           # and if we're configured to use the first found hosts as the
           # limit method then pass in the limit thus minimizing the amount
           # of work we do in the discover phase and speeding it up significantly
+          filter = @filter.merge({'collective' => @collective})
           if @limit_method == :first and @limit_targets.is_a?(Fixnum)
-            @discovered_agents = @client.discover(@filter, discovery_timeout, @limit_targets)
+            @discovered_agents = @client.discover(filter, discovery_timeout, @limit_targets)
           else
-            @discovered_agents = @client.discover(@filter, discovery_timeout)
+            @discovered_agents = @client.discover(filter, discovery_timeout)
           end
 
           @stderr.puts(@discovered_agents.size) if verbose
@@ -625,7 +626,7 @@ module MCollective
         unless Config.instance.direct_addressing
           raise "Can only set batch size if direct addressing is supported"
         end
-        
+
         validate_batch_size(limit)
 
         @batch_size = limit
@@ -813,10 +814,10 @@ module MCollective
           processed_nodes = 0
 
           discovered.in_groups_of(batch_size) do |hosts|
-            message = Message.new(req, nil, {:agent => @agent, 
-                                             :type => :direct_request, 
-                                             :collective => @collective, 
-                                             :filter => opts[:filter], 
+            message = Message.new(req, nil, {:agent => @agent,
+                                             :type => :direct_request,
+                                             :collective => @collective,
+                                             :filter => opts[:filter],
                                              :options => opts})
 
             # first time round we let the Message object create a request id
@@ -1007,7 +1008,7 @@ module MCollective
       end
 
       private
-      
+
       def determine_batch_mode(batch_size)
         if (batch_size != 0 && batch_size != "0")
           return true
