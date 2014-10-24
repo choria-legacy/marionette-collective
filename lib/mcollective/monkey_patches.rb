@@ -128,6 +128,12 @@ class OpenSSL::SSL::SSLContext
   else
     DEFAULT_PARAMS[:options] = OpenSSL::SSL::OP_NO_SSLv2 | OpenSSL::SSL::OP_NO_SSLv3
   end
+
+  # ruby 1.8.5 doesn't define this constant, but has it on by default
+  if defined?(OpenSSL::SSL::OP_DONT_INSERT_EMPTY_FRAGMENTS)
+    DEFAULT_PARAMS[:options] |= OpenSSL::SSL::OP_DONT_INSERT_EMPTY_FRAGMENTS
+  end
+
   DEFAULT_PARAMS[:ciphers] << ':!SSLv2'
 
   alias __mcollective_original_initialize initialize
