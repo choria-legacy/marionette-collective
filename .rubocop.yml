@@ -387,6 +387,10 @@ Style/SingleLineMethods:
 Style/SpecialGlobalVars:
   Enabled: false
 
+# DISABLED - minor performance gain for major readability hit
+Style/SymbolProc:
+  Enabled: false
+
 Style/TrivialAccessors:
   Enabled: false
 
