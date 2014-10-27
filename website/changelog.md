@@ -9,6 +9,9 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2014/10/29|Release *2.6.1*|MCO-495|
+|2014/10/23|Disable SSLv2 and SSLv3 protocols by default|MCO-489|
+|2014/10/16|Expose SSL cipher selection via connector settings|MCO-486|
 |2014/08/28|Release *2.6.0*|MCO-422|
 |2014/08/20|Fix a race condition in type validator plugin loader|MCO-453|
 |2014/08/12|Use a distinct reply queue per request|MCO-443|

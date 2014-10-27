@@ -8,6 +8,47 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_6_1">&nbsp;</a>
+
+## 2.6.1 - 2014/10/29
+
+
+### Improvements from 2.6.1
+
+* We now preconfigure the SSL context used to disallow the SSLv2 and SSLv3 protocols.
+* The rabbitmq and activemq connectors now allow you to specify the
+  desired set of SSL ciphers.
+
+### Connector cipher specification
+
+The rabbitmq and activemq connector plugins now allow the
+specification of ciphers to be used in the connection to the
+middleware.
+
+To request the same set of cipher that ruby 2.1.2 defaults to you
+could specify:
+
+    # ciphers from ruby 2.1.2
+    plugin.activemq.pool.1.ssl.ciphers = ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW
+
+
+If not specified the default set of ciphers chosen will depend on a
+combination of the version of the stomp gem in use and your version of
+ruby.
+
+See the OpenSSL documentation for further explanation of what these cipher
+strings mean.
+
+https://www.openssl.org/docs/apps/ciphers.html#CIPHER_STRINGS
+
+
+### Changes since 2.6.1
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2014/10/23|Disable SSLv2 and SSLv3 protocols by default|MCO-489|
+|2014/10/16|Expose SSL cipher selection via connector settings|MCO-486|
+
 
 <a name="2_6_0">&nbsp;</a>
 
