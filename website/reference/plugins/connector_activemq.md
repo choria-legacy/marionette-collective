@@ -6,6 +6,7 @@ toc: false
 
 [STOMP]: http://stomp.codehaus.org/
 [heartbeat]: http://stomp.github.io/stomp-specification-1.1.html#Heart-beating
+[cipherstrings]: https://www.openssl.org/docs/apps/ciphers.html#CIPHER_STRINGS
 [wildcard]: http://activemq.apache.org/wildcards.html
 [subcollectives]: /mcollective/reference/basic/subcollectives.html
 [activemq_config]: /mcollective/deploy/middleware/activemq.html
@@ -84,7 +85,7 @@ plugin.activemq.use_exponential_back_off = true
 plugin.activemq.back_off_multiplier = 2
 plugin.activemq.max_reconnect_attempts = 0
 plugin.activemq.randomize = false
-plugin.activemq.timeout = -1
+plugin.activemq.connect_timeout = 30
 {% endhighlight %}
 
 ### Message Priority
@@ -121,3 +122,188 @@ This feature is avaiable from version 2.4.0 and requires version
 1.2.10 or newer of the stomp gem.
 
 More information about STOMP heartbeats can be found [in the STOMP specification][heartbeat]
+
+### Parameter reference
+
+#### `plugin.activemq.connect_timeout`
+
+Specify the timeout for the TCP+SSL connection to the middleware.
+
+- _Default:_ 30
+- _Allowed values:_ Any integer
+
+#### `plugin.activemq.use_exponential_back_off`
+
+Whether to use exponential backoff when reconnecting to the
+middleware.
+
+- _Default:_ true
+- _Allowed values:_ A boolean value
+
+#### `plugin.activemq.initial_reconnect_delay`
+
+When `use_exponential_back_off` is set, the initial delay to use when
+reconnecting to the middleware.
+
+- _Default:_ 0.01
+- _Allowed values:_ A positive number expressing time in seconds
+
+#### `plugin.activemq.max_reconnect_delay`
+
+When `use_exponential_back_off` is set, the maximum delay to use when
+reconnecting to the middleware.
+
+- _Default:_ 30
+- _Allowed values:_ A number integer expressing time in seconds
+
+#### `plugin.activemq.back_off_multiplier`
+
+When `use_exponential_back_off` is set, the amount to increase the
+delay by (up to `max_reconnect_delay`).
+
+- _Default:_ 2
+- _Allowed values:_ A positive integer
+
+#### `plugin.activemq.max_reconnect_attempts`
+
+The number of times to attempt to connect to the middleware.  0 means
+no limit (retry forever).
+
+- _Default:_ 0
+- _Allowed values:_ Any integer
+
+#### `plugin.activemq.heartbeat_interval`
+
+Setting this value enables STOMP 1.1 heartbeats, and sets the interval
+to send/receive heartbeat messages to that number of seconds.
+
+- _Default:_ (no value)
+- _Allowed values:_ An integer >= 30 (smaller values will be padded)
+
+#### `plugin.activemq.stomp_1_0_fallback`
+
+When `heartbeat_interval` is set it will request STOMP 1.1 but support fallback
+to 1.0.  You can force STOMP 1.1 only operation by setting this to false.
+
+- _Default:_ false
+- _Allowed values:_ A boolean
+
+#### `plugin.activemq.max_hbread_fails`
+
+Maximum amount of heartbeat read failures to allow before assuming the
+connection is dead and reconnecting.
+
+- _Default:_ 2
+- _Allowed values:_ Any integer
+
+#### `plugin.activemq.max_hbrlck_fails`
+
+Maximum amount of heartbeat lock obtain failures before assuming the
+connection is dead and reconnecting.
+
+- _Default:_ 2
+- _Allowed values:_ Any integer
+
+#### `plugin.activemq.priority`
+
+Specifies the priority of the messages sent to ActiveMQ.  1 is the
+lowest priority, 9 is the highest, and unspecified is the same as the
+default value (4).
+
+- _Default:_ no default
+- _Allowed values:_ An integer in the range 1..9
+
+#### `plugin.activemq.randomize`
+
+Whether to randomize the order of the connection pool before connecting.
+
+- _Default:_ false
+- _Allowed values:_ A boolean value
+
+#### `plugin.activemq.pool.size`
+
+Specifies the size of the connector pool.
+
+- _Default:_ no default
+- _Allowed values:_ Any positive integer
+
+#### `plugin.activemq.pool.1.host`
+
+The hostname of this middleware server.
+
+- _Default:_ no default
+- _Allowed values:_ Any string value
+
+#### `plugin.activemq.pool.1.port`
+
+The port number to connect to for this middleware server.
+
+- _Default:_ 61613
+- _Allowed values:_ Any positive integer
+
+#### `plugin.activemq.pool.1.user`
+
+The username to connect with to this middleware server.  If the
+`STOMP_USER` environment variable is set this value will be used
+instead.
+
+- _Default:_ The empty string ""
+- _Allowed values:_ Any string value
+
+#### `plugin.activemq.pool.1.password`
+
+The password to connect with to this middleware server.  If the
+`STOMP_PASSWORD` environment variable is set this value will be used
+instead.
+
+- _Default:_ The empty string ""
+- _Allowed values:_ Any string value
+
+#### `plugin.activemq.pool.1.ssl`
+
+Whether to use TLS when connecting to this middleware server.
+
+- _Default:_ false
+- _Allowed values:_ Any boolean value
+
+#### `plugin.activemq.pool.ssl.fallback`
+
+Whether to allow unverified TLS if the ca/cert/key settings aren't set.
+
+- _Default:_ false
+- _Allowed values:_ Any boolean value
+
+#### `plugin.activemq.pool.1.ssl.ca`
+
+The CA certificate to use when verifying the middlewares
+certificate.  Must be the fully-qualified path to a `.pem` file.
+
+- _Default:_ (nothing)
+- _Allowed values:_ A fully-qualified path
+
+#### `plugin.activemq.pool.1.ssl.cert`
+
+The certificate to present when connecting to the middleware.  Must be
+the fully-qualified path to a `.pem` file.  MCollective will also
+check the environment variable `MCOLLECTIVE_ACTIVEMQ_POOL1_SSL_CERT`
+for the client's ssl cert.
+
+- _Default:_ (nothing)
+- _Allowed values:_ A fully-qualified path
+
+#### `plugin.activemq.pool.1.ssl.key`
+
+The private key corresponding to this node's certificate.  Must be the
+fully-qualified path to a `.pem` file.  MCollective will also check
+the environment variable `MCOLLECTIVE_ACTIVEMQ_POOL1_SSL_KEY` for the
+client's ssl key.
+
+- _Default:_ (nothing)
+- _Allowed values:_ A fully-qualified path
+
+#### `plugin.activemq.pool.1.ssl.ciphers`
+
+The SSL ciphers to use when communicating with this middleware server.
+
+- _Default:_ no default
+- _Allowed values:_ A string supplying an [OpenSSL cipher suite][cipherstrings]
