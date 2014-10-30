@@ -13,7 +13,7 @@ will be highlighted here.
 ## 2.6.1 - 2014/10/29
 
 
-### Improvements from 2.6.1
+### Improvements from 2.6.0
 
 * We now preconfigure the SSL context used to disallow the SSLv2 and SSLv3 protocols.
 * The rabbitmq and activemq connectors now allow you to specify the
