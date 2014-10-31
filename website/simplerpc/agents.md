@@ -8,7 +8,7 @@ title: Writing SimpleRPC Agents
 [SimpleRPCAuditing]: /mcollective/simplerpc/auditing.html
 [SimpleRPCAuthorization]: /mcollective/simplerpc/authorization.html
 [DDL]: /mcollective/reference/plugins/ddl.html
-[WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
+[WritingAgentsScreenCast]: https://www.youtube.com/watch?v=2Xhq_UqnqRE
 [RPCUtil]: /mcollective/reference/plugins/rpcutil.html
 [ValidatorPlugins]: /mcollective/reference/plugins/validator.html
 

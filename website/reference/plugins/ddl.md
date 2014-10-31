@@ -7,8 +7,8 @@ title: Data Definition Language
 [ResultsandExceptions]: /mcollective/simplerpc/clients.html#results_and_exceptions
 [SimpleRPCAuditing]: /mcollective/simplerpc/auditing.html
 [SimpleRPCAuthorization]: /mcollective/simplerpc/authorization.html
-[WritingAgentsScreenCast]: http://mcollective.blip.tv/file/3808928/
-[DDLScreenCast]: http://mcollective.blip.tv/file/3799653
+[WritingAgentsScreenCast]: https://www.youtube.com/watch?v=2Xhq_UqnqRE
+[DDLScreenCast]: https://www.youtube.com/watch?v=xikjjXvN6nA
 [RPCUtil]: /mcollective/reference/plugins/rpcutil.html
 [ValidatorPlugins]: /mcollective/reference/plugins/validator.html
 
