@@ -3035,7 +3035,7 @@ We've extended the use of the DDL in the RPC client.  We've integrated the DDL i
 
 We're also using color to improve the display of the results, the color display can be disabled with the new _color_ configuration option.
 
-A "screencast of the DDL integration":http://mcollective.blip.tv/file/3799653 and color usage has been recorded.
+A "screencast of the DDL integration":https://www.youtube.com/watch?v=xikjjXvN6nA and color usage has been recorded.
 
 ### Bug Fixes
 

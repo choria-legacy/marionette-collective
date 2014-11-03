@@ -38,7 +38,7 @@ There is also a [slideshare][] site where presentations will go that we do at co
 [This video](http://youtu.be/0i7VpvC2vMM) introduces the basic concepts behind MCollective.  It predates the
 SimpleRPC framework but is still valid today.
 
-<iframe width="640" height="360" src="http://www.youtube-nocookie.com/embed/0i7VpvC2vMM" frameborder="0" allowfullscreen></iframe>
+<iframe width="640" height="360" src="//www.youtube-nocookie.com/embed/0i7VpvC2vMM" frameborder="0" allowfullscreen></iframe>
 
 <a name="ec2_demo">&nbsp;</a>
 
@@ -49,7 +49,7 @@ on your network.  Viewing this prior to starting your deployment is recommended.
 
 We also have a page detailing the [Terminology][]
 
-<iframe width="640" height="480" src="http://www.youtube-nocookie.com/embed/fIHW41W8jas" frameborder="0" allowfullscreen></iframe>
+<iframe width="640" height="480" src="//www.youtube-nocookie.com/embed/fIHW41W8jas" frameborder="0" allowfullscreen></iframe>
 
 View more <a href="http://www.slideshare.net/">webinars</a> from <a href="http://www.slideshare.net/mcollective">Marionette Collective</a>.
 <a name="writing_agents">&nbsp;</a>
@@ -59,7 +59,7 @@ Writing agents are easy, we have good documentation that can be used as a refere
 video](http://youtu.be/2Xhq_UqnqRE) should show you how to tie it all together though.
 See the [SimpleRPC Introduction][SimpleRPCIntroduction] for reference wiki pages after viewing this video.
 
-<iframe width="640" height="480" src="http://www.youtube-nocookie.com/embed/2Xhq_UqnqRE" frameborder="0" allowfullscreen></iframe>
+<iframe width="640" height="480" src="//www.youtube-nocookie.com/embed/2Xhq_UqnqRE" frameborder="0" allowfullscreen></iframe>
 
 <a name="simplerpc_ddl">&nbsp;</a>
 
@@ -68,14 +68,14 @@ The Data Definition Language helps your clients produce more user friendly outpu
 input gets validated while showing online help, and it enables dynamic generation of user interfaces.
 After you have watched the video, you can refer to the [DDL][] wiki page for more information.
 
-<iframe width="640" height="480" src="http://www.youtube-nocookie.com/embed/xikjjXvN6nA" frameborder="0" allowfullscreen></iframe>
+<iframe width="640" height="480" src="//www.youtube-nocookie.com/embed/xikjjXvN6nA" frameborder="0" allowfullscreen></iframe>
 
 <a name="simplerpc_ddl_irb">&nbsp;</a>
 
 ### SimpleRPC DDL enhanced IRB
 Based on the SimpleRPC DDL, this custom IRB shell supports command completion.
 
-<iframe width="640" height="480" src="http://www.youtube-nocookie.com/embed/xikjjXvN6nA" frameborder="0" allowfullscreen></iframe>
+<iframe width="640" height="480" src="//www.youtube-nocookie.com/embed/xikjjXvN6nA" frameborder="0" allowfullscreen></iframe>
 
 <a name="mcollective_deployer"> </a>
 
@@ -84,7 +84,7 @@ If you ever do commissioned work based on MCollective, this deployer written usi
 It can be used by developers to deploy applications live into production using a defined
 API and process.
 
-<object width="640" height="385"><param name="movie" value="http://www.youtube.com/v/Fqt2SgnQn3k&amp;hl=en_US&amp;fs=1?rel=0"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/Fqt2SgnQn3k&amp;hl=en_US&amp;fs=1?rel=0" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="640" height="385"></embed></object>
+<iframe width="640" height="480" src="//www.youtube-nocookie.com/embed/Fqt2SgnQn3k" frameborder="0" allowfullscreen></iframe>
 
 <a name="exim">&nbsp; </a>
 
@@ -94,7 +94,7 @@ A command line and dialog-based UI written to manage clusters of Exim Servers.
 The code for this is [open source](http://github.com/puppetlabs/mcollective-plugins/tree/master/agent/exim/).
 Unfortunately it predates SimpleRPC; we hope to port it soon.
 
-<object width="640" height="385"><param name="movie" value="http://www.youtube.com/v/kNvoQCpJ1V4&amp;hl=en_US&amp;fs=1?rel=0"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/kNvoQCpJ1V4&amp;hl=en_US&amp;fs=1?rel=0" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="640" height="385"></embed></object>
+<iframe width="640" height="480" src="//www.youtube-nocookie.com/embed/kNvoQCpJ1V4" frameborder="0" allowfullscreen></iframe>
 
 <a name="server_provisioner">&nbsp;</a>
 
@@ -105,4 +105,4 @@ of provisioning EC2 nodes using Puppet.
 
 More detail is available [on this blog post](http://www.devco.net/archives/2010/07/14/bootstrapping_puppet_on_ec2_with_mcollective.php)
 
-<iframe width="640" height="480" src="http://www.youtube-nocookie.com/embed/-iEgz9MD3qA" frameborder="0" allowfullscreen></iframe>
+<iframe width="640" height="480" src="//www.youtube-nocookie.com/embed/-iEgz9MD3qA" frameborder="0" allowfullscreen></iframe>
