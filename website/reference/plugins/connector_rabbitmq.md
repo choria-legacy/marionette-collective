@@ -8,6 +8,7 @@ toc: false
 [RabbitStomp]: http://www.rabbitmq.com/stomp.html
 [RabbitCLI]: http://www.rabbitmq.com/management-cli.html
 [RabbitClustering]: https://www.rabbitmq.com/clustering.html
+[cipherstrings]: https://www.openssl.org/docs/apps/ciphers.html#CIPHER_STRINGS
 
 The RabbitMQ connector uses the [STOMP][] rubygem to connect to RabbitMQ servers.
 
