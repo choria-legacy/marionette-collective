@@ -4,6 +4,6 @@ class <%= @package_name %>::<%= @klass %> {
   include ::<%= @package_name %>::common
   <% end %>
   mcollective::plugin { '<%= @package_name %>/<%= @klass %>':
-    source => 'puppet:///modules/<%= @package_name %>/<% @klass %>',
+    source => 'puppet:///modules/<%= @package_name %>/<%= @klass %>',
   }
 }

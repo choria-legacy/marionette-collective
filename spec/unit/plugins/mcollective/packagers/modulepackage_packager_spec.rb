@@ -125,6 +125,11 @@ module MCollective
       describe '#make_module' do
         it 'should copy the package content to the tmp build dir' do
           file = mock()
+
+          ['./agent/rspec.rb', './agent/rspec.ddl', './application/rspec.rb'].each do |m|
+            File.stubs(:expand_path).with(m).returns(m)
+          end
+
           File.stubs(:directory?).with('rspec_tmp/manifests').returns(false, true)
           File.stubs(:directory?).with('rspec_tmp/files/agent/mcollective/agent').returns(false, true)
           File.stubs(:directory?).with('rspec_tmp/files/common/mcollective/agent').returns(false, true)

@@ -301,7 +301,7 @@ mco plugin package [options] <directory>
 
       mcdependency = {:mcname => configuration[:mcname], :mcversion => configuration[:mcversion]}
 
-      #Deprecation warning for --iteration
+      # Deprecation warning for --iteration
       if configuration[:iteration]
         puts 'Warning. The --iteration flag has been deprecated. Please use --revision instead.'
         configuration[:revision] = configuration[:iteration] unless configuration[:revision]
@@ -310,16 +310,16 @@ mco plugin package [options] <directory>
       plugin_class.new(configuration, mcdependency, plugintype)
     end
 
-    def directory_for_type(type)
-      File.directory?(File.join(configuration[:target], type))
+    def plugin_directory_exists?(plugin_type)
+      File.directory?(File.join(PluginPackager.get_plugin_path(configuration[:target]), plugin_type))
     end
 
     # Identify plugin type if not provided.
     def set_plugin_type
-      if directory_for_type("agent") || directory_for_type("application")
+      if plugin_directory_exists?("agent") || plugin_directory_exists?("application")
         configuration[:plugintype] = "AgentDefinition"
         return "Agent"
-      elsif directory_for_type(plugintype = identify_plugin)
+      elsif plugin_directory_exists?(plugintype = identify_plugin)
         configuration[:plugintype] = "StandardDefinition"
         return plugintype
       else
@@ -330,9 +330,11 @@ mco plugin package [options] <directory>
     # If plugintype is StandardDefinition, identify which of the special
     # plugin types we are dealing with based on directory structure.
     # To keep it simple we limit it to one type per target directory.
+    # Return the name of the type of plugin as a string
     def identify_plugin
       plugintype = Dir.glob(File.join(configuration[:target], "*")).select do |file|
-        File.directory?(file) && file.match(/(connector|facts|registration|security|audit|pluginpackager|data|discovery|validator)/)
+        File.directory?(file) &&
+          file.match(/(connector|facts|registration|security|audit|pluginpackager|data|discovery|validator)/)
       end
 
       raise RuntimeError, "more than one plugin type detected in directory" if plugintype.size > 1

@@ -85,5 +85,14 @@ module MCollective
         end
       end.reject{ |dependency| dependency == nil }
     end
+
+    # Return the path to a plugin's core directories
+    def self.get_plugin_path(target)
+      if (File.exists?(File.join(target, "lib", "mcollective")))
+        return File.join(target, "lib", "mcollective")
+      end
+
+      return target
+    end
   end
 end

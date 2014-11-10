@@ -7,7 +7,7 @@ module MCollective
 
       def initialize(configuration, mcdependency, plugintype)
         @plugintype = plugintype
-        @path = configuration[:target]
+        @path = PluginPackager.get_plugin_path(configuration[:target])
         @packagedata = {}
         @revision = configuration[:revision] || 1
         @preinstall = configuration[:preinstall]
@@ -42,9 +42,9 @@ module MCollective
 
         agentdir = File.join(@path, "agent")
 
-        if PluginPackager.check_dir_present agentdir
+        if (PluginPackager.check_dir_present(agentdir))
           ddls = Dir.glob(File.join(agentdir, "*.ddl"))
-          agent[:files] = (Dir.glob(File.join(agentdir, "*")) - ddls)
+          agent[:files] = (Dir.glob(File.join(agentdir, "**", "**")) - ddls)
         else
           return nil
         end

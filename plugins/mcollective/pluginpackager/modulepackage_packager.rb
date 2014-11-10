@@ -60,7 +60,7 @@ module MCollective
         # for each subpackage make a subclass
         @plugin.packagedata.each do |klass,data|
           data[:files].each do |file|
-            relative_path = file.sub(/^\.\//, '')
+            relative_path = File.expand_path(file).gsub(/#{@plugin.target_path}|^\.\//, '')
             targetdir = File.join(@tmpdir, 'files', klass.to_s, 'mcollective', File.dirname(relative_path))
             FileUtils.mkdir_p(targetdir) unless File.directory?(targetdir)
             FileUtils.cp_r(file, targetdir)
