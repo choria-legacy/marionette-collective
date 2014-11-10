@@ -87,6 +87,7 @@ module MCollective
       describe "#agent" do
         before do
           AgentDefinition.any_instance.expects(:client).once
+          PluginPackager.expects(:get_plugin_path).with(".").returns(".")
         end
 
         it "should not populate the agent files if the agent directory is empty" do
@@ -101,12 +102,25 @@ module MCollective
           PluginPackager.stubs(:check_dir_present).returns(true)
           File.stubs(:join).with(".", "agent").returns("tmpdir/agent")
           File.stubs(:join).with("tmpdir/agent", "*.ddl").returns("tmpdir/agent/*.ddl")
-          File.stubs(:join).with("tmpdir/agent", "*").returns("tmpdir/agent/*")
+          File.stubs(:join).with("tmpdir/agent", "**", "**").returns("tmpdir/agent/**/**")
           Dir.stubs(:glob).with("tmpdir/agent/*.ddl").returns([])
-          Dir.stubs(:glob).with("tmpdir/agent/*").returns(["implementation.rb"])
+          Dir.stubs(:glob).with("tmpdir/agent/**/**").returns(["implementation.rb"])
 
           agent = AgentDefinition.new(configuration, {}, "agent")
           agent.packagedata[:agent][:files].should == ["implementation.rb"]
+        end
+
+        it "should recursively populate the file list if the agent directory contains subdirectories" do
+          AgentDefinition.any_instance.expects(:common).returns(nil)
+          PluginPackager.stubs(:check_dir_present).returns(true)
+          File.stubs(:join).with(".", "agent").returns("tmpdir/agent")
+          File.stubs(:join).with("tmpdir/agent", "*.ddl").returns("tmpdir/agent/*.ddl")
+          File.stubs(:join).with("tmpdir/agent", "**", "**").returns("tmpdir/agent/**/**")
+          Dir.stubs(:glob).with("tmpdir/agent/*.ddl").returns([])
+          Dir.stubs(:glob).with("tmpdir/agent/**/**").returns(["implementation.rb", "test/test.rb"])
+
+          agent = AgentDefinition.new(configuration, {}, "agent")
+          agent.packagedata[:agent][:files].should == ["implementation.rb", "test/test.rb"]
         end
 
         it "should add common package as dependency if present" do
@@ -125,6 +139,10 @@ module MCollective
       end
 
       describe "#common" do
+        before :each do
+          PluginPackager.expects(:get_plugin_path).with(".").returns(".")
+        end
+
         it "should populate the common files if there are any" do
           AgentDefinition.any_instance.expects(:agent)
           AgentDefinition.any_instance.expects(:client)
@@ -163,6 +181,7 @@ module MCollective
           AgentDefinition.any_instance.expects(:agent).returns(nil)
           File.expects(:join).with(".", "application").returns("clientdir")
           File.expects(:join).with(".", "aggregate").returns("aggregatedir")
+          PluginPackager.expects(:get_plugin_path).with(".").returns(".")
         end
 
         it "should populate client files if all directories are present" do

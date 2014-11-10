@@ -73,6 +73,9 @@ module MCollective
       end
 
       describe "#plugin" do
+        before :each do
+          PluginPackager.expects(:get_plugin_path).with(".").returns(".")
+        end
 
         it "should return nil if the plugin doesn't contain any files" do
           StandardDefinition.any_instance.expects(:common).returns(nil)
@@ -102,8 +105,9 @@ module MCollective
       end
 
       describe "#common" do
-        before do
+        before :each do
           StandardDefinition.any_instance.expects(:plugin).returns(false)
+          PluginPackager.expects(:get_plugin_path).with(".").returns(".")
         end
 
         it "should return nil if common doesn't contain any files" do

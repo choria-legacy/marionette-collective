@@ -6,7 +6,7 @@ module MCollective
 
       def initialize(configuration, mcdependency, plugintype)
         @plugintype = plugintype
-        @path = configuration[:target]
+        @path = PluginPackager.get_plugin_path(configuration[:target])
         @packagedata = {}
         @revision = configuration[:revision] || 1
         @preinstall = configuration[:preinstall]
