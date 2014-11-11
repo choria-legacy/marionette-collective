@@ -1,21 +1,44 @@
 module MCollective
   # Helpers for writing clients that can talk to agents, do discovery and so forth
   class Client
-    attr_accessor :options, :stats, :discoverer
+    attr_accessor :options, :stats, :discoverer, :connection_timeout
 
-    def initialize(configfile)
+    def initialize(options)
       @config = Config.instance
-      @config.loadconfig(configfile) unless @config.configured
+      @options = nil
+
+      if options.is_a?(String)
+        # String is the path to a config file
+        @config.loadconfig(options) unless @config.configured
+      elsif options.is_a?(Hash)
+        @config.loadconfig(options[:config]) unless @config.configured
+        @options = options
+        @connection_timeout = options[:connection_timeout]
+      else
+        raise "Invalid parameter passed to Client constructor. Valid types are Hash or String"
+      end
+
+      @connection_timeout ||= @config.connection_timeout
 
       @connection = PluginManager["connector_plugin"]
       @security = PluginManager["security_plugin"]
 
       @security.initiated_by = :client
-      @options = nil
       @subscriptions = {}
 
       @discoverer = Discovery.new(self)
-      @connection.connect
+
+      # Time box the connection if a timeout has been specified
+      # connection_timeout defaults to nil which means it will try forever if
+      # not specified
+      begin
+        Timeout::timeout(@connection_timeout, ClientTimeoutError) do
+          @connection.connect
+        end
+      rescue ClientTimeoutError => e
+        Log.error("Timeout occured while trying to connect to middleware")
+        raise e
+      end
     end
 
     @@request_sequence = 0

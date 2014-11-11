@@ -2,8 +2,9 @@ module MCollective
 # Exceptions for the RPC system
   class DDLValidationError<RuntimeError;end
   class ValidatorError<RuntimeError; end
+  class ClientTimeoutError<RuntimeError; end
   class MsgDoesNotMatchRequestID < RuntimeError; end
-  class MsgTTLExpired<RuntimeError;end   
+  class MsgTTLExpired<RuntimeError;end
   class NotTargettedAtUs<RuntimeError;end
   class RPCError<StandardError;end
   class SecurityValidationFailed<RuntimeError;end

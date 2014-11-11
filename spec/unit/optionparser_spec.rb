@@ -197,6 +197,12 @@ module MCollective
         @parser.instance_variable_get(:@options)[:discovery_options].should == ['nodes.txt']
       end
 
+      it 'should parse the --nodes option' do
+        ARGV << '--connection-timeout=1'
+        @parser.parse
+        @parser.instance_variable_get(:@options)[:connection_timeout].should == 1
+      end
+
       it 'should fail on the --nodes option if discovery_method or discovery_options have already been set' do
       end
 

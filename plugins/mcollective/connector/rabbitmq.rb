@@ -142,6 +142,9 @@ module MCollective
           connection[:logger] = EventLogger.new
 
           @connection = connector.new(connection)
+
+        rescue ClientTimeoutError => e
+          raise e
         rescue Exception => e
           raise("Could not connect to RabbitMQ Server: #{e}")
         end

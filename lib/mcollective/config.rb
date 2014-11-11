@@ -17,6 +17,7 @@ module MCollective
     attr_reader :default_discovery_method, :default_discovery_options
     attr_reader :publish_timeout, :threaded, :soft_shutdown, :activate_agents
     attr_reader :registration_splay, :discovery_timeout, :soft_shutdown_timeout
+    attr_reader :connection_timeout
 
     def initialize
       @configured = false
@@ -94,6 +95,8 @@ module MCollective
                   @discovery_timeout = Integer(val)
                 when "publish_timeout"
                   @publish_timeout = Integer(val)
+                when "connection_timeout"
+                  @connection_timeout = Integer(val)
                 when "rpcaudit"
                   @rpcaudit = Util.str_to_bool(val)
                 when "rpcauditprovider"
@@ -205,6 +208,7 @@ module MCollective
       @soft_shutdown = false
       @soft_shutdown_timeout = nil
       @activate_agents = true
+      @connection_timeout = nil
     end
 
     def read_plugin_config_dir(dir)
