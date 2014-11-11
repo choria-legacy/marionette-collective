@@ -46,8 +46,7 @@ module MCollective
         @initial_options = initial_options
 
         @config = initial_options[:config]
-        @client = MCollective::Client.new(@config)
-        @client.options = initial_options
+        @client = MCollective::Client.new(@initial_options)
 
         @stats = Stats.new
         @agent = agent

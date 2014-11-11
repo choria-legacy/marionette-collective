@@ -49,8 +49,7 @@ module MCollective
     end
 
     def main
-      client = MCollective::Client.new(options[:config])
-      client.options = options
+      client = MCollective::Client.new(options)
 
       start = Time.now.to_f
       times = []

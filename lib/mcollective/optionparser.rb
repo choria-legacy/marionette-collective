@@ -181,6 +181,10 @@ module MCollective
       @parser.on("--sort", "Sort the output of an RPC call before processing.") do |v|
         @options[:sort] = true
       end
+
+      @parser.on("--connection-timeout TIMEOUT", Integer, "Set the timeout for establishing a connection to the middleware") do |v|
+        @options[:connection_timeout] = Integer(v)
+      end
     end
 
     private
