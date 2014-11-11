@@ -189,24 +189,53 @@ module MCollective
           Config.instance.expects(:libdir).returns(["#{File::SEPARATOR}libdir1", "#{File::SEPARATOR}libdir2"])
 
           action_in_first_dir = File.join(File::SEPARATOR, "libdir1", "agent", "spectester", "action.sh")
+          action_in_first_dir_new = File.join(File::SEPARATOR, "libdir1", "mcollective", "agent", "spectester", "action.sh")
           action_in_last_dir = File.join(File::SEPARATOR, "libdir2", "agent", "spectester", "action.sh")
+          action_in_last_dir_new = File.join(File::SEPARATOR, "libdir2", "mcollective", "agent", "spectester", "action.sh")
 
-          File.expects("exist?").with(action_in_first_dir).returns(true)
-          File.expects("exist?").with(action_in_last_dir).never
-
+          File.expects("exists?").with(action_in_first_dir).returns(true)
+          File.expects("exists?").with(action_in_first_dir_new).returns(false)
+          File.expects("exists?").with(action_in_last_dir).never
+          File.expects("exists?").with(action_in_last_dir_new).never
           ActionRunner.new("action.sh", @req, :json).command.should == action_in_first_dir
         end
 
-        it "should find the match even in the last libdir" do
+        it "should find the match in the last libdir" do
           Config.instance.expects(:libdir).returns(["#{File::SEPARATOR}libdir1", "#{File::SEPARATOR}libdir2"])
 
           action_in_first_dir = File.join(File::SEPARATOR, "libdir1", "agent", "spectester", "action.sh")
+          action_in_first_dir_new = File.join(File::SEPARATOR, "libdir1", "mcollective", "agent", "spectester", "action.sh")
           action_in_last_dir = File.join(File::SEPARATOR, "libdir2", "agent", "spectester", "action.sh")
+          action_in_last_dir_new = File.join(File::SEPARATOR, "libdir2", "mcollective", "agent", "spectester", "action.sh")
 
-          File.expects("exist?").with(action_in_first_dir).returns(false)
-          File.expects("exist?").with(action_in_last_dir).returns(true)
-
+          File.expects("exists?").with(action_in_first_dir).returns(false)
+          File.expects("exists?").with(action_in_first_dir_new).returns(false)
+          File.expects("exists?").with(action_in_last_dir).returns(true)
+          File.expects("exists?").with(action_in_last_dir_new).returns(false)
           ActionRunner.new("action.sh", @req, :json).command.should == action_in_last_dir
+        end
+
+        it "should find the match in the 'new' directory layout" do
+          Config.instance.expects(:libdir).returns(["#{File::SEPARATOR}libdir1", "#{File::SEPARATOR}libdir2"])
+
+          action_in_new_dir = File.join(File::SEPARATOR, "libdir1", "mcollective", "agent", "spectester", "action.sh")
+          action_in_old_dir = File.join(File::SEPARATOR, "libdir1", "agent", "spectester", "action.sh")
+
+          File.expects("exists?").with(action_in_new_dir).returns(true)
+          File.expects("exists?").with(action_in_old_dir).returns(false)
+          ActionRunner.new("action.sh", @req, :json).command.should == action_in_new_dir
+        end
+
+        it "if the script is both the old and new locations, the new location should be preferred" do
+          Config.instance.expects(:libdir).returns(["#{File::SEPARATOR}libdir1", "#{File::SEPARATOR}libdir2"])
+
+          action_in_new_dir = File.join(File::SEPARATOR, "libdir1", "mcollective", "agent", "spectester", "action.sh")
+          action_in_old_dir = File.join(File::SEPARATOR, "libdir1", "agent", "spectester", "action.sh")
+
+          File.expects("exists?").with(action_in_new_dir).returns(true)
+          File.expects("exists?").with(action_in_old_dir).returns(true)
+
+          ActionRunner.new("action.sh", @req, :json).command.should == action_in_new_dir
         end
       end
     end

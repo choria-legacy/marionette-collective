@@ -127,15 +127,31 @@ module MCollective
       end
 
       def path_to_command(command)
-        unless command[0,1] == File::SEPARATOR
-          Config.instance.libdir.each do |libdir|
-            command_file = File.join(libdir, "agent", agent, command)
+        if Util.absolute_path?(command)
+          return command
+        end
 
-            return command_file if File.exist?(command_file)
+        Config.instance.libdir.each do |libdir|
+          command_file_old = File.join(libdir, "agent", agent, command)
+          command_file_new = File.join(libdir, "mcollective", "agent", agent, command)
+          command_file_old_exists = File.exists?(command_file_old)
+          command_file_new_exists = File.exists?(command_file_new)
+
+          if command_file_new_exists && command_file_old_exists
+            Log.debug("Found 'implemented_by' scripts found in two locations #{command_file_old} and #{command_file_new}")
+            Log.debug("Running script: #{command_file_new}")
+            return command_file_new
+          elsif command_file_old_exists
+            Log.debug("Running script: #{command_file_old}")
+            return command_file_old
+          elsif command_file_new_exists
+            Log.debug("Running script: #{command_file_new}")
+            return command_file_new
           end
         end
 
-        return command
+        Log.warn("No script found for: #{command}")
+        command
       end
     end
   end
