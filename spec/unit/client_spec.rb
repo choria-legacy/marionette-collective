@@ -125,20 +125,22 @@ module MCollective
 
     describe "receive" do
       let(:message) do
-        m = mock
+        m = mock('message')
         m.stubs(:type=)
         m.stubs(:expected_msgid=)
         m.stubs(:decode!)
         m.stubs(:requestid).returns("erfs123")
+        m.stubs(:payload).returns({:senderid => 'test-sender'})
         m
       end
 
       let(:badmessage) do
-        m = mock
+        m = mock('badmessage')
         m.stubs(:type=)
         m.stubs(:expected_msgid=)
         m.stubs(:decode!)
         m.stubs(:requestid).returns("badmessage")
+        m.stubs(:payload).returns({})
         m
       end
 
@@ -148,7 +150,15 @@ module MCollective
         result.should == message
       end
 
-      it "log and retry if the message reqid does not match the expected msgid" do
+      it 'should log who the message was from' do
+        @connector.stubs(:receive).returns(message)
+        Log.expects(:debug).with("Received reply to erfs123 from test-sender")
+
+        client.receive("erfs123")
+      end
+
+      it "should log and retry if the message reqid does not match the expected msgid" do
+        Log.stubs(:debug)
         Log.expects(:debug).with("Ignoring a message for some other client : Message reqid badmessage does not match our reqid erfs123")
         @connector.stubs(:receive).returns(badmessage, message)
         client.receive("erfs123")
