@@ -124,9 +124,12 @@ module MCollective
         reply.expected_msgid = requestid
 
         reply.decode!
+
         unless reply.requestid == requestid
           raise(MsgDoesNotMatchRequestID, "Message reqid #{reply.requestid} does not match our reqid #{requestid}")
         end
+
+        Log.debug("Received reply to #{reply.requestid} from #{reply.payload[:senderid]}")
       rescue SecurityValidationFailed => e
         Log.warn("Ignoring a message that did not pass security validations")
         retry
