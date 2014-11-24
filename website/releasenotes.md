@@ -8,6 +8,169 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_7_0">&nbsp;</a>
+
+## 2.7.0 - 2014/12/02
+
+
+### New Features and Improvements from 2.6.1
+
+* A collective data plugin has been added
+* `mco` now supports a --connection-timeout option
+* The target collective is now visible to custom discovery plugins
+* implemented_by now searches a more conventional path
+* `mco plugin package` now supports 'lib' layout
+* The version of the stomp gem in use is now logged at connector startup
+* We now log the senderid of a successfully decoded frame at debug
+* Default values for STOMP 1.1 heart-beating have been revisited
+
+
+### New collective data plugin, and collective filtering
+
+We have added a collective data plugin, which enables you to filter
+based on collective membership.
+
+For example, to find nodes connected to the `all` collective which are
+also members of the `us` collective you can use the following compound
+query:
+
+{% highlight console %}
+$ mco find -T all -S 'collective("us").member=true'
+{% endhighlight %}
+
+
+### --connection-timeout client option
+
+`mco` now supports a --connection-timeout option (connection_timeout
+in a client configuration file).  It will cause the mcollective client
+to abort if a connection to the middleware cannot be established in
+the specified number of seconds (the default value is unspecified - no
+timeout).
+
+{% highlight shell %}
+$ mco ping --connection-timeout 5
+error 2014/11/24 17:10:47: activemq.rb:149:in `on_ssl_connectfail' SSL session creation with stomp+ssl://mcollective@127.0.0.1:61614 failed: Connection refused - connect(2)
+error 2014/11/24 17:10:47: activemq.rb:149:in `on_ssl_connectfail' SSL session creation with stomp+ssl://mcollective@127.0.0.1:61614 failed: Connection refused - connect(2)
+error 2014/11/24 17:10:47: activemq.rb:149:in `on_ssl_connectfail' SSL session creation with stomp+ssl://mcollective@127.0.0.1:61614 failed: Connection refused - connect(2)
+error 2014/11/24 17:10:47: activemq.rb:149:in `on_ssl_connectfail' SSL session creation with stomp+ssl://mcollective@127.0.0.1:61614 failed: Connection refused - connect(2)
+error 2014/11/24 17:10:47: activemq.rb:149:in `on_ssl_connectfail' SSL session creation with stomp+ssl://mcollective@127.0.0.1:61614 failed: Connection refused - connect(2)
+error 2014/11/24 17:10:47: activemq.rb:149:in `on_ssl_connectfail' SSL session creation with stomp+ssl://mcollective@127.0.0.1:61614 failed: Connection refused - connect(2)
+error 2014/11/24 17:10:47: activemq.rb:149:in `on_ssl_connectfail' SSL session creation with stomp+ssl://mcollective@127.0.0.1:61614 failed: Connection refused - connect(2)
+error 2014/11/24 17:10:48: activemq.rb:149:in `on_ssl_connectfail' SSL session creation with stomp+ssl://mcollective@127.0.0.1:61614 failed: Connection refused - connect(2)
+error 2014/11/24 17:10:49: activemq.rb:149:in `on_ssl_connectfail' SSL session creation with stomp+ssl://mcollective@127.0.0.1:61614 failed: Connection refused - connect(2)
+error 2014/11/24 17:10:52: client.rb:39:in `rescue in initialize' Timeout occured while trying to connect to middleware
+
+The ping application failed to run, use -v for full error backtrace details: execution expired
+{% endhighlight %}
+
+This is complementary to the `plugin.activemq.max_reconnect_attempts`
+or `plugin.rabbitmq.max_reconnect_attempts` parameters available to the
+activemq and rabbitmq connectors.
+
+
+### STOMP 1.1 heart-beat values
+
+The initial default values for `plugin.activemq.max_hbrlck_fails` and
+`plugin.rabbitmq.max_hbrlck_fails` have been changed to 0.  This is
+more appropriate for MCollective's usage pattern as the main receiver
+thread will block the heartbeat threads ability to claim the read
+lock on the connector socket.
+
+If you have previously specified a value for this parameter, we
+suggest you use the new default of 0.
+
+
+### lib layout and `mco plugin package`
+
+The traditional way to layout an MCollective plugin in your source
+repository is what we are now referring to as 'flat' layout, and looks
+like this:
+
+{% highlight console %}
+$ tree
+.
+├── agent
+│   ├── flat.ddl
+│   └── flat.rb
+└── spec
+    └── unit
+        └── flat_agent_spec.rb
+{% endhighlight %}
+
+
+A similar agent plugin in lib layout will look like this:
+
+{% highlight console %}
+$ tree
+.
+├── lib
+│   └── mcollective
+│       └── agent
+│           ├── lib.ddl
+│           └── lib.rb
+└── spec
+    └── unit
+        └── mcollective
+            └── agent
+                └── lib_spec.rb
+{% endhighlight %}
+
+You'll see that under lib layout the paths now more closely match the
+namespaces in the files, and also the structure you use when
+installing the agent onto a target system.  This means that you can
+more readily test a plugin under development by adding something like
+the following to your configuration files:
+
+{% highlight ini %}
+libdir = /usr/src/mcollective-libdemo-agent/lib
+{% endhighlight %}
+
+In order to allow you to adopt lib layout more easily, `mco plugin
+package` has been updated to support it.
+
+### implemented_by path changes
+
+As originally written, the `implemented_by $command` feature searches
+for the command in `$libdir/agent/$agentname/$command` when the path
+is not fully-qualified.  This was potentially confusing as the main
+agent implementation file is in
+`$libdir/mcollective/agent/$agentname.rb`.
+
+With this release we now search
+`$libdir/mcollective/agent/$agentname/$command` in addition to
+`$libdir/agent/$agentname/$command`, and will invoke the command from
+the former location if the command exists in both locations.
+
+In MCollective 2.8.0 we will warn more strongly if we find a the
+external helper in both locations, and remove the search of the old
+path in 2.9.0.
+
+
+### Bug fixes since 2.6.1
+
+* Exceptions raised in the runner are now re-raised in the main thread
+* Windows service_manager.rb now more aggressively tests for a ruby binary, avoiding broken installs
+
+
+### Changes since 2.6.1
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2014/11/24|Revisit STOMP 1.1 heart-beat defaults|MCO-522|
+|2014/11/18|Log the senderid of messages at debug|MCO-521|
+|2014/11/11|Add a --connection-timeout to the client options|MCO-464|
+|2014/11/11|Add search of `$libdir/mcollective/agent/$agent/$action` to `implemented_by`|MCO-466|
+|2014/11/10|`mco plugin package` support for 'lib' layout|MCO-314|
+|2014/10/28|Add rubocop style checks to the codebase|MCO-136|
+|2014/10/22|Expose target collective to custom discovery plugins|MCO-456|
+|2014/10/13|Make windows service_manager.rb helper more vigorous in finding ruby|MCO-465|
+|2014/10/02|Reraise exceptions caught by the runner thread in the main thread|MCO-475|
+|2014/10/01|Add a collective data plugin|MCO-472|
+|2014/10/01|Update windows scripts to pass --daemonize to daemon|MCO-474|
+|2014/09/20|Report the version of stomp gem at startup|MCO-470|
+|2014/09/19|Removed vendoring of the json gem|MCO-457|
+
+
 <a name="2_6_1">&nbsp;</a>
 
 ## 2.6.1 - 2014/10/29
@@ -42,7 +205,7 @@ strings mean.
 https://www.openssl.org/docs/apps/ciphers.html#CIPHER_STRINGS
 
 
-### Changes since 2.6.1
+### Changes since 2.6.0
 
 |Date|Description|Ticket|
 |----|-----------|------|
