@@ -134,7 +134,7 @@ module MCollective
           connection[:timeout] = Integer(get_option("rabbitmq.timeout", -1))
           connection[:connect_timeout] = Integer(get_option("rabbitmq.connect_timeout", 30))
           connection[:reliable] = true
-          connection[:max_hbrlck_fails] = Integer(get_option("rabbitmq.max_hbrlck_fails", 2))
+          connection[:max_hbrlck_fails] = Integer(get_option("rabbitmq.max_hbrlck_fails", 0))
           connection[:max_hbread_fails] = Integer(get_option("rabbitmq.max_hbread_fails", 2))
 
           connection[:connect_headers] = connection_headers

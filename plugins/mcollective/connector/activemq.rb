@@ -240,7 +240,7 @@ module MCollective
           connection[:connect_timeout] = Integer(get_option("activemq.connect_timeout", 30))
           connection[:reliable] = true
           connection[:connect_headers] = connection_headers
-          connection[:max_hbrlck_fails] = Integer(get_option("activemq.max_hbrlck_fails", 2))
+          connection[:max_hbrlck_fails] = Integer(get_option("activemq.max_hbrlck_fails", 0))
           connection[:max_hbread_fails] = Integer(get_option("activemq.max_hbread_fails", 2))
 
           connection[:logger] = EventLogger.new

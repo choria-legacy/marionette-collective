@@ -110,7 +110,7 @@ module MCollective
           Activemq.any_instance.stubs(:get_bool_option).with("activemq.backup", "false").returns(true)
           Activemq.any_instance.stubs(:get_option).with("activemq.timeout", -1).returns(1)
           Activemq.any_instance.stubs(:get_option).with("activemq.connect_timeout", 30).returns(5)
-          Activemq.any_instance.stubs(:get_option).with("activemq.max_hbrlck_fails", 2).returns(2)
+          Activemq.any_instance.stubs(:get_option).with("activemq.max_hbrlck_fails", 0).returns(0)
           Activemq.any_instance.stubs(:get_option).with("activemq.max_hbread_fails", 2).returns(2)
           Activemq.any_instance.stubs(:get_bool_option).with("activemq.base64", 'false').returns(false)
           Activemq.any_instance.stubs(:get_option).with("activemq.priority", 0).returns(0)
@@ -150,8 +150,8 @@ module MCollective
                                        :use_exponential_back_off => true,
                                        :max_reconnect_attempts => 5,
                                        :initial_reconnect_delay => 0.01,
+                                       :max_hbrlck_fails => 0,
                                        :max_hbread_fails => 2,
-                                       :max_hbrlck_fails => 2,
                                        :randomize => true,
                                        :reliable => true,
                                        :logger => "logger",
