@@ -47,7 +47,27 @@ module MCollective
 
         # Stomp 1.1+ - heart beat read (receive) failed.
         def on_hbread_fail(params, ticker_data)
-          Log.error("Heartbeat read failed from '%s': %s" % [stomp_url(params), ticker_data.inspect])
+          if ticker_data["lock_fail"]
+            if params[:max_hbrlck_fails] == 0
+              # failure is disabled
+              Log.debug("Heartbeat failed to acquire readlock for '%s': %s" % [stomp_url(params), ticker_data.inspect])
+            elsif ticker_data['lock_fail_count'] >= params[:max_hbrlck_fails]
+              # we're about to force a disconnect
+              Log.error("Heartbeat failed to acquire readlock for '%s': %s" % [stomp_url(params), ticker_data.inspect])
+            else
+              Log.warn("Heartbeat failed to acquire readlock for '%s': %s" % [stomp_url(params), ticker_data.inspect])
+            end
+          else
+            if params[:max_hbread_fails] == 0
+              # failure is disabled
+              Log.debug("Heartbeat read failed from '%s': %s" % [stomp_url(params), ticker_data.inspect])
+            elsif ticker_data['read_fail_count'] >= params[:max_hbread_fails]
+              # we're about to force a reconnect
+              Log.error("Heartbeat read failed from '%s': %s" % [stomp_url(params), ticker_data.inspect])
+            else
+              Log.warn("Heartbeat read failed from '%s': %s" % [stomp_url(params), ticker_data.inspect])
+            end
+          end
         rescue Exception => e
         end
 
