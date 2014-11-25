@@ -115,6 +115,10 @@ As an example, here are the platform-appropriate destinations for two of the fil
 
 Most public MCollective plugins are developed and published in a source repository (e.g. on GitHub) that mimics the structure of the `<LIBDIR>/mcollective` directory --- that is, the repo will have an `agent` directory, an `application` directory, etc. You can ignore any Rakefiles, READMEs, or `spec` directories.
 
+If you come across a repository that has `lib` at the top level you
+will need to treat lib/mcollective as the repository root and then
+continue with the following instructions.
+
 > **Note:** Servers and clients will not need every file for a given _plugin set_ --- you can consult [the plugin types table above][types_onpage] to see which parts should go where.
 >
 > Alternately, you can just copy everything in the plugin's repo to every client and server --- nothing bad will happen from installing unused components.
