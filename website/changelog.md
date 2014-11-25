@@ -4,6 +4,24 @@ title: Changelog
 toc: false
 ---
 
+## Version 2.7.x
+|Date|Description|Ticket|
+|----|-----------|------|
+|2014/12/02|Release *2.7.0*|MCO-525|
+|2014/11/24|Revisit STOMP 1.1 heart-beat defaults|MCO-522|
+|2014/11/18|Log the senderid of messages at debug|MCO-521|
+|2014/11/11|Add a --connection-timeout to the client options|MCO-464|
+|2014/11/11|Add search of `$libdir/mcollective/agent/$agent/$action` to `implemented_by`|MCO-466|
+|2014/11/10|`mco plugin package` support for 'lib' layout|MCO-314|
+|2014/10/28|Add rubocop style checks to the codebase|MCO-136|
+|2014/10/22|Expose target collective to custom discovery plugins|MCO-456|
+|2014/10/13|Make windows service_manager.rb helper more vigorous in finding ruby|MCO-465|
+|2014/10/02|Reraise exceptions caught by the runner thread in the main thread|MCO-475|
+|2014/10/01|Add a collective data plugin|MCO-472|
+|2014/10/01|Update windows scripts to pass --daemonize to daemon|MCO-474|
+|2014/09/20|Report the version of stomp gem at startup|MCO-470|
+|2014/09/19|Removed vendoring of the json gem|MCO-457|
+
 
 ## Version 2.6.x
 

@@ -115,7 +115,7 @@ plugin.activemq.stomp_1_0_fallback = 0
 plugin.activemq.max_hbread_fails = 2
 
 # Maximum amount of heartbeat lock obtain failures before retrying. 0 means never retry.
-plugin.activemq.max_hbrlck_fails = 2
+plugin.activemq.max_hbrlck_fails = 0
 {% endhighlight %}
 
 This feature is avaiable from version 2.4.0 and requires version
@@ -199,9 +199,10 @@ connection is dead and reconnecting.
 #### `plugin.activemq.max_hbrlck_fails`
 
 Maximum amount of heartbeat lock obtain failures before assuming the
-connection is dead and reconnecting.
+connection is dead and reconnecting.  This setting is best left at 0
+due to MCollective's usage patterns.
 
-- _Default:_ 2
+- _Default:_ 0
 - _Allowed values:_ Any integer
 
 #### `plugin.activemq.priority`

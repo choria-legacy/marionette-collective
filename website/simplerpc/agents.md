@@ -297,7 +297,10 @@ action "test" do
 end
 {% endhighlight %}
 
-This will search each configured libdir for `libdir/agent/agent_name/script.py`. If you specified a full path it will not try to find the file in libdirs.
+This will search each configured libdir for
+`mcollective/agent/$agent_name/script.py` and
+`agent/$agent_name/script.py`, and will use the former if found. If you
+specified a full path it will not try to find the file in libdirs.
 
 
 ## Constructing Replies

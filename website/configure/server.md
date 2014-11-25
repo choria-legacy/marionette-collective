@@ -63,7 +63,7 @@ plugin.activemq.pool.1.ssl.fallback = 0
 plugin.activemq.stomp_1_0_fallback = 0
 plugin.activemq.heartbeat_interval = 30
 plugin.activemq.max_hbread_fails = 2
-plugin.activemq.max_hbrlck_fails = 2
+plugin.activemq.max_hbrlck_fails = 0
 
 # <a href="#rabbitmq-connector-settings">RabbitMQ connector settings:</a>
 plugin.rabbitmq.vhost = /mcollective
@@ -267,7 +267,7 @@ plugin.activemq.pool.1.ssl.fallback = 0
 plugin.activemq.stomp_1_0_fallback = 0
 plugin.activemq.heartbeat_interval = 30
 plugin.activemq.max_hbread_fails = 2
-plugin.activemq.max_hbrlck_fails = 2
+plugin.activemq.max_hbrlck_fails = 0
 
 # <a href="#rabbitmq-connector-settings">RabbitMQ connector settings:</a>
 plugin.rabbitmq.vhost = /mcollective

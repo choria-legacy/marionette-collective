@@ -44,6 +44,7 @@ The following is an example MCollective client config file showing all of the ma
 <a href="#directaddressing">direct_addressing</a> = 1
 
 # <a href="#activemq-connector-settings">ActiveMQ connector settings:</a>
+plugin.activemq.max_reconnect_attempts = 5
 plugin.activemq.pool.size = 1
 plugin.activemq.pool.1.host = middleware.example.net
 plugin.activemq.pool.1.port = 61614
@@ -90,6 +91,7 @@ plugin.psk = j9q8kx7fnuied9e
 <a href="#discovery_timeout">discovery_timeout</a> = 2
 <a href="#publish_timeout">publish_timeout</a> = 2
 <a href="#threaded">threaded</a> = false
+<a href="#connectiontimeout">connection_timeout</a> = 3
 
 # <a href="#miscellaneous">Miscellaneous settings:</a>
 
@@ -422,6 +424,14 @@ nodes that can be addressed at one time when using direct addressing.
 
 - _Default_: `false`
 - _Allowed values:_ Any boolean value
+
+#### `connection_timeout`
+
+If specified, the client will abort if the connection has not been
+established after `connection_timeout` seconds.
+
+- _Default_: unspecified (no timeout)
+- _Allowed values:_ Any positive integer
 
 ### Miscellaneous
 
