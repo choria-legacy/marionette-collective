@@ -2428,7 +2428,7 @@ Special thanks to the community members who contributed the wrappers.
 ### Enhancements
 
  * Actions can now be written in any language
- * Plugin configuration can be kept in _/etc/mcollective/plugin.d_
+ * Plugin configuration can be kept in _/etc/puppetlabs/agent/mcollective/plugin.d_
  * _mco inventory_ now shows collective and sub-collective membership
  * mc-controller has been deprecated for _mco controller_
  * Agents are now ran using new instances of the classes rather than reuse the exiting
@@ -2995,7 +2995,7 @@ This is a bug fix and minor improvement release.
 
 ### Notable New Features
 
- * Users can now have a _~/.mcollective_ file which will be preferred over over _/etc/mcollective/client.cfg_ if it exists.  You can still use _--config_ to override.
+ * Users can now have a _~/.mcollective_ file which will be preferred over over _/etc/puppetlabs/agent/mcollective/client.cfg_ if it exists.  You can still use _--config_ to override.
 
  * The SSL Security plugin can now use "either YAML or Marshal for serialization":/reference/plugins/security_ssl.html#serialization_method, this means other programming languages can be used as clients.  A sample Perl client is included in the ext directory.  Marshal remains the default for backwards compatibility
 

@@ -247,18 +247,18 @@ To configure servers, you'll need to:
 [As mentioned above in Step 1][step1], servers need the CA, an individual certificate and key, the shared server keypair, and every authorized client certificate.
 
 * If you're using Puppet, the CA, individual cert, and individual key are already present.
-* Put a copy of the shared public key at `/etc/mcollective/server_public.pem`.
-* Put a copy of the shared private key at `/etc/mcollective/server_private.pem`.
-* Create a `/etc/mcollective/clients` directory and put a copy of every client certificate in it. You will need to maintain this directory centrally, and keep it up to date on every server as you add and delete admin users. (E.g. as a [file resource][file] with `ensure => directory, recurse => true`.)
+* Put a copy of the shared public key at `/etc/puppetlabs/agent/mcollective/server_public.pem`.
+* Put a copy of the shared private key at `/etc/puppetlabs/agent/mcollective/server_private.pem`.
+* Create a `/etc/puppetlabs/agent/mcollective/clients` directory and put a copy of every client certificate in it. You will need to maintain this directory centrally, and keep it up to date on every server as you add and delete admin users. (E.g. as a [file resource][file] with `ensure => directory, recurse => true`.)
 
 ### Populate the Fact File
 
-Every MCollective server will need to populate the `/etc/mcollective/facts.yaml` file with a cache of its facts. (You can get by without this file, but doing so will limit your ability to filter requests.)
+Every MCollective server will need to populate the `/etc/puppetlabs/agent/mcollective/facts.yaml` file with a cache of its facts. (You can get by without this file, but doing so will limit your ability to filter requests.)
 
 Make sure you include a resource like the following in the Puppet code you're using to deploy MCollective:
 
 {% highlight ruby %}
-    file{"/etc/mcollective/facts.yaml":
+    file{"/etc/puppetlabs/agent/mcollective/facts.yaml":
       owner    => root,
       group    => root,
       mode     => 400,
@@ -269,7 +269,7 @@ Make sure you include a resource like the following in the Puppet code you're us
 
 ### Write the Server Config File
 
-The server config file is located at `/etc/mcollective/server.cfg`.
+The server config file is located at `/etc/puppetlabs/agent/mcollective/server.cfg`.
 
 [as_resources]: /mcollective/configure/server.html#best-practices
 
@@ -287,7 +287,7 @@ This example template snippet shows the settings you need to use in a standard d
 
     {% highlight erb %}
     <% ssldir = '/var/lib/puppet/ssl' %>
-    # /etc/mcollective/server.cfg
+    # /etc/puppetlabs/agent/mcollective/server.cfg
 
     # ActiveMQ connector settings:
     connector = activemq
@@ -305,14 +305,14 @@ This example template snippet shows the settings you need to use in a standard d
 
     # SSL security plugin settings:
     securityprovider = ssl
-    plugin.ssl_client_cert_dir = /etc/mcollective/clients
-    plugin.ssl_server_private = /etc/mcollective/server_private.pem
-    plugin.ssl_server_public = /etc/mcollective/server_public.pem
+    plugin.ssl_client_cert_dir = /etc/puppetlabs/agent/mcollective/clients
+    plugin.ssl_server_private = /etc/puppetlabs/agent/mcollective/server_private.pem
+    plugin.ssl_server_public = /etc/puppetlabs/agent/mcollective/server_public.pem
 
     # Facts, identity, and classes:
     identity = <%= scope.lookupvar('::fqdn') %>
     factsource = yaml
-    plugin.yaml = /etc/mcollective/facts.yaml
+    plugin.yaml = /etc/puppetlabs/agent/mcollective/facts.yaml
     classesfile = /var/lib/puppet/state/classes.txt
 
     # No additional subcollectives:
@@ -424,7 +424,7 @@ After all these steps, and following a Puppet run on each MCollective server, th
 
 ### Write the Client Config File
 
-For admin users running commands on a workstation, the client config file is located at `~/.mcollective`. For system users (e.g. for use in automated scripts), it is located at `/etc/mcollective/client.cfg`.
+For admin users running commands on a workstation, the client config file is located at `~/.mcollective`. For system users (e.g. for use in automated scripts), it is located at `/etc/puppetlabs/agent/mcollective/client.cfg`.
 
 > See the [client configuration reference][client_config] for complete details about the client config file, including its format and available settings.
 
@@ -443,7 +443,7 @@ After receiving this partial config file, a new user should fill out the credent
 
     # ~/.mcollective
     # or
-    # /etc/mcollective/client.cfg
+    # /etc/puppetlabs/agent/mcollective/client.cfg
 
     # ActiveMQ connector settings:
     connector = activemq
@@ -481,7 +481,7 @@ After receiving this partial config file, a new user should fill out the credent
     # by the package should include correct values or omit the setting if the
     # default value is fine.
     libdir = /usr/libexec/mcollective
-    helptemplatedir = /etc/mcollective
+    helptemplatedir = /etc/puppetlabs/agent/mcollective
 
     # Logging:
     logger_type = console

@@ -127,7 +127,7 @@ A machine can be both at once, in which case you need to install all 3 packages.
 
 
 ## Configuring
-You'll need to tweak some configs in */etc/mcollective/client.cfg*, a full reference of config settings can be
+You'll need to tweak some configs in */etc/puppetlabs/agent/mcollective/client.cfg*, a full reference of config settings can be
 found [here][ConfigurationReference]:
 
 We're assuming you called the machine running ActiveMQ *stomp.example.net*; please change as appropriate. Also note that the port should be 61614 if you turned on TLS.
@@ -151,7 +151,7 @@ We're assuming you called the machine running ActiveMQ *stomp.example.net*; plea
   plugin.psk = abcdefghj
 {% endhighlight %}
 
-You should also create _/etc/mcollective/server.cfg_ here's a sample, a full reference of config settings can be found on the [Server Configuration Reference][server_config]:
+You should also create _/etc/puppetlabs/agent/mcollective/server.cfg_ here's a sample, a full reference of config settings can be found on the [Server Configuration Reference][server_config]:
 
 {% highlight ini %}
   # main config
@@ -171,7 +171,7 @@ You should also create _/etc/mcollective/server.cfg_ here's a sample, a full ref
 
   # facts
   factsource = yaml
-  plugin.yaml = /etc/mcollective/facts.yaml
+  plugin.yaml = /etc/puppetlabs/agent/mcollective/facts.yaml
 
   # security plugin config
   securityprovider = psk
@@ -183,7 +183,7 @@ Replace the *plugin.psk* in both these files with a Pre-Shared Key of your own.
 ### Create Facts
 By default - and for this setup - we'll use a simple YAML file for a fact source, later on you can use Puppet Labs Facter or something else.
 
-Create */etc/mcollective/facts.yaml* along these lines:
+Create */etc/puppetlabs/agent/mcollective/facts.yaml* along these lines:
 
 {% highlight yaml %}
   ---

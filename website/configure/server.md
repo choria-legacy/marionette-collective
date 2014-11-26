@@ -41,7 +41,7 @@ The following is an example MCollective server config file showing all of the ma
 
 [See below the example for a full description of the config file location and format.](#the-server-config-files)
 
-<pre><code># /etc/mcollective/server.cfg
+<pre><code># /etc/puppetlabs/agent/mcollective/server.cfg
 
 # <a href="#connector-settings">Connector settings (required):</a>
 # -----------------------------
@@ -77,9 +77,9 @@ plugin.rabbitmq.pool.1.host = middleware.example.net
 <a href="#securityprovider">securityprovider</a> = ssl
 
 # <a href="#ssl-plugin-settings">SSL plugin settings:</a>
-plugin.ssl_client_cert_dir = /etc/mcollective.d/clients
-plugin.ssl_server_private = /etc/mcollective.d/server_private.pem
-plugin.ssl_server_public = /etc/mcollective.d/server_public.pem
+plugin.ssl_client_cert_dir = /etc/puppetlabs/agent/mcollective.d/clients
+plugin.ssl_server_private = /etc/puppetlabs/agent/mcollective.d/server_private.pem
+plugin.ssl_server_public = /etc/puppetlabs/agent/mcollective.d/server_public.pem
 
 # <a href="#psk-plugin-settings">PSK plugin settings:</a>
 plugin.psk = j9q8kx7fnuied9e
@@ -88,7 +88,7 @@ plugin.psk = j9q8kx7fnuied9e
 # ------------------------------------------
 
 <a href="#factsource">factsource</a> = yaml
-<a href="#pluginyaml">plugin.yaml</a> = /etc/mcollective/facts.yaml
+<a href="#pluginyaml">plugin.yaml</a> = /etc/puppetlabs/agent/mcollective/facts.yaml
 <a href="#factcachetime">fact_cache_time</a> = 300
 
 <a href="#identity">identity</a> = web01.example.com
@@ -157,7 +157,7 @@ The Server Config File(s)
 
 ### Main Config File
 
-MCollective servers are configured with the `/etc/mcollective/server.cfg` file. It contains MCollective's core settings, as well as settings for the various plugins.
+MCollective servers are configured with the `/etc/puppetlabs/agent/mcollective/server.cfg` file. It contains MCollective's core settings, as well as settings for the various plugins.
 
 > **Warning:** This file contains sensitive credentials, and should only be readable by the root user, or whatever user the MCollective daemon runs as.
 
@@ -176,16 +176,16 @@ The spaces on either side of the equals sign are optional. Lines starting with a
 
 ### Plugin Config Directory (Optional)
 
-Many of MCollective's settings are named with the format `plugin.<NAME>.<SETTING_NAME>`. These settings can optionally be put in separate files, in the `/etc/mcollective/plugin.d/` directory.
+Many of MCollective's settings are named with the format `plugin.<NAME>.<SETTING_NAME>`. These settings can optionally be put in separate files, in the `/etc/puppetlabs/agent/mcollective/plugin.d/` directory.
 
-To move a `plugin.<NAME>.<SETTING_NAME>` setting to an external file, put it in `/etc/mcollective/plugin.d/<NAME>.cfg`, and use only the `<SETTING_NAME>` segment of the setting. So this:
+To move a `plugin.<NAME>.<SETTING_NAME>` setting to an external file, put it in `/etc/puppetlabs/agent/mcollective/plugin.d/<NAME>.cfg`, and use only the `<SETTING_NAME>` segment of the setting. So this:
 
-    # /etc/mcollective/server.cfg
+    # /etc/puppetlabs/agent/mcollective/server.cfg
     plugin.puppet.splay = true
 
 ...is equivalent to:
 
-    # /etc/mcollective/plugin.d/puppet.cfg
+    # /etc/puppetlabs/agent/mcollective/plugin.d/puppet.cfg
     splay = true
 
 Note that this doesn't work for settings like `plugin.psk`, since they have no `<SETTING_NAME>` segment; a setting must have at least three segments to go in a plugin.cfg file.
@@ -202,7 +202,7 @@ Below is an example of how to do this using the `file_line` type from the [puppe
 
 {% highlight ruby %}
     # /etc/puppet/modules/mcollective/manifests/setting.pp
-    define mcollective::setting ($setting = $title, $target = '/etc/mcollective/server.cfg', $value) {
+    define mcollective::setting ($setting = $title, $target = '/etc/puppetlabs/agent/mcollective/server.cfg', $value) {
       validate_re($target, '\/(plugin\.d\/[a-z]+|server)\.cfg\Z')
       $regex_escaped_setting = regsubst($setting, '\.', '\\.', 'G') # assume dots are the only regex-unsafe chars in a setting name.
 
@@ -346,9 +346,9 @@ The RabbitMQ connector uses very similar settings to the ActiveMQ connector, wit
 <pre><code><a href="#securityprovider">securityprovider</a> = ssl
 
 # <a href="#ssl-plugin-settings">SSL plugin settings:</a>
-plugin.ssl_client_cert_dir = /etc/mcollective/clients
-plugin.ssl_server_private = /etc/mcollective/server_private.pem
-plugin.ssl_server_public = /etc/mcollective/server_public.pem
+plugin.ssl_client_cert_dir = /etc/puppetlabs/agent/mcollective/clients
+plugin.ssl_server_private = /etc/puppetlabs/agent/mcollective/server_private.pem
+plugin.ssl_server_public = /etc/puppetlabs/agent/mcollective/server_public.pem
 
 # <a href="#psk-plugin-settings">PSK plugin settings:</a>
 plugin.psk = j9q8kx7fnuied9e
@@ -415,7 +415,7 @@ Recommended Features
 ### Facts, Identity, and Classes
 
 <pre><code><a href="#factsource">factsource</a> = yaml
-<a href="#pluginyaml">plugin.yaml</a> = /etc/mcollective/facts.yaml
+<a href="#pluginyaml">plugin.yaml</a> = /etc/puppetlabs/agent/mcollective/facts.yaml
 <a href="#factcachetime">fact_cache_time</a> = 300
 
 <a href="#identity">identity</a> = web01.example.com
@@ -467,7 +467,7 @@ _When `factsource == yaml`_
 The fact file(s) to load for [the default `yaml` fact plugin](#factsource).
 
 - _Default:_ (nothing)
-- _Sample value:_ `/etc/mcollective/facts.yaml`
+- _Sample value:_ `/etc/puppetlabs/agent/mcollective/facts.yaml`
 - _Valid values:_ A single path, or a list of paths separated by the {{ path_separator }}.
 
 **Notes:**
@@ -480,7 +480,7 @@ If you are using Puppet and Facter, you can populate it by putting something lik
 
 {% highlight ruby %}
     # /etc/puppet/manifests/site.pp
-    file{"/etc/mcollective/facts.yaml":
+    file{"/etc/puppetlabs/agent/mcollective/facts.yaml":
       owner    => root,
       group    => root,
       mode     => 400,

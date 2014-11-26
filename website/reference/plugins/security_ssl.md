@@ -40,16 +40,16 @@ The certificate names must match /\w\.\-/.
  % openssl rsa -in server-private.pem -out server-public.pem -outform PEM -pubout
 {% endhighlight %}
 
-Distribute the private and public file to */etc/mcollective/ssl* on all the nodes.
-Distribute the public file to */etc/mcollective/ssl* everywhere the client code runs.
+Distribute the private and public file to */etc/puppetlabs/agent/mcollective/ssl* on all the nodes.
+Distribute the public file to */etc/puppetlabs/agent/mcollective/ssl* everywhere the client code runs.
 
 server.cfg:
 
 {% highlight ini %}
   securityprovider = ssl
-  plugin.ssl_server_private = /etc/mcollective/ssl/server-private.pem
-  plugin.ssl_server_public = /etc/mcollective/ssl/server-public.pem
-  plugin.ssl_client_cert_dir = /etc/mcollective/ssl/clients/
+  plugin.ssl_server_private = /etc/puppetlabs/agent/mcollective/ssl/server-private.pem
+  plugin.ssl_server_public = /etc/puppetlabs/agent/mcollective/ssl/server-public.pem
+  plugin.ssl_client_cert_dir = /etc/puppetlabs/agent/mcollective/ssl/clients/
 {% endhighlight %}
 
 TTL and Message Times are protected by default 2.0.0, this means older clients will not be able to
@@ -86,7 +86,7 @@ Every users public key needs to be distributed to all the nodes, save the john o
 in a file called:
 
 {% highlight console %}
-  /etc/mcollective/ssl/clients/john-public.pem
+  /etc/puppetlabs/agent/mcollective/ssl/clients/john-public.pem
 {% endhighlight %}
 
 If you wish to use [Registration][] or auditing that sends connections over MC to a
@@ -100,7 +100,7 @@ client.cfg:
 
 {% highlight ini %}
  securityprovider = ssl
- plugin.ssl_server_public = /etc/mcollective/ssl/server-public.pem
+ plugin.ssl_server_public = /etc/puppetlabs/agent/mcollective/ssl/server-public.pem
  plugin.ssl_client_private = /home/john/.mc/john-private.pem
  plugin.ssl_client_public = /home/john/.mc/john-public.pem
 {% endhighlight %}

@@ -282,7 +282,7 @@ Inventory for some.node:
    Server Statistics:
                       Version: 0.4.10
                    Start Time: Mon Nov 29 16:38:28 +0000 2010
-                  Config File: /etc/mcollective/server.cfg
+                  Config File: /etc/puppetlabs/agent/mcollective/server.cfg
                    Process ID: 5387
                Total Messages: 10196
       Messages Passed Filters: 7108
