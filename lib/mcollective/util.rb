@@ -153,7 +153,7 @@ module MCollective
     end
 
     # Picks a config file defaults to ~/.mcollective
-    # else /etc/mcollective/client.cfg
+    # else /etc/puppetlabs/agent/mcollective/client.cfg
     def self.config_file_for_user
       # expand_path is pretty lame, it relies on HOME environment
       # which isnt't always there so just handling all exceptions
@@ -165,14 +165,14 @@ module MCollective
           if self.windows?
             config = File.join(self.windows_prefix, "etc", "client.cfg")
           else
-            config = "/etc/mcollective/client.cfg"
+            config = "/etc/puppetlabs/agent/mcollective/client.cfg"
           end
         end
       rescue Exception => e
         if self.windows?
           config = File.join(self.windows_prefix, "etc", "client.cfg")
         else
-          config = "/etc/mcollective/client.cfg"
+          config = "/etc/puppetlabs/agent/mcollective/client.cfg"
         end
       end
 
@@ -500,7 +500,7 @@ module MCollective
       template_path = File.join(config_dir, template_file)
       return template_path if File.exists?(template_path)
 
-      template_path = File.join("/etc/mcollective", template_file)
+      template_path = File.join("/etc/puppetlabs/agent/mcollective", template_file)
       return template_path
     end
 

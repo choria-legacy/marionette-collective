@@ -18,8 +18,8 @@ module MCollective
     #   openssl genrsa -out mcserver-private.pem 1024
     #   openssl rsa -in mcserver-private.pem -out mcserver-public.pem -outform PEM -pubout
     #
-    # Distribute the private and public file to /etc/mcollective/ssl on all the nodes.
-    # Distribute the public file to /etc/mcollective/ssl everywhere the client code runs.
+    # Distribute the private and public file to /etc/puppetlabs/agent/mcollective/ssl on all the nodes.
+    # Distribute the public file to /etc/puppetlabs/agent/mcollective/ssl everywhere the client code runs.
     #
     # Now you should create a key pair for every one of your clients, here we create one
     # for user john - you could also if you are less concerned with client id create one
@@ -39,7 +39,7 @@ module MCollective
     # Every users public key needs to be distributed to all the nodes, save the john one
     # in a file called:
     #
-    #   /etc/mcollective/ssl/clients/john-public.pem
+    #   /etc/puppetlabs/agent/mcollective/ssl/clients/john-public.pem
     #
     # If you wish to use registration or auditing that sends connections over MC to a
     # central host you will need also put the server-public.pem in the clients directory.
@@ -51,7 +51,7 @@ module MCollective
     # client.cfg:
     #
     #   securityprovider = ssl
-    #   plugin.ssl_server_public = /etc/mcollective/ssl/server-public.pem
+    #   plugin.ssl_server_public = /etc/puppetlabs/agent/mcollective/ssl/server-public.pem
     #   plugin.ssl_client_private = /home/john/.mc/john-private.pem
     #   plugin.ssl_client_public = /home/john/.mc/john-public.pem
     #
@@ -64,9 +64,9 @@ module MCollective
     # server.cfg:
     #
     #   securityprovider = ssl
-    #   plugin.ssl_server_private = /etc/mcollective/ssl/server-private.pem
-    #   plugin.ssl_server_public = /etc/mcollective/ssl/server-public.pem
-    #   plugin.ssl_client_cert_dir = /etc/mcollective/etc/ssl/clients/
+    #   plugin.ssl_server_private = /etc/puppetlabs/agent/mcollective/ssl/server-private.pem
+    #   plugin.ssl_server_public = /etc/puppetlabs/agent/mcollective/ssl/server-public.pem
+    #   plugin.ssl_client_cert_dir = /etc/puppetlabs/agent/mcollective/etc/ssl/clients/
     #
     #   # Log but accept messages that may have been tampered with
     #   plugin.ssl.enforce_ttl = 0

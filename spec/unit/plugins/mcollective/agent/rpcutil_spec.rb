@@ -75,13 +75,13 @@ module MCollective
                    :agents => ['agent1', 'agent2'],
                    :pid => 42,
                    :times => 12345,
-                   :configfile => '/etc/mcollective/server.cfg',
+                   :configfile => '/etc/puppetlabs/agent/mcollective/server.cfg',
                    :version => '2.4.0',
                    :stats => {}}
           config = mock
           Config.stubs(:instance).returns(config)
           MCollective.stubs(:version).returns('2.4.0')
-          config.stubs(:configfile).returns('/etc/mcollective/server.cfg')
+          config.stubs(:configfile).returns('/etc/puppetlabs/agent/mcollective/server.cfg')
           PluginManager.stubs(:[]).returns(stats)
           result = @agent.call(:daemon_stats)
           result.should be_successful
