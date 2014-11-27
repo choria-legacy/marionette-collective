@@ -27,8 +27,8 @@ uid=`id -u`
 pidfile="/var/run/mcollectived.pid"
 
 name="mcollective"
-mcollectived=/usr/sbin/mcollectived
-daemonopts="--pid=${pidfile}  --config=/etc/mcollective/server.cfg"
+mcollectived=/opt/puppetlabs/agent/bin/mcollectived
+daemonopts="--pid=${pidfile} --config=/etc/puppetlabs/agent/mcollective/server.cfg"
 
 
 # Source function library.
