@@ -11,7 +11,7 @@ configfile = ENV["SERVER_CONFIG"]
 # @return [String, nil]
 def find_ruby_in_path
   ENV["PATH"].split(File::PATH_SEPARATOR).each do |path|
-    ruby = File.join(path, "ruby.exe")
+    ruby = File.join(path, "rubyw.exe")
 
     if File.exist?(ruby)
       return ruby
