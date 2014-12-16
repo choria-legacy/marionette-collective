@@ -11,3 +11,5 @@ pkg
 Gemfile.lock
 .bundle
 ext/packaging
+.idea
+Gemfile.local
