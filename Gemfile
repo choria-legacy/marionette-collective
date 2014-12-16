@@ -15,3 +15,7 @@ group :test do
   gem 'mocha', '~> 0.10.0'
   gem 'mcollective-test'
 end
+
+if File.exists? "#{__FILE__}.local"
+  eval(File.read("#{__FILE__}.local"), binding)
+end
