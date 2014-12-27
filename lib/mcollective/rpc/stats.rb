@@ -39,7 +39,6 @@ module MCollective
          :totaltime         => @totaltime,
          :discovered        => @discovered,
          :discovered_nodes  => @discovered_nodes,
-         :noresponsefrom    => @noresponsefrom,
          :okcount           => @okcount,
          :requestid         => @requestid,
          :failcount         => @failcount,
