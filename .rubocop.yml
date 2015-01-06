@@ -9,6 +9,7 @@ AllCops:
     - 'ext/packaging/**/*'
     - 'spec/**/*'
     - 'tasks/**/*'
+    - 'lib/mcollective/vendor/**/*'
 
 Lint/ConditionPosition:
   Enabled: true
