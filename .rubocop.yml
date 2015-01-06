@@ -43,6 +43,8 @@ Lint/ShadowingOuterLocalVariable:
 Lint/LiteralInInterpolation:
   Enabled: true
 
+Style/EmptyElse:
+  Enabled: false
 
 # DISABLED really useless. Detects return as last statement.
 Style/RedundantReturn:
