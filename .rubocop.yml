@@ -336,7 +336,16 @@ Style/EmptyLines:
 Style/EmptyLinesAroundAccessModifier:
   Enabled: false
 
-Style/EmptyLinesAroundBody:
+Style/EmptyLinesAroundBlockBody:
+  Enabled: false
+
+Style/EmptyLinesAroundMethodBody:
+  Enabled: false
+
+Style/EmptyLinesAroundClassBody:
+  Enabled: false
+
+Style/EmptyLinesAroundModuleBody:
   Enabled: false
 
 Style/EmptyLiteral:
