@@ -9,6 +9,7 @@ AllCops:
     - 'ext/packaging/**/*'
     - 'spec/**/*'
     - 'tasks/**/*'
+    - 'lib/mcollective/vendor/**/*'
 
 Lint/ConditionPosition:
   Enabled: true
@@ -42,6 +43,8 @@ Lint/ShadowingOuterLocalVariable:
 Lint/LiteralInInterpolation:
   Enabled: true
 
+Style/EmptyElse:
+  Enabled: false
 
 # DISABLED really useless. Detects return as last statement.
 Style/RedundantReturn:
@@ -55,6 +58,9 @@ Lint/AmbiguousOperator:
 # TODO: Change the checking so that if the variable being assigned to has
 # a value ALREADY, then raise an error.
 Lint/AssignmentInCondition:
+  Enabled: false
+
+Metrics/AbcSize:
   Enabled: false
 
 Metrics/BlockNesting:
@@ -333,7 +339,16 @@ Style/EmptyLines:
 Style/EmptyLinesAroundAccessModifier:
   Enabled: false
 
-Style/EmptyLinesAroundBody:
+Style/EmptyLinesAroundBlockBody:
+  Enabled: false
+
+Style/EmptyLinesAroundMethodBody:
+  Enabled: false
+
+Style/EmptyLinesAroundClassBody:
+  Enabled: false
+
+Style/EmptyLinesAroundModuleBody:
   Enabled: false
 
 Style/EmptyLiteral:
@@ -352,6 +367,9 @@ Style/TrailingWhitespace:
   Enabled: false
 
 Style/StringLiterals:
+  Enabled: false
+
+Style/StringLiteralsInInterpolation:
   Enabled: false
 
 Style/TrailingComma:

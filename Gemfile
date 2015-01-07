@@ -6,7 +6,7 @@ gem 'systemu'
 
 group :dev do
   gem 'rake'
-  gem "rubocop", :platforms => [:ruby] unless RUBY_VERSION =~ /^1.8/
+  gem 'rubocop', '~> 0.28.0', :platforms => [:ruby] unless RUBY_VERSION =~ /^1.8/
 end
 
 group :test do
