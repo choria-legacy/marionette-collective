@@ -369,6 +369,9 @@ Style/TrailingWhitespace:
 Style/StringLiterals:
   Enabled: false
 
+Style/StringLiteralsInInterpolation:
+  Enabled: false
+
 Style/TrailingComma:
   Enabled: false
 
