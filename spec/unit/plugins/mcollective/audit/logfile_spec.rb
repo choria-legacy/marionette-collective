@@ -36,7 +36,7 @@ module MCollective
 
       it 'should log to a default logfile' do
         Config.any_instance.stubs(:pluginconf).returns({})
-        File.expects(:open).with("/var/log/mcollective-audit.log", "a").yields(file)
+        File.expects(:open).with("/var/log/puppetlabs/agent/mcollective-audit.log", "a").yields(file)
         Logfile.new.audit_request(request, nil)
       end
     end

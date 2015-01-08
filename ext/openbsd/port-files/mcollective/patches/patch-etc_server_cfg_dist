@@ -4,6 +4,6 @@ $OpenBSD$
 @@ -1,5 +1,5 @@
 -libdir = /usr/libexec/mcollective
 +libdir = ${PREFIX}/share/mcollective/plugins
- logfile = /var/log/mcollective.log
+ logfile = /var/log/puppetlabs/agent/mcollective.log
  loglevel = info
  daemonize = 1

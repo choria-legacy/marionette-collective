@@ -114,7 +114,7 @@ plugin.psk = j9q8kx7fnuied9e
 
 <a href="#rpcaudit">rpcaudit</a> = 1
 <a href="#rpcauditprovider">rpcauditprovider</a> = logfile
-<a href="#pluginrpcauditlogfile">plugin.rpcaudit.logfile</a> = /var/log/mcollective-audit.log
+<a href="#pluginrpcauditlogfile">plugin.rpcaudit.logfile</a> = /var/log/puppetlabs/agent/mcollective-audit.log
 
 # <a href="#authorization">Authorization (optional):</a>
 # ------------------------
@@ -127,7 +127,7 @@ plugin.psk = j9q8kx7fnuied9e
 
 <a href="#loggertype">logger_type</a> = file
 <a href="#loglevel">loglevel</a> = info
-<a href="#logfile">logfile</a> = /var/log/mcollective.log
+<a href="#logfile">logfile</a> = /var/log/puppetlabs/agent/mcollective.log
 <a href="#keeplogs">keeplogs</a> = 5
 <a href="#maxlogsize">max_log_size</a> = 2097152
 <a href="#logfacility">logfacility</a> = user
@@ -594,7 +594,7 @@ The main collective for this server. Currently, this is only used as the default
 
 <pre><code><a href="#rpcaudit">rpcaudit</a> = 1
 <a href="#rpcauditprovider">rpcauditprovider</a> = logfile
-<a href="#pluginrpcauditlogfile">plugin.rpcaudit.logfile</a> = /var/log/mcollective-audit.log
+<a href="#pluginrpcauditlogfile">plugin.rpcaudit.logfile</a> = /var/log/puppetlabs/agent/mcollective-audit.log
 </code>
 </pre>
 
@@ -629,7 +629,7 @@ _When `rpcauditprovider == logfile`_
 
 The file to write to when using the `logfile` audit plugin. **Note:** this file is not automatically rotated.
 
-- _Default:_ `/var/log/mcollective-audit.log`
+- _Default:_ `/var/log/puppetlabs/agent/mcollective-audit.log`
 
 
 ([↑ Back to top](#content))
@@ -674,7 +674,7 @@ Advanced Settings
 
 <pre><code><a href="#loggertype">logger_type</a> = file
 <a href="#loglevel">loglevel</a> = info
-<a href="#logfile">logfile</a> = /var/log/mcollective.log
+<a href="#logfile">logfile</a> = /var/log/puppetlabs/agent/mcollective.log
 <a href="#keeplogs">keeplogs</a> = 5
 <a href="#maxlogsize">max_log_size</a> = 2097152
 <a href="#logfacility">logfacility</a> = user
@@ -706,7 +706,7 @@ _When `logger_type == file`_
 Where the log file should be stored.
 
 - _Default:_ (nothing; the package's default config file usually sets a platform-appropriate value)
-- _Sample value:_ `/var/log/mcollective.log`
+- _Sample value:_ `/var/log/puppetlabs/agent/mcollective.log`
 
 #### `keeplogs`
 

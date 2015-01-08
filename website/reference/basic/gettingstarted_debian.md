@@ -156,7 +156,7 @@ You should also create _/etc/mcollective/server.cfg_ here's a sample, a full ref
 {% highlight ini %}
   # main config
   libdir = /usr/libexec/mcollective
-  logfile = /var/log/mcollective.log
+  logfile = /var/log/puppetlabs/agent/mcollective.log
   daemonize = 1
   loglevel = info
 
@@ -202,7 +202,7 @@ The packages include standard init script, just start the server:
 You should see in the log file somethig like:
 
 {% highlight console %}
-  # tail /var/log/mcollective.log
+  # tail /var/log/puppetlabs/agent/mcollective.log
   I, [2010-12-29T11:15:32.321744 #11479]  INFO -- : mcollectived:33 The Marionette Collective 1.1.0 started logging at info level
 {% endhighlight %}
 

@@ -19,6 +19,6 @@ index 2038324..c28a826 100644
  collectives = mcollective
 -libdir = /usr/libexec/mcollective
 +libdir = /usr/share/mcollective/plugins
- logfile = /var/log/mcollective.log
+ logfile = /var/log/puppetlabs/agent/mcollective.log
  loglevel = info
  daemonize = 1

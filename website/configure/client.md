@@ -109,7 +109,7 @@ plugin.psk = j9q8kx7fnuied9e
 
 <a href="#loggertype">logger_type</a> = console
 <a href="#loglevel">loglevel</a> = warn
-<a href="#logfile">logfile</a> = /var/log/mcollective.log
+<a href="#logfile">logfile</a> = /var/log/puppetlabs/agent/mcollective.log
 <a href="#keeplogs">keeplogs</a> = 5
 <a href="#maxlogsize">max_log_size</a> = 2097152
 <a href="#logfacility">logfacility</a> = user
@@ -505,7 +505,7 @@ These settings can generally be ignored, as appropriate values should have been 
 
 <pre><code><a href="#loggertype">logger_type</a> = console
 <a href="#loglevel">loglevel</a> = warn
-<a href="#logfile">logfile</a> = /var/log/mcollective.log
+<a href="#logfile">logfile</a> = /var/log/puppetlabs/agent/mcollective.log
 <a href="#keeplogs">keeplogs</a> = 5
 <a href="#maxlogsize">max_log_size</a> = 2097152
 <a href="#logfacility">logfacility</a> = user
@@ -537,7 +537,7 @@ _When `logger_type == file`_
 Where the log file should be stored.
 
 - _Default:_ (nothing; the package's default config file usually sets a platform-appropriate value)
-- _Sample value:_ `/var/log/mcollective.log`
+- _Sample value:_ `/var/log/puppetlabs/agent/mcollective.log`
 
 #### `keeplogs`
 

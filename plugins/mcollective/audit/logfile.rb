@@ -10,7 +10,7 @@ module MCollective
       require 'pp'
 
       def audit_request(request, connection)
-        logfile = Config.instance.pluginconf["rpcaudit.logfile"] || "/var/log/mcollective-audit.log"
+        logfile = Config.instance.pluginconf["rpcaudit.logfile"] || "/var/log/puppetlabs/agent/mcollective-audit.log"
 
         now = Time.now
         # Already told timezone to be in UTC so we don't look it up again

@@ -50,7 +50,7 @@ install --directory ${RPM_BUILD_ROOT}%{libexecdir}
 install --directory ${RPM_BUILD_ROOT}%{libdir}/webapps
 install --directory ${RPM_BUILD_ROOT}%{cachedir}
 install --directory ${RPM_BUILD_ROOT}%{cachedir}/data
-install --directory ${RPM_BUILD_ROOT}/var/log/%{name}
+install --directory ${RPM_BUILD_ROOT}/var/log/puppetlabs/agent/%{name}
 install --directory ${RPM_BUILD_ROOT}/var/run/%{name}
 install --directory ${RPM_BUILD_ROOT}/etc/%{name}
 install --directory ${RPM_BUILD_ROOT}/etc/init.d
@@ -88,7 +88,7 @@ pushd ${RPM_BUILD_ROOT}%{homedir}
     [ -d docs ] || %{__ln_s} -f %{docsdir} docs
     [ -d lib ] || %{__ln_s} -f %{libdir}/lib lib
     [ -d lib ] || %{__ln_s} -f %{libdir}/libexec libexec
-    [ -d log ] || %{__ln_s} -f /var/log/%{name} log 
+    [ -d log ] || %{__ln_s} -f /var/log/puppetlabs/agent/%{name} log
     [ -d webapps ] || %{__ln_s} -f %{libdir}/webapps webapps
 popd
 
@@ -123,7 +123,7 @@ rm -rf $RPM_BUILD_ROOT
 %docdir %{docsdir}
 %{docsdir}
 %{libdir}
-%attr(775,activemq,activemq) %dir /var/log/%{name}
+%attr(775,activemq,activemq) %dir /var/log/puppetlabs/agent/%{name}
 %attr(775,activemq,activemq) %dir /var/run/%{name}
 %attr(775,root,activemq) %dir %{cachedir}/data
 %attr(755,root,root) /etc/init.d/activemq

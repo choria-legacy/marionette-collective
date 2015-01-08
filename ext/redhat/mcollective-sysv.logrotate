@@ -1,4 +1,4 @@
-/var/log/mcollective/*log {
+/var/log/puppetlabs/agent/mcollective.log {
     missingok
     notifempty
     sharedscripts
