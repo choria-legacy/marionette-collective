@@ -329,7 +329,7 @@ This example template snippet shows the settings you need to use in a standard d
     # If you turn this on, you must arrange to rotate the log file it creates.
     rpcaudit = 1
     rpcauditprovider = logfile
-    plugin.rpcaudit.logfile = /var/log/mcollective-audit.log
+    plugin.rpcaudit.logfile = /var/log/puppetlabs/agent/mcollective-audit.log
 
     # Authorization:
     # If you turn this on now, you won't be able to issue most MCollective
@@ -343,7 +343,7 @@ This example template snippet shows the settings you need to use in a standard d
     # Logging:
     logger_type = file
     loglevel = info
-    logfile = /var/log/mcollective.log
+    logfile = /var/log/puppetlabs/agent/mcollective.log
     keeplogs = 5
     max_log_size = 2097152
     logfacility = user

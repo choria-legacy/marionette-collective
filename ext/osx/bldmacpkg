@@ -7,7 +7,7 @@ BBINDIR='/usr/bin'
 BLIBEXECDIR='/usr/libexec/mcollective'
 BDOCDIR='/usr/share/doc/mcollective'
 BLAUNCHDIR='/Library/LaunchDaemons'
-BLOGDIR='/var/log/mcollective'
+BLOGDIR='/var/log/puppetlabs/agent'
 PACKAGEMAKER='/Applications/PackageMaker.app/Contents/MacOS/PackageMaker'
 
 if [ -z $MPATH ]; then

@@ -27,7 +27,7 @@ Configuration is a simple *key = val* style configuration file.
 |---|------|-----------|
 |collectives|mcollective,subcollective|A list of [Subcollectives][] to join - 1.1.3 and newer only|
 |main_collective|mcollective|The main collective to target - 1.1.3 and newer only|
-|logfile|/var/log/mcollective.log|Where to log|
+|logfile|/var/log/puppetlabs/agent/mcollective.log|Where to log|
 |loglevel|debug|Can be info, warn, debug, fatal, error|
 |identity|dev1.your.com|Identifier for this node, does not need to be unique, defaults to hostname if unset and must match _/\w\.\-/_ if set|
 |keeplogs|5|The amount of logs to keep|

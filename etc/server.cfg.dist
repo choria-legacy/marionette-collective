@@ -1,7 +1,7 @@
 main_collective = mcollective
 collectives = mcollective
 libdir = /usr/libexec/mcollective
-logfile = /var/log/mcollective.log
+logfile = /var/log/puppetlabs/agent/mcollective.log
 loglevel = info
 daemonize = 1
 

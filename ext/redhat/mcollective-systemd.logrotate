@@ -1,0 +1,8 @@
+/var/log/puppetlabs/agent/mcollective.log {
+    missingok
+    notifempty
+    sharedscripts
+    postrotate
+      /usr/bin/systemctl restart mcollective >/dev/null 2>&1 || true
+    endscript
+}
