@@ -21,7 +21,7 @@ IPS package
 -----------
 
 To create an IPS package, follow the excellent guide at:
-http://www.neuhalfen.name/blog/2011/07/02/Solaris11-Packaging-IPS_simple_packages/
+http://www.neuhalfen.name/2011/07/02/Solaris11-Packaging-IPS_simple_packages/
 
 To create a basic IPS repository (and start the associated services):
 
