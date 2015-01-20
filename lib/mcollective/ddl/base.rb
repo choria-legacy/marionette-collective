@@ -38,7 +38,7 @@ module MCollective
       # on the plugin type.  If the provided template path is
       # not absolute then the template will be loaded either from
       # the config dir and if that does not exist, default to
-      # /etc/mcollective
+      # /etc/puppetlabs/agent/mcollective
       def help(template=nil)
         template = template_for_plugintype unless template
         template = Util.templatepath(template) unless Util.absolute_path?(template)

@@ -232,7 +232,7 @@ You should copy the contents of this `plugins` directory to some platform-approp
 >
 > **Example:**
 >
->     # /etc/mcollective/server.cfg
+>     # /etc/puppetlabs/agent/mcollective/server.cfg
 >     # ...
 >     libdir = /usr/libexec/mcollective
 >

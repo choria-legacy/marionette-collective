@@ -17,7 +17,7 @@ This guide tells you about the major configuration options in the daemon and cli
 here typically ones specific to a certain plugin.
 
 ## Configuration Files
-There are 2 configuration files, one for the client and one for the server, these default to */etc/mcollective/server.cfg* and */etc/mcollective/client.cfg*.
+There are 2 configuration files, one for the client and one for the server, these default to */etc/puppetlabs/agent/mcollective/server.cfg* and */etc/puppetlabs/agent/mcollective/client.cfg*.
 
 Configuration is a simple *key = val* style configuration file.
 
@@ -35,8 +35,8 @@ Configuration is a simple *key = val* style configuration file.
 |libdir|/usr/libexec/mcollective:/site/mcollective|Where to look for plugins|
 |connector|activemq|Which _connector_ plugin to use for communication|
 |securityprovider|Psk|Which security model to use, see [SSL Security Plugin][SSLSecurity] and [AES Security Plugin][AESSecurity] for details on others|
-|rpchelptemplate|/etc/mcollective/rpc-help.erb|The path to the erb template used for generating help|
-|helptemplatedir|/etc/mcollective|The path that contains all the erb templates for generating help|
+|rpchelptemplate|/etc/puppetlabs/agent/mcollective/rpc-help.erb|The path to the erb template used for generating help|
+|helptemplatedir|/etc/puppetlabs/agent/mcollective|The path that contains all the erb templates for generating help|
 |logger_type|file|Valid logger types, currently file, syslog or console|
 |ssl_cipher|aes-256-cbc|This sets the cipher in use by the SSL code, see _man enc_ for a list supported by OpenSSL|
 |direct_addressing|n|Enable or disable directed requests|
@@ -84,7 +84,7 @@ Common plugin options are:
 
 |Key|Sample|Description|
 |---|------|-----------|
-|plugin.yaml|/etc/mcollective/facts.yaml:/other/facts.yaml|Where the yaml fact source finds facts from, multiples get merged|
+|plugin.yaml|/etc/puppetlabs/agent/mcollective/facts.yaml:/other/facts.yaml|Where the yaml fact source finds facts from, multiples get merged|
 |plugin.psk|123456789|The pre-shared key to use for the Psk security provider|
 |plugin.psk.callertype|group|What to base the callerid on for the PSK plugin, uid, gid, user, group or identity|
 

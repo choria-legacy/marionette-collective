@@ -8,7 +8,7 @@ toc: false
 
 Fact plugins are used during discovery whenever you run the agent with queries like *-W country=de*.
 
-The default setup uses a YAML file typically stored in */etc/mcollective/facts.yaml* to read facts; usually, you'll configure Puppet or a background task to write this file using data from Facter. If you're using some other tool to profile system data, you can either configure it to write a similar YAML file or write a **fact plugin** to access that tool directly.
+The default setup uses a YAML file typically stored in */etc/puppetlabs/agent/mcollective/facts.yaml* to read facts; usually, you'll configure Puppet or a background task to write this file using data from Facter. If you're using some other tool to profile system data, you can either configure it to write a similar YAML file or write a **fact plugin** to access that tool directly.
 
 Facts at the moment should be simple *variable = value* style flat hashes, where `value` is a string; structured facts aren't supported.
 

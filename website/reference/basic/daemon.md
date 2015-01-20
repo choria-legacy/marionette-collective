@@ -28,7 +28,7 @@ application:
    Server Statistics:
                       Version: 2.2.0
                    Start Time: Mon Sep 24 17:37:28 +0100 2012
-                  Config File: /etc/mcollective/server.cfg
+                  Config File: /etc/puppetlabs/agent/mcollective/server.cfg
                   Collectives: mcollective, fr_collective
               Main Collective: mcollective
                    Process ID: 24473
@@ -87,7 +87,7 @@ example.com
                         "eximng",
                         "filemgr",
                         "process"]
-          Config File: /etc/mcollective/server.cfg
+          Config File: /etc/puppetlabs/agent/mcollective/server.cfg
         Failed Filter: 168432
         Passed Filter: 91231
                   PID: 1418

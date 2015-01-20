@@ -21,7 +21,7 @@ Inventory for node.example.com:
 
   Server Statistics:
                   Start Time: Mon Sep 13 18:24:46 +0100 2010
-                 Config File: /etc/mcollective/server.cfg
+                 Config File: /etc/puppetlabs/agent/mcollective/server.cfg
                   Process ID: 5197
               Total Messages: 62
      Messages Passed Filters: 62

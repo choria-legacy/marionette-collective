@@ -271,8 +271,8 @@ Clients will still need their own keys made and distributed.
 
 |Setting|Example / Default|Description
 |-------|-----------------|-----------|
-|`plugin.aes.client_cert_dir`|`/etc/mcollective/ssl/clients`|Where to store and load client public keys|
-|`plugin.aes.server_private`|`/etc/mcollective/ssl/server-private.pem`|Server private key.  File must be `/\w\.\-/`|
-|`plugin.aes.server_public`|`/etc/mcollective/ssl/server-public.pem`|Server public key.  File must be `/\w\.\-/`|
+|`plugin.aes.client_cert_dir`|`/etc/puppetlabs/agent/mcollective/ssl/clients`|Where to store and load client public keys|
+|`plugin.aes.server_private`|`/etc/puppetlabs/agent/mcollective/ssl/server-private.pem`|Server private key.  File must be `/\w\.\-/`|
+|`plugin.aes.server_public`|`/etc/puppetlabs/agent/mcollective/ssl/server-public.pem`|Server public key.  File must be `/\w\.\-/`|
 |`plugin.aes.enforce_ttl`|`1`|Enforce TTL and Message time security, warn only when disabled.  1.3.2 and newer only|
 

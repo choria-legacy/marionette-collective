@@ -35,7 +35,7 @@ The following is an example MCollective client config file showing all of the ma
 
 <pre><code># ~/.mcollective
 # or
-# /etc/mcollective/client.cfg
+# /etc/puppetlabs/agent/mcollective/client.cfg
 
 # <a href="#connector-settings">Connector settings (required):</a>
 # -----------------------------
@@ -82,7 +82,7 @@ plugin.psk = j9q8kx7fnuied9e
 # <a href="#discovery">Discovery settings:</a>
 
 <a href="#defaultdiscoverymethod">default_discovery_method</a> = mc
-# <a href="#defaultdiscoveryoptions">default_discovery_options</a> = /etc/mcollective/nodes.txt
+# <a href="#defaultdiscoveryoptions">default_discovery_options</a> = /etc/puppetlabs/agent/mcollective/nodes.txt
 
 # <a href="#performance">Performance settings:</a>
 
@@ -114,8 +114,8 @@ plugin.psk = j9q8kx7fnuied9e
 <a href="#maxlogsize">max_log_size</a> = 2097152
 <a href="#logfacility">logfacility</a> = user
 <a href="#libdir">libdir</a> = /usr/libexec/mcollective
-<a href="#rpchelptemplate">rpchelptemplate</a> = /etc/mcollective/rpc-help.erb
-<a href="#helptemplatedir">helptemplatedir</a> = /etc/mcollective
+<a href="#rpchelptemplate">rpchelptemplate</a> = /etc/puppetlabs/agent/mcollective/rpc-help.erb
+<a href="#helptemplatedir">helptemplatedir</a> = /etc/puppetlabs/agent/mcollective
 <a href="#sslcipher">ssl_cipher</a> = aes-256-cbc
 </code>
 </pre>
@@ -129,7 +129,7 @@ The `mco` client is usually run interactively from an admin workstation, but can
 These cases have different needs. In the first, the configuration and credentials should be per-user; in the second, they should be at the system level with restricted visibility of the credentials. MCollective solves this by having two locations for the client configuration:
 
 * `~/.mcollective` --- A `.mcollective` file in the current user's home directory. If this file exists, `mco` will use it instead of the global config file.
-* `/etc/mcollective/client.cfg` --- A global client config file, which will be used if `~/.mcollective` doesn't exist. If you are using this file, read access to it and the external credentials it refers to should be strictly controlled, probably limited to the root user.
+* `/etc/puppetlabs/agent/mcollective/client.cfg` --- A global client config file, which will be used if `~/.mcollective` doesn't exist. If you are using this file, read access to it and the external credentials it refers to should be strictly controlled, probably limited to the root user.
 
 ### File Format
 
@@ -146,16 +146,16 @@ The spaces on either side of the equals sign are optional. Lines starting with a
 
 ### Plugin Config Directory (Optional)
 
-Many of MCollective's settings are named with the format `plugin.<NAME>.<SETTING_NAME>`. These settings can optionally be put in separate files, in the `/etc/mcollective/plugin.d/` directory. If you are using the mco client in system-level scripts, this can let the client and the server daemon share some settings, but it isn't particularly useful when you're doing per-user client configuration, and there's no equivalent `plugin.d` directory in the user's home directory.
+Many of MCollective's settings are named with the format `plugin.<NAME>.<SETTING_NAME>`. These settings can optionally be put in separate files, in the `/etc/puppetlabs/agent/mcollective/plugin.d/` directory. If you are using the mco client in system-level scripts, this can let the client and the server daemon share some settings, but it isn't particularly useful when you're doing per-user client configuration, and there's no equivalent `plugin.d` directory in the user's home directory.
 
-To move a `plugin.<NAME>.<SETTING_NAME>` setting to an external file, put it in `/etc/mcollective/plugin.d/<NAME>.cfg`, and use only the `<SETTING_NAME>` segment of the setting. So this:
+To move a `plugin.<NAME>.<SETTING_NAME>` setting to an external file, put it in `/etc/puppetlabs/agent/mcollective/plugin.d/<NAME>.cfg`, and use only the `<SETTING_NAME>` segment of the setting. So this:
 
-    # /etc/mcollective/server.cfg
+    # /etc/puppetlabs/agent/mcollective/server.cfg
     plugin.puppet.splay = true
 
 ...is equivalent to:
 
-    # /etc/mcollective/plugin.d/puppet.cfg
+    # /etc/puppetlabs/agent/mcollective/plugin.d/puppet.cfg
     splay = true
 
 Note that this doesn't work for settings like `plugin.psk`, since they have no `<SETTING_NAME>` segment; a setting must have at least three segments to go in a plugin.cfg file.
@@ -328,7 +328,7 @@ Interface Settings
 <pre><code># <a href="#discovery">Discovery settings:</a>
 
 <a href="#defaultdiscoverymethod">default_discovery_method</a> = mc
-# <a href="#defaultdiscoveryoptions">default_discovery_options</a> = /etc/mcollective/nodes.txt
+# <a href="#defaultdiscoveryoptions">default_discovery_options</a> = /etc/puppetlabs/agent/mcollective/nodes.txt
 
 # <a href="#performance">Performance settings:</a>
 
@@ -372,9 +372,9 @@ Options to pass to the discovery plugin. This acts as a default value for the `-
 The only common discovery method that uses this setting is `flatfile`, where it should be the filename of a list of nodes (with one node identity per line). Setting the following options:
 
     default_discovery_method = flatfile
-    default_discovery_options = /etc/mcollective/nodes.txt
+    default_discovery_options = /etc/puppetlabs/agent/mcollective/nodes.txt
 
-...is the equivalent of specifying the option `--nodes /etc/mcollective/nodes.txt` (or the pair `--dm flatfile --do /etc/mcollective/nodes.txt`) for every command, except those where you explicitly specify something like `--dm mc`.
+...is the equivalent of specifying the option `--nodes /etc/puppetlabs/agent/mcollective/nodes.txt` (or the pair `--dm flatfile --do /etc/puppetlabs/agent/mcollective/nodes.txt`) for every command, except those where you explicitly specify something like `--dm mc`.
 
 - _Default:_ (nothing)
 
@@ -570,8 +570,8 @@ The syslog facility to use.
 ### Platform Defaults
 
 <pre><code><a href="#libdir">libdir</a> = /usr/libexec/mcollective
-<a href="#rpchelptemplate">rpchelptemplate</a> = /etc/mcollective/rpc-help.erb
-<a href="#helptemplatedir">helptemplatedir</a> = /etc/mcollective
+<a href="#rpchelptemplate">rpchelptemplate</a> = /etc/puppetlabs/agent/mcollective/rpc-help.erb
+<a href="#helptemplatedir">helptemplatedir</a> = /etc/puppetlabs/agent/mcollective
 <a href="#sslcipher">ssl_cipher</a> = aes-256-cbc
 </code>
 </pre>
@@ -590,15 +590,15 @@ By default, this setting is blank, but the package you installed MCollective wit
 
 The path to one particular ERB template used for part of MCollective's interactive help.
 
-- _Default:_ If it exists, `rpc-help.erb` in the same directory as the current config file; otherwise, `/etc/mcollective/rpc-help.erb`
+- _Default:_ If it exists, `rpc-help.erb` in the same directory as the current config file; otherwise, `/etc/puppetlabs/agent/mcollective/rpc-help.erb`
 
 #### `helptemplatedir`
 
 The path to a directory containing all of MCollective's ERB help templates.
 
-This setting is generally only useful if you installed MCollective without a package, in which case the help templates may be stored with the source instead of installed in the `/etc/mcollective` directory.
+This setting is generally only useful if you installed MCollective without a package, in which case the help templates may be stored with the source instead of installed in the `/etc/puppetlabs/agent/mcollective` directory.
 
-- _Default:_ The directory containing the `rpchelptemplate` file, usually `/etc/mcollective`
+- _Default:_ The directory containing the `rpchelptemplate` file, usually `/etc/puppetlabs/agent/mcollective`
 - _Allowed values:_ Any fully qualified path on disk
 
 #### `ssl_cipher`

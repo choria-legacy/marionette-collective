@@ -652,8 +652,8 @@ module MCollective
 
       it "should look for a template in the default dir" do
         File.stubs(:exists?).with("/rspec/test-help.erb").returns(false)
-        File.stubs(:exists?).with("/etc/mcollective/test-help.erb").returns(true)
-        Util.templatepath("test-help.erb").should == "/etc/mcollective/test-help.erb"
+        File.stubs(:exists?).with("/etc/puppetlabs/agent/mcollective/test-help.erb").returns(true)
+        Util.templatepath("test-help.erb").should == "/etc/puppetlabs/agent/mcollective/test-help.erb"
 
       end
     end

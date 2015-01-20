@@ -45,7 +45,7 @@ module MCollective
     # Servers:
     #
     #    # Where to cache client keys or find manually distributed ones
-    #    plugin.aes.client_cert_dir = /etc/mcollective/ssl/clients
+    #    plugin.aes.client_cert_dir = /etc/puppetlabs/agent/mcollective/ssl/clients
     #
     #    # Cache public keys promiscuously from the network (this requires either a ca_cert to be set
     #      or insecure_learning to be enabled)
@@ -55,14 +55,14 @@ module MCollective
     #    plugin.aes.insecure_learning = 1
     #
     #    # CA cert used to verify public keys when in learning mode
-    #    plugin.aes.ca_cert = /etc/mcollective/ssl/ca.cert
+    #    plugin.aes.ca_cert = /etc/puppetlabs/agent/mcollective/ssl/ca.cert
     #
     #    # Log but accept messages that may have been tampered with
     #    plugin.aes.enforce_ttl = 0
     #
     #    # The servers public and private keys
-    #    plugin.aes.server_private = /etc/mcollective/ssl/server-private.pem
-    #    plugin.aes.server_public = /etc/mcollective/ssl/server-public.pem
+    #    plugin.aes.server_private = /etc/puppetlabs/agent/mcollective/ssl/server-private.pem
+    #    plugin.aes.server_public = /etc/puppetlabs/agent/mcollective/ssl/server-public.pem
     #
     class Aes_security<Base
       def decodemsg(msg)
