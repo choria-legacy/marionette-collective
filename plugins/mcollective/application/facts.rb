@@ -38,14 +38,22 @@ class MCollective::Application::Facts<MCollective::Application
       begin
         value = resp[:body][:data][:value]
         if value
-          facts.include?(value) ? facts[value] << resp[:senderid] : facts[value] = [ resp[:senderid] ]
+          if facts.include?(value)
+            facts[value] << resp[:senderid]
+          else
+            facts[value] = [ resp[:senderid] ]
+          end
         end
       rescue Exception => e
         STDERR.puts "Could not parse facts for #{resp[:senderid]}: #{e.class}: #{e}"
       end
     end
 
-    show_single_fact_report(configuration[:fact], facts, options[:verbose])
+    if facts.empty?
+      puts "No values found for fact #{configuration[:fact]}\n"
+    else
+      show_single_fact_report(configuration[:fact], facts, options[:verbose])
+    end
 
     printrpcstats
 
