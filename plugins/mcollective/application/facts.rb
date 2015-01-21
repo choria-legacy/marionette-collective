@@ -45,7 +45,11 @@ class MCollective::Application::Facts<MCollective::Application
       end
     end
 
-    show_single_fact_report(configuration[:fact], facts, options[:verbose])
+    if facts.empty?
+      puts "No values found for fact #{configuration[:fact]}\n"
+    else
+      show_single_fact_report(configuration[:fact], facts, options[:verbose])
+    end
 
     printrpcstats
 
