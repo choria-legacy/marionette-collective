@@ -91,6 +91,17 @@ task :test do
   sh "cd spec && rake"
 end
 
+desc "Run spec tests"
+task :test => :spec
+
+namespace :ci do
+  desc "Run the specs with CI options"
+  task :spec do
+    ENV["LOG_SPEC_ORDER"] = "true"
+    sh %{rspec -r yarjuf -f JUnit -o result.xml -fp spec}
+  end
+end
+
 desc "Creates the website as a tarball"
 task :website => :clean do
   FileUtils.mkdir_p("build/marionette-collective.org/html")
