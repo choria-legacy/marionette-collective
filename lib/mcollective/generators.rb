@@ -1,7 +1,7 @@
 module MCollective
   module Generators
-    autoload :Base, "mcollective/generators/base.rb"
-    autoload :DataGenerator, "mcollective/generators/data_generator.rb"
-    autoload :AgentGenerator, "mcollective/generators/agent_generator.rb"
+    require "mcollective/generators/base.rb"
+    require "mcollective/generators/data_generator.rb"
+    require "mcollective/generators/agent_generator.rb"
   end
 end

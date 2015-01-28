@@ -1,8 +1,8 @@
 module MCollective
   module PluginPackager
     # Plugin definition classes
-    autoload :AgentDefinition, "mcollective/pluginpackager/agent_definition"
-    autoload :StandardDefinition, "mcollective/pluginpackager/standard_definition"
+    require "mcollective/pluginpackager/agent_definition"
+    require "mcollective/pluginpackager/standard_definition"
 
     # Package implementation plugins
     def self.load_packagers

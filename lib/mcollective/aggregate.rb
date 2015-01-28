@@ -1,7 +1,7 @@
 module MCollective
   class Aggregate
-    autoload :Result, 'mcollective/aggregate/result'
-    autoload :Base, 'mcollective/aggregate/base'
+    require 'mcollective/aggregate/result'
+    require 'mcollective/aggregate/base'
 
     attr_accessor :ddl, :functions, :action, :failed
 

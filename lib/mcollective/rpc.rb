@@ -5,16 +5,16 @@ module MCollective
   # an RPC metaphor, standard compliant agents will make it easier
   # to create generic clients like web interfaces etc
   module RPC
-    autoload :ActionRunner, "mcollective/rpc/actionrunner"
-    autoload :Agent, "mcollective/rpc/agent"
-    autoload :Audit, "mcollective/rpc/audit"
-    autoload :Client, "mcollective/rpc/client"
-    autoload :Helpers, "mcollective/rpc/helpers"
-    autoload :Progress, "mcollective/rpc/progress"
-    autoload :Reply, "mcollective/rpc/reply"
-    autoload :Request, "mcollective/rpc/request"
-    autoload :Result, "mcollective/rpc/result"
-    autoload :Stats, "mcollective/rpc/stats"
+    require "mcollective/rpc/actionrunner"
+    require "mcollective/rpc/agent"
+    require "mcollective/rpc/audit"
+    require "mcollective/rpc/client"
+    require "mcollective/rpc/helpers"
+    require "mcollective/rpc/progress"
+    require "mcollective/rpc/reply"
+    require "mcollective/rpc/request"
+    require "mcollective/rpc/result"
+    require "mcollective/rpc/stats"
 
     # Creates a standard options hash, pass in a block to add extra headings etc
     # see Optionparser
