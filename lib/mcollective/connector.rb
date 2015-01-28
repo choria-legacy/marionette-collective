@@ -13,6 +13,6 @@ module MCollective
   # with something else that supports the above, see MCollective::Connector::Stomp
   # for the default connector.
   module Connector
-    autoload :Base, "mcollective/connector/base"
+    require "mcollective/connector/base"
   end
 end

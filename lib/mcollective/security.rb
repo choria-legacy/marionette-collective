@@ -21,6 +21,6 @@ module MCollective
   #
   # Filtering can be extended by providing a new validate_filter? method.
   module Security
-    autoload :Base, "mcollective/security/base"
+    require "mcollective/security/base"
   end
 end

@@ -48,10 +48,10 @@ module MCollective
   # content though so you add, do not remove.  See the AgentDDL class for an example
   # where agents want a :required argument to be always set.
   module DDL
-    autoload :Base, "mcollective/ddl/base"
-    autoload :AgentDDL, "mcollective/ddl/agentddl"
-    autoload :DataDDL, "mcollective/ddl/dataddl"
-    autoload :DiscoveryDDL, "mcollective/ddl/discoveryddl"
+    require "mcollective/ddl/base"
+    require "mcollective/ddl/agentddl"
+    require "mcollective/ddl/dataddl"
+    require "mcollective/ddl/discoveryddl"
 
     # There used to be only one big nasty DDL class with a bunch of mashed
     # together behaviors.  It's been around for ages and we would rather not

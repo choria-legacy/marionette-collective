@@ -10,8 +10,8 @@ module MCollective
   # char = A-Z | a-z | < | > | => | =< | _ | - |* | / { A-Z | a-z | < | > | => | =< | _ | - | * | / | }
   # int = 0|1|2|3|4|5|6|7|8|9{|0|1|2|3|4|5|6|7|8|9|0}
   module Matcher
-    autoload :Parser, "mcollective/matcher/parser"
-    autoload :Scanner, "mcollective/matcher/scanner"
+    require "mcollective/matcher/parser"
+    require "mcollective/matcher/scanner"
 
     # Helper creates a hash from a function call string
     def self.create_function_hash(function_call)

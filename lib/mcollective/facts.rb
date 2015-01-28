@@ -17,7 +17,7 @@ module MCollective
   #
   # method that should return a hash of facts.
   module Facts
-    autoload :Base, "mcollective/facts/base"
+    require "mcollective/facts/base"
 
     @@config = nil
 

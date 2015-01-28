@@ -1,5 +1,5 @@
 module MCollective
   module Logger
-    autoload :Base, "mcollective/logger/base"
+    require "mcollective/logger/base"
   end
 end

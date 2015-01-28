@@ -1,7 +1,7 @@
 module MCollective
   module Data
-    autoload :Base, "mcollective/data/base"
-    autoload :Result, "mcollective/data/result"
+    require "mcollective/data/base"
+    require "mcollective/data/result"
 
     def self.load_data_sources
       PluginManager.find_and_load("data")

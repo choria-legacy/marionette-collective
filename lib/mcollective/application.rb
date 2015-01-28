@@ -1,3 +1,5 @@
+require 'mcollective/rpc'
+
 module MCollective
   class Application
     include RPC

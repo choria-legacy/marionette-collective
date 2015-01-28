@@ -11,6 +11,6 @@ module MCollective
   # to supply a _body_ method, whatever this method returns will be send to the
   # middleware connection for an agent called _registration_
   module Registration
-    autoload :Base, "mcollective/registration/base"
+    require "mcollective/registration/base"
   end
 end
