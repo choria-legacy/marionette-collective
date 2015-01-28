@@ -1,5 +1,5 @@
 ---
-layout: normal
+layout: default
 title: "MCollective Plugin: IP Tables Junkfilter Agent"
 ---
 
