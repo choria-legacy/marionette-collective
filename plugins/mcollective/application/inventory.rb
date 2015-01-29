@@ -151,7 +151,7 @@ class MCollective::Application::Inventory<MCollective::Application
           puts
 
           puts "   Data Plugins:"
-          if data[:data_plugins].size > 0
+          if data[:data_plugins] != nil and data[:data_plugins].size > 0
             data[:data_plugins].sort.in_groups_of(3, "") do |plugins|
               puts "      %-15s %-15s %-15s" % plugins.map{|p| p.gsub("_data", "")}
             end
