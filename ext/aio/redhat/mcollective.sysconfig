@@ -1,0 +1,10 @@
+# Configuration file for mcollectived
+
+# Full path to the mcollectived binary
+#DAEMON=/opt/puppetlabs/agent/bin/mcollectived
+
+# Location of PID file
+#PIDFILE=/var/run/puppetlabs/agent/mcollectived.pid
+
+# Any other parameters to pass to mcollectived
+#DAEMON_OPTS=
