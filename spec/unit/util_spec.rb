@@ -193,6 +193,28 @@ module MCollective
       end
     end
 
+    describe '#config_file_for_user' do
+      before :each do
+        File.stubs(:expand_path).raises
+        File.stubs(:readable?).returns(false)
+        Util.stubs(:windows?).returns(false)
+      end
+
+      it 'should default to /etc/puppetlabs/agent/mcollective/client.cfg if ~/.mcollective can not be expanded' do
+        Util.config_file_for_user.should == '/etc/puppetlabs/agent/mcollective/client.cfg'
+      end
+
+      it 'should default to ~/.mcollective if it can be expanded' do
+        File.expects(:expand_path).with('~/.mcollective').returns('/home/mco/.mcollective')
+        Util.config_file_for_user.should == '/home/mco/.mcollective'
+      end
+
+      it 'should choose /etc/mcollective/client.cfg if it is readable' do
+        File.expects(:readable?).with('/etc/mcollective/client.cfg').returns(true)
+        Util.config_file_for_user.should == '/etc/mcollective/client.cfg'
+      end
+    end
+
     describe "#default_options" do
       it "should supply correct default options" do
         Config.instance.stubs(:default_discovery_options).returns([])

@@ -58,7 +58,7 @@ module MCollective
     # exit if there is a failure constructing the RPC client. Set this flag
     # to false to cause an Exception to be raised instead.
     def rpcclient(agent, flags = {})
-      configfile = flags[:configfile] || "/etc/mcollective/client.cfg"
+      configfile = flags[:configfile] || Util.config_file_for_user
       options = flags[:options] || nil
 
       if flags.key?(:exit_on_failure)

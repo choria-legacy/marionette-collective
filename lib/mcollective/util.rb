@@ -155,28 +155,28 @@ module MCollective
     # Picks a config file defaults to ~/.mcollective
     # else /etc/mcollective/client.cfg
     def self.config_file_for_user
-      # expand_path is pretty lame, it relies on HOME environment
-      # which isnt't always there so just handling all exceptions
-      # here as cant find reverting to default
-      begin
-        config = File.expand_path("~/.mcollective")
+      # the set of acceptable config files
+      config_paths = []
 
-        unless File.readable?(config) && File.file?(config)
-          if self.windows?
-            config = File.join(self.windows_prefix, "etc", "client.cfg")
-          else
-            config = "/etc/mcollective/client.cfg"
-          end
-        end
-      rescue Exception => e
-        if self.windows?
-          config = File.join(self.windows_prefix, "etc", "client.cfg")
-        else
-          config = "/etc/mcollective/client.cfg"
-        end
+      # user dotfile
+      begin
+        # File.expand_path will raise if HOME isn't set, catch it
+        user_path = File.expand_path("~/.mcollective")
+        config_paths << user_path
+      rescue Exception
       end
 
-      return config
+      # standard locations
+      if self.windows?
+        config_paths << File.join(self.windows_prefix, 'etc', 'client.cfg')
+      else
+        config_paths << '/etc/puppetlabs/agent/mcollective/client.cfg'
+        config_paths << '/etc/mcollective/client.cfg'
+      end
+
+      # use the first readable config file, or if none are the first listed
+      found = config_paths.find_index { |file| File.readable?(file) } || 0
+      return config_paths[found]
     end
 
     # Creates a standard options hash
