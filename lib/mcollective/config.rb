@@ -5,7 +5,7 @@ module MCollective
 
     attr_accessor :mode
 
-    attr_reader :daemonize, :pluginconf, :libdir, :configured
+    attr_reader :daemonize, :pluginconf, :configured
     attr_reader :logfile, :keeplogs, :max_log_size, :loglevel, :logfacility
     attr_reader :identity, :daemonize, :connector, :securityprovider, :factsource
     attr_reader :registration, :registerinterval, :classesfile
@@ -27,6 +27,7 @@ module MCollective
       set_config_defaults(configfile)
 
       if File.exists?(configfile)
+        libdirs = []
         File.readlines(configfile).each do |line|
 
           # strip blank spaces, tabs etc off the end of all lines
@@ -66,10 +67,7 @@ module MCollective
                   paths.each do |path|
                     raise("libdir paths should be absolute paths but '%s' is relative" % path) unless Util.absolute_path?(path)
 
-                    @libdir << path
-                    unless $LOAD_PATH.include?(path)
-                      $LOAD_PATH << path
-                    end
+                    libdirs << path
                   end
                 when "identity"
                   @identity = val
@@ -139,7 +137,7 @@ module MCollective
           end
         end
 
-        raise('The %s config file does not specify a libdir setting, cannot continue' % configfile) if @libdir.empty?
+        raise('The %s config file does not specify a libdir setting, cannot continue' % configfile) if libdirs.empty?
 
         read_plugin_config_dir("#{@configdir}/plugin.d")
 
@@ -147,7 +145,15 @@ module MCollective
 
         @configured = true
 
-        @libdir.each {|dir| Log.warn("Cannot find libdir: #{dir}") unless File.directory?(dir)}
+        libdirs.each do |dir|
+          unless File.directory?(dir)
+            Log.warn("Cannot find libdir: #{dir}")
+          end
+
+          # remove the old one if it exists, we're moving it to the front
+          $LOAD_PATH.reject! { |elem| elem == dir }
+          $LOAD_PATH.unshift dir
+        end
 
         if @logger_type == "syslog"
           raise "The sylog logger is not usable on the Windows platform" if Util.windows?
@@ -190,7 +196,6 @@ module MCollective
       @keeplogs = 5
       @max_log_size = 2097152
       @rpclimitmethod = :first
-      @libdir = Array.new
       @fact_cache_time = 300
       @loglevel = "info"
       @logfacility = "user"
@@ -209,6 +214,10 @@ module MCollective
       @soft_shutdown_timeout = nil
       @activate_agents = true
       @connection_timeout = nil
+    end
+
+    def libdir
+      $LOAD_PATH
     end
 
     def read_plugin_config_dir(dir)
