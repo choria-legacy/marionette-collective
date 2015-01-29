@@ -33,6 +33,18 @@ module MCollective
         expect { Config.instance.loadconfig("/nonexisting") }.to raise_error(/should be absolute paths/)
       end
 
+      it 'should prepend $libdir to $LOAD_PATH' do
+        Util.expects(:absolute_path?).with('/test').returns(true)
+
+        File.stubs(:exists?).with("/nonexisting").returns(true)
+
+        File.expects(:readlines).with('/nonexisting').returns(['libdir = /test'])
+
+        Config.instance.loadconfig("/nonexisting")
+
+        $LOAD_PATH[0].should == '/test'
+      end
+
       it "should not allow any path like construct for identities" do
         # Taken from puppet test cases
         ['../foo', '..\\foo', './../foo', '.\\..\\foo',
