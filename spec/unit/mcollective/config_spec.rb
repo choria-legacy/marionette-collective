@@ -5,13 +5,6 @@ require 'spec_helper'
 module MCollective
   describe Config do
     describe "#loadconfig" do
-      it "should fail when no libdir is set" do
-        File.expects(:exists?).with("/nonexisting").returns(true)
-        File.expects(:readlines).with("/nonexisting").returns([])
-        Config.instance.stubs(:set_config_defaults)
-        expect { Config.instance.loadconfig("/nonexisting") }.to raise_error("The /nonexisting config file does not specify a libdir setting, cannot continue")
-      end
-
       it "should only test that libdirs are absolute paths" do
         Util.expects(:absolute_path?).with("/one").returns(true)
         Util.expects(:absolute_path?).with("/two").returns(true)
