@@ -141,7 +141,6 @@ fi
 %doc doc
 %{ruby_libdir}/mcollective.rb
 %{ruby_libdir}/mcollective
-%{_libexecdir}/mcollective/mcollective
 %dir %{_sysconfdir}/mcollective
 %dir %{_sysconfdir}/mcollective/ssl
 %config %{_sysconfdir}/mcollective/*.erb
@@ -151,8 +150,6 @@ fi
 %attr(0755, root, root)%{_bindir}/mco
 %doc COPYING
 %config(noreplace)%{_sysconfdir}/mcollective/client.cfg
-%{_libexecdir}/mcollective/mcollective/application
-%{_libexecdir}/mcollective/mcollective/pluginpackager
 
 %files
 %defattr(-, root, root, 0755)
