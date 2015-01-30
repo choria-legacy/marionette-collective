@@ -1,6 +1,6 @@
 #!/usr/bin/env rspec
 
-@agent_file = File.join(File.dirname(__FILE__), '../../../../../', 'plugins', 'mcollective', 'agent', 'rpcutil.rb')
+@agent_file = File.join('mcollective', 'agent', 'rpcutil')
 
 require 'spec_helper'
 require @agent_file

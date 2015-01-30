@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-require File.dirname(__FILE__) + '/../../../../../plugins/mcollective/discovery/flatfile.rb'
+require 'mcollective/discovery/flatfile'
 
 module MCollective
   class Discovery

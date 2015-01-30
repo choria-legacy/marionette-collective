@@ -1,7 +1,7 @@
 #!/usr/bin/env rspec
 
 require 'spec_helper'
-require File.join(File.dirname(__FILE__), '../../../../../', 'plugins', 'mcollective', 'facts', 'yaml_facts.rb')
+require 'mcollective/facts/yaml_facts'
 
 module MCollective
   module Facts

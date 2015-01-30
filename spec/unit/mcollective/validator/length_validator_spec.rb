@@ -1,6 +1,6 @@
 #!/usr/bin/env rspec
 require 'spec_helper'
-require File.dirname(__FILE__) + '/../../../../../plugins/mcollective/validator/length_validator.rb'
+require 'mcollective/validator/length_validator'
 
 module MCollective
   module Validator

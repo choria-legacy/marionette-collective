@@ -1,7 +1,7 @@
 #!/usr/bin/env rspec
 
 require 'spec_helper'
-require File.dirname(__FILE__) + '/../../../../../plugins/mcollective/security/psk.rb'
+require 'mcollective/security/psk'
 
 module MCollective::Security
   describe Psk do

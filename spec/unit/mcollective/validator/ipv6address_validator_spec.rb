@@ -1,6 +1,6 @@
 #!/usr/bin/env rspec
 require 'spec_helper'
-require File.dirname(__FILE__) + '/../../../../../plugins/mcollective/validator/ipv6address_validator.rb'
+require 'mcollective/validator/ipv6address_validator'
 
 module MCollective
   module Validator

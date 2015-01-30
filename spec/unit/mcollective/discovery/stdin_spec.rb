@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-require File.dirname(__FILE__) + '/../../../../../plugins/mcollective/discovery/stdin.rb'
+require 'mcollective/discovery/stdin'
 
 module MCollective
   class Discovery

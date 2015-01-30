@@ -1,7 +1,7 @@
 #!/usr/bin/env rspec
 
 require 'spec_helper'
-require File.join(File.dirname(__FILE__), '../../../../../', 'plugins', 'mcollective', 'audit', 'logfile.rb')
+require 'mcollective/audit/logfile'
 
 module MCollective
   module RPC

@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 MCollective::PluginManager.clear
-require File.dirname(__FILE__) + '/../../../../../plugins/mcollective/pluginpackager/ospackage_packager.rb'
+require 'mcollective/pluginpackager/ospackage_packager'
 
 module MCollective
   module PluginPackager

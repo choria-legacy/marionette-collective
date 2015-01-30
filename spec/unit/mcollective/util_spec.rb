@@ -484,8 +484,8 @@ module MCollective
         Util.stubs(:terminal_dimensions).returns([0,0])
 
         rootdir = File.dirname(__FILE__)
-        input = File.read("#{rootdir}/../fixtures/util/4.in")
-        output = File.read("#{rootdir}/../fixtures/util/4.out")
+        input = File.read("#{rootdir}/../../fixtures/util/4.in")
+        output = File.read("#{rootdir}/../../fixtures/util/4.out")
 
         (Util.align_text(input, nil, 3) + "\n").should == output
       end
@@ -508,14 +508,14 @@ module MCollective
       it "should correctly align strings" do
         rootdir = File.dirname(__FILE__)
         (1..2).each do |i|
-          input = File.read("#{rootdir}/../fixtures/util/#{i}.in")
-          output = File.read("#{rootdir}/../fixtures/util/#{i}.out")
+          input = File.read("#{rootdir}/../../fixtures/util/#{i}.in")
+          output = File.read("#{rootdir}/../../fixtures/util/#{i}.out")
 
           (Util.align_text(input, 158 , 5) + "\n").should == output
         end
 
-        input = File.read("#{rootdir}/../fixtures/util/3.in")
-        output = File.read("#{rootdir}/../fixtures/util/3.out")
+        input = File.read("#{rootdir}/../../fixtures/util/3.in")
+        output = File.read("#{rootdir}/../../fixtures/util/3.out")
 
         (Util.align_text(input, 30, 0) + "\n").should == output
       end

@@ -1,7 +1,7 @@
 #!/usr/bin/env rspec
 
 require 'spec_helper'
-require File.dirname(__FILE__) + "/../../../../../plugins/mcollective/aggregate/summary.rb"
+require 'mcollective/aggregate/summary'
 
 module MCollective
   class Aggregate

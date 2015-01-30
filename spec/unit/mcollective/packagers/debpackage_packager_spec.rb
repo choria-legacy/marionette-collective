@@ -1,6 +1,6 @@
 #!/usr/bin/env rspec
 require 'spec_helper'
-require File.dirname(__FILE__) + '/../../../../../plugins/mcollective/pluginpackager/debpackage_packager.rb'
+require 'mcollective/pluginpackager/debpackage_packager'
 
 module MCollective
   module PluginPackager

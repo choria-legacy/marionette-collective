@@ -1,7 +1,7 @@
 #!/usr/bin/env rspec
 
 require 'spec_helper'
-require File.dirname(__FILE__) + '/../../../../../plugins/mcollective/security/aes_security.rb'
+require 'mcollective/security/aes_security'
 
 module MCollective
   module Security

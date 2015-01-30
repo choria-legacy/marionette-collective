@@ -1,6 +1,6 @@
 #!/usr/bin/env rspec
 require 'spec_helper'
-require File.dirname(__FILE__) + '/../../../../../plugins/mcollective/validator/typecheck_validator.rb'
+require 'mcollective/validator/typecheck_validator'
 
 module MCollective
   module Validator

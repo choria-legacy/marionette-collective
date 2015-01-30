@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-require File.dirname(__FILE__) + "/../../../../../plugins/mcollective/data/fstat_data.rb"
+require 'mcollective/data/fstat_data'
 
 module MCollective
   module Data

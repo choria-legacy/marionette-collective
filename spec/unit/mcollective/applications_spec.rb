@@ -16,7 +16,7 @@ module MCollective
       @appsdir = File.join([@tmpdir, "mcollective", "application"])
       FileUtils.mkdir_p(@appsdir)
 
-      FileUtils.cp(File.join([File.dirname(__FILE__), "..", "fixtures", "application", "test.rb"]), @appsdir)
+      FileUtils.cp(File.join([File.dirname(__FILE__), '..', "..", "fixtures", "application", "test.rb"]), @appsdir)
     end
 
     after do

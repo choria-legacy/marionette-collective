@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-require File.dirname(__FILE__) + '/../../../../../plugins/mcollective/discovery/mc.rb'
+require 'mcollective/discovery/mc'
 
 module MCollective
   class Discovery

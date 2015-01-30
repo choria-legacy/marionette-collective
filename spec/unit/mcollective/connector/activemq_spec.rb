@@ -4,7 +4,7 @@ require 'spec_helper'
 
 MCollective::PluginManager.clear
 
-require File.dirname(__FILE__) + '/../../../../../plugins/mcollective/connector/activemq.rb'
+require 'mcollective/connector/activemq'
 
 # create the stomp error class here as it does not always exist
 # all versions of the stomp gem and we do not want to tie tests

@@ -6,7 +6,7 @@ module MCollective
   describe SSL do
     before do
       @rootdir = File.dirname(__FILE__)
-      @ssl = SSL.new("#{@rootdir}/../fixtures/test-public.pem", "#{@rootdir}/../fixtures/test-private.pem")
+      @ssl = SSL.new("#{@rootdir}/../../fixtures/test-public.pem", "#{@rootdir}/../../fixtures/test-private.pem")
     end
 
     it "should be able to decode base64 text it encoded" do
@@ -51,26 +51,26 @@ module MCollective
 
       it "should take the configured value when present" do
         Config.instance.stubs("ssl_cipher").returns("aes-128-cbc")
-        @ssl = SSL.new("#{@rootdir}/../fixtures/test-public.pem", "#{@rootdir}/../fixtures/test-private.pem")
+        @ssl = SSL.new("#{@rootdir}/../../fixtures/test-public.pem", "#{@rootdir}/../../fixtures/test-private.pem")
 
         @ssl.ssl_cipher.should == "aes-128-cbc"
       end
 
       it "should set the supplied ssl cipher" do
-        @ssl = SSL.new("#{@rootdir}/../fixtures/test-public.pem", "#{@rootdir}/../fixtures/test-private.pem", nil, "aes-128-cbc")
+        @ssl = SSL.new("#{@rootdir}/../../fixtures/test-public.pem", "#{@rootdir}/../../fixtures/test-private.pem", nil, "aes-128-cbc")
         @ssl.ssl_cipher.should == "aes-128-cbc"
       end
 
       it "should prefer the supplied cipher over configured cipher" do
         Config.instance.stubs("aes_key_size").returns("foo-foo-foo")
-        @ssl = SSL.new("#{@rootdir}/../fixtures/test-public.pem", "#{@rootdir}/../fixtures/test-private.pem", nil, "aes-128-cbc")
+        @ssl = SSL.new("#{@rootdir}/../../fixtures/test-public.pem", "#{@rootdir}/../../fixtures/test-private.pem", nil, "aes-128-cbc")
 
         @ssl.ssl_cipher.should == "aes-128-cbc"
       end
 
       it "should fail on invalid ciphers" do
         expect {
-          @ssl = SSL.new("#{@rootdir}/../fixtures/test-public.pem", "#{@rootdir}/../fixtures/test-private.pem", nil, "foo-foo-foo")
+          @ssl = SSL.new("#{@rootdir}/../../fixtures/test-public.pem", "#{@rootdir}/../../fixtures/test-private.pem", nil, "foo-foo-foo")
         }.to raise_error("The supplied cipher 'foo-foo-foo' is not supported")
       end
     end
@@ -97,11 +97,11 @@ module MCollective
       end
 
       it "should read a public key" do
-        @ssl.read_key(:public, "#{@rootdir}/../fixtures/test-public.pem")
+        @ssl.read_key(:public, "#{@rootdir}/../../fixtures/test-public.pem")
       end
 
       it "should read the public key from a certificate" do
-        @ssl.read_key(:public, "#{@rootdir}/../fixtures/test-cert.pem").to_s.should match(/.+BEGIN.+PUBLIC KEY.+END.+PUBLIC KEY.+/m)
+        @ssl.read_key(:public, "#{@rootdir}/../../fixtures/test-cert.pem").to_s.should match(/.+BEGIN.+PUBLIC KEY.+END.+PUBLIC KEY.+/m)
       end
 
       it "should return nil if no key was given" do
@@ -115,15 +115,15 @@ module MCollective
       it "should clear the OpenSSL error queue on ruby 1.8" do
         Util.expects(:ruby_version).returns("1.8.7")
         OpenSSL.expects(:errors)
-        @ssl.read_key(:public, "#{@rootdir}/../fixtures/test-public.pem")
-        @ssl.read_key(:private, "#{@rootdir}/../fixtures/test-private.pem")
+        @ssl.read_key(:public, "#{@rootdir}/../../fixtures/test-public.pem")
+        @ssl.read_key(:private, "#{@rootdir}/../../fixtures/test-private.pem")
       end
 
       it "should not clear the OpenSSL error queue on ruby > 1.8" do
         Util.expects(:ruby_version).returns("1.9.3")
         OpenSSL.expects(:errors).never
-        @ssl.read_key(:public, "#{@rootdir}/../fixtures/test-public.pem")
-        @ssl.read_key(:private, "#{@rootdir}/../fixtures/test-private.pem")
+        @ssl.read_key(:public, "#{@rootdir}/../../fixtures/test-public.pem")
+        @ssl.read_key(:private, "#{@rootdir}/../../fixtures/test-private.pem")
       end
     end
 
@@ -176,7 +176,7 @@ module MCollective
         end
 
         # new ssl instance configured for aes-128-cbc, should work
-        @ssl = SSL.new("#{@rootdir}/../fixtures/test-public.pem", "#{@rootdir}/../fixtures/test-private.pem", nil, "aes-128-cbc")
+        @ssl = SSL.new("#{@rootdir}/../../fixtures/test-public.pem", "#{@rootdir}/../../fixtures/test-private.pem", nil, "aes-128-cbc")
         @ssl.aes_decrypt(key, data).should == "foo"
       end
     end
