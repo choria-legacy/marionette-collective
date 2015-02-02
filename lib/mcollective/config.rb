@@ -137,8 +137,6 @@ module MCollective
           end
         end
 
-        raise('The %s config file does not specify a libdir setting, cannot continue' % configfile) if libdirs.empty?
-
         read_plugin_config_dir("#{@configdir}/plugin.d")
 
         raise 'Identities can only match /\w\.\-/' unless @identity.match(/^[\w\.\-]+$/)
