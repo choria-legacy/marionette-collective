@@ -4,7 +4,23 @@ title: Changelog
 toc: false
 ---
 
+## Version 2.8.x
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2015/02/04|Release *2.8.0*|MCO-561|
+|2015/02/02|Add AIO init scripts to ext/aio|MCO-555|
+|2015/02/02|Move core plugins into sitelibdir|MCO-583|
+|2015/01/29|Prefer configuration files from AIO paths|MCO-560|
+|2015/01/29|Use $LOAD_PATH for loading plugins|MCO-315|
+|2015/01/28|Replace uses of `autoload` with `require`|MCO-580|
+|2015/01/21|Fix `mco facts` in absence of fact|MCO-558|
+|2015/01/07|Ensure rubocop failures fail the build|MCO-519|
+|2014/12/19|Fix powershell exit code interactions|MCO-550|
+
+
 ## Version 2.7.x
+
 |Date|Description|Ticket|
 |----|-----------|------|
 |2014/12/02|Release *2.7.0*|MCO-525|
