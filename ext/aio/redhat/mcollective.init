@@ -1,0 +1,139 @@
+#!/bin/sh
+#
+# mcollective   Application Server for STOMP based agents
+#
+# chkconfig:    - 24 76
+#
+# description:  mcollective lets you build powerful Stomp compatible middleware clients in ruby without having to worry too
+#               much about all the setup and management of a Stomp connection, it also provides stats, logging and so forth
+#               as a bonus.
+#
+### BEGIN INIT INFO
+# Provides:          mcollective
+# Required-Start:    $remote_fs
+# Required-Stop:     $remote_fs
+# Short-Description: Start daemon at boot time
+# Description:       Enable service provided by daemon.
+### END INIT INFO
+
+mcollectived="/opt/puppetlabs/agent/bin/mcollectived"
+pidfile="/var/run/puppetlabs/agent/mcollectived.pid"
+if [ -d /var/lock/subsys ]; then
+    # RedHat/CentOS/etc who use subsys
+    lockfile="/var/lock/subsys/mcollective"
+else
+    # The rest of them
+    lockfile="/var/lock/mcollective"
+fi
+
+# Check that binary exists
+if ! [ -f $mcollectived ]; then
+    echo "mcollectived binary not found"
+    exit 5
+fi
+
+# Source function library.
+. /etc/init.d/functions
+
+if [ -f /etc/sysconfig/mcollective ]; then
+    . /etc/sysconfig/mcollective
+fi
+
+# Determine if we can use the -p option to daemon, killproc, and status.
+# RHEL < 5 can't.
+if status | grep -q -- '-p' 2>/dev/null; then
+    daemonopts="--pidfile $pidfile"
+    pidopts="-p $pidfile"
+fi
+
+start() {
+    echo -n "Starting mcollective: "
+    # Only try to start if not already started
+    if ! rh_status_q; then
+      daemon ${daemonopts} ${mcollectived} --pid=${pidfile} --config="/etc/puppetlabs/agent/mcollective/server.cfg" --daemonize
+    fi
+    # This will be 0 if mcollective is already running
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && touch ${lockfile}
+    return $RETVAL
+}
+
+stop() {
+    echo -n "Shutting down mcollective: "
+    # If running, try to stop it
+    if rh_status_q; then
+      killproc ${pidopts} -d 10 ${mcollectived}
+    else
+      # Non-zero status either means lockfile and pidfile need cleanup (1 and 2)
+      # or the process is already stopped (3), so we can just call true to
+      # trigger the cleanup that happens below.
+      true
+    fi
+    RETVAL=$?
+    echo
+    [ $RETVAL = 0 ] && rm -f ${lockfile} ${pidfile}
+    return $RETVAL
+}
+
+restart() {
+    stop
+    start
+}
+
+reload_agents() {
+    echo -n "Reloading mcollective agents: "
+    killproc ${pidopts} ${mcollectived} -USR1
+    RETVAL=$?
+    echo
+    return $RETVAL
+}
+
+reload_loglevel() {
+    echo -n "Cycling mcollective logging level: "
+    killproc ${pidopts} ${mcollectived} -USR2
+    RETVAL=$?
+    echo
+    return $RETVAL
+}
+
+rh_status() {
+    status ${pidopts} ${mcollectived}
+    RETVAL=$?
+    return $RETVAL
+}
+
+rh_status_q() {
+    rh_status >/dev/null 2>&1
+}
+
+# See how we were called.
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        restart
+        ;;
+    condrestart)
+        rh_status_q || exit 0
+        restart
+        ;;
+    reload-agents)
+        reload_agents
+        ;;
+    reload-loglevel)
+        reload_loglevel
+        ;;
+    status)
+        rh_status
+        ;;
+    *)
+        echo "Usage: mcollectived {start|stop|restart|condrestart|reload-agents|reload-loglevel|status}"
+        RETVAL=2
+        ;;
+esac
+exit $RETVAL
