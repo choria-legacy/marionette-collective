@@ -786,9 +786,9 @@ amount of time has elapsed.
 
 Where to look for plugins. Should be a single path or a list of paths separated by the {{ path_separator }}.
 
-By default, this setting is blank, but the package you installed MCollective with should supply a default server.cfg file with a platform-appropriate value for this setting. **If server.cfg has no value for this setting, MCollective will not work.**
+This setting is optional from 2.8.0 onwards.
 
-- _Default:_ (nothing; the package's default config file usually sets a platform-appropriate value)
+- _Default:_ None
 - _Sample value:_ `/usr/libexec/mcollective:/opt/mcollective`
 
 #### `ssl_cipher`
