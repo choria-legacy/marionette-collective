@@ -8,6 +8,64 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+
+## 2.8.0 - 2015/02/04
+
+### New Features and Improvements from 2.7.0
+
+* Puppet Labs All-In-One Agent paths are now consulted in preference
+* core plugins now live in lib, are installed into sitelibdir
+* $libdir is now optional and extends the ruby $LOAD_PATH
+* rubocop policy violations now cause Travis CI build failures
+
+### Configuration path changes for Puppet Labs All-In-One Agent
+
+Client applications will now use the first readable config file of
+`~/.mcollective`, `/etc/puppetlabs/agent/mcollective/client.cfg`,
+`/etc/mcollective/client.cfg` when no configuration file is specified.
+
+The MCollective daemon will now use the first readable config file of
+`/etc/puppetlabs/agent/mcollective/server.cfg`,
+`/etc/mcollective/server.cfg` when no configuration file is specified.
+
+This is to support the forthcoming All-In-One Agent packages from
+Puppet Labs, which you can read about [here][aio].
+
+[aio]: https://groups.google.com/d/msg/puppet-dev/qZ-nOvmfrig/htvN7tyo_1YJ
+
+### $libdir/$LOAD_PATH changes and core plugins
+
+What would have been known as the core plugins now live alongside the
+core MCollective libraries and will be installed into ruby's
+sitelibdir on installation.
+
+In addition to this we have changed the behaviour of plugin loading so
+that all of ruby's $LOAD_PATH is consulted, the $libdir configuration
+file directive now works as a way to add entries to the start of this
+search path.
+
+The sum of these changes will make the mcollective-client gem usable
+as a self-contained client, just supply `~/.mcollective`.
+
+### Bug fixes since 2.7.0
+
+* Fixed crashing bug caused by interaction of autoload and threads
+* Fixed `mco facts` when no fact value is returned
+
+### Changes since 2.7.0
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2015/02/02|Add AIO init scripts to ext/aio|MCO-555|
+|2015/02/02|Move core plugins into sitelibdir|MCO-583|
+|2015/01/29|Prefer configuration files from AIO paths|MCO-560|
+|2015/01/29|Use $LOAD_PATH for loading plugins|MCO-315|
+|2015/01/28|Replace uses of `autoload` with `require`|MCO-580|
+|2015/01/21|Fix `mco facts` in absence of fact|MCO-558|
+|2015/01/07|Ensure rubocop failures fail the build|MCO-519|
+|2014/12/19|Fix powershell exit code interactions|MCO-550|
+
+
 <a name="2_7_0">&nbsp;</a>
 
 ## 2.7.0 - 2014/12/02
