@@ -8,7 +8,7 @@ metadata  :name        => "average",
 
 usage <<-USAGE
 
-  This aggregate plugin will determine te average of a set of numeric values.
+  This aggregate plugin will determine the average of a set of numeric values.
 
   DDL Example:
 
