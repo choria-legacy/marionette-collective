@@ -1,6 +1,7 @@
 #!/usr/bin/env rspec
 
 require 'spec_helper'
+require 'mcollective/runner'
 
 module MCollective
   describe Runner do
