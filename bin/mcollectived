@@ -5,6 +5,7 @@
 $LOAD_PATH.delete '.'
 
 require 'mcollective'
+require 'mcollective/runner'
 require 'getoptlong'
 
 opts = GetoptLong.new(
