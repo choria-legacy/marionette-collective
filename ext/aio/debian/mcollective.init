@@ -56,7 +56,6 @@ case "$1" in
         start-stop-daemon -S -p ${pidfile} --oknodo -q -a ${mcollectived} -- ${daemonopts} --daemonize
         [ $? = 0 ] && { exit 0 ; } || { exit 1 ; }
         log_success_msg "mcollective started"
-        touch $lock
         ;;
     stop)
         echo "Stopping daemon: " $name
@@ -72,11 +71,10 @@ case "$1" in
         [ $? = 0 ] && { echo "mcollective restarted" ; exit 0 ; }
         ;;
     condrestart)
-        if [ -f $lock ]; then
-            $0 stop
-            # avoid race
-            sleep 2
-            $0 start
+        # status prints a horrible error message when it fails. We
+        # don't want to scare the user away.
+        if $0 status >/dev/null 2>&1; then
+            $0 restart
         fi
         ;;
     force-reload)
