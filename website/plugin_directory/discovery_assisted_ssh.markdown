@@ -1,3 +1,10 @@
+---
+layout: default
+title: "MCollective Plugin: Discovery-Assisted SSH"
+toc: false
+---
+
+
 If you're using the discovery filters heavily, you might also want to use SSH based on these filters. We have 2 client scripts that help you do this at [GitHub](https://github.com/puppetlabs/mcollective-plugins/tree/master/utilities/mc-ssh).
 
 The first uses the [Highline](http://highline.rubyforge.org/) gem and looks something like this:

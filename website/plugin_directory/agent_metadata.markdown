@@ -1,6 +1,7 @@
 ---
 layout: default
 title: "MCollective Plugin: Agent Metadata"
+toc: false
 ---
 
 

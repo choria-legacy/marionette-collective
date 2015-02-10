@@ -10,12 +10,12 @@ The intention is to put all the node data in a easily reusable place for web UI'
 A prototype system exist that lets you query this data from Puppet, the code is on [GitHub](https://github.com/puppetlabs/mcollective-plugins/tree/master/agent/registration-mongodb/puppet) and I have a [Blog Post](http://www.devco.net/archives/2010/09/18/puppet_search_engine_with_mcollective.php) that shows how it is used.
 
 Shortcomings
-=============
+-----
 
  * It has no way to know when a node is not around anymore, so you need to delete old data yourself.  Will make scripts available that does this based on last seen time.
 
 Installation
-============
+-----
 
 You need to have the following installed:
 
@@ -25,7 +25,7 @@ You need to have the following installed:
  * The source is on [GitHub](https://github.com/puppetlabs/mcollective-plugins/tree/master/agent/registration-mongodb/)
 
 Configuration
-=============
+-----
 
 <pre>
 plugin.registration.mongohost = localhost
@@ -48,7 +48,7 @@ switched to db puppet
 </pre>
 
 Discovery
-======
+-----
 
 As of version 2.1.0 of MCollective discovery is pluggable, the GitHub repo for this registration receiver includes
 a discovery plugin that supports class, fact, identity and agent filters with full sub collective support.
@@ -66,7 +66,7 @@ Discovery Methods:
   mongo           MongoDB based discovery for databases built using registration
 </pre>
 
-The discovery plugin takes the same configuration options as above to locate the mongodb instance and you can 
+The discovery plugin takes the same configuration options as above to locate the mongodb instance and you can
 set it to be the default discovery method in your client.cfg:
 
 <pre>

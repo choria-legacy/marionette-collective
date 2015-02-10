@@ -1,5 +1,9 @@
-Introduction
-------------
+---
+layout: default
+title: "MCollective Plugin: Sysctl Data"
+toc: false
+---
+
 
 This plugin can retrive a value from a Linux sysctl variable to be used in agents and discovery.
 
@@ -11,7 +15,7 @@ $ mco find -S "sysctl('net.ipv4.conf.all.forwarding').value=1"
 
 
 Installation
-=======
+------
 
  * The source is on [GitHub](https://github.com/puppetlabs/mcollective-plugins/tree/master/data/sysctl/).
 
