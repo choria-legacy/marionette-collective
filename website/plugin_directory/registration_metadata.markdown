@@ -10,13 +10,13 @@ Sends all available metadata via the registration mechanism, at present this is:
  * List of all classes
 
 Installation
-============
+-----
 
  * The source is on [GitHub](https://github.com/puppetlabs/mcollective-plugins/tree/master/registration/).
 
 
 Configuration
-=============
+-----
 
 For full details about the registration system see [Registration](http://docs.puppetlabs.com/mcollective/reference/plugins/registration.html)
 

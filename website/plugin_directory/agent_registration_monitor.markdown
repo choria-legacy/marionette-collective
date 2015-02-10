@@ -10,15 +10,15 @@ It includes a Nagios check that monitors the directory with these files for any 
 You can use this agent as well as other types of registration agents, just not more than one per server.  So you can inventory your machines as well as monitor them on your Nagios server by just enabling registration on the mcollectived servers.
 
 Installation
-============
+-----
 
  * The source is on [GitHub](https://github.com/puppetlabs/mcollective-plugins/tree/master/agent/registration-monitor/).
 
 
 Configuration
-=======
+-----
 
-By default the plugin will create _/var/tmp/mcollective_ and create files in there per sender id.  
+By default the plugin will create _/var/tmp/mcollective_ and create files in there per sender id.
 
 You can configure the directory used using the setting _plugin.registration.directory_ in the server config.
 

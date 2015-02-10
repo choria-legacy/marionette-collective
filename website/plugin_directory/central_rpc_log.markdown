@@ -1,10 +1,8 @@
 ---
 layout: default
-title: "MCollective Plugin: Central RPC Log"
+title: "MCollective Plugin: Central RPC Audit Log"
 ---
 
-Centralized RPC Audit Logs
-==========================
 
 This is a [SimpleRPC Audit Plugin](http://docs.puppetlabs.com/mcollective/simplerpc/auditing.html) and Agent that sends all SimpleRPC audit events to a central point for logging.
 
@@ -34,15 +32,14 @@ switched to db mcollective
 { "_id" : ObjectId("4c5975e2dc3ecb0c3b000001"), "agent" : "nrpe", "senderid" : "monitor1.xxx.net", "requestid" : "6c311d786b2d187b231d41f14cbb03ce", "action" : "runcommand", "data" : { "command" : "check_bacula-fd", "process_results" : true }, "caller" : "cert=nagios@monitor1.xxx.net" }
 </pre>
 
-There are some limitations to the design of this plugin, I suspect it will be affective to only a few 100 machines.  This is due to RPC requests being used to create the audit entries.  If the central host isn't fast there might be some overflow and discarding happening.  
+There are some limitations to the design of this plugin, I suspect it will be affective to only a few 100 machines.  This is due to RPC requests being used to create the audit entries.  If the central host isn't fast there might be some overflow and discarding happening.
 
 I'd be interested in working with someone to improve this, we'd essentially write audit log entries to a Queue and have a daemon that consumes the queue, this will ensure that all logs get saved to the DB.
 
 Installation
-============
+-----
 
-Every Node
-----------
+### Every Node
 
  * The source is on [GitHub](https://github.com/puppetlabs/mcollective-plugins/tree/master/audit/centralrpclog/audit/).
 
@@ -62,10 +59,9 @@ plugin.centralrpclog.collective = audit
 
 And restart
 
-Central Audit Node
-------------------
+### Central Audit Node
 
-### File logging agent
+#### File logging agent
 
  * The source is on [GitHub](https://github.com/puppetlabs/mcollective-plugins/tree/master/audit/centralrpclog/agent/).
 
@@ -78,7 +74,7 @@ plugin.centralrpclog.logfile = /var/log/mcollective-rpcaudit.log
 
  * Set up log rotation for _/var/log/mcollective-rpcaudit.log_ using your Operating Systems log rotation system.
 
-### MongoDB agent
+#### MongoDB agent
 
  * The source is on [GitHub](https://github.com/puppetlabs/mcollective-plugins/tree/master/audit/centralrpclog/agent/).
 

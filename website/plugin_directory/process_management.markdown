@@ -8,13 +8,13 @@ An agent that can be used for process management like the Unix _pgrep_, _kill_ a
 **WARNING:** You should use the _kill_ and _pkill_ actions with extreme caution, you can do extensive damage to the availability of your infrastructure using these.
 
 Installation
-============
+-----
 
  * The source is on [GitHub](https://github.com/puppetlabs/mcollective-plugins/tree/master/agent/process/)
  * You need to have the [sys-proctable](http://raa.ruby-lang.org/project/sys-proctable/) Gem installed
 
 Usage
-=====
+-----
 
 There is a bundled _pgrep_ utility:
 
@@ -24,11 +24,11 @@ There is a bundled _pgrep_ utility:
  * [ ============================================================> ] 48 / 48
 
 node1.your.com
-32470 root        92.805MB  ruby /usr/sbin/mcollectived --pid=/var/run/mcollectived.pid 
+32470 root        92.805MB  ruby /usr/sbin/mcollectived --pid=/var/run/mcollectived.pid
 
 node2.your.com
  1997 root        40.539MB  /usr/bin/ruby /usr/sbin/puppetd --onetime
-12316 root        25.676MB  ruby /usr/sbin/mcollectived --pid=/var/run/mcollectived.pid 
+12316 root        25.676MB  ruby /usr/sbin/mcollectived --pid=/var/run/mcollectived.pid
 
 &lt;snip&gt;
 

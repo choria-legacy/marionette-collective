@@ -3,14 +3,14 @@ layout: default
 title: "MCollective Plugin: Facter via YAML"
 ---
 
-# Overview
+## Overview
 
 
 This method of accessing facts is what we recommend for Puppet users, it's faster and deals better with some strange issues in Facter.
 
-Essentially we use Puppet to dump the data it gathers during normal runs into a YAML file and just use the MCollective YAML fact source to read this data.  This avoids an extreme slowdown from Facter running on every mcollective invocation, plus it lets you get any in-scope variables (for example, parameters from your external node classifier) available as mcollective filters for free. 
+Essentially we use Puppet to dump the data it gathers during normal runs into a YAML file and just use the MCollective YAML fact source to read this data.  This avoids an extreme slowdown from Facter running on every mcollective invocation, plus it lets you get any in-scope variables (for example, parameters from your external node classifier) available as mcollective filters for free.
 
-# Creating the YAML
+## Creating the YAML
 
 In your Puppet manifests create a class similar to below: (Thanks to Dave Ta for this recipe, and to Jesse Throwe for the Ruby 1.9 fix)
 
@@ -19,16 +19,16 @@ class mcollective::facts ()
 {
   #The facts.yaml file resource is generated in its own dedicated class
   #By doing this, the file produced isn't polluted with unwanted in scope class variables.
- 
+
   ##Bring in as many variables as you want from other classes here.
   #This makes them available to mcollective for use in filters.
   #eg
   #$class_variable = $class::variable
- 
+
   #mcollective doesn't work with arrays, so use the puppet-stdlib join function
   #eg
   #$ntp_servers = join($ntp::servers, ",")
- 
+
   file{'/etc/mcollective/facts.yaml':
    owner    => root,
    group    => root,
@@ -39,7 +39,7 @@ class mcollective::facts ()
 </pre>
 
 
-## facts.yaml.erb
+### facts.yaml.erb
 <pre>
 <%=
     # remove dynamic facts
@@ -58,7 +58,7 @@ class mcollective::facts ()
 
 Apply this to all the nodes that run MCollective.
 
-# Configure MCollective
+## Configure MCollective
 
 Add the following lines to <em>server.cfg</em>
 
@@ -67,7 +67,7 @@ factsource = yaml
 plugin.yaml = /etc/mcollective/facts.yaml
 </pre>
 
-# Verify
+## Verify
 
 <pre>
 % mc-inventory some.node

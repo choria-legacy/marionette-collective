@@ -20,17 +20,17 @@ Packages agent tackles the following requirements
 1. Include "yum clean expire-cache"
 
 Limitations
-===========
+-----
 
 Mainly tested on Scientific Linux 6.1.
 
 Installation
-============
+-----
 
 The source is on [GitHub](https://github.com/jbraeuer/mcollective-plugins/tree/packages/agent/packages/)
 
 Usage
-=====
+-----
 
 Install multiple packages at a time:
 
