@@ -6,9 +6,9 @@ After=network.target
 Type=forking
 StandardOutput=syslog
 StandardError=syslog
-ExecStart=/opt/puppetlabs/agent/bin/mcollectived --config=/etc/puppetlabs/agent/mcollective/server.cfg --pidfile=/var/run/puppetlabs/agent/mcollective.pid --daemonize
+ExecStart=/opt/puppetlabs/puppet/bin/mcollectived --config=/etc/puppetlabs/mcollective/server.cfg --pidfile=/var/run/puppetlabs/mcollective.pid --daemonize
 ExecReload=/bin/kill -USR1 $MAINPID
-PIDFile=/var/run/puppetlabs/agent/mcollective.pid
+PIDFile=/var/run/puppetlabs/mcollective.pid
 
 [Install]
 WantedBy=multi-user.target

@@ -200,8 +200,8 @@ module MCollective
         Util.stubs(:windows?).returns(false)
       end
 
-      it 'should default to /etc/puppetlabs/agent/mcollective/client.cfg if ~/.mcollective can not be expanded' do
-        Util.config_file_for_user.should == '/etc/puppetlabs/agent/mcollective/client.cfg'
+      it 'should default to /etc/puppetlabs/mcollective/client.cfg if ~/.mcollective can not be expanded' do
+        Util.config_file_for_user.should == '/etc/puppetlabs/mcollective/client.cfg'
       end
 
       it 'should default to ~/.mcollective if it can be expanded' do
