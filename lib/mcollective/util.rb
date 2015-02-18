@@ -170,7 +170,7 @@ module MCollective
       if self.windows?
         config_paths << File.join(self.windows_prefix, 'etc', 'client.cfg')
       else
-        config_paths << '/etc/puppetlabs/agent/mcollective/client.cfg'
+        config_paths << '/etc/puppetlabs/mcollective/client.cfg'
         config_paths << '/etc/mcollective/client.cfg'
       end
 
