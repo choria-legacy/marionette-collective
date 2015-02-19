@@ -49,7 +49,6 @@ module MCollective
   require "mcollective/pluginpackager"
   require "mcollective/registration"
   require "mcollective/rpc"
-  require "mcollective/runner"
   require "mcollective/runnerstats"
   require "mcollective/security"
   require "mcollective/shell"

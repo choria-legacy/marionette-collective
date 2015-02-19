@@ -30,9 +30,9 @@
 [ -f /etc/sysconfig/mcollective ] && . /etc/sysconfig/mcollective
 
 desc=${DESC:-mcollective daemon}
-daemon=${DAEMON:-/opt/puppetlabs/agent/bin/mcollectived}
+daemon=${DAEMON:-/opt/puppetlabs/puppet/bin/mcollectived}
 name=${NAME:-mcollectived}
-pidfile=${PIDFILE:-/var/run/puppetlabs/agent/mcollectived.pid}
+pidfile=${PIDFILE:-/var/run/puppetlabs/mcollectived.pid}
 daemon_opts=${DAEMON_OPTS:---pid ${pidfile}}
 
 # First reset status of this service

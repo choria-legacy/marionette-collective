@@ -1,7 +1,7 @@
 main_collective = mcollective
 collectives = mcollective
-libdir = /opt/puppetlabs/agent/plugins
-logfile = /var/log/puppetlabs/agent/mcollective.log
+libdir = /opt/puppetlabs/mcollective/plugins
+logfile = /var/log/puppetlabs/mcollective.log
 loglevel = info
 daemonize = 1
 
@@ -18,4 +18,4 @@ plugin.activemq.pool.1.password = marionette
 
 # Facts
 factsource = yaml
-plugin.yaml = /etc/puppetlabs/agent/mcollective/facts.yaml
+plugin.yaml = /etc/puppetlabs/mcollective/facts.yaml

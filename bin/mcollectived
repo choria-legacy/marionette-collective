@@ -5,6 +5,7 @@
 $LOAD_PATH.delete '.'
 
 require 'mcollective'
+require 'mcollective/runner'
 require 'getoptlong'
 
 opts = GetoptLong.new(
@@ -21,7 +22,7 @@ if MCollective::Util.windows?
   configfile = File.join(MCollective::Util.windows_prefix, "etc", "server.cfg")
 else
   # search for the server.cfg in the AIO path then the traditional one
-  configfiles = ['/etc/puppetlabs/agent/mcollective/server.cfg',
+  configfiles = ['/etc/puppetlabs/mcollective/server.cfg',
                  '/etc/mcollective/server.cfg' ]
 
   found = configfiles.find_index { |file| File.readable?(file) }
