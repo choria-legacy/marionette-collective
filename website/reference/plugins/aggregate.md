@@ -3,7 +3,7 @@ layout: default
 title: Aggregate Plugins
 ---
 [DDL]: /mcollective/reference/plugins/ddl.html
-[Examples]: https://github.com/puppetlabs/marionette-collective/tree/master/plugins/mcollective/aggregate
+[Examples]: https://github.com/puppetlabs/marionette-collective/tree/master/lib/mcollective/aggregate
 
 ## Overview
 MCollective Agents return data and we try to provide as much usable user
@@ -365,5 +365,3 @@ end
 Add the last few lines - we check that we're running in a version of MCollective
 that supports this feature and then we call our function with the *:exitcode*
 results.
-
-
