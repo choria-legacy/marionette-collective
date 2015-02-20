@@ -2,7 +2,7 @@
 layout: default
 title: Message Format
 ---
-[SecurityPlugins]: http://github.com/puppetlabs/marionette-collective/tree/master/plugins/mcollective/security/
+[SecurityPlugins]: http://github.com/puppetlabs/marionette-collective/tree/master/lib/mcollective/security/
 [SimpleRPCIntroduction]: /mcollective/simplerpc/
 [MessageFlow]: messageflow.html
 [ScreenCast]: /mcollective/screencasts.html#message_flow
