@@ -157,7 +157,7 @@ The Server Config File(s)
 
 ### Main Config File
 
-MCollective servers are configured with the `server.cfg` file located at `/etc/puppetlabs/agent/mcollective/server.cfg` or `/etc/mcollective/server.cfg`. It contains MCollective's core settings, as well as settings for the various plugins.
+MCollective servers are configured with the `server.cfg` file located at `/etc/puppetlabs/mcollective/server.cfg` or `/etc/mcollective/server.cfg`. It contains MCollective's core settings, as well as settings for the various plugins.
 
 > **Warning:** This file contains sensitive credentials, and should only be readable by the root user, or whatever user the MCollective daemon runs as.
 
@@ -176,7 +176,7 @@ The spaces on either side of the equals sign are optional. Lines starting with a
 
 ### Plugin Config Directory (Optional)
 
-Many of MCollective's settings are named with the format `plugin.<NAME>.<SETTING_NAME>`. These settings can optionally be put in separate files, in the `/etc/mcollective/plugin.d/` directory.  Note the directory `/etc/mcollective/plugin.d` is determined relative to the configuration file in use, if you were to use `/etc/puppetlabs/agent/mcollective/server.cfg` then `/etc/puppetlabs/agent/mcollective/plugin.d` would be consulted.
+Many of MCollective's settings are named with the format `plugin.<NAME>.<SETTING_NAME>`. These settings can optionally be put in separate files, in the `/etc/mcollective/plugin.d/` directory.  Note the directory `/etc/mcollective/plugin.d` is determined relative to the configuration file in use, if you were to use `/etc/puppetlabs/mcollective/server.cfg` then `/etc/puppetlabs/mcollective/plugin.d` would be consulted.
 
 To move a `plugin.<NAME>.<SETTING_NAME>` setting to an external file, put it in `/etc/mcollective/plugin.d/<NAME>.cfg`, and use only the `<SETTING_NAME>` segment of the setting. So this:
 
