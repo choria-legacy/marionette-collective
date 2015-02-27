@@ -14,3 +14,5 @@ plugin.activemq.pool.1.host = stomp1
 plugin.activemq.pool.1.port = 6163
 plugin.activemq.pool.1.user = mcollective
 plugin.activemq.pool.1.password = marionette
+
+connection_timeout = 3
