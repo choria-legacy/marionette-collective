@@ -1,9 +1,6 @@
 HOSTS:
   mcollective:
     roles:
-      - activemq
-      - mco
-      - mcollectived
       - default
     platform: el-7-x86_64
     hypervisor: vagrant
