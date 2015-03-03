@@ -11,12 +11,19 @@ test_name 'install' do
   install_package default, 'activemq'
 
   scp_to default, 'files/activemq.xml', '/etc/activemq/activemq.xml'
+  scp_to default, 'files/activemq.truststore', '/etc/activemq/activemq.truststore'
+  scp_to default, 'files/activemq.keystore', '/etc/activemq/activemq.keystore'
 
   shell 'service activemq start'
 
   # install mcollective config files
   scp_to default, 'files/server.cfg', '/etc/puppetlabs/mcollective/server.cfg'
   scp_to default, 'files/client.cfg', '/etc/puppetlabs/mcollective/client.cfg'
+  scp_to default, 'files/ca_crt.pem', '/etc/puppetlabs/mcollective/ca_crt.pem'
+  scp_to default, 'files/server.crt', '/etc/puppetlabs/mcollective/server.crt'
+  scp_to default, 'files/server.key', '/etc/puppetlabs/mcollective/server.key'
+  scp_to default, 'files/client.crt', '/etc/puppetlabs/mcollective/client.crt'
+  scp_to default, 'files/client.key', '/etc/puppetlabs/mcollective/client.key'
 
   shell 'service mcollective restart'
 end
