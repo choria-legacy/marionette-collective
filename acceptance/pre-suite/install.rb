@@ -16,6 +16,11 @@ test_name 'install' do
 
   shell 'service activemq start'
 
+  # TODO(richardc): This should really be a bounded busy-loop waiting
+  # until activemq starts accepting connections on port 61613.  Until
+  # then, just sleep to give activemq time to start.
+  shell 'sleep 10'
+
   # install mcollective config files
   scp_to default, 'files/server.cfg', '/etc/puppetlabs/mcollective/server.cfg'
   scp_to default, 'files/client.cfg', '/etc/puppetlabs/mcollective/client.cfg'
