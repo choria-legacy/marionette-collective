@@ -30,5 +30,8 @@ test_name 'install' do
   scp_to default, 'files/client.crt', '/etc/puppetlabs/mcollective/client.crt'
   scp_to default, 'files/client.key', '/etc/puppetlabs/mcollective/client.key'
 
+  shell 'mkdir /etc/puppetlabs/mcollective/ssl-clients'
+  scp_to default, 'files/client.crt', '/etc/puppetlabs/mcollective/ssl-clients/client.pem'
+
   shell 'service mcollective restart'
 end
