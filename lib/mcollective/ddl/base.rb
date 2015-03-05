@@ -100,11 +100,6 @@ module MCollective
 
       def validate_requirements
         if requirement = @requirements[:mcollective]
-          if Util.mcollective_version == "@DEVELOPMENT_VERSION@"
-            Log.warn("DDL requirements validation being skipped in development")
-            return true
-          end
-
           if Util.versioncmp(Util.mcollective_version, requirement) < 0
             raise DDLValidationError, "%s plugin '%s' requires MCollective version %s or newer" % [@plugintype.to_s.capitalize, @pluginname, requirement]
           end
