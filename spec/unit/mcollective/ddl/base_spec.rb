@@ -207,12 +207,6 @@ module MCollective
           @ddl.requires(:mcollective => "0.1")
           @ddl.validate_requirements.should == true
         end
-
-        it "should bypass checks in development" do
-          Util.stubs(:mcollective_version).returns("@DEVELOPMENT_VERSION@")
-          Log.expects(:warn).with(regexp_matches(/skipped in development/))
-          @ddl.requires(:mcollective => "0.1")
-        end
       end
 
       describe "#loaddlfile" do
