@@ -8,6 +8,11 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2015/03/11|Release *2.8.1*|MCO-601|
+|2015/03/05|Maintain version number in-tree|MCO-617|
+|2015/02/18|Use updated AIO paths|MCO-594|
+|2015/02/10|Fix AIO debian condrestart action|MCO-591|
+|2015/02/05|Fix problems with 2.8.0 gem loading|MCO-587|
 |2015/02/04|Release *2.8.0*|MCO-561|
 |2015/02/02|Add AIO init scripts to ext/aio|MCO-555|
 |2015/02/02|Move core plugins into sitelibdir|MCO-583|

@@ -8,12 +8,47 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_8_1">&nbsp;</a>
+
+## 2.8.1 - 2015/03/11
+
+### Bug fixes since 2.8.0
+
+* Fixed loading of the mcollective-client gem
+* debian init condrestart action fixed for AIO
+
+### Configuration path changes for Puppet Labs All-In-One Agent
+
+Client applications will now use the first readable config file of
+`~/.mcollective`, `/etc/puppetlabs/mcollective/client.cfg`,
+`/etc/mcollective/client.cfg` when no configuration file is specified.
+
+The MCollective daemon will now use the first readable config file of
+`/etc/puppetlabs/mcollective/server.cfg`,
+`/etc/mcollective/server.cfg` when no configuration file is specified.
+
+*Note:* these are different to the paths announced in the 2.8.0 release
+and may be a source of incompatibility if you have already rearranged
+your files.
+
+### Changes since 2.8.0
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2015/03/05|Maintain version number in-tree|MCO-617|
+|2015/02/18|Use updated AIO paths|MCO-594|
+|2015/02/10|Fix AIO debian condrestart action|MCO-591|
+|2015/02/05|Fix problems with 2.8.0 gem loading|MCO-587|
+
+
+<a name="2_8_0">&nbsp;</a>
 
 ## 2.8.0 - 2015/02/04
 
 ### New Features and Improvements from 2.7.0
 
 * Puppet Labs All-In-One Agent paths are now consulted in preference
+  to traditional paths
 * core plugins now live in lib, are installed into sitelibdir
 * $libdir is now optional and extends the ruby $LOAD_PATH
 * rubocop policy violations now cause Travis CI build failures
