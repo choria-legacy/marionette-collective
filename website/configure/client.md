@@ -129,8 +129,8 @@ The `mco` client is usually run interactively from an admin workstation, but can
 These cases have different needs. In the first, the configuration and credentials should be per-user; in the second, they should be at the system level with restricted visibility of the credentials. MCollective solves this by having two locations for the client configuration:
 
 * `~/.mcollective` --- A `.mcollective` file in the current user's home directory. If this file exists, `mco` will use it instead of the global config file.
-* `/etc/puppetlabs/agent/mcollective/client.cfg` --- A global client config file, which will be used (by versions >= 2.8.0) if `~/.mcollective` doesn't exist. If you are using this file, read access to it and the external credentials it refers to should be strictly controlled, probably limited to the root user.
-* `/etc/mcollective/client.cfg` --- A global client config file, which will be used if `~/.mcollective` and `/etc/puppetlabs/agent/mcollective/client.cfg` don't exist. If you are using this file, read access to it and the external credentials it refers to should be strictly controlled, probably limited to the root user.
+* `/etc/puppetlabs/mcollective/client.cfg` --- A global client config file, which will be used (by versions >= 2.8.1) if `~/.mcollective` doesn't exist. If you are using this file, read access to it and the external credentials it refers to should be strictly controlled, probably limited to the root user.
+* `/etc/mcollective/client.cfg` --- A global client config file, which will be used if `~/.mcollective` and `/etc/puppetlabs/mcollective/client.cfg` don't exist. If you are using this file, read access to it and the external credentials it refers to should be strictly controlled, probably limited to the root user.
 
 ### File Format
 
