@@ -2,7 +2,12 @@ source 'https://rubygems.org'
 
 gem 'json'
 gem 'stomp'
-gem 'systemu'
+
+if RUBY_VERSION =~ /^1.8/
+  gem 'systemu', '2.6.4'
+else
+  gem 'systemu'
+end
 
 group :dev do
   gem 'rake'
