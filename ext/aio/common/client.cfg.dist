@@ -1,6 +1,12 @@
 main_collective = mcollective
 collectives = mcollective
+
 libdir = /opt/puppetlabs/mcollective/plugins
+
+# consult the "classic" libdirs too
+libdir = /usr/share/mcollective/plugins
+libdir = /usr/libexec/mcollective
+
 logger_type = console
 loglevel = warn
 
