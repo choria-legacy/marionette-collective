@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>EnvironmentVariables</key>
+        <dict>
+                <key>PATH</key>
+		<string>/opt/puppetlabs/puppet/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        </dict>
+        <key>Label</key>
+        <string>mcollective</string>
+        <key>KeepAlive</key>
+        <true/>
+        <key>ProgramArguments</key>
+        <array>
+		<string>/opt/puppetlabs/puppet/bin/mcollectived</string>
+                <string>--no-daemonize</string>
+                <string>--config=/etc/puppetlabs/mcollective/server.cfg</string>
+		<string>--pidfile=/var/run/puppetlabs/mcollective.pid</string>
+        </array>
+        <key>RunAtLoad</key>
+        <true/>
+        <key>StandardErrorPath</key>
+	<string>/var/log/puppetlabs/mcollective/mcollective.log</string>
+        <key>StandardOutPath</key>
+	<string>/var/log/puppetlabs/mcollective/mcollective.log</string>
+</dict>
+</plist>
