@@ -6,6 +6,9 @@ $LOAD_PATH.delete '.'
 
 require 'mcollective'
 
+# assume everything will all be fine
+exitcode = 0
+
 Version = MCollective.version
 known_applications = MCollective::Applications.list
 
@@ -37,6 +40,9 @@ else
     puts
     puts MCollective::Config.instance.libdir.map { |path| "   #{path}\n" }
     puts
+
+    # exit with an error as we didn't find a command
+    exitcode = 1
   else
     puts "usage: #{$0} command <options>"
     puts
@@ -54,3 +60,5 @@ else
   puts "to get detailed help for a command"
   puts
 end
+
+exit exitcode
