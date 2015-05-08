@@ -15,6 +15,12 @@ if $0 =~ /mc\-([a-zA-Z\-_\.]+)$/
 else
   app_name = ARGV.first
   ARGV.delete_at(0)
+
+  # it may be a config option rather than an application name.  In this
+  # case pretend we had no application name
+  if app_name =~ /^--/
+    app_name = nil
+  end
 end
 
 if known_applications.include?(app_name)
@@ -25,8 +31,17 @@ if known_applications.include?(app_name)
 else
   puts "The Marionette Collective version #{MCollective.version}"
   puts
-  puts "usage: #{$0} command <options>"
-  puts
+
+  if app_name
+    puts "Unknown command '#{app_name}', searched for applications in:"
+    puts
+    puts MCollective::Config.instance.libdir.map { |path| "   #{path}\n" }
+    puts
+  else
+    puts "usage: #{$0} command <options>"
+    puts
+  end
+
   puts "Known commands:"
   puts
 

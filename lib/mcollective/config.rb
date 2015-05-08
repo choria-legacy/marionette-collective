@@ -145,7 +145,7 @@ module MCollective
 
         libdirs.each do |dir|
           unless File.directory?(dir)
-            Log.warn("Cannot find libdir: #{dir}")
+            Log.debug("Cannot find libdir: #{dir}")
           end
 
           # remove the old one if it exists, we're moving it to the front
