@@ -8,6 +8,66 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_8_2">&nbsp;</a>
+
+## 2.8.2 - 2015/05/19
+
+### Bug fixes and improvements since 2.8.1
+
+* `mco notacommand` now tells you where we looked for application plugins
+* Exit code of `mco notacommand` now indicates failure
+* Fixes to the init script used by SUSE under puppet-agent
+
+#### `mco nosuchapplication` behaviour changes
+
+The behaviour of the `mco` command when a subcommand is absent has
+been changed to indicate failure in its exit code.  We also now tell
+you where we would have looked for the application plugins.
+
+{% highlight shell %}
+$ mco notacommand
+The Marionette Collective version 2.8.2
+
+Unknown command 'notacommand', searched for applications in:
+
+   /Users/richardc/src/mcollective/lib
+   /Users/richardc/.gem/ruby/1.9.3/gems/stomp-1.3.4/lib
+   /opt/rubies/ruby-1.9.3-p547/lib/ruby/site_ruby/1.9.1
+   /opt/rubies/ruby-1.9.3-p547/lib/ruby/site_ruby/1.9.1/x86_64-darwin13.4.0
+   /opt/rubies/ruby-1.9.3-p547/lib/ruby/site_ruby
+   /opt/rubies/ruby-1.9.3-p547/lib/ruby/vendor_ruby/1.9.1
+   /opt/rubies/ruby-1.9.3-p547/lib/ruby/vendor_ruby/1.9.1/x86_64-darwin13.4.0
+   /opt/rubies/ruby-1.9.3-p547/lib/ruby/vendor_ruby
+   /opt/rubies/ruby-1.9.3-p547/lib/ruby/1.9.1
+   /opt/rubies/ruby-1.9.3-p547/lib/ruby/1.9.1/x86_64-darwin13.4.0
+   /Users/richardc/src/mcollective/lib/mcollective/vendor/systemu/lib
+
+Known commands:
+
+   completion           facts                find
+   help                 inventory            ping
+   plugin               rpc
+
+Type 'bin/mco help' for a detailed list of commands and 'bin/mco help command'
+to get detailed help for a command
+$ echo $?
+1
+{% endhighlight %}
+
+### Changes since 2.8.1
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2015/05/12|Do not build for debian stable or testing (target codenames instead)|MCO-665|
+|2015/05/08|Exit non-zero when `mco` is called with a non-existent subcommand|MCO-640|
+|2015/05/08|Add legacy `libdir` settings to aio sample config|MCO-641|
+|2015/05/08|Downgrade warning on absent `libdir`|MCO-647|
+|2015/05/04|Add OSX plist for AIO|MCO-646|
+|2015/04/23|Drop lucid from build targets|MCO-638|
+|2015/04/13|Drop fedora 19 from build targets|MCO-633|
+|2015/03/22|Update AIO SUSE init script|RE-3977|
+
+
 <a name="2_8_1">&nbsp;</a>
 
 ## 2.8.1 - 2015/03/11
