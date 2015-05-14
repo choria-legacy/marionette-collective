@@ -8,6 +8,15 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2015/05/19|Release *2.8.2*|MCO-648|
+|2015/05/12|Do not build for debian stable or testing (target codenames instead)|MCO-665|
+|2015/05/08|Exit non-zero when `mco` is called with a non-existent subcommand|MCO-640|
+|2015/05/08|Add legacy `libdir` settings to aio sample config|MCO-641|
+|2015/05/08|Downgrade warning on absent `libdir`|MCO-647|
+|2015/05/04|Add OSX plist for AIO|MCO-646|
+|2015/04/23|Drop lucid from build targets|MCO-638|
+|2015/04/13|Drop fedora 19 from build targets|MCO-633|
+|2015/03/22|Update AIO SUSE init script|RE-3977|
 |2015/03/11|Release *2.8.1*|MCO-601|
 |2015/03/05|Maintain version number in-tree|MCO-617|
 |2015/02/18|Use updated AIO paths|MCO-594|
