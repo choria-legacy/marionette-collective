@@ -169,6 +169,42 @@ module MCollective
         token = scanner.get_token
         token.should == ["fstatement", "foo('bar=baz')"]
       end
+
+      it "should correctly tokenize a statement escaped with double quotes" do
+        scanner = Scanner.new('foo="a very long string"')
+        token = scanner.get_token
+        token.should == ["statement", "foo=a very long string"]
+      end
+
+      it "should correctly tokenize a statement escaped with single quotes" do
+        scanner = Scanner.new("foo='a very long string'")
+        token = scanner.get_token
+        token.should == ["statement", "foo=a very long string"]
+      end
+
+      it "should correctly tokenize a statement with an escaped sequence and special chars" do
+        scanner = Scanner.new('foo="/slashes/in/the/hizzouse"')
+        token = scanner.get_token
+        token.should == ["statement", "foo=/slashes/in/the/hizzouse"]
+      end
+
+      it "should correctly tokenize escaped regular expressions" do
+        scanner = Scanner.new('puppet_vardir=/\/var\/lib\/puppet/')
+        token = scanner.get_token
+        token.should == ["statement", 'puppet_vardir=/\/var\/lib\/puppet/']
+      end
+
+      it "should correctly tokenize a statement escaped with double quotes containing escaped quotes" do
+        scanner = Scanner.new('foo="a very long \"embedded quoted\" string"')
+        token = scanner.get_token
+        token.should == ["statement", "foo=a very long \"embedded quoted\" string"]
+      end
+
+      it "should correctly tokenize a statement escaped with single quotes containig escaped quotes" do
+        scanner = Scanner.new("foo='a very long \\'embedded quoted\\' string'")
+        token = scanner.get_token
+        token.should == ["statement", "foo=a very long 'embedded quoted' string"]
+      end
     end
   end
 end
