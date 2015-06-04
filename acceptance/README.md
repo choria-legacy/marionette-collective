@@ -1,5 +1,25 @@
 beaker tests for validation of MCollective in puppet-agent
 
+# WARNING
+
+![There be Dragons](http://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Chinese_black_dragon.svg/235px-Chinese_black_dragon.svg.png)
+
+**WARNING:** Under NO circumstances should you use **any** of the
+certificate files located in the /acceptance directory or any of
+its subdirectories in a production system. The private keys are
+publicly available and **will** result in an insecure environment
+
+# Files directory
+
+/files contains pre-generated certificates and configuration files
+that are used by the acceptance test pre-suites in order to quickly
+facilitate a running environment on the system under test. The
+certificates in the /files directory are for testing purposes only
+and are publicly available.
+
+These files were generated using the command outlined below, in the
+*SSL setup* section.
+
 # SSL setup
 
 /ssl is a puppet master's ssl directory.  Selected files from this
