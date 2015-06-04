@@ -1,5 +1,5 @@
-test_name "mco ping" do
-  step "run ping"
+test_name "mco puppet count" do
+  step "run puppet count"
     if agent.platform =~ /windows/ then
       if agent[:ruby_arch] == 'x86' then
         mco_bin = 'cmd.exe /c C:/Program\ Files\ \(x86\)/Puppet\ Labs/Puppet/bin/mco.bat'
@@ -9,8 +9,8 @@ test_name "mco ping" do
     else
      mco_bin = '/opt/puppetlabs/bin/mco'
     end
-    on(agent, "#{mco_bin} ping") do
+    on(agent, "#{mco_bin} puppet count") do
       assert_equal(0, exit_code)
-      assert_match(/^1\s+replies/, stdout)
+      assert_match(/^Total Puppet nodes:\s+1/, stdout)
     end
 end
