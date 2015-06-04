@@ -1,14 +1,5 @@
 beaker tests for validation of MCollective in puppet-agent
 
-This repository creates a single-node install of MCollective with ActiveMQ
-
-It assumes beaker and vagrant locally available.
-
-# Usage
-
-    gem install beaker
-    ./run.sh
-
 # SSL setup
 
 /ssl is a puppet master's ssl directory.  Selected files from this
