@@ -64,6 +64,8 @@ module MCollective
         func = false
         current_token_value = ""
         j = @token_index
+        escaped = false
+        escaped_with = ""
 
         begin
           if (@arguments[j] == "/")
@@ -89,7 +91,6 @@ module MCollective
                   break
                 end
               end until (j >= @arguments.size) || (@arguments[j] =~ /\//)
-            else
               while (j < @arguments.size) && ((@arguments[j] != " ") && (@arguments[j] != ")"))
                 current_token_value << @arguments[j]
                 j += 1
@@ -100,32 +101,70 @@ module MCollective
               # Identify and tokenize regular expressions by ignoring everything between /'s
               if @arguments[j] == '/'
                 current_token_value << '/'
-                j+=1
+                j += 1
                 while(j < @arguments.size && @arguments[j] != '/')
+                  if  @arguments[j] == '\\'
+                    # eat the escape char
+                    current_token_value << @arguments[j]
+                    j += 1
+                    escaped = true
+                  end
+
                   current_token_value << @arguments[j]
                   j += 1
                 end
                 current_token_value << @arguments[j] if @arguments[j]
                 break
               end
+
               if @arguments[j+1] == "("
                 func = true
                 be_greedy = true
               end
+
+              if @arguments[j+1] == '"' || @arguments[j+1] == "'"
+                func = false
+                be_greedy = true
+                escaped = true
+                escaped_with = @arguments[j+1]
+              end
+
               current_token_value << @arguments[j]
+
               if be_greedy
-                while !(j+1 >= @arguments.size) && @arguments[j] != ')'
-                  j += 1
-                  current_token_value << @arguments[j]
+                if func
+                  while !(j+1 >= @arguments.size) && @arguments[j] != ')'
+                    j += 1
+                    current_token_value << @arguments[j]
+                  end
+                else
+                  j += 2 # step over first "
+                  @white_spaces += 1
+                  # identified "..."
+                  while !(j+1 >= @arguments.size) && @arguments[j] != escaped_with
+                    if  @arguments[j] == '\\'
+                      # eat the escape char but don't add it to the token, or we
+                      # end up with \\\"
+                      @white_spaces += 1
+                      j += 1
+                      escaped = true
+                    end
+                    current_token_value << @arguments[j]
+                    j += 1
+                  end
+                  @white_spaces += 1
                 end
+
                 j += 1
                 be_greedy = false
               else
                 j += 1
               end
+
               if(@arguments[j] == ' ')
                 break if(is_klass?(j) && !(@arguments[j-1] =~ /=|<|>/))
               end
+
               if( (@arguments[j] == ' ') && (@seperation_counter < 2) && !(current_token_value.match(/^.+(=|<|>).+$/)) )
                 if((index = lookahead(j)))
                   j = index
@@ -158,6 +197,9 @@ module MCollective
               return "bad_token", [@token_index - current_token_value.size + 1, @token_index]
             end
           else
+            if escaped
+              return "statement", current_token_value
+            end
             slash_err = false
             current_token_value.split('').each do |c|
               if c == '/'
