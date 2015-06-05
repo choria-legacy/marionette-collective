@@ -1,0 +1,27 @@
+# Specifies a gem mirror; duplicated in acceptance setup
+# to ensure a similar environment on acceptance hosts.
+source ENV['GEM_SOURCE'] || 'https://rubygems.org'
+
+def location_for(place, fake_version = nil)
+  if place =~ /^(git:[^#]*)#(.*)/
+    [fake_version, { :git => $1, :branch => $2, :require => false }].compact
+  elsif place =~ /^file:\/\/(.*)/
+    ['>= 0', { :path => File.expand_path($1), :require => false }]
+  else
+    [place, { :require => false }]
+  end
+end
+
+gem "beaker", *location_for(ENV['BEAKER_VERSION'] || '~> 2.8')
+gem "rake", "~> 10.1"
+gem "httparty", :require => false
+gem 'uuidtools', :require => false
+
+group(:test) do
+  gem "rspec", "~> 2.14.0", :require => false
+  gem "mocha", "~> 0.10.5", :require => false
+end
+
+if File.exists? "#{__FILE__}.local"
+  eval(File.read("#{__FILE__}.local"), binding)
+end
