@@ -9,6 +9,7 @@ HOSTS:
   agent:
     roles:
     - agent
+    - mco_master
     platform: debian-jessie-x86_64
     hypervisor: vcloud
     template: debian-8-x86_64

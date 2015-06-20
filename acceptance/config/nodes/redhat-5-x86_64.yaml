@@ -9,6 +9,7 @@ HOSTS:
   agent:
     roles:
     - agent
+    - mco_master
     platform: el-5-x86_64
     hypervisor: vcloud
     template: redhat-5-x86_64

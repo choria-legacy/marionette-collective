@@ -9,6 +9,7 @@ HOSTS:
   agent:
     roles:
     - agent
+    - mco_master
     platform: fedora-20-x86_64
     hypervisor: vcloud
     template: fedora-20-x86_64

@@ -9,6 +9,7 @@ HOSTS:
   agent-2012r2-x86_64-rubyx86:
     roles:
     - agent
+    - mco_master
     platform: windows-2012r2-64
     ruby_arch: x86
     hypervisor: vcloud
