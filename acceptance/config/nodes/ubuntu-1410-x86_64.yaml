@@ -9,6 +9,7 @@ HOSTS:
   agent:
     roles:
     - agent
+    - mco_master
     platform: ubuntu-utopic-x86_64
     hypervisor: vcloud
     template: ubuntu-1410-x86_64

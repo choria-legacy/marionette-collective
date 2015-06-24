@@ -9,6 +9,7 @@ HOSTS:
   agent-2003-i386:
     roles:
     - agent
+    - mco_master
     platform: windows-2003-32
     ruby_arch: x86
     hypervisor: vcloud
