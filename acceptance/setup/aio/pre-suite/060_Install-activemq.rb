@@ -122,8 +122,12 @@ EOS
       mco_confdir = "C:/ProgramData/PuppetLabs/mcollective/etc"
       libdir = "#{mco_confdir}/plugins"
       logdir = "C:/ProgramData/PuppetLabs/mcollective/var/log"
-      puppet_cmd = "C:/Program Files/Puppet Labs\\Puppet\\bin\\puppet.bat"
-      puppet_confdir = "C:/ProgramData/PuppetLabs\\puppept\\etc\\puppet"
+      if h[:ruby_arch] == 'x64' then
+        puppet_cmd = "C:/Program Files/Puppet Labs/Puppet/bin/puppet.bat"
+      else
+        puppet_cmd = "C:/Program Files (x86)/Puppet Labs/Puppet/bin/puppet.bat"
+      end
+      puppet_confdir = "C:/ProgramData/PuppetLabs/puppet/etc/puppet"
     end
 
 
