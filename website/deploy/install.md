@@ -269,5 +269,5 @@ Unlike with the official packages, you won't be able to count on sensible defaul
 Installing on Windows
 -----
 
-We currently have no instructions for installing MCollective on Windows. You should investigate the `ext/windows` directory in the MCollective source. If you've used MCollective on Windows, we'd love to hear about your experience, especially any unexpected pitfalls you ran into. Email <faq@puppetlabs.com>.
+We currently have no instructions for installing MCollective on Windows. You should investigate the `ext/windows` directory in the MCollective source. If you've used MCollective on Windows, we'd love to hear about your experience, especially any unexpected pitfalls you ran into. Email <docs@puppetlabs.com>.
 

@@ -300,7 +300,7 @@ By default, ActiveMQ allows everyone to **read** from any topic or queue, **writ
 By setting rules in an `<authorizationPlugin>` element, you can regulate things a bit. Some notes:
 
 * Authorization is done **by group.**
-* The exact behavior of authorization doesn't seem to be documented anywhere. Going by observation, it appears that ActiveMQ first tries the most specific rule available, then retreats to less specific rules. This means if a given group isn't allowed an action by a more specific rule but is allowed it by a more general rule, it still gets authorized to take that action. If you have any solid information about how this works, please email us at <faq@puppetlabs.com>.
+* The exact behavior of authorization doesn't seem to be documented anywhere. Going by observation, it appears that ActiveMQ first tries the most specific rule available, then retreats to less specific rules. This means if a given group isn't allowed an action by a more specific rule but is allowed it by a more general rule, it still gets authorized to take that action. If you have any solid information about how this works, please email us at <docs@puppetlabs.com>.
 * MCollective creates subscriptions before it knows whether there will be any content coming. That means any role able to **read** from or **write** to a destination must also be able to **admin** that destination. Think of "admin" as a superset of both read and write.
 
 #### Simple Restrictions
