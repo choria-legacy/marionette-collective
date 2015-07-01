@@ -7,7 +7,7 @@ title: Getting Started
 [RabbitMQ]: http://www.rabbitmq.com/
 [EC2Demo]: /mcollective/ec2demo.html
 [Stomp]: http://stomp.codehaus.org/Ruby+Client
-[DepRPMs]: http://yum.puppetlabs.com/
+[DepRPMs]: https://yum.puppetlabs.com/
 [DebianBug]: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=562954
 [SecurityWithActiveMQ]: /mcollective/reference/integration/activemq_security.html
 [ActiveMQClustering]: http://www.devco.net/archives/2009/11/10/activemq_clustering.php
