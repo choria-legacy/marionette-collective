@@ -10,7 +10,8 @@
     'setup/common/pre-suite/040_ValidateSignCert.rb',
     'setup/aio/pre-suite/045_EnsureMasterStartedOnPassenger.rb',
     'setup/common/pre-suite/070_InstallCACerts.rb',
-    'setup/aio/pre-suite/060_Install-activemq.rb',
+    'setup/aio/pre-suite/050_Install-activemq.rb',
+    'setup/aio/pre-suite/060_Install-mcollective-daemon.rb',
     'setup/aio/pre-suite/070_Install_puppet-agent-plugin.rb',
   ],
 }
