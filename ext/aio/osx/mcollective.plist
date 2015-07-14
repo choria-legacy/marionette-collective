@@ -5,7 +5,9 @@
         <key>EnvironmentVariables</key>
         <dict>
                 <key>PATH</key>
-		<string>/opt/puppetlabs/puppet/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+                <string>/opt/puppetlabs/puppet/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+                <key>LANG</key>
+                <string>en_US.UTF-8</string>
         </dict>
         <key>Label</key>
         <string>mcollective</string>
@@ -13,16 +15,16 @@
         <true/>
         <key>ProgramArguments</key>
         <array>
-		<string>/opt/puppetlabs/puppet/bin/mcollectived</string>
+                <string>/opt/puppetlabs/puppet/bin/mcollectived</string>
                 <string>--no-daemonize</string>
                 <string>--config=/etc/puppetlabs/mcollective/server.cfg</string>
-		<string>--pidfile=/var/run/puppetlabs/mcollective.pid</string>
+                <string>--pidfile=/var/run/puppetlabs/mcollective.pid</string>
         </array>
         <key>RunAtLoad</key>
         <true/>
         <key>StandardErrorPath</key>
-	<string>/var/log/puppetlabs/mcollective/mcollective.log</string>
+        <string>/var/log/puppetlabs/mcollective/mcollective.log</string>
         <key>StandardOutPath</key>
-	<string>/var/log/puppetlabs/mcollective/mcollective.log</string>
+        <string>/var/log/puppetlabs/mcollective/mcollective.log</string>
 </dict>
 </plist>
