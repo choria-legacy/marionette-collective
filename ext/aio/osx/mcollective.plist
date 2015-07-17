@@ -10,7 +10,7 @@
                 <string>en_US.UTF-8</string>
         </dict>
         <key>Label</key>
-        <string>mcollective</string>
+        <string>com.puppetlabs.mcollective</string>
         <key>KeepAlive</key>
         <true/>
         <key>ProgramArguments</key>
