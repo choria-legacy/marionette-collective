@@ -110,7 +110,7 @@ module MCollective
 
     # These options should always be present
     def add_required_options
-      @parser.on('-c', '--config FILE', 'Load configuratuion from file rather than default') do |f|
+      @parser.on('-c', '--config FILE', 'Load configuration from file rather than default') do |f|
         @options[:config] = f
       end
 
