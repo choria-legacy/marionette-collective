@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!-- Original mcollective manifest: Michael Stahnke - puppetlabs.com -->
+<service_bundle type="manifest" name="mcollective">
+
+  <service name="network/mcollective" type="service" version="1">
+
+    <create_default_instance enabled="false"/>
+    <single_instance/>
+
+    <dependency name="config-file" grouping="require_all" restart_on="none" type="path">
+      <service_fmri value="file:///etc/puppetlabs/mcollective/server.cfg"/>
+    </dependency>
+
+    <dependency name="loopback" grouping="require_all" restart_on="error" type="service">
+      <service_fmri value="svc:/network/loopback:default"/>
+    </dependency>
+
+    <dependency name="physical" grouping="require_all" restart_on="error" type="service">
+      <service_fmri value="svc:/network/physical:default"/>
+    </dependency>
+
+    <dependency name="fs-local" grouping="require_all" restart_on="none" type="service">
+      <service_fmri value="svc:/system/filesystem/local"/>
+    </dependency>
+
+    <exec_method type="method" name="start" exec="/opt/puppetlabs/bin/mcollectived --pid=/var/run/puppetlabs/mcollective.pid --config=/etc/puppetlabs/mcollective/server.cfg" timeout_seconds="60"/>
+
+    <exec_method type="method" name="stop" exec=":kill" timeout_seconds="60"/>
+
+    <stability value="Evolving"/>
+
+    <template>
+      <common_name>
+        <loctext xml:lang="C">Mcollective Daemon</loctext>
+      </common_name>
+      <documentation>
+        <manpage title="mcollective" section="1"/>
+        <doc_link name="puppetlabs.com" uri="http://www.puppetlabs.com/mcollective/introduction/"/>
+      </documentation>
+    </template>
+  </service>
+
+</service_bundle>
