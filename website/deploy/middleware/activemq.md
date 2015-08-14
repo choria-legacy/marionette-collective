@@ -113,7 +113,7 @@ You can also read external documentation for a more complete understanding.
 The Apache ActiveMQ documentation contains important information, but it is often incomplete, badly organized, and confusing. The Fuse documentation (a commercially supported release of ActiveMQ) is significantly better written and better organized, although it requires signing up for an email newsletter, but it may be out of sync with the most recent ActiveMQ releases.
 
 * [Apache ActiveMQ Documentation][apache_activemq_config_docs]
-* [Fuse Documentation](http://fusesource.com/documentation/fuse-message-broker-documentation/)
+* [Fuse Documentation](https://access.redhat.com/documentation/en-US/Fuse_Message_Broker/)
 
 ### Wildcards
 
@@ -268,7 +268,7 @@ You set up authentication by adding the appropriate element to the `<plugins>` e
 - `jaasAuthenticationPlugin` lets you use external text files (or even an LDAP database) to define users and groups. You need to make a `login.config` file in the ActiveMQ config directory, and possibly two more files. You can add users and groups without restarting the broker. The external users file will contain sensitive passwords and must be protected.
 - `jaasCertificateAuthenticationPlugin` ignores the username and password that MCollective presents; instead, it reads the distinguished name of the certificate and maps that to a username. It requires TLS, a `login.config` file, and two other external files. It is also impractical unless your servers are all using the same SSL certificate to connect to ActiveMQ; the currently recommended approach of re-using Puppet certificates makes this problematic, but you can probably ship credentials around and figure out a way to make it work. This is not currently well-tested with MCollective.
 
-[fuse_security]: http://fusesource.com/docs/broker/5.5/security/front.html
+[fuse_security]: https://access.redhat.com/documentation/en-US/Fuse_Message_Broker/5.5/html/Security_Guide/files/front.html
 [activemq_security]: http://activemq.apache.org/security.html
 
 The example below uses `simpleAuthenticationPlugin`.
@@ -446,7 +446,7 @@ Designing your broker network's topology is beyond the scope of this reference. 
 * What kinds of traffic should be excluded from other brokers.
 
 [NetworksOfBrokers]: http://activemq.apache.org/networks-of-brokers.html
-[fuse_cluster]: http://fusesource.com/docs/broker/5.5/clustering/index.html
+[fuse_cluster]: https://access.redhat.com/documentation/en-US/Fuse_Message_Broker/5.5/html/Using_Networks_of_Brokers/files/front.html
 
 
 ### Broker Name
@@ -533,7 +533,7 @@ Notes:
 
 ### Destination Filtering
 
-[fuse_filtering]: http://fusesource.com/docs/broker/5.5/clustering/Networks-Filtering.html
+[fuse_filtering]: https://access.redhat.com/documentation/en-US/Fuse_Message_Broker/5.5/html/Using_Networks_of_Brokers/files/FMQNetworksDestinationFiltering.html
 
 _Optional._
 

@@ -6,7 +6,7 @@ toc: false
 [MessageFlow]: /mcollective/reference/basic/messageflow.html
 [NetworksOfBrokers]: http://activemq.apache.org/networks-of-brokers.html
 [SampleConfig]: http://github.com/puppetlabs/marionette-collective/tree/master/ext/activemq/
-[fuse_cluster]: http://fusesource.com/docs/broker/5.5/clustering/index.html
+[fuse_cluster]: https://access.redhat.com/documentation/en-US/Fuse_Message_Broker/5.5/html/Using_Networks_of_Brokers/files/front.html
 [activemq_network]: /mcollective/deploy/middleware/activemq.html#settings-for-networks-of-brokers
 
 Relying on existing middleware tools and not re-inventing the transport wheel ourselves means we can take advantage of a lot of the built in features they provide.  One such feature is clustering in ActiveMQ that allows for highly scalable and flexible network layouts.
