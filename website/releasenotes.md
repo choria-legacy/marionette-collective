@@ -8,6 +8,57 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_8_3">&nbsp;</a>
+
+## 2.8.3 - 2015/08/18
+
+### Bug fixes and improvements since 2.8.2
+
+* Added a `describe_filter` application
+* Fixed handling of quoted strings in compound filters
+* Adds a solaris smf definition for puppet-agent
+* Fixes for OSX service plist used by puppet-agent
+
+### `mco describe_filter` application
+
+In order to help you understand what the filtering options will
+translate into when discovering nodes we've added a `describe_filter`
+application.
+
+Some exmples of this might be, find nodes with the apache configuraion
+class:
+
+{% highlight shell %}
+$ mco describe_filter -C apache
+-C filter expands to the following class checks:
+
+  Check if class 'apache' is present on the host
+{% endhighlight %}
+
+Find hosts with the wizard class that came from the moon:
+
+{% highlight shell %}
+$ mco describe_filter -S 'wizard and source="moon"'
+-S Query expands to the following instructions:
+
+  Check if class 'wizard' is present on the host
+  AND
+  Check if fact 'source' = 'moon'
+{% endhighlight %}
+
+
+### Changes since 2.8.2
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2015/08/05|Add solaris smf service for AIO|MCO-687|
+|2015/07/17|Fully qualify the label in the osx mco plist|RE-5032|
+|2015/07/03|Fix documentation links to use https|DOCS-2092|
+|2015/06/05|Add `mco describe_filter` application|MCO-668|
+|2015/06/05|Fix quote handling in compound query language|MCO-668|
+|2015/06/04|Add acceptance tests|MCO-671|
+
+
 <a name="2_8_2">&nbsp;</a>
 
 ## 2.8.2 - 2015/05/19
