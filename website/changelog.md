@@ -8,6 +8,13 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2015/08/18|Release *2.8.3*|MCO-689|
+|2015/08/05|Add solaris smf service for AIO|MCO-687|
+|2015/07/17|Fully qualify the label in the osx mco plist|RE-5032|
+|2015/07/03|Fix documentation links to use https|DOCS-2092|
+|2015/06/05|Add `mco describe_filter` application|MCO-668|
+|2015/06/05|Fix quote handling in compound query language|MCO-668|
+|2015/06/04|Add acceptance tests|MCO-671|
 |2015/05/19|Release *2.8.2*|MCO-648|
 |2015/05/12|Do not build for debian stable or testing (target codenames instead)|MCO-665|
 |2015/05/08|Exit non-zero when `mco` is called with a non-existent subcommand|MCO-640|
