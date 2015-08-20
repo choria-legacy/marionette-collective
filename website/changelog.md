@@ -11,6 +11,7 @@ toc: false
 |2015/08/18|Release *2.8.3*|MCO-689|
 |2015/08/05|Add solaris smf service for AIO|MCO-687|
 |2015/07/17|Fully qualify the label in the osx mco plist|RE-5032|
+|2015/07/13|Set character encoding in the OSX plist|(#326)[https://github.com/puppetlabs/marionette-collective/pull/326]|
 |2015/07/03|Fix documentation links to use https|DOCS-2092|
 |2015/06/05|Add `mco describe_filter` application|MCO-668|
 |2015/06/05|Fix quote handling in compound query language|MCO-668|
