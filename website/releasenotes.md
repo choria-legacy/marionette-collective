@@ -8,6 +8,23 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_8_4">&nbsp;</a>
+
+## 2.8.4 - 2015/08/21
+
+### Changes since 2.8.4
+
+* Changed the OSX service name back to the 2.8.2 value
+  (com.puppetlabs.mcollective -> mcollective) as changing the service
+  name in a point release is too disruptive.
+
+### Changes since 2.8.3
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2015/08/20|Revert RE-5032|MCO-705|
+
+
 <a name="2_8_3">&nbsp;</a>
 
 ## 2.8.3 - 2015/08/18
@@ -53,6 +70,7 @@ $ mco describe_filter -S 'wizard and source="moon"'
 |----|-----------|------|
 |2015/08/05|Add solaris smf service for AIO|MCO-687|
 |2015/07/17|Fully qualify the label in the osx mco plist|RE-5032|
+|2015/07/13|Set character encoding in the OSX plist|(#326)[https://github.com/puppetlabs/marionette-collective/pull/326]|
 |2015/07/03|Fix documentation links to use https|DOCS-2092|
 |2015/06/05|Add `mco describe_filter` application|MCO-668|
 |2015/06/05|Fix quote handling in compound query language|MCO-668|
