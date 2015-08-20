@@ -8,6 +8,8 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2015/08/21|Release *2.8.4*|MCO-706|
+|2015/08/20|Revert RE-5032|MCO-705|
 |2015/08/18|Release *2.8.3*|MCO-689|
 |2015/08/05|Add solaris smf service for AIO|MCO-687|
 |2015/07/17|Fully qualify the label in the osx mco plist|RE-5032|
