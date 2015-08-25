@@ -73,7 +73,7 @@ case "$1" in
         # Remember status and be verbose
         rc_status -v
         ;;
-    try-restart|force-reload)
+    try-restart|condrestart|force-reload)
         ## Stop the service and if this succeeds (i.e. the
         ## service was running before), start it again.
         $0 status &> /dev/null
@@ -112,7 +112,7 @@ case "$1" in
         rc_status -v
         ;;
     *)
-        echo "Usage: $0 {start|stop|status|try-restart|restart|force-reload}"
+        echo "Usage: $0 {start|stop|status|try-restart|condrestart|restart|force-reload}"
         exit 1
         ;;
 esac
