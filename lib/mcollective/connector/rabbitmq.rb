@@ -1,5 +1,4 @@
 require 'stomp'
-require_relative 'password'
 
 module MCollective
   module Connector
@@ -121,50 +120,42 @@ module MCollective
           hosts = []
           middleware_user = ''
           middleware_password = ''
+          prompt_for_username = get_bool_option("rabbitmq.prompt-user", "false")
+          prompt_for_password = get_bool_option("rabbitmq.prompt-password", "false")
+          
+          if prompt_for_username and middleware_user == ''
+            Log.debug("No previous user exists and rabbitmq.prompt-user is set to true")
+            print "Please enter user to connect to middleware: "
+            middleware_user = STDIN.gets.chomp
+          end
 
+          if prompt_for_password and middleware_password == ''
+            Log.debug("No previous password exists and rabbitmq.prompt-password is set to true")
+            middleware_password = MCollective::Util.get_hidden_input("Please enter password: ")
+            print "\n"
+          end
+          
           1.upto(pools) do |poolnum|
             host = {}
-
+            
             host[:host] = get_option("rabbitmq.pool.#{poolnum}.host")
             host[:port] = get_option("rabbitmq.pool.#{poolnum}.port", 61613).to_i
-            host[:login] = get_env_or_option("STOMP_USER", "rabbitmq.pool.#{poolnum}.user", '')
-            host[:passcode] = get_env_or_option("STOMP_PASSWORD", "rabbitmq.pool.#{poolnum}.password", '')
             host[:ssl] = get_bool_option("rabbitmq.pool.#{poolnum}.ssl", "false")
             
-            if host[:login] == 'ask'
-              # Considering how RabbitMQ is deployed, it is more than likely that
-              # user has same user on all machines in the pool.
-              #
-              # Assign a user to all middleware servers in the pool, or ask
-              # for it if we don't have it and use it for subsequent servers.
-              
-              if middleware_user == ''
-                Log.debug("No previous user exists and 'ask' is set for #{host[:host]}")
-                print "Please enter user to connect to middleware: "
-                middleware_user = STDIN.gets.chomp
-              end
-              
-              Log.debug("Using middleware user for #{host[:host]}. User was set to 'ask'.")
+            # read user from config file if rabbitmq user is not set for prompt
+            unless prompt_for_username
+              host[:login] = get_env_or_option("STOMP_USER", "rabbitmq.pool.#{poolnum}.user", '')
+            else
               host[:login] = middleware_user
             end
             
-            if host[:passcode] == 'ask'
-              # Considering how RabbitMQ is deployed, it is more than likely that
-              # user has same password on all machines in the pool.
-              #
-              # Assign a password to all middleware servers in the pool, or ask
-              # for it if we don't have it and use it for subsequent servers.
-              
-              if middleware_password == ''
-                Log.debug("No previous password exists and 'ask' is set for #{host[:host]}")
-                middleware_password = ::Password.ask("Please enter password for #{host[:login]}: ")
-                print "\n"
-              end
-              
-              Log.debug("Using middleware password for #{host[:host]}. Password was set to 'ask'.")
+            # read user from config file if rabbitmq password is not set for prompt
+            unless prompt_for_password
+              host[:passcode] = get_env_or_option("STOMP_PASSWORD", "rabbitmq.pool.#{poolnum}.password", '')
+            else
               host[:passcode] = middleware_password
             end
-            
+           
             # if ssl is enabled set :ssl to the hash of parameters
             if host[:ssl]
               host[:ssl] = ssl_parameters(poolnum, get_bool_option("rabbitmq.pool.#{poolnum}.ssl.fallback", "false"))

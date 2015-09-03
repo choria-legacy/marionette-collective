@@ -520,5 +520,17 @@ module MCollective
       number = (max_size/field_size).to_i
       (number == 0) ? 1 : number
     end
+    
+    def self.get_hidden_input(message='Please enter data: ')
+      unless message.nil?
+        print message
+      end
+      if versioncmp(ruby_version, '1.9.3') >= 0
+        require 'io/console'
+      end
+      input = $stdin.noecho(&:gets)
+      input.chomp! if input
+      input
+    end
   end
 end
