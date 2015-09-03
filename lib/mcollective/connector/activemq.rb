@@ -226,8 +226,8 @@ module MCollective
           hosts = []
           middleware_user = ''
           middleware_password = ''
-          prompt_for_username = get_bool_option("activemq.prompt-user", "false")
-          prompt_for_password = get_bool_option("activemq.prompt-password", "false")
+          prompt_for_username = get_bool_option("activemq.prompt_user", "false")
+          prompt_for_password = get_bool_option("activemq.prompt_password", "false")
           
           if prompt_for_username and middleware_user == ''
             Log.debug("No previous user exists and activemq.prompt-user is set to true")

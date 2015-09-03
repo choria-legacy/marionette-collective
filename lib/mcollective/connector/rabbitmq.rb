@@ -120,8 +120,8 @@ module MCollective
           hosts = []
           middleware_user = ''
           middleware_password = ''
-          prompt_for_username = get_bool_option("rabbitmq.prompt-user", "false")
-          prompt_for_password = get_bool_option("rabbitmq.prompt-password", "false")
+          prompt_for_username = get_bool_option("rabbitmq.prompt_user", "false")
+          prompt_for_password = get_bool_option("rabbitmq.prompt_password", "false")
           
           if prompt_for_username and middleware_user == ''
             Log.debug("No previous user exists and rabbitmq.prompt-user is set to true")
