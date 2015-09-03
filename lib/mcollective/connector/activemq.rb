@@ -1,5 +1,4 @@
-require 'stomp'
-require_relative 'password'
+require 'stomp' 
 
 module MCollective
   module Connector
