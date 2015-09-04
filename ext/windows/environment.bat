@@ -14,3 +14,6 @@ SET RUBYLIB=%BASEDIR%\lib;%RUBYLIB%
 SET RUBYLIB=%RUBYLIB:\=/%
 
 SET RUBY="ruby"
+
+SET SSL_CERT_FILE=%WINDIR%\system32\ssl\cert.pem
+SET SSL_CERT_DIR=%WINDIR%\system32\ssl\certs
