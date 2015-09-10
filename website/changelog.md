@@ -8,6 +8,8 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2015/09/10|Release *2.8.5*|MCO-724|
+|2015/08/25|Add condrestart to the suse init script for AIO|RE-11690|
 |2015/08/21|Release *2.8.4*|MCO-706|
 |2015/08/20|Revert RE-5032|MCO-705|
 |2015/08/18|Release *2.8.3*|MCO-689|
