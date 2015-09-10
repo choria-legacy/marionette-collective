@@ -8,17 +8,30 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_8_5">&nbsp;</a>
+
+## 2.8.5 - 2015/09/10
+
+### Changes since 2.8.4
+
+* Added condrestart action to suse AIO init script
+
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2015/08/25|Add condrestart to the suse init script for AIO|RE-11690|
+
+
 <a name="2_8_4">&nbsp;</a>
 
 ## 2.8.4 - 2015/08/21
 
-### Changes since 2.8.4
+### Changes since 2.8.3
 
 * Changed the OSX service name back to the 2.8.2 value
   (com.puppetlabs.mcollective -> mcollective) as changing the service
   name in a point release is too disruptive.
 
-### Changes since 2.8.3
 
 |Date|Description|Ticket|
 |----|-----------|------|
