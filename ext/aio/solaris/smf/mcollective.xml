@@ -24,7 +24,7 @@
       <service_fmri value="svc:/system/filesystem/local"/>
     </dependency>
 
-    <exec_method type="method" name="start" exec="/opt/puppetlabs/bin/mcollectived --pid=/var/run/puppetlabs/mcollective.pid --config=/etc/puppetlabs/mcollective/server.cfg" timeout_seconds="60"/>
+    <exec_method type="method" name="start" exec="/opt/puppetlabs/puppet/bin/mcollectived --pid=/var/run/puppetlabs/mcollective.pid --config=/etc/puppetlabs/mcollective/server.cfg" timeout_seconds="60"/>
 
     <exec_method type="method" name="stop" exec=":kill" timeout_seconds="60"/>
 
