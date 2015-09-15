@@ -8,6 +8,22 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+
+<a name="2_8_6">&nbsp;</a>
+
+## 2.8.6 - 2015/09/15
+
+### Changes since 2.8.5
+
+* Fixed an issue with the solaris smf service in AIO. The service manifest listed the
+daemon binary in the wrong location (/opt/puppetlabs/bin as opposed to
+/opt/puppetlabs/puppet/bin)
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2015/09/11|Fix solaris smf service manifest for aio|(#345)[https://github.com/puppetlabs/marionette-collective/pull/345]|
+
+
 <a name="2_8_5">&nbsp;</a>
 
 ## 2.8.5 - 2015/09/10
