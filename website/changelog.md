@@ -8,6 +8,8 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2015/09/15|Release *2.8.6*|MCO-726|
+|2015/09/11|Fix solaris smf service manifest for aio|(#345)[https://github.com/puppetlabs/marionette-collective/pull/345]|
 |2015/09/10|Release *2.8.5*|MCO-724|
 |2015/08/25|Add condrestart to the suse init script for AIO|RE-11690|
 |2015/08/21|Release *2.8.4*|MCO-706|
