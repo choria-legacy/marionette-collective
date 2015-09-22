@@ -521,14 +521,59 @@ module MCollective
       (number == 0) ? 1 : number
     end
     
+    def self.get_hidden_input_on_windows()
+      require 'Win32API'
+      # Hook into getch from crtdll. Keep reading all keys till return
+      # or newline is hit.
+      # If key is backspace or delete, then delete the character and update
+      # the buffer.
+      input = ''
+      while char = Win32API.new("crtdll", "_getch", [ ], "I").Call do
+        break if char == 10 || char == 13 # return or newline
+        if char == 127 || char == 8 # backspace and delete
+          if input.length > 0
+            input.slice!(-1, 1)
+          end
+        else
+          input << char.chr
+        end
+      end
+      char = ''
+      input
+    end
+
+    def self.get_hidden_input_on_unix()
+      unless $stdin.tty?
+        raise 'Could not hook to stdin to hide input. If using SSH, try using'+
+              ' -t flag while connecting to server.'
+      end
+      unless system 'stty -echo -icanon'
+        raise 'Could not hide input using stty command.'
+      end
+      input = $stdin.gets
+      ensure
+        unless system 'stty echo icanon'
+          raise 'Could not enable echoing of input. Try executing ' +
+                '`stty echo icanon` to debug.'
+        end
+      input
+    end
+
     def self.get_hidden_input(message='Please enter data: ')
       unless message.nil?
         print message
       end
       if versioncmp(ruby_version, '1.9.3') >= 0
         require 'io/console'
+        input = $stdin.noecho(&:gets)
+      else
+        # Use hacks to get hidden input on Ruby <1.9.3
+        if self.windows?
+          input = self.get_hidden_input_on_windows()
+        else
+          input = self.get_hidden_input_on_unix()
+        end
       end
-      input = $stdin.noecho(&:gets)
       input.chomp! if input
       input
     end
