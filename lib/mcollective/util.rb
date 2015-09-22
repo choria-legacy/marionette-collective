@@ -544,8 +544,7 @@ module MCollective
 
     def self.get_hidden_input_on_unix()
       unless $stdin.tty?
-        raise 'Could not hook to stdin to hide input. If using SSH, try using'+
-              ' -t flag while connecting to server.'
+        raise 'Could not hook to stdin to hide input. If using SSH, try using -t flag while connecting to server.'
       end
       unless system 'stty -echo -icanon'
         raise 'Could not hide input using stty command.'
@@ -553,8 +552,7 @@ module MCollective
       input = $stdin.gets
       ensure
         unless system 'stty echo icanon'
-          raise 'Could not enable echoing of input. Try executing ' +
-                '`stty echo icanon` to debug.'
+          raise 'Could not enable echoing of input. Try executing `stty echo icanon` to debug.'
         end
       input
     end
