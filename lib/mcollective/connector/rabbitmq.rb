@@ -136,7 +136,7 @@ module MCollective
           
           1.upto(pools) do |poolnum|
             host = {}
-            
+
             host[:host] = get_option("rabbitmq.pool.#{poolnum}.host")
             host[:port] = get_option("rabbitmq.pool.#{poolnum}.port", 61613).to_i
             host[:ssl] = get_bool_option("rabbitmq.pool.#{poolnum}.ssl", "false")
