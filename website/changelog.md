@@ -770,7 +770,7 @@ toc: false
 |2009/12/29|Simplify mc-rpc command line|16|
 |2009/12/29|Fix layout issue when printing hosts that did not respond|15|
 |*2009/12/29*|*Release version 0.4.0* | |
-|2009/12/28|Add support for other configuration management systems like chef in the --with-class filters|13|
+|2009/12/28|Add support for other configuration management systems in the --with-class filters|13|
 |2009/12/28|Add a <em>Util.empty_filter?</em> to test for an empty filter| |
 |2009/12/27|Create a new client framework - SimpleRPC|6|
 |2009/12/27|Add support for multiple filters of the same type|3|

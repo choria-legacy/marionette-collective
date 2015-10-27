@@ -3811,7 +3811,7 @@ Old code will keep working but you should change to this name for filters to be 
 
 |Date|Description|Ticket|
 |----|-----------|------|
-| 2009/12/28 | Add support for other configuration management systems like chef in the --with-class filters|13|
+| 2009/12/28 | Add support for other configuration management systems in the --with-class filters|13|
 | 2009/12/28 | Add a `Util.empty_filter?` to test for an empty filter| |
 | 2009/12/27 | Create a new client framework SimpleRPCIntroduction|6|
 | 2009/12/27 | Add support for multiple filters of the same type|3|
