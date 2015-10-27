@@ -4,7 +4,7 @@ module MCollective
     # you would do for each agent allowing you to just create methods following a naming
     # standard leaving the heavy lifting up to this clas.
     #
-    # See http://marionette-collective.org/simplerpc/agents.html
+    # See https://docs.puppetlabs.com/mcollective/simplerpc/agents.html
     #
     # It only really makes sense to use this with a Simple RPC client on the other end, basic
     # usage would be:

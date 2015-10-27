@@ -47,7 +47,7 @@ Index to basic users documentation.
  1. [Stomp Connector](plugins/connector_stomp.html)
  1. [ActiveMQ Connector](plugins/connector_activemq.html)
  1. [RabbitMQ Connector](plugins/connector_rabbitmq.html)
- 1. [User Contributed Plugins](http://projects.puppetlabs.com/projects/mcollective-plugins/wiki)
+ 1. [User Contributed Plugins](plugin_directory/)
 
 ### Development
 

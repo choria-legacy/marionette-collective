@@ -18,7 +18,7 @@ Installation
 Configuration
 -----
 
-For full details about the registration system see [Registration](http://docs.puppetlabs.com/mcollective/reference/plugins/registration.html)
+For full details about the registration system see [Registration](https://docs.puppetlabs.com/mcollective/reference/plugins/registration.html)
 
 The simplest configuration for this plugin is:
 

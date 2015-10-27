@@ -14,7 +14,7 @@
 
     <!--
       For more information about what MCollective requires in this file,
-      see http://docs.puppetlabs.com/mcollective/deploy/middleware/activemq.html
+      see https://docs.puppetlabs.com/mcollective/deploy/middleware/activemq.html
     -->
 
     <!--
@@ -87,7 +87,7 @@
             mcollective, which can both issue and respond to commands. For an
             example that splits permissions and doesn't allow servers to issue
             commands, see:
-            http://docs.puppetlabs.com/mcollective/deploy/middleware/activemq.html#detailed-restrictions
+            https://docs.puppetlabs.com/mcollective/deploy/middleware/activemq.html#detailed-restrictions
           -->
           <authorizationPlugin>
             <map>
@@ -111,7 +111,7 @@
         <!--
           The systemUsage controls the maximum amount of space the broker will
           use for messages. For more information, see:
-          http://docs.puppetlabs.com/mcollective/deploy/middleware/activemq.html#memory-and-temp-usage-for-messages-systemusage
+          https://docs.puppetlabs.com/mcollective/deploy/middleware/activemq.html#memory-and-temp-usage-for-messages-systemusage
         -->
         <systemUsage>
             <systemUsage>
@@ -133,7 +133,7 @@
           use OpenWire. You'll need different URLs depending on whether you are
           using TLS. For more information, see:
 
-          http://docs.puppetlabs.com/mcollective/deploy/middleware/activemq.html#transport-connectors
+          https://docs.puppetlabs.com/mcollective/deploy/middleware/activemq.html#transport-connectors
         -->
         <transportConnectors>
             <transportConnector name="openwire" uri="tcp://0.0.0.0:61616"/>

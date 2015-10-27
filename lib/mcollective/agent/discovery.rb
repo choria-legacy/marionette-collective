@@ -15,7 +15,7 @@ module MCollective
                  :timeout => @timeout,
                  :name => "Discovery Agent",
                  :version => MCollective.version,
-                 :url => "http://www.marionette-collective.org",
+                 :url => "https://docs.puppetlabs.com/mcollective/",
                  :description => "MCollective Discovery Agent"}
       end
 

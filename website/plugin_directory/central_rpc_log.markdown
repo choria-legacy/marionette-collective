@@ -4,7 +4,7 @@ title: "MCollective Plugin: Central RPC Audit Log"
 ---
 
 
-This is a [SimpleRPC Audit Plugin](http://docs.puppetlabs.com/mcollective/simplerpc/auditing.html) and Agent that sends all SimpleRPC audit events to a central point for logging.
+This is a [SimpleRPC Audit Plugin](https://docs.puppetlabs.com/mcollective/simplerpc/auditing.html) and Agent that sends all SimpleRPC audit events to a central point for logging.
 
 You'd run the audit plugin on every node and designate one node as the receiver of audit logs.  The receiver will have a detailed log of every SimpleRPC request processed on your entire server estate.
 

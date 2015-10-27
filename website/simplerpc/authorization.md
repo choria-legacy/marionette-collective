@@ -6,7 +6,7 @@ toc: false
 [SimpleRPCIntroduction]: index.html
 [SecurityWithActiveMQ]: /mcollective/reference/integration/activemq_security.html
 [SimpleRPCAuditing]: /mcollective/simplerpc/auditing.html
-[ActionPolicy]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/AuthorizationActionPolicy
+[ActionPolicy]: https://docs.puppetlabs.com/mcollective/plugin_directory/authorization_action_policy.html
 
 As part of the [SimpleRPC][SimpleRPCIntroduction] framework we've added an authorization system that you can use to exert fine grained control over who can call agents and actions.
 

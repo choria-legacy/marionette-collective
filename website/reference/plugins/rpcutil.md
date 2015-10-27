@@ -71,7 +71,7 @@ Returns a list of all agents with their meta data like version, author, license 
 	      {:agent=>"rpcutil",
 	       :license=>"Apache License, Version 2.0",
 	       :name=>"Utilities and Helpers for SimpleRPC Agents",
-	       :url=>"http://marionette-collective.org/",
+	       :url=>"https://docs.puppetlabs.com/mcollective/",
 	       :description=> "General helpful actions that expose stats and internals to SimpleRPC clients",
 	       :version=>"1.0",
 	       :author=>"R.I.Pienaar <rip@devco.net>",

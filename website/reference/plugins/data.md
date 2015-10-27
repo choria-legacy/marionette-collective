@@ -163,7 +163,7 @@ metadata    :name        => "Sysctl values",
             :author      => "R.I.Pienaar <rip@devco.net>",
             :license     => "ASL 2.0",
             :version     => "1.0",
-            :url         => "http://marionette-collective.org/",
+            :url         => "https://docs.puppetlabs.com/mcollective/",
             :timeout     => 1
 
 dataquery :description => "Sysctl values" do
@@ -236,7 +236,7 @@ Retrieve values for a given sysctl
      Version: 1.0
      License: ASL 2.0
      Timeout: 1
-   Home Page: http://marionette-collective.org/
+   Home Page: https://docs.puppetlabs.com/mcollective/
 
 QUERY FUNCTION INPUT:
 

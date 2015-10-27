@@ -175,8 +175,8 @@ The example below uses a modified pattern. It assumes:
       }
 
       # Restart the service when any settings change
-      # (see http://docs.puppetlabs.com/puppet/latest/reference/lang_collectors.html and
-      # http://docs.puppetlabs.com/puppet/latest/reference/lang_relationships.html#chaining-arrows
+      # (see https://docs.puppetlabs.com/puppet/latest/reference/lang_collectors.html and
+      # https://docs.puppetlabs.com/puppet/latest/reference/lang_relationships.html#chaining-arrows
       # for syntax details)
       Package['mcollective'] -> Mcollective::Setting <| |> ~> Service['mcollective']
     }
