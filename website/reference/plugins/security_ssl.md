@@ -27,6 +27,7 @@ Validation is as default and is provided by *MCollective::Security::Base*
 Initial code was contributed by Vladimir Vuksan and modified by R.I.Pienaar
 
 An [alternative plugin][AESPlugin] exist that encrypts data but is more work to setup and maintain.
+If you are using ActiveMQ middleware with CA-verified TLS configured, this plugin is usually adequate.
 
 ## Setup
 
