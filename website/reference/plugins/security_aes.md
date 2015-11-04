@@ -1,6 +1,6 @@
 ---
 layout: default
-title: OpenSSL based Security Plugin
+title: AES Security Plugin
 ---
 [SimpleRPCAuthorization]: /mcollective/simplerpc/authorization.html
 [Registration]: registration.html
@@ -8,6 +8,8 @@ title: OpenSSL based Security Plugin
 [SecurityOverview]: ../../security.html
 
 ## Overview
+In most cases, users will probably want to use the [SSLSecurity][] plugin instead of this one.
+
 This plugin impliments a AES encryption and RSA public / private key based security system
 for The Marionette Collective.
 
@@ -48,6 +50,9 @@ automatic key distribution.
 
 The [SSLSecurity][] plugin puts less drain on resources, if you do not specifically need encryption
 you should consider using that one instead.
+
+If you are using ActiveMQ middleware with CA-verified TLS enabled, the features of this plugin
+may not be required and you should probably use the [SSLSecurity][] plugin instead.
 
 ## Deployment Scenarios
 
