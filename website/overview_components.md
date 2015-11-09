@@ -9,7 +9,7 @@ layout: default
 [standard_deploy]: /mcollective/deploy/standard.html
 [agents]: /mcollective/simplerpc/agents.html
 [subcollectives]: /mcollective/reference/basic/subcollectives.html
-[actionpolicy]: https://github.com/puppetlabs/mcollective-actionpolicy-auth#readme
+[actionpolicy]: https://docs.puppetlabs.com/mcollective/plugin_directory/authorization_action_policy.html
 [ssl_plugin]: /mcollective/reference/plugins/security_ssl.html
 [psk_plugin]: /mcollective/configure/server.html#psk-plugin-settings
 [aes_plugin]: /mcollective/reference/plugins/security_aes.html

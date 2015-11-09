@@ -4,7 +4,7 @@ Priority: extra
 Maintainer: Riccardo Setti <giskard@debian.org>
 Build-Depends: debhelper (>= 7), quilt, cdbs, ruby
 Standards-Version: 3.8.0
-Homepage: http://marionette-collective.org/
+Homepage: https://docs.puppetlabs.com/mcollective/
 
 Package: mcollective
 Architecture: all

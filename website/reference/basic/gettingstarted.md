@@ -21,7 +21,7 @@ title: Getting Started
 [ConnectorActiveMQ]: /mcollective/reference/plugins/connector_activemq.html
 [ConnectorRabbitMQ]: /mcollective/reference/plugins/connector_rabbitmq.html
 [MessageFlowCast]: /mcollective/screencasts.html#message_flow
-[Plugins]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki
+[Plugins]: https://docs.puppetlabs.com/mcollective/plugin_directory/
 [RedHatGuide]: gettingstarted_redhat.html
 [DebianGuide]: gettingstarted_debian.html
 [server_config]: /mcollective/configure/server.html

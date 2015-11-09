@@ -100,7 +100,7 @@
             mcollective, which can both issue and respond to commands. For an
             example that splits permissions and doesn't allow servers to issue
             commands, see:
-            http://docs.puppetlabs.com/mcollective/deploy/middleware/activemq.html#detailed-restrictions
+            https://docs.puppetlabs.com/mcollective/deploy/middleware/activemq.html#detailed-restrictions
           -->
           <authorizationPlugin>
             <map>

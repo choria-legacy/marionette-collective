@@ -9,10 +9,10 @@ toc: false
 [Amazon EC2 based demo]: /mcollective/ec2demo.html
 [broadcast paradigm]: /mcollective/reference/basic/messageflow.html
 [UsingWithPuppet]: /mcollective/reference/integration/puppet.html
-[Facter]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/FactsFacterYAML
+[Facter]: https://docs.puppetlabs.com/mcollective/plugin_directory/facter_via_yaml.html
 [WritingFactsPlugins]: /mcollective/reference/plugins/facts.html
 [NodeReports]: /mcollective/reference/ui/nodereports.html
-[PluginsSite]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki
+[PluginsSite]: https://docs.puppetlabs.com/mcollective/plugin_directory/
 [SimpleRPCIntroduction]: /mcollective/simplerpc/
 [SecurityOverview]: /mcollective/security.html
 [SecurityWithActiveMQ]: /mcollective/reference/integration/activemq_security.html

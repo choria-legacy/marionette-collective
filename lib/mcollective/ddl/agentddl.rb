@@ -9,7 +9,7 @@ module MCollective
     #             :author      => "R.I.Pienaar <rip@devco.net>",
     #             :license     => "Apache License, Version 2.0",
     #             :version     => "1.0",
-    #             :url         => "http://marionette-collective.org/",
+    #             :url         => "https://docs.puppetlabs.com/mcollective/",
     #             :timeout     => 10
     #
     # action "get_fact", :description => "Retrieve a single fact from the fact store" do

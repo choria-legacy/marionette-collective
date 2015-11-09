@@ -8,7 +8,7 @@ releaseable state.  In doing this we use the following branches.
 `master` is the main development branch, it is where you should be
 targetting your changes by default.
  
-Our documentation on http://docs.puppetlabs.com/mcollective is built
+Our documentation on https://docs.puppetlabs.com/mcollective is built
 from the /website directory of `master`, so if you are making changes
 that change documented behaviour please take care to mention if the
 feature is unreleased.

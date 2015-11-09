@@ -19,7 +19,7 @@ Installation
 
 You need to have the following installed:
 
- * The [registration metadata](registration_metadata.html)  plugin and [Registration](http://docs.puppetlabs.com/mcollective/reference/plugins/registration.html) should be set up.
+ * The [registration metadata](registration_metadata.html)  plugin and [Registration](https://docs.puppetlabs.com/mcollective/reference/plugins/registration.html) should be set up.
  * A copy of [MongoDB](http://mongodb.org/) up and running
  * The [Mongo Ruby](http://www.mongodb.org/display/DOCS/Ruby+Language+Center) extension
  * The source is on [GitHub](https://github.com/puppetlabs/mcollective-plugins/tree/master/agent/registration-mongodb/)

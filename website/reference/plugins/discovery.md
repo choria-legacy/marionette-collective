@@ -50,7 +50,7 @@ Flatfile based discovery for node identities
      Version: 0.1
      License: ASL 2.0
      Timeout: 0
-   Home Page: http://marionette-collective.org/
+   Home Page: https://docs.puppetlabs.com/mcollective/
 
 DISCOVERY METHOD CAPABILITIES:
       Filter based on mcollective identity
@@ -143,7 +143,7 @@ metadata    :name        => "flatfile",
             :author      => "R.I.Pienaar <rip@devco.net>",
             :license     => "ASL 2.0",
             :version     => "0.1",
-            :url         => "http://marionette-collective.org/",
+            :url         => "https://docs.puppetlabs.com/mcollective/",
             :timeout     => 0
 
 discovery do

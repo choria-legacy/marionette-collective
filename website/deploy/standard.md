@@ -25,7 +25,7 @@ layout: default
 [puppet_template]: /guides/templating.html
 [puppet_lang_notification]: /puppet/latest/reference/lang_relationships.html#ordering-and-notification
 [file]: /references/latest/type.html#file
-[actionpolicy_docs]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/AuthorizationActionPolicy
+[actionpolicy_docs]: https://docs.puppetlabs.com/mcollective/plugin_directory/authorization_action_policy.html
 [actionpolicy]: https://github.com/puppetlabs/mcollective-actionpolicy-auth
 [server_config]: /mcollective/configure/server.html
 [client_config]: /mcollective/configure/client.html
@@ -534,7 +534,7 @@ For more information on how to install these agents, [see "Installing and Packag
     * [Installing plugins by copying into the libdir][plugin_libdir]
 
 [agent_writing]: /mcollective/simplerpc/agents.html
-[mcollective_plugins_wiki]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki
+[mcollective_plugins_wiki]: https://docs.puppetlabs.com/mcollective/plugin_directory/
 
 ### Learn MCollective's Command Line Interface
 

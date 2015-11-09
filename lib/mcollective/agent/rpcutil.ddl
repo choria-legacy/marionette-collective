@@ -3,7 +3,7 @@ metadata    :name        => "rpcutil",
             :author      => "R.I.Pienaar <rip@devco.net>",
             :license     => "Apache License, Version 2.0",
             :version     => "1.0",
-            :url         => "http://marionette-collective.org/",
+            :url         => "https://docs.puppetlabs.com/mcollective/",
             :timeout     => 10
 
 action "collective_info", :description => "Info about the main and sub collectives" do

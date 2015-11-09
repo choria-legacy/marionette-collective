@@ -3,7 +3,7 @@ metadata  :name        => "average",
           :author      => "Pieter Loubser <pieter.loubser@puppetlabs.com>",
           :license     => "ASL 2.0",
           :version     => "1.0",
-          :url         => "http://projects.puppetlabs.com/projects/mcollective-plugins/wiki",
+          :url         => "https://docs.puppetlabs.com/mcollective/plugin_directory/",
           :timeout     => 5
 
 usage <<-USAGE

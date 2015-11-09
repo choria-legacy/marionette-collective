@@ -3,7 +3,7 @@ layout: default
 title: "MCollective Plugin: Agent Registration Monitor"
 ---
 
-MCollective supports sending [registration messages](http://docs.puppetlabs.com/mcollective/reference/plugins/registration.html) at set intervals. This is an agent to receive those messages and simply write the content to a file per sender.
+MCollective supports sending [registration messages](https://docs.puppetlabs.com/mcollective/reference/plugins/registration.html) at set intervals. This is an agent to receive those messages and simply write the content to a file per sender.
 
 It includes a Nagios check that monitors the directory with these files for any that has not checked in for some time.
 

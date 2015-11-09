@@ -316,7 +316,7 @@ Determining the amount of hosts matching filter for 2 seconds .... 1
 
 some.node:
    Agents:
-        [{:url=>"http://marionette-collective.org/",
+        [{:url=>"https://docs.puppetlabs.com/mcollective/",
           :version=>"1.0",
           :name=>"Utilities and Helpers for SimpleRPC Agents",
           :agent=>"rpcutil",
@@ -343,7 +343,7 @@ General helpful actions that expose stats and internals to SimpleRPC clients
      Version: 1.0
      License: Apache License, Version 2.0
      Timeout: 3
-   Home Page: http://marionette-collective.org/
+   Home Page: https://docs.puppetlabs.com/mcollective/
 
 
 

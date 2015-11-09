@@ -6,14 +6,14 @@ layout: default
 
 [middleware]: /mcollective/deploy/middleware/
 [filters]: /mcollective/reference/ui/filters.html
-[plugin_directory]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki
+[plugin_directory]: https://docs.puppetlabs.com/mcollective/plugin_directory/
 [subcollectives]: /mcollective/reference/basic/subcollectives.html
 [registration]: /mcollective/reference/plugins/registration.html
 [puppetdb]: /puppetdb/
 [security_plugin]: #security-plugin-settings
 [auditing]: /mcollective/simplerpc/auditing.html
 [authorization]: /mcollective/simplerpc/authorization.html
-[actionpolicy]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/AuthorizationActionPolicy
+[actionpolicy]: https://docs.puppetlabs.com/mcollective/plugin_directory/authorization_action_policy.html
 [security_aes]: /mcollective/reference/plugins/security_aes.html
 [security_overview]: /mcollective/security.html
 [ssl_plugin]: /mcollective/reference/plugins/security_ssl.html

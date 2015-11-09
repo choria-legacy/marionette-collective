@@ -14,8 +14,8 @@ toc: false
 [ActiveMQ SSL]: /mcollective/reference/integration/activemq_ssl.html
 [ActiveMQ STOMP]: http://activemq.apache.org/stomp.html
 [MCollective STOMP Connector]: /mcollective/reference/plugins/connector_stomp.html
-[ActionPolicy]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/AuthorizationActionPolicy
-[CentralAudit]: http://projects.puppetlabs.com/projects/mcollective-plugins/wiki/AuditCentralRPC
+[ActionPolicy]: https://docs.puppetlabs.com/mcollective/plugin_directory/authorization_action_policy.html
+[CentralAudit]: https://docs.puppetlabs.com/mcollective/plugin_directory/central_rpc_log.html
 [Subcollectives]: reference/basic/subcollectives.html
 
 
