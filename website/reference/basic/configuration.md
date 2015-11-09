@@ -9,17 +9,33 @@ title: Configuration Guide
 [Auditing]: /mcollective/simplerpc/auditing.html
 [Authorization]: /mcollective/simplerpc/authorization.html
 [Subcollectives]: /mcollective/reference/basic/subcollectives.html
+[client_config]: /mcollective/configure/client.html
 [server_config]: /mcollective/configure/server.html
 
-> **Note:** There is a new [Server Configuration Reference][server_config] page with a more complete overview of MCollective's server daemon settings. A similar client configuration page is forthcoming.
+> **Note:** For detailed information on MCollective's client and server daemon settings, see [Client Configuration Reference][client_config] and [Server Configuration Reference][server_config], respectively.
 
-This guide tells you about the major configuration options in the daemon and client config files.  There are options not mentioned
-here typically ones specific to a certain plugin.
+You can configure the MCollective server daemon and client by setting options in their configuration files. Plugins can also add their own options.
 
 ## Configuration Files
-There are 2 configuration files, one for the client and one for the server, these default to */etc/mcollective/server.cfg* and */etc/mcollective/client.cfg*.
 
-Configuration is a simple *key = val* style configuration file.
+MCollective uses two configuration files, one for the client and one for the server. 
+
+If you don't specify a client configuration file when invoking MCollective, it looks for one in these locations, in the listed order:
+
+1. `~/.mcollective`
+1. `/etc/puppetlabs/mcollective/client.cfg`
+1. `/etc/mcollective/client.cfg`
+
+The MCollective server daemon looks in these locations, also in order:
+
+1. `/etc/puppetlabs/agent/mcollective/server.cfg`
+1. `/etc/mcollective/server.cfg`
+
+The configuration file formats use a simple key-value syntax:
+
+~~~ ini
+key = value
+~~~
 
 ## Common Options
 
@@ -47,7 +63,8 @@ Configuration is a simple *key = val* style configuration file.
 |default_discovery_options|Options to pass to the discovery plugin, empty by default|
 
 ## Server Configuration
-The server configuration file should be root only readable
+
+The server configuration file should be readable by the root user _only._
 
 |Key|Sample|Description|
 |---|------|-----------|
@@ -61,50 +78,59 @@ The server configuration file should be root only readable
 |rpcauditprovider|Logfile|Enables auditing using _MCollective::Audit::Logfile_|
 |rpcauthorization|1|Enables [SimpleRPC Authorization][Authorization] globally|
 |rpcauthprovider|action_policy|Use the _MCollective::Util::ActionPolicy_ plugin to manage authorization|
-|rpclimitmethod|The method used for --limit-results.  Can be either _first_ or _random_|
+|rpclimitmethod|The method used for --limit-results. Can be either _first_ or _random_|
 |fact_cache_time|300|How long to cache fact results for before refreshing from source|
 
 ## Client Configuration
-The client configuration file should be readable by everyone, it's not advised to put PSK's or client SSL certs in a world readable file, see below how to do that per user.
+
+The client configuration file should be globally readable.
+
+> **Security Note:** _Don't_ put pre-shared keys or client SSL certificates in a world-readable file. See [Client Setup](#client-setup) for details on how to provide those values for each user.
 
 |Key|Sample|Description|
 |---|------|-----------|
 |color|0|Disables the use of color in RPC results|
+|connection_timeout|3|Sets the timeout for server communication. Default: none|
+|discovery_timeout|2|Sets the timeout for discovering nodes. Default: 2|
 
 ## Plugin Configuration
-You can add free form config options for plugins, they take the general form like:
 
-{% highlight ini %}
-    plugin.pluginname.option = value
-{% endhighlight %}
+You can add configuration options for plugins you create, using this syntax:
 
-Each plugin's documentation should tell you what options are availble.
+~~~ ini
+plugin.pluginname.option = value
+~~~
 
-Common plugin options are:
+Describe any options in the plugin's documentation.
+
+Common plugin options include:
 
 |Key|Sample|Description|
 |---|------|-----------|
-|plugin.yaml|/etc/mcollective/facts.yaml:/other/facts.yaml|Where the yaml fact source finds facts from, multiples get merged|
-|plugin.psk|123456789|The pre-shared key to use for the Psk security provider|
-|plugin.psk.callertype|group|What to base the callerid on for the PSK plugin, uid, gid, user, group or identity|
+|plugin.yaml|/etc/puppetlabs/agent/mcollective/facts.yaml:/other/facts.yaml|Where the YAML fact source finds facts; multiples are merged|
+|plugin.psk|123456789|The pre-shared key (PSK) to use for the PSK security provider|
+|plugin.psk.callertype|group|What to base the callerid on for the PSK plugin: uid, gid, user, group, or identity|
 
 ## Client Setup
-It's recommended that you do not set host, user, password and Psk in the client configuration file since these files are generally world readable unlike the server one that should be root readable only.  I just set mine to *unset* so it's clear to someone who looks at the config file that it's not going to work without the settings below.
 
-You can also put client configuration in _~/.mcollective_ as an alternative to the method below, but you will need a full client.cfg then in that location.
+Do not set the host, user, password, and pre-shared key in the client configuration file, since these files are generally world-readable (unlike the server configuration file, which should be readable by the root user only). 
 
-You can set various Environment variables per user to supply these values:
+> **Note:** You can make this clearer by explicitly setting these options to 'unset' in the client configuration file, which prevents MCollective from working unless something overrides those settings.
 
-{% highlight bash %}
+You can set per-user environment variables to supply these values:
+
+~~~ bash
 export STOMP_USER=user
 export STOMP_PASSWORD=password
 export MCOLLECTIVE_PSK=123456789
-{% endhighlight %}
+~~~
 
-You an set options that will always apply using the _MCOLLECTIVE_EXTRA_OPTS_ as below:
+You can also set options that MCollective always applies by using the `MCOLLECTIVE_EXTRA_OPTS` environment variable:
 
-{% highlight bash %}
+~~~ bash
 export MCOLLECTIVE_EXTRA_OPTS="--dt 5 --timeout 3 --config /home/you/mcollective.cfg"
-{% endhighlight %}
+~~~
 
-The client library will use these and so you can give each user who use the admin utilities their own username and rights.
+The client library uses these variables, allowing you to give each administrative user their own username and privileges.
+
+You can also configure clients in a user's `~/.mcollective` file as an alternative to the method above, but that file must then be a complete client configuration file; MCollective will not look for and apply other client configuration files after finding one at `~/.mcollective`.
