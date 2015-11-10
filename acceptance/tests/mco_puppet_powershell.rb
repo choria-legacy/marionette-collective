@@ -74,6 +74,7 @@ MANIFEST
     step "Install powershell module on master"
     install_puppet_module_via_pmt_on(master, {:module_name => "puppetlabs-powershell"})
 
+    # TODO: once PUP-5480 is addressed, this workaround step can be removed
     step "Delete puppet cache dir on Windows hosts, because `agent` run created it with wrong permissions"
       # NOTE: `with_puppet_running_on` triggers a `puppet agent -t` run on the
       # Windows agents using the ADMINISTRATOR user. This creates a
