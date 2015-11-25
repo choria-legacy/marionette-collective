@@ -136,7 +136,7 @@ module MCollective
       l_compare = execute_function(function_hash)
 
       # Break out early and return false if the function returns nil
-      return false unless l_compare
+      return false unless !l_compare.nil?
 
       # Prevent unwanted discovery by limiting comparison operators
       # on Strings and Booleans
