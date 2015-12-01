@@ -134,14 +134,20 @@ module MCollective
     # includes a function
     def self.eval_compound_fstatement(function_hash)
       l_compare = execute_function(function_hash)
+      r_compare = function_hash["r_compare"]
+      operator = function_hash["operator"]
 
       # Break out early and return false if the function returns nil
-      return false unless l_compare
+      if l_compare.nil?
+        return false
+      end
 
       # Prevent unwanted discovery by limiting comparison operators
       # on Strings and Booleans
-      if((l_compare.is_a?(String) || l_compare.is_a?(TrueClass) || l_compare.is_a?(FalseClass)) && function_hash["operator"].match(/<|>/))
-        Log.debug "Cannot do > and < comparison on Booleans and Strings '#{l_compare} #{function_hash["operator"]} #{function_hash["r_compare"]}'"
+      if((l_compare.is_a?(String) || l_compare.is_a?(TrueClass) ||
+          l_compare.is_a?(FalseClass)) && function_hash["operator"].match(/<|>/))
+        Log.debug("Cannot do > and < comparison on Booleans and Strings " +
+                  "'#{l_compare} #{function_hash["operator"]} #{function_hash["r_compare"]}'")
         return false
       end
 
@@ -152,28 +158,30 @@ module MCollective
       end
 
       # Escape strings for evaluation
-      function_hash["r_compare"] = "\"#{function_hash["r_compare"]}\"" if(l_compare.is_a?(String)  && !(function_hash["operator"] =~ /=~|!=~/))
+      if (l_compare.is_a?(String)  && !(function_hash["operator"] =~ /=~|!=~/))
+        r_compare = "\"#{r_compare}\""
+      end
 
       # Do a regex comparison if right compare string is a regex
-      if function_hash["operator"] =~ /(=~|!=~)/
+      if operator=~ /(=~|!=~)/
         # Fail if left compare value isn't a string
         unless l_compare.is_a?(String)
           Log.debug("Cannot do a regex check on a non string value.")
           return false
         else
-          compare_result = l_compare.match(function_hash["r_compare"])
+          result = l_compare.match(r_compare)
           # Flip return value for != operator
           if function_hash["operator"] == "!=~"
-            !((compare_result.nil?) ? false : true)
+            return !result
           else
-            (compare_result.nil?) ? false : true
+            return !!result
           end
         end
         # Otherwise evaluate the logical comparison
       else
         l_compare = "\"#{l_compare}\"" if l_compare.is_a?(String)
-        result = eval("#{l_compare} #{function_hash["operator"]} #{function_hash["r_compare"]}")
-        (result.nil?) ? false : result
+        result = eval("#{l_compare} #{operator} #{r_compare}")
+        return result
       end
     end
 

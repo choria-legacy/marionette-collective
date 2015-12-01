@@ -230,6 +230,14 @@ module MCollective
           result.should == true
         end
 
+        it "should return false if right value is a regex and matches the left value and !=~ is the operator" do
+          Matcher.expects(:execute_function).returns("teststring")
+          @function_hash["r_compare"] = /teststring/
+          @function_hash["operator"] = "!=~"
+          result = Matcher.eval_compound_fstatement(@function_hash)
+          result.should == false
+        end
+
         it "should return false if right value is a regex, operator is != and regex equals left value" do
           Matcher.expects(:execute_function).returns("teststring")
           @function_hash["r_compare"] = /teststring/
@@ -250,6 +258,14 @@ module MCollective
           Matcher.expects(:execute_function).returns(1)
           @function_hash["r_compare"] = 1
           @function_hash["operator"] = ">="
+          result = Matcher.eval_compound_fstatement(@function_hash)
+          result.should == true
+       end
+
+       it "should return true if we do a false=false comparison" do
+          Matcher.expects(:execute_function).returns(false)
+          @function_hash["r_compare"] = false
+          @function_hash["operator"] = "=="
           result = Matcher.eval_compound_fstatement(@function_hash)
           result.should == true
        end
