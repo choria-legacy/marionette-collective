@@ -1,5 +1,5 @@
 test_name 'install activemq' do
-  amq_version = '5.11.1'
+  amq_version = '5.11.3'
   # install activemq, copy config and trust/keystore
   if mco_master.platform =~ /el-|centos/ then
     install_package mco_master, 'java-1.7.0-openjdk'
