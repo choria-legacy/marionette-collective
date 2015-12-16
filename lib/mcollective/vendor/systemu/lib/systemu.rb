@@ -28,10 +28,10 @@ class SystemUniversal
 
   c = begin; ::RbConfig::CONFIG; rescue NameError; ::Config::CONFIG; end
   ruby = File.join(c['bindir'], c['ruby_install_name']) << c['EXEEXT']
-  @ruby = if system('%s -e 42' % ruby)
+  @ruby = if system(ruby, '-e', '42')
     ruby
   else
-    system('%s -e 42' % 'ruby') ? 'ruby' : warn('no ruby in PATH/CONFIG')
+    system('ruby', '-e', '42') ? 'ruby' : warn('no ruby in PATH/CONFIG')
   end
 
   class << SystemUniversal
