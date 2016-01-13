@@ -9,6 +9,22 @@ before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
 
+<a name="2_8_7">&nbsp;</a>
+
+## 2.8.7 - 2016/01/13
+
+### Changes since 2.8.6
+
+* Fixed logrotate on systemd-based systems.
+* Fixed negative data plugin comparisons.
+
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2015/12/17|Fix systemd logrotate unit|MCO-744|
+|2015/12/01|Fix negative data plugin comparisons|MCO-739|
+
+
 <a name="2_8_6">&nbsp;</a>
 
 ## 2.8.6 - 2015/09/15
