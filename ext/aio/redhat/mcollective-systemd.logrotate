@@ -3,6 +3,6 @@
     notifempty
     sharedscripts
     postrotate
-      /usr/bin/systemctl restart mcollective >/dev/null 2>&1 || true
+      systemctl restart mcollective >/dev/null 2>&1 || true
     endscript
 }
