@@ -47,6 +47,8 @@ end
 
 if (defined?(RbConfig) ? RbConfig : Config)::CONFIG['host_os'] =~ /mswin|win32|dos|mingw|cygwin/i
   WINDOWS = TRUE
+else
+  WINDOWS = FALSE
 end
 
 PREREQS = %w{}
