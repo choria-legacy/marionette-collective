@@ -46,8 +46,7 @@ rescue LoadError
 end
 
 if (defined?(RbConfig) ? RbConfig : Config)::CONFIG['host_os'] =~ /mswin|win32|dos|mingw|cygwin/i
-    $stderr.puts "install.rb does not support Microsoft Windows. See ext/windows/README.md for information on installing on Microsoft Windows."
-    exit(-1)
+  WINDOWS = TRUE
 end
 
 PREREQS = %w{}
@@ -158,6 +157,12 @@ def prepare_installation
       InstallOptions.ri      = true
       InstallOptions.configs = true
     end
+    if WINDOWS
+      InstallOptions.service_files = true
+      opts.on('--[no-]service-files', 'Installation of windows service files', 'Default is to install the windows service files') do |service_files|
+        InstallOptions.service_files = service_files
+      end
+    end
     opts.separator("")
     opts.on_tail('--help', "Shows this help text.") do
       $stderr.puts opts
@@ -223,11 +228,13 @@ def prepare_installation
     destdir = ''
   end
 
-  configdir   = File.join(destdir, configdir)
-  bindir      = File.join(destdir, bindir)
-  sbindir     = File.join(destdir, sbindir)
-  sitelibdir  = File.join(destdir, sitelibdir)
-  plugindir   = File.join(destdir, plugindir)
+  unless destdir.empty?
+    configdir   = File.join(destdir, configdir)
+    bindir      = File.join(destdir, bindir)
+    sbindir     = File.join(destdir, sbindir)
+    sitelibdir  = File.join(destdir, sitelibdir)
+    plugindir   = File.join(destdir, plugindir)
+  end
 
   makedirs(configdir) if InstallOptions.configs
   makedirs(bindir)
@@ -292,6 +299,13 @@ cd File.dirname(__FILE__) do
   rdoc = glob(%w{bin/* lib/**/*.rb README* })
   libs = glob(%w{lib/**/*})
   plugins = glob(%w{plugins/**/*})
+  if WINDOWS
+    if InstallOptions.service_files
+       windows_bins = glob(%w{ext/windows/*.bat ext/windows/*.rb})
+    else
+       windows_bins = glob(%w{ext/windows/mco.bat})
+    end
+  end
 
   check_prereqs
   prepare_installation
@@ -301,6 +315,7 @@ cd File.dirname(__FILE__) do
   do_configs(erbs, InstallOptions.configdir) if InstallOptions.configs
   do_bins(bins, InstallOptions.bindir)
   do_bins(sbins, InstallOptions.sbindir)
+  do_bins(windows_bins, InstallOptions.bindir, 'ext/windows/') if WINDOWS
   do_libs(libs, InstallOptions.sitelibdir)
   do_libs(plugins, InstallOptions.plugindir, 'plugins/')
 end
