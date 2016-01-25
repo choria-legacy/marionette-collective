@@ -280,7 +280,7 @@ def install_binfile(from, op_file, target)
 
   File.open(from) do |ip|
     File.open(tmp_file.path, "w") do |op|
-      op.puts "#!#{ruby}"
+      op.puts "#!#{ruby}" unless WINDOWS
       contents = ip.readlines
       contents.shift if contents[0] =~ /^#!/
       op.write contents.join
