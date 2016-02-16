@@ -19,10 +19,40 @@ module MCollective
 
       UnixDaemon.daemonize do
         if pid
-          begin
-            File.open(pid, 'w') {|f| f.write(Process.pid) }
-          rescue Exception => e
+          # Clean up stale pidfile if needed
+          if File.exist?(pid)
+            lock_pid = File.read(pid)
+            begin
+              lock_pid = Integer(lock_pid)
+            rescue ArgumentError, TypeError
+              lock_pid = nil
+            end
+
+            # If there's no pid in the pidfile, remove it
+            if lock_pid.nil?
+              File.unlink(pid)
+            else
+              begin
+                # This will raise an error if the process doesn't
+                # exist, and do nothing otherwise
+                Process.kill(0, lock_pid)
+                # If we reach this point then the process is running.
+                # We should raise an error rather than continuing on
+                # trying to create the PID
+                raise "Process is already running with PID #{lock_pid}"
+              rescue Errno::ESRCH
+                # Errno::ESRCH = no such process
+                # PID in pidfile doesn't exist, remove pidfile
+                File.unlink(pid)
+              end
+            end
+
           end
+
+          # Use exclusive create on the PID to avoid race condition
+          # when two mcollectived processes start at the same time
+          opt =  File::CREAT | File::EXCL | File::WRONLY
+          File.open(pid, opt) {|f| f.print(Process.pid) }
         end
 
         begin
