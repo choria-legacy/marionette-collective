@@ -8,6 +8,23 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_8_8">&nbsp;</a>
+
+## 2.8.8 - 2016/02/23
+
+### Changes since 2.8.7
+
+* Fixed pidfile handling to prevent multiple running daemon processes.
+* Added windows support to install.rb
+
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2016/02/18|Improve pidfile handling to avoid running multiple daemons|MCO-751|
+|2016/02/18|Update build targets to LTS debian variants|MCO-634|
+|2016/02/05|Update mco.bat file to allow for absence of CONFIG_FILE setting|MCO-748|
+|2016/01/22|Add windows support to install.rb|MCO-745|
+
 
 <a name="2_8_7">&nbsp;</a>
 
