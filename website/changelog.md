@@ -8,6 +8,11 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2016/02/23|Release *2.8.8*||
+|2016/02/18|Improve pidfile handling to avoid running multiple daemons|MCO-751|
+|2016/02/18|Update build targets to LTS debian variants|MCO-634|
+|2016/02/05|Update mco.bat file to allow for absence of CONFIG_FILE setting|MCO-748|
+|2016/01/22|Add windows support to install.rb|MCO-745|
 |2016/01/13|Release *2.8.7*||
 |2015/12/17|Fix systemd logrotate unit|MCO-744|
 |2015/12/16|Fix run helper for systems where the path to ruby binary includes spaces|MCO-742|
