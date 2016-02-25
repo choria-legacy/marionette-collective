@@ -10,7 +10,7 @@ will be highlighted here.
 
 <a name="2_8_8">&nbsp;</a>
 
-## 2.8.8 - 2016/02/23
+## 2.8.8 - 2016/02/25
 
 ### Changes since 2.8.7
 
@@ -20,6 +20,7 @@ will be highlighted here.
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2016/02/25|Fix dependency on aio for creating the pidfile directory|MCO-753|
 |2016/02/18|Improve pidfile handling to avoid running multiple daemons|MCO-751|
 |2016/02/18|Update build targets to LTS debian variants|MCO-634|
 |2016/02/05|Update mco.bat file to allow for absence of CONFIG_FILE setting|MCO-748|
