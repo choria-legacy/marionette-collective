@@ -17,7 +17,9 @@
 ### END INIT INFO
 
 mcollectived="/opt/puppetlabs/puppet/bin/mcollectived"
-pidfile="/var/run/puppetlabs/mcollectived.pid"
+piddir="/var/run/puppetlabs"
+pidfile="${piddir}/mcollectived.pid"
+
 if [ -d /var/lock/subsys ]; then
     # RedHat/CentOS/etc who use subsys
     lockfile="/var/lock/subsys/mcollective"
@@ -48,6 +50,7 @@ fi
 
 start() {
     echo -n "Starting mcollective: "
+    mkdir -p ${piddir}
     # Only try to start if not already started
     if ! rh_status_q; then
       daemon ${daemonopts} ${mcollectived} --pid=${pidfile} --config="/etc/puppetlabs/mcollective/server.cfg" --daemonize
