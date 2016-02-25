@@ -32,7 +32,8 @@
 desc=${DESC:-mcollective daemon}
 daemon=${DAEMON:-/opt/puppetlabs/puppet/bin/mcollectived}
 name=${NAME:-mcollectived}
-pidfile=${PIDFILE:-/var/run/puppetlabs/mcollectived.pid}
+piddir=${PIDDIR:-/var/run/puppetlabs}
+pidfile=${PIDFILE:-${piddir}/mcollectived.pid}
 daemon_opts=${DAEMON_OPTS:---pid ${pidfile}}
 
 # First reset status of this service
@@ -59,6 +60,7 @@ case "$1" in
         ## the echo return value is set appropriate.
         # startproc should return 0, even if service is
         # already running to match LSB spec.
+        mkdir -p ${piddir}
         startproc -p $pidfile $daemon $daemon_opts
         # Remember status and be verbose
         rc_status -v
