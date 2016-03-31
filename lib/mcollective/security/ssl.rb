@@ -1,5 +1,6 @@
 require 'base64'
 require 'openssl'
+require 'net/ssh'
 
 module MCollective
   module Security
@@ -310,7 +311,29 @@ module MCollective
       def makehash(body)
         Log.debug("Creating message hash using #{private_key_file}")
 
-        sign(private_key_file, body.to_s)
+        begin
+          a = Net::SSH::Authentication::Agent.connect
+          # Look for key based on public key
+          pub_key = OpenSSL::PKey::RSA.new File.read client_public_key
+          a.identities.each do |i|
+            if pub_key.fingerprint == i.public_key.fingerprint
+              sig =  a.sign(i, body.to_s)
+              return SSL.base64_encode(parse_ssh_sig(sig))
+            end
+          end
+        rescue
+          sign(private_key_file, body.to_s)
+        end
+      end
+
+      def parse_ssh_sig(string)
+        offset = 0
+        typelen = string[offset..(offset+3)].reverse.unpack("L")[0]
+        offset += 4
+        offset += typelen
+        siglen = string[offset..(offset+3)].reverse.unpack("L")[0]
+        offset += 4
+        string[offset..(offset+siglen)]
       end
 
       # Code adapted from http://github.com/adamcooke/basicssl
