@@ -218,7 +218,7 @@ module MCollective
     def self.uuid(string=nil)
       string ||= OpenSSL::Random.random_bytes(16).unpack('H*').shift
 
-      uuid_name_space_dns = "\x6b\xa7\xb8\x10\x9d\xad\x11\xd1\x80\xb4\x00\xc0\x4f\xd4\x30\xc8"
+      uuid_name_space_dns = [0x6b, 0xa7, 0xb8, 0x10, 0x9d, 0xad, 0x11, 0xd1, 0x80, 0xb4, 0x00, 0xc0, 0x4f, 0xd4, 0x30, 0xc8].map {|b| b.chr}.join
 
       sha1 = Digest::SHA1.new
       sha1.update(uuid_name_space_dns)
