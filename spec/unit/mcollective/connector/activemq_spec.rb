@@ -65,6 +65,7 @@ module MCollective
         Activemq.any_instance.stubs(:get_option).with("activemq.initial_reconnect_delay", 0.01).returns(0.01)
         Activemq.any_instance.stubs(:get_option).with("activemq.back_off_multiplier", 2).returns(2)
         Activemq.any_instance.stubs(:get_option).with("activemq.max_reconnect_delay", 30.0).returns(30.0)
+        Activemq.any_instance.stubs(:get_bool_option).with("activemq.agents_multiplex", "false").returns(true)
         c = Activemq.new
         c.instance_variable_set("@subscriptions", subscription)
         c.instance_variable_set("@connection", connection)
@@ -665,8 +666,13 @@ module MCollective
       end
 
       describe "#make_target" do
-        it "should create correct targets" do
+        it "should create correct targets if agents_multiplex is false" do
+          # realize the connector let so that we can unstub it
+          connector
+          Activemq.any_instance.unstub(:get_bool_option)
+          Activemq.any_instance.stubs(:get_bool_option).with("activemq.agents_multiplex", "false").returns(false)
           Client.stubs(:request_sequence).returns(42)
+
           connector.make_target("test", :reply, "mcollective").should == {
             :name => "/queue/mcollective.reply.rspec_#{$$}.42",
             :headers => {},
@@ -683,6 +689,46 @@ module MCollective
             :name => "/topic/mcollective.test.agent",
             :headers => {},
             :id => "/topic/mcollective.test.agent",
+          }
+
+          connector.make_target("test", :direct_request, "mcollective").should == {
+            :name => "/queue/mcollective.nodes",
+            :headers => {},
+            :id => "/queue/mcollective.nodes",
+          }
+
+          connector.make_target("test", :directed, "mcollective").should == {
+            :name => "/queue/mcollective.nodes",
+            :headers => {
+              "selector" => "mc_identity = 'rspec'",
+            },
+            :id => "mcollective_directed_to_identity",
+          }
+        end
+
+        it "should create correct targets if agents_multiplex is true" do
+          # realize the connector let so that we can unstub it
+          connector
+          Activemq.any_instance.unstub(:get_bool_option)
+          Activemq.any_instance.stubs(:get_bool_option).with("activemq.agents_multiplex", "false").returns(true)
+          Client.stubs(:request_sequence).returns(42)
+
+          connector.make_target("test", :reply, "mcollective").should == {
+            :name => "/queue/mcollective.reply.rspec_#{$$}.42",
+            :headers => {},
+            :id => "/queue/mcollective.reply.rspec_#{$$}.42",
+          }
+
+          connector.make_target("test", :broadcast, "mcollective").should == {
+            :name => "/topic/mcollective.agents",
+            :headers => {},
+            :id => "/topic/mcollective.agents",
+          }
+
+          connector.make_target("test", :request, "mcollective").should == {
+            :name => "/topic/mcollective.agents",
+            :headers => {},
+            :id => "/topic/mcollective.agents",
           }
 
           connector.make_target("test", :direct_request, "mcollective").should == {
