@@ -10,7 +10,7 @@ else
 end
 
 group :dev do
-  gem 'rake'
+  gem 'rake', '~> 10.4'
   gem 'rubocop', '~> 0.28.0', :platforms => [:ruby] unless RUBY_VERSION =~ /^1.8/
 end
 
