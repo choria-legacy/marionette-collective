@@ -33,7 +33,7 @@ layout: default
 
 To install MCollective:
 
-1.  Install and start your middleware, and configure your firewalls. See the [pre-install instructions] for details.(#pre-install)
+1.  Install and start your middleware, and configure your firewalls. See the [pre-install instructions](#pre-install) for details.
 2.  Install the `mcollective` package on servers, and then make sure the `mcollective` service is running.
 3.  Install the `mcollective-client` package on admin workstations.
 
@@ -169,8 +169,8 @@ Other platforms might use different conventions.
 >     # ...
 >     libdir = /usr/libexec/mcollective
 >
-> * Good: `/usr/libexec/mcollective/mcollective/agent/discovery.rb`
-> * Bad: `/usr/libexec/mcollective/agent/discovery.rb` (This would only work if you had set a `libdir` of `/usr/libexec`.)
+> -   **Good:** `/usr/libexec/mcollective/mcollective/agent/discovery.rb`
+> -   **Bad:** `/usr/libexec/mcollective/agent/discovery.rb` (This would only work if you had set a `libdir` of `/usr/libexec`.)
 
 ### Add `mcollective/bin` to the path
 
