@@ -8,6 +8,22 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_8_9">&nbsp;</a>
+
+## 2.8.9 - 2016/05/11
+
+### Changes since 2.8.8
+
+* Worked around RuboCop parser change
+* Restored support for running tests on ruby 1.8.7
+
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2016/05/03|Work around RuboCop parser change causing errors on non UTF-8 compliant strings|(#375)[https://github.com/puppetlabs/marionette-collective/pull/375]|
+|2016/05/03|Pin rake to 10.4 required for running tests on ruby 1.8.7|(#375)[https://github.com/puppetlabs/marionette-collective/pull/375]|
+
+
 <a name="2_8_8">&nbsp;</a>
 
 ## 2.8.8 - 2016/02/25
