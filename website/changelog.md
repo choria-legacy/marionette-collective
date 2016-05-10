@@ -8,6 +8,14 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2016/06/27|Release *2.8.9*|MCO-761|
+|2016/06/20|Make parsing of quoted strings in discovery filter expressions side effects free||
+|2016/06/20|Do not use eval on unchecked strings in discovery filter expressions|MCO-765|
+|2016/05/17|Link to PE docs|(#373)[https://github.com/puppetlabs/marionette-collective/pull/373]|
+|2016/05/17|Update installation docs|(#376)[https://github.com/puppetlabs/marionette-collective/pull/376]|
+|2016/05/11|Fix ActiveMQ install|(#378)[https://github.com/puppetlabs/marionette-collective/pull/378]|
+|2016/05/03|Work around RuboCop parser change causing errors on non UTF-8 compliant strings|(#375)[https://github.com/puppetlabs/marionette-collective/pull/375]|
+|2016/05/03|Pin rake to 10.4 required for running tests on ruby 1.8.7|(#375)[https://github.com/puppetlabs/marionette-collective/pull/375]|
 |2016/02/25|Release *2.8.8*||
 |2016/02/25|Fix dependency on aio for creating the pidfile directory|MCO-753|
 |2016/02/18|Improve pidfile handling to avoid running multiple daemons|MCO-751|
