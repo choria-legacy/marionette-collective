@@ -1,14 +1,15 @@
 test_name 'install activemq' do
-  amq_version = '5.11.3'
+  amq_version = '5.11.4'
   # install activemq, copy config and trust/keystore
+  curl_options = '--silent --show-error --fail'
   if mco_master.platform =~ /el-|centos/ then
     install_package mco_master, 'java-1.7.0-openjdk'
-    curl_on(mco_master, "-O http://apache.osuosl.org/activemq/#{amq_version}/apache-activemq-#{amq_version}-bin.tar.gz")
+    curl_on(mco_master, "#{curl_options} -O http://apache.osuosl.org/activemq/#{amq_version}/apache-activemq-#{amq_version}-bin.tar.gz")
     on(mco_master, "cd /opt && tar xzf /root/apache-activemq-#{amq_version}-bin.tar.gz")
     activemq_confdir = "/opt/apache-activemq-#{amq_version}/conf"
   elsif mco_master.platform =~/ubuntu|debian/ then
     install_package mco_master, 'openjdk-7-jdk'
-    curl_on(mco_master, "-O http://apache.osuosl.org/activemq/#{amq_version}/apache-activemq-#{amq_version}-bin.tar.gz")
+    curl_on(mco_master, "#{curl_options} -O http://apache.osuosl.org/activemq/#{amq_version}/apache-activemq-#{amq_version}-bin.tar.gz")
     on(mco_master, "cd /opt && tar xzf /root/apache-activemq-#{amq_version}-bin.tar.gz")
     activemq_confdir = "/opt/apache-activemq-#{amq_version}/conf"
   elsif mco_master.platform =~/windows/ then
