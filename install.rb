@@ -110,7 +110,7 @@ end
 #
 def prepare_installation
   InstallOptions.configs = true
-
+  InstallOptions.batch_files = true
   # Only try to do docs if we're sure they have rdoc
   if $haverdoc
     InstallOptions.rdoc = true
@@ -148,6 +148,9 @@ def prepare_installation
     end
     opts.on('--plugindir[=OPTIONAL]', 'Installation directory for plugins', 'Default /usr/libexec/mcollective') do |plugindir|
       InstallOptions.plugindir = plugindir
+    end
+    opts.on('--no-batch-files', 'Prevents installation of batch files for windows', 'Default off') do |batch_files|
+      InstallOptions.batch_files = false
     end
     opts.on('--quick', 'Performs a quick installation. Only the', 'installation is done.') do |quick|
       InstallOptions.rdoc    = false
@@ -301,7 +304,7 @@ cd File.dirname(__FILE__) do
   rdoc = glob(%w{bin/* lib/**/*.rb README* })
   libs = glob(%w{lib/**/*})
   plugins = glob(%w{plugins/**/*})
-  if WINDOWS
+  if WINDOWS && InstallOptions.batch_files
     if InstallOptions.service_files
        windows_bins = glob(%w{ext/windows/*.bat ext/windows/*.rb})
     else
@@ -317,7 +320,7 @@ cd File.dirname(__FILE__) do
   do_configs(erbs, InstallOptions.configdir) if InstallOptions.configs
   do_bins(bins, InstallOptions.bindir)
   do_bins(sbins, InstallOptions.sbindir)
-  do_bins(windows_bins, InstallOptions.bindir, 'ext/windows/') if WINDOWS
+  do_bins(windows_bins, InstallOptions.bindir, 'ext/windows/') if WINDOWS && InstallOptions.batch_files
   do_libs(libs, InstallOptions.sitelibdir)
   do_libs(plugins, InstallOptions.plugindir, 'plugins/')
 end
