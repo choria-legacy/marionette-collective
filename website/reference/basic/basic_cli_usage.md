@@ -2,9 +2,14 @@
 layout: default
 title: Using MCollective Command Line Applications
 ---
+
 MCollective is designed first and foremost for the CLI. You will mostly
 interact with a single executable called *mco* which has a number of
 sub-commands, arguments and flags.
+
+> **Note:** In [Puppet Enterprise](https://docs.puppet.com/pe/), the `peadmin` user is the *only* user
+who can execute `mco` commands. To execute commands as the `peadmin` user, see
+[the Puppet Enterprise documentation](https://docs.puppet.com/pe/latest/orchestration_invoke_cli.html#logging-in-as-peadmin).
 
 ## Basic Usage of the *mco* Command
 
