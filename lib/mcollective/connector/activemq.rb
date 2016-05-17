@@ -224,15 +224,43 @@ module MCollective
 
           pools = Integer(get_option("activemq.pool.size"))
           hosts = []
+          middleware_user = ''
+          middleware_password = ''
+          prompt_for_username = get_bool_option("activemq.prompt_user", "false")
+          prompt_for_password = get_bool_option("activemq.prompt_password", "false")
+          
+          if prompt_for_username
+            Log.debug("No previous user exists and activemq.prompt-user is set to true")
+            print "Please enter user to connect to middleware: "
+            middleware_user = STDIN.gets.chomp
+          end
+
+          if prompt_for_password
+            Log.debug("No previous password exists and activemq.prompt-password is set to true")
+            middleware_password = MCollective::Util.get_hidden_input("Please enter password: ")
+            print "\n"
+          end
 
           1.upto(pools) do |poolnum|
             host = {}
 
             host[:host] = get_option("activemq.pool.#{poolnum}.host")
             host[:port] = get_option("activemq.pool.#{poolnum}.port", 61613).to_i
-            host[:login] = get_env_or_option("STOMP_USER", "activemq.pool.#{poolnum}.user", '')
-            host[:passcode] = get_env_or_option("STOMP_PASSWORD", "activemq.pool.#{poolnum}.password", '')
             host[:ssl] = get_bool_option("activemq.pool.#{poolnum}.ssl", "false")
+            
+            # read user from config file
+            host[:login] = get_env_or_option("STOMP_USER", "activemq.pool.#{poolnum}.user", middleware_user)
+            if prompt_for_username and host[:login] != middleware_user
+                Log.info("Using #{host[:login]} from config file to connect to #{host[:host]}. "+
+                        "plugin.activemq.prompt_user should be set to false to remove the prompt.")
+            end
+            
+            # read user from config file
+            host[:passcode] = get_env_or_option("STOMP_PASSWORD", "activemq.pool.#{poolnum}.password", middleware_password)
+            if prompt_for_password and host[:passcode] != middleware_password
+                Log.info("Using password from config file to connect to #{host[:host]}. "+
+                        "plugin.activemq.prompt_password should be set to false to remove the prompt.")
+            end
 
             # if ssl is enabled set :ssl to the hash of parameters
             if host[:ssl]
