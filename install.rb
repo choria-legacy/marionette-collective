@@ -296,6 +296,7 @@ end
 
 # Change directory into the mcollective root so we don't get the wrong files for install.
 cd File.dirname(__FILE__) do
+  prepare_installation
   # Set these values to what you want installed.
   configs = glob(%w{etc/*.dist})
   erbs = glob(%w{etc/*.erb})
@@ -304,6 +305,7 @@ cd File.dirname(__FILE__) do
   rdoc = glob(%w{bin/* lib/**/*.rb README* })
   libs = glob(%w{lib/**/*})
   plugins = glob(%w{plugins/**/*})
+
   if WINDOWS && InstallOptions.batch_files
     if InstallOptions.service_files
        windows_bins = glob(%w{ext/windows/*.bat ext/windows/*.rb})
@@ -313,8 +315,6 @@ cd File.dirname(__FILE__) do
   end
 
   check_prereqs
-  prepare_installation
-
   build_rdoc(rdoc) if InstallOptions.rdoc
   do_configs(configs, InstallOptions.configdir, 'etc/|\.dist') if InstallOptions.configs
   do_configs(erbs, InstallOptions.configdir) if InstallOptions.configs
