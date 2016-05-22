@@ -387,6 +387,7 @@ module MCollective
         raise("Unknown target type #{type}") unless [:directed, :broadcast, :reply, :request, :direct_request].include?(type)
         raise("Unknown collective '#{collective}' known collectives are '#{@config.collectives.join ', '}'") unless @config.collectives.include?(collective)
 
+        agents_multiplex = get_bool_option("rabbitmq.agents_multiplex", "false")
         target = {:name => "", :headers => {}, :id => nil}
 
         if reply_to
@@ -402,13 +403,18 @@ module MCollective
             target[:id] = "mcollective_%s_replies" % agent
 
           when :broadcast, :request # publishing a request to all nodes with an agent
-            target[:name] = "/exchange/%s_broadcast/%s" % [collective, agent]
+            if agents_multiplex
+              target[:name] = "/exchange/%s_broadcast" % collective
+              target[:id] = "%s_broadcast" % collective
+            else
+              target[:name] = "/exchange/%s_broadcast/%s" % [collective, agent]
+              target[:id] = "%s_broadcast_%s" % [collective, agent]
+            end
             if reply_to
               target[:headers]["reply-to"] = reply_to
             else
               target[:headers]["reply-to"] = reply_path
             end
-            target[:id] = "%s_broadcast_%s" % [collective, agent]
 
           when :direct_request # a request to a specific node
             raise "Directed requests need to have a node identity" unless node
