@@ -308,3 +308,11 @@ The SSL ciphers to use when communicating with this middleware server.
 
 - _Default:_ no default
 - _Allowed values:_ A string supplying an [OpenSSL cipher suite][cipherstrings]
+
+#### `plugin.activemq.agents_multiplex`
+
+Whether to use a single target for all agents in a node thus reducing the number of subscriptions in the message broker.
+
+- _Default:_ false
+- _Allowed values:_ A boolean value
+
