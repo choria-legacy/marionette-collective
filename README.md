@@ -2,7 +2,7 @@
 
 The Marionette Collective aka. mcollective is a framework to build server orchestration or parallel job execution systems.
 
-For full information, wikis, ticketing and downloads please see https://puppetlabs.com/mcollective
+For documentation please see https://docs.puppet.com/mcollective
 
 ## Maintenance
 
