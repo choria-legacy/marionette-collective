@@ -157,11 +157,6 @@ module MCollective
         return false
       end
 
-      # Escape strings for evaluation
-      if (l_compare.is_a?(String)  && !(function_hash["operator"] =~ /=~|!=~/))
-        r_compare = "\"#{r_compare}\""
-      end
-
       # Do a regex comparison if right compare string is a regex
       if operator=~ /(=~|!=~)/
         # Fail if left compare value isn't a string
@@ -177,10 +172,40 @@ module MCollective
             return !!result
           end
         end
-        # Otherwise evaluate the logical comparison
+        # Otherwise do a normal comparison while taking the type into account
       else
-        l_compare = "\"#{l_compare}\"" if l_compare.is_a?(String)
-        result = eval("#{l_compare} #{operator} #{r_compare}")
+        if l_compare.is_a? String
+          r_compare = r_compare.to_s
+        elsif r_compare.is_a? String
+          if l_compare.is_a? Numeric
+            r_compare = r_compare.strip
+            begin
+              r_compare = Integer(r_compare)
+            rescue ArgumentError
+              begin
+                r_compare = Float(r_compare)
+              rescue ArgumentError
+                raise ArgumentError, "invalid numeric value: #{r_compare}"
+              end
+            end
+          elsif l_compare.is_a? TrueClass or l_compare.is_a? FalseClass
+            r_compare = r_compare.strip
+            if r_compare == true.to_s
+              r_compare = true
+            elsif r_compare == false.to_s
+              r_compare = false
+            else
+              raise ArgumentError, "invalid boolean value: #{r_compare}"
+            end
+          end
+        end
+        operator = operator.strip
+        if operator =~ /(?:(!=|<=|>=|<|>)|==?)/
+          operator = $1 ? $1.to_sym : :==
+        else
+          raise ArgumentError, "invalid operator: #{operator}"
+        end
+        result = l_compare.send(operator, r_compare)
         return result
       end
     end
