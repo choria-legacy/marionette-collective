@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'json'
-gem 'stomp'
+gem 'stomp', '>= 1.4.1'
 
 if RUBY_VERSION =~ /^1.8/
   gem 'systemu', '2.6.4'
