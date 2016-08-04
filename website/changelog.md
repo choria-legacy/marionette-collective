@@ -4,6 +4,19 @@ title: Changelog
 toc: false
 ---
 
+## Version 2.9.x
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2016/08/05|Release *2.9.0*||
+|2016/06/24|Update Stomp gem dependency to >= 1.4.1|RE-7302|
+|2016/06/13|acceptance: allow plugin versioned install||
+|2016/06/01|Update README link to documentation||
+|2016/05/24|Fix mco plugins installation when using puppet-agent on Debian family systems|MCO-688|
+|2016/05/19|Move prepare_installation to run first|MCO-763|
+|2016/05/17|Add --no-batch-files option|MCO-762|
+|2016/05/17|Runtime username/password input to connect to middleware|MCO-760|
+
 ## Version 2.8.x
 
 |Date|Description|Ticket|
