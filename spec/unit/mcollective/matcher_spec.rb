@@ -262,6 +262,22 @@ module MCollective
           result.should == true
        end
 
+        it "should handle integer literals" do
+          Matcher.expects(:execute_function).returns(10)
+          @function_hash["r_compare"] = "0xa"
+          @function_hash["operator"] = "="
+          result = Matcher.eval_compound_fstatement(@function_hash)
+          result.should == true
+        end
+
+        it "should handle float literals" do
+          Matcher.expects(:execute_function).returns(50)
+          @function_hash["r_compare"] = "0.5e2"
+          @function_hash["operator"] = "="
+          result = Matcher.eval_compound_fstatement(@function_hash)
+          result.should == true
+        end
+
        it "should return true if we do a false=false comparison" do
           Matcher.expects(:execute_function).returns(false)
           @function_hash["r_compare"] = false

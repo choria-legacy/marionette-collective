@@ -65,7 +65,6 @@ module MCollective
         current_token_value = ""
         j = @token_index
         escaped = false
-        escaped_with = ""
 
         begin
           if (@arguments[j] == "/")
@@ -117,47 +116,46 @@ module MCollective
                 break
               end
 
-              if @arguments[j+1] == "("
+              if @arguments[j] == "("
                 func = true
-                be_greedy = true
-              end
 
-              if @arguments[j+1] == '"' || @arguments[j+1] == "'"
-                func = false
-                be_greedy = true
-                escaped = true
-                escaped_with = @arguments[j+1]
-              end
-
-              current_token_value << @arguments[j]
-
-              if be_greedy
-                if func
-                  while !(j+1 >= @arguments.size) && @arguments[j] != ')'
-                    j += 1
-                    current_token_value << @arguments[j]
-                  end
-                else
-                  j += 2 # step over first "
-                  @white_spaces += 1
-                  # identified "..."
-                  while !(j+1 >= @arguments.size) && @arguments[j] != escaped_with
-                    if  @arguments[j] == '\\'
-                      # eat the escape char but don't add it to the token, or we
-                      # end up with \\\"
-                      @white_spaces += 1
-                      j += 1
-                      escaped = true
-                    end
-                    current_token_value << @arguments[j]
-                    j += 1
-                  end
-                  @white_spaces += 1
-                end
-
+                current_token_value << @arguments[j]
                 j += 1
-                be_greedy = false
+
+                while j < @arguments.size
+                  current_token_value << @arguments[j]
+                  if @arguments[j] == ')'
+                    j += 1
+                    break
+                  end
+                  j += 1
+                end
+              elsif @arguments[j] == '"' || @arguments[j] == "'"
+                escaped = true
+                escaped_with = @arguments[j]
+
+                j += 1 # step over first " or '
+                @white_spaces += 1
+                # identified "..." or '...'
+                while j < @arguments.size
+                  if  @arguments[j] == '\\'
+                    # eat the escape char but don't add it to the token, or we
+                    # end up with \\\"
+                    j += 1
+                    @white_spaces += 1
+                    unless j < @arguments.size
+                      break
+                    end
+                  elsif @arguments[j] == escaped_with
+                    j += 1
+                    @white_spaces += 1
+                    break
+                  end
+                  current_token_value << @arguments[j]
+                  j += 1
+                end
               else
+                current_token_value << @arguments[j]
                 j += 1
               end
 

@@ -114,6 +114,8 @@ module MCollective
           Rabbitmq.any_instance.stubs(:get_option).with("rabbitmq.max_hbrlck_fails", 0).returns(0)
           Rabbitmq.any_instance.stubs(:get_option).with("rabbitmq.max_hbread_fails", 2).returns(2)
           Rabbitmq.any_instance.stubs(:get_bool_option).with("rabbitmq.base64", 'false').returns(false)
+          Rabbitmq.any_instance.stubs(:get_bool_option).with("rabbitmq.prompt_user", 'false').returns(false)
+          Rabbitmq.any_instance.stubs(:get_bool_option).with("rabbitmq.prompt_password", 'false').returns(false)
           Rabbitmq.any_instance.stubs(:get_option).with("rabbitmq.pool.size").returns(2)
           Rabbitmq.any_instance.stubs(:get_option).with("rabbitmq.pool.1.host").returns("host1")
           Rabbitmq.any_instance.stubs(:get_option).with("rabbitmq.pool.1.port", 61613).returns(6163)
