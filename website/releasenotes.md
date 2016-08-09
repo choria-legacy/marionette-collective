@@ -8,6 +8,53 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_9_0">&nbsp;</a>
+
+## 2.9.0 - 2016/08/05
+
+### Changes since 2.9.0
+
+* Updated Stomp gem dependency to >= 1.4.1 for SSL-related fixes
+* Fixed mco plugins installation when using puppet-agent on Debian systems
+* Added runtime username/password input to connect to middleware
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2016/08/05|Release *2.9.0*||
+|2016/06/24|Update Stomp gem dependency to >= 1.4.1|RE-7302|
+|2016/06/13|acceptance: allow plugin versioned install||
+|2016/06/01|Update README link to documentation||
+|2016/05/24|Fix mco plugins installation when using puppet-agent on Debian family systems|MCO-688|
+|2016/05/19|Move prepare_installation to run first|MCO-763|
+|2016/05/17|Add --no-batch-files option|MCO-762|
+|2016/05/17|Runtime username/password input to connect to middleware|MCO-760|
+
+
+<a name="2_8_9">&nbsp;</a>
+
+## 2.8.9 - 2016/06/27
+
+### Changes since 2.8.8
+
+* Improved parsing of quoted strings in discovery filter expressions
+* Dropped use of eval on unchecked strings - CVE-2016-2788
+* Updated documentation
+* Fixed ActiveMQ install
+* Worked around RuboCop parser change
+* Restored support for running tests on ruby 1.8.7
+
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2016/06/20|Make parsing of quoted strings in discovery filter expressions side effects free||
+|2016/06/20|Do not use eval on unchecked strings in discovery filter expressions|MCO-765|
+|2016/05/17|Link to PE docs|(#373)[https://github.com/puppetlabs/marionette-collective/pull/373]|
+|2016/05/17|Update installation docs|(#376)[https://github.com/puppetlabs/marionette-collective/pull/376]|
+|2016/05/11|Fix ActiveMQ install|(#378)[https://github.com/puppetlabs/marionette-collective/pull/378]|
+|2016/05/03|Work around RuboCop parser change causing errors on non UTF-8 compliant strings|(#375)[https://github.com/puppetlabs/marionette-collective/pull/375]|
+|2016/05/03|Pin rake to 10.4 required for running tests on ruby 1.8.7|(#375)[https://github.com/puppetlabs/marionette-collective/pull/375]|
+
+
 <a name="2_8_8">&nbsp;</a>
 
 ## 2.8.8 - 2016/02/25
