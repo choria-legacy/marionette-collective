@@ -91,11 +91,11 @@ module MCollective
         dependencies = []
         PluginPackager.filter_dependencies('debian', data[:dependencies]).each do |dep|
           if dep[:version] && dep[:revision]
-            dependencies << "#{dep[:name]} (>=#{dep[:version]}-#{dep[:revision]})"
+            dependencies << "#{dep[:name]} (>=#{dep[:version]}-#{dep[:revision]}) | puppet-agent"
           elsif dep[:version]
-            dependencies << "#{dep[:name]} (>=#{dep[:version]})"
+            dependencies << "#{dep[:name]} (>=#{dep[:version]}) | puppet-agent"
           else
-            dependencies << dep[:name]
+            dependencies << "#{dep[:name]} | puppet-agent"
           end
         end
 

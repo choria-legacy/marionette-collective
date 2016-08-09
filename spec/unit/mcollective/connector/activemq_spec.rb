@@ -113,6 +113,8 @@ module MCollective
           Activemq.any_instance.stubs(:get_option).with("activemq.max_hbrlck_fails", 0).returns(0)
           Activemq.any_instance.stubs(:get_option).with("activemq.max_hbread_fails", 2).returns(2)
           Activemq.any_instance.stubs(:get_bool_option).with("activemq.base64", 'false').returns(false)
+          Activemq.any_instance.stubs(:get_bool_option).with("activemq.prompt_user", 'false').returns(false)
+          Activemq.any_instance.stubs(:get_bool_option).with("activemq.prompt_password", 'false').returns(false)
           Activemq.any_instance.stubs(:get_option).with("activemq.priority", 0).returns(0)
           Activemq.any_instance.stubs(:get_option).with("activemq.pool.size").returns(2)
           Activemq.any_instance.stubs(:get_option).with("activemq.pool.1.host").returns("host1")

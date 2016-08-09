@@ -14,4 +14,5 @@
     'setup/aio/pre-suite/060_Install-mcollective-daemon.rb',
     'setup/aio/pre-suite/070_Install_puppet-agent-plugin.rb',
   ],
+  :plugins => [ 'mcollective-puppet-agent' ],
 }
