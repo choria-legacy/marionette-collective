@@ -8,6 +8,7 @@ module MCollective
       class MCollective::Foo; end
 
       PluginManager.pluginlist.each {|p| PluginManager.delete p}
+      @config = mock
     end
 
     describe "#<<" do
