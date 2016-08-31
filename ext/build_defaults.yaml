@@ -5,17 +5,12 @@ default_cow: 'base-squeeze-i386.cow'
 cows: 'base-precise-i386.cow base-trusty-i386.cow'
 pbuild_conf: '/etc/pbuilderrc'
 packager: 'puppetlabs'
-gpg_name: 'info@puppetlabs.com'
-gpg_key: '4BD6EC30'
+gpg_key: '7F438280EF8D349F'
 sign_tar: FALSE
 # a space separated list of mock configs
 final_mocks: 'pl-el-6-i386 pl-el-7-x86_64'
-yum_host: 'yum.puppetlabs.com'
-yum_repo_path: '/opt/repository/yum/'
 build_gem: TRUE
 build_dmg: FALSE
 build_doc: TRUE
 build_ips: FALSE
-apt_host: 'apt.puppetlabs.com'
 apt_repo_url: 'http://apt.puppetlabs.com'
-apt_repo_path: '/opt/repository/incoming'
