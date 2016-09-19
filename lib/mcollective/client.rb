@@ -168,7 +168,10 @@ module MCollective
 
       @options = options if options
       threaded = @options[:threaded]
-      timeout = @discoverer.discovery_timeout(@options[:timeout], @options[:filter])
+      # The discovery timeout should be added to the timeout to allow global
+      # configuration in environments when nodes are slow to respond
+      dtimeout = @options[:disctimeout] || @config.discovery_timeout || 0
+      timeout = @discoverer.discovery_timeout(@options[:timeout] + dtimeout, @options[:filter])
       request = createreq(body, agent, @options[:filter])
       publish_timeout = @options[:publish_timeout]
       stat = {:starttime => Time.now.to_f, :discoverytime => 0, :blocktime => 0, :totaltime => 0}
