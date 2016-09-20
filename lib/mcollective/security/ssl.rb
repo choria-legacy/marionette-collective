@@ -328,10 +328,10 @@ module MCollective
 
       def parse_ssh_sig(string)
         offset = 0
-        typelen = string[offset..(offset+3)].reverse.unpack("L")[0]
+        typelen = string[offset..(offset+3)].reverse.unpack("N")[0]
         offset += 4
         offset += typelen
-        siglen = string[offset..(offset+3)].reverse.unpack("L")[0]
+        siglen = string[offset..(offset+3)].reverse.unpack("N")[0]
         offset += 4
         string[offset..(offset+siglen)]
       end
