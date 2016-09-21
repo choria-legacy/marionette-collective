@@ -462,7 +462,19 @@ rpc failed to run: Attempted to call action foo for rpcutil but it's not declare
         from /usr/bin/mco:20
 {% endhighlight %}
 
+## Exit codes
+
+When _mco_ finishes, it generates an exit code. The returned exit code depends on the nature of the issue:
+
+-   0: If nodes were discovered and all passed.
+-   0: If no discovery was performed, at least 1 response was received, and all responses were OK.
+-   1: If no nodes were discovered, or if mco encountered an issue not listed here.
+-   2: If nodes were discovered but some RPC requests failed.
+-   3: If nodes were discovered, but no responses were received.
+-   4: If no discovery was performed, and no responses were received.
+
 ## Custom Applications
+
 The *rpc* application should suit most needs. However, sometimes the
 data being returned calls for customization such as custom aggregation,
 summarising or complete custom display.
