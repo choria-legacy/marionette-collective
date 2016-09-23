@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2016/09/23|Ping application includes discovery_timeout|MCO-775|
 |2016/08/05|Release *2.9.0*||
 |2016/06/24|Update Stomp gem dependency to >= 1.4.1|RE-7302|
 |2016/06/13|acceptance: allow plugin versioned install||
