@@ -49,6 +49,11 @@ module MCollective
     end
 
     def main
+      # If the user did not override the default timeout include the discovery timeout
+      if options[:timeout] == 5
+        discovery_timeout = options[:disctimeout] || Config.instance.discovery_timeout || 0
+        options[:timeout] = options[:timeout] + discovery_timeout
+      end
       client = MCollective::Client.new(options)
 
       start = Time.now.to_f
