@@ -34,12 +34,33 @@
 
           For more information, see:
           http://activemq.apache.org/producer-flow-control.html
+
+          Additional hints from this guy running a much larger cluster than me.
+          http://grokbase.com/t/gg/mcollective-users/163xya3hgq/activemq-topology
+
         -->
         <destinationPolicy>
           <policyMap>
             <policyEntries>
-              <policyEntry topic=">" producerFlowControl="false"/>
-              <policyEntry queue="*.reply.>" gcInactiveDestinations="true" inactiveTimoutBeforeGC="300000" />
+              <policyEntry
+                topic=">"
+                producerFlowControl="false"
+                usePrefetchExtension="false"
+              >
+                <messageEvictionStrategy>
+                  <oldestMessageEvictionStrategy/>
+                </messageEvictionStrategy>
+                <pendingMessageLimitStrategy>
+                  <prefetchRatePendingMessageLimitStrategy
+                    multiplier="2"
+                  />
+                </pendingMessageLimitStrategy>
+              </policyEntry>
+              <policyEntry
+                queue="*.reply.>"
+                gcInactiveDestinations="true"
+                inactiveTimoutBeforeGC="300000"
+              />
             </policyEntries>
           </policyMap>
         </destinationPolicy>
