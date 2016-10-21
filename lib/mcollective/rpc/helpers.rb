@@ -2,14 +2,21 @@ module MCollective
   module RPC
     # Various utilities for the RPC system
     class Helpers
-      # Parse JSON output as produced by printrpc and extract
-      # the "sender" of each rpc response
+      # Parse JSON output as produced by printrpc or puppet query
+      # and extract the "sender" / "certname" of each entry
       #
       # The simplist valid JSON based data would be:
       #
       # [
       #  {"sender" => "example.com"},
       #  {"sender" => "another.com"}
+      # ]
+      #
+      # or
+      #
+      # [
+      #  {"certname" => "example.com"},
+      #  {"certname" => "another.com"}
       # ]
       def self.extract_hosts_from_json(json)
         hosts = JSON.parse(json)
@@ -18,9 +25,12 @@ module MCollective
 
         hosts.map do |host|
           raise "JSON host list is not an array of Hashes" unless host.is_a?(Hash)
-          raise "JSON host list does not have senders in it" unless host.include?("sender")
 
-          host["sender"]
+          unless host.include?("sender") || host.include?("certname")
+            raise "JSON host list does not have senders in it"
+          end
+
+          host["sender"] || host["certname"]
         end.uniq
       end
 
@@ -264,7 +274,7 @@ module MCollective
         parser.on('--one', '-1', 'Send request to only one discovered nodes') do |v|
           options[:mcollective_limit_targets] = 1
         end
-    
+
         parser.on('--batch SIZE', 'Do requests in batches') do |v|
           # validate batch string. Is it x% where x > 0 or is it an integer
           if ((v =~ /^(\d+)%$/ && Integer($1) != 0) || v =~ /^(\d+)$/)
