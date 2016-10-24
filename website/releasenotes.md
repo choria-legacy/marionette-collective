@@ -8,11 +8,25 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_9_1">&nbsp;</a>
+
+## 2.9.1 - 2016/10/24
+
+### Changes since 2.9.0
+
+* Ping application includes discovery_timeout so timeout can be increased via the config file
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2016/10/24|Release *2.9.1*||
+|2016/09/23|Ping application includes discovery_timeout|MCO-775|
+
+
 <a name="2_9_0">&nbsp;</a>
 
 ## 2.9.0 - 2016/08/05
 
-### Changes since 2.9.0
+### Changes since 2.8.9
 
 * Updated Stomp gem dependency to >= 1.4.1 for SSL-related fixes
 * Fixed mco plugins installation when using puppet-agent on Debian systems
