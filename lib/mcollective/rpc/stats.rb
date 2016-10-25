@@ -2,9 +2,9 @@ module MCollective
   module RPC
     # Class to wrap all the stats and to keep track of some timings
     class Stats
-      attr_accessor :noresponsefrom, :starttime, :discoverytime, :blocktime, :responses, :totaltime
-      attr_accessor :discovered, :discovered_nodes, :okcount, :failcount, :noresponsefrom, :responsesfrom
-      attr_accessor :requestid, :aggregate_summary, :ddl, :aggregate_failures
+      attr_accessor :noresponsefrom, :unexpectedresponsefrom, :starttime, :discoverytime, :blocktime, :responses
+      attr_accessor :totaltime, :discovered, :discovered_nodes, :okcount, :failcount, :noresponsefrom
+      attr_accessor :responsesfrom, :requestid, :aggregate_summary, :ddl, :aggregate_failures
 
       def initialize
         reset
@@ -13,6 +13,7 @@ module MCollective
       # Resets stats, if discovery time is set we keep it as it was
       def reset
         @noresponsefrom = []
+        @unexpectedresponsefrom = []
         @responsesfrom = []
         @responses = 0
         @starttime = Time.now.to_f
@@ -23,7 +24,6 @@ module MCollective
         @discovered_nodes = []
         @okcount = 0
         @failcount = 0
-        @noresponsefrom = []
         @requestid = nil
         @aggregate_summary = []
         @aggregate_failures = []
@@ -32,6 +32,7 @@ module MCollective
       # returns a hash of our stats
       def to_hash
         {:noresponsefrom    => @noresponsefrom,
+         :unexpectedresponsefrom => @unexpectedresponsefrom,
          :starttime         => @starttime,
          :discoverytime     => @discoverytime,
          :blocktime         => @blocktime,
@@ -70,6 +71,7 @@ module MCollective
       # Re-initializes the object with stats from the basic client
       def client_stats=(stats)
         @noresponsefrom = stats[:noresponsefrom]
+        @unexpectedresponsefrom = stats[:unexpectedresponsefrom]
         @responses = stats[:responses]
         @starttime = stats[:starttime]
         @blocktime = stats[:blocktime]
@@ -115,13 +117,19 @@ module MCollective
       def finish_request
         @totaltime = @blocktime + @discoverytime
 
-        # figures out who we had no responses from
+        # figure out who responded unexpectedly
+        rhosts = @responsesfrom.clone
+        @discovered_nodes.each {|d| rhosts.delete(d)}
+        @unexpectedresponsefrom = rhosts
+
+        # figure out who we had no responses from
         dhosts = @discovered_nodes.clone
         @responsesfrom.each {|r| dhosts.delete(r)}
         @noresponsefrom = dhosts
       rescue
         @totaltime = 0
         @noresponsefrom = []
+        @unexpectedresponsefrom = []
       end
 
       # Helper to keep track of who we received responses from
@@ -225,8 +233,22 @@ module MCollective
           end
         end
 
-        if no_response_report != ""
-          result_text << "" << no_response_report
+        no_response_r = no_response_report
+        unexpected_response_r = unexpected_response_report
+        if no_response_r || unexpected_response_r
+          result_text << ""
+        end
+
+        if no_response_r != ""
+          result_text << "" << no_response_r
+        end
+
+        if unexpected_response_r != ""
+          result_text << "" << unexpected_response_r
+        end
+
+        if no_response_r || unexpected_response_r
+          result_text << ""
         end
 
         result_text.join("\n")
@@ -237,7 +259,6 @@ module MCollective
         result_text = StringIO.new
 
         if @noresponsefrom.size > 0
-          result_text.puts
           result_text.puts Util.colorize(:red, "No response from:")
           result_text.puts
 
@@ -248,8 +269,26 @@ module MCollective
           @noresponsefrom.sort.in_groups_of(fields_num) do |c|
             result_text.puts format % c
           end
+        end
 
+        result_text.string
+      end
+
+      # Returns a blob of text indicating what nodes responded but weren't discovered
+      def unexpected_response_report
+        result_text = StringIO.new
+
+        if @unexpectedresponsefrom.size > 0
+          result_text.puts Util.colorize(:red, "Unexpected response from:")
           result_text.puts
+
+          field_size = Util.field_size(@unexpectedresponsefrom, 30)
+          fields_num = Util.field_number(field_size)
+          format = "   " + ( " %-#{field_size}s" * fields_num )
+
+          @unexpectedresponsefrom.sort.in_groups_of(fields_num) do |c|
+            result_text.puts format % c
+          end
         end
 
         result_text.string
