@@ -96,18 +96,8 @@ class MCollective::Application::Rpc<MCollective::Application
       puts "Request sent with id: " + mc.send(configuration[:action], configuration[:arguments])
     else
       discover_args = {:verbose => true}
-      # IF the discovery method hasn't been explicitly overridden
-      #  and we're not being run interactively,
-      #  and someone has piped us some data
-      # Then we assume it's a discovery list - this can be either:
-      #  - list of hosts in plaintext
-      #  - JSON that came from another rpc or printrpc
-      if mc.default_discovery_method && !STDIN.tty? && !STDIN.eof?
-          # Then we override discovery to try to grok the data on STDIN
-          mc.discovery_method = 'stdin'
-          mc.discovery_options = 'auto'
-          discover_args = {:verbose => false}
-      end
+
+      mc.detect_and_set_stdin_discovery
 
       mc.discover discover_args
 

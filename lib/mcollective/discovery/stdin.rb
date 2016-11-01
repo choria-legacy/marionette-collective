@@ -18,7 +18,7 @@ module MCollective
         file = STDIN.read
 
         if file =~ /^\s*$/
-              raise("data piped on STDIN contained only whitespace - could not discover hosts from it.")
+          raise("data piped on STDIN contained only whitespace - could not discover hosts from it.")
         end
 
         if type == 'auto'
@@ -29,8 +29,10 @@ module MCollective
           end
         end
 
+        Log.debug("Parsing STDIN input as type %s" % type)
+
         if type == 'json'
-          hosts = MCollective::RPC::Helpers.extract_hosts_from_json(file)
+          hosts = RPC::Helpers.extract_hosts_from_json(file)
         elsif type == 'text'
           hosts = file.split("\n")
         else
