@@ -170,7 +170,7 @@ module MCollective
       threaded = @options[:threaded]
       timeout = @discoverer.discovery_timeout(@options[:timeout], @options[:filter])
       request = createreq(body, agent, @options[:filter])
-      publish_timeout = @options[:publish_timeout]
+      publish_timeout = @options[:publish_timeout] || @config.publish_timeout
       stat = {:starttime => Time.now.to_f, :discoverytime => 0, :blocktime => 0, :totaltime => 0}
       STDOUT.sync = true
       hosts_responded = 0
