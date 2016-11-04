@@ -205,14 +205,25 @@ module MCollective
 
       it "should thread the publisher and receiver if configured" do
         client.instance_variable_get(:@options)[:threaded] = true
-        client.expects(:threaded_req).with(request, nil, 0, 1)
+        client.expects(:threaded_req).with(request, 2, 0, 1)
         message.options[:threaded] = true
         client.req(message)
       end
 
       it "should not thread the publisher and receiver if configured" do
         client.instance_variable_set(:@threaded, false)
-        client.expects(:unthreaded_req).with(request, nil, 0, 1)
+        client.expects(:unthreaded_req).with(request, 2, 0, 1)
+        client.req(message)
+      end
+
+      it "uses the publish_timeout from options when passed as an option" do
+        client.expects(:unthreaded_req).with(request, 5, 0, 1)
+        client.req(message, nil, message.options.merge(:publish_timeout => 5))
+      end
+
+      it "uses the publish_timeout from config when passed as a config value" do
+        client.expects(:unthreaded_req).with(request, 10, 0, 1)
+        client.instance_variable_get(:@config).expects(:publish_timeout).returns(10)
         client.req(message)
       end
     end
