@@ -336,7 +336,8 @@ The SSL ciphers to use when communicating with the middleware.
 
 #### `plugin.rabbitmq.agents_multiplex`
 
-Whether to use a single target for all agents in a node thus reducing the number of subscriptions in the message broker
+Whether to use a single target for all agents in a node. This is an optimization that may make sense when running collectives with several thousands of nodes in order to reduce the number of subscriptions in the message broker.
+This is a trade-off between increasing network traffic by delivering messages to all nodes - and letting them select messages they care about - versus increasing work in the message broker to handle large numbers of subscriptions.
 
 - _Default:_ false
 - _Allowed values:_ A boolean value
