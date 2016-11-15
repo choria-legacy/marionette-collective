@@ -79,6 +79,7 @@ module MCollective
         logger
         Config.stubs(:instance).returns(config)
         Rabbitmq.any_instance.stubs(:get_bool_option).with("rabbitmq.use_reply_exchange", false).returns(false)
+        Rabbitmq.any_instance.stubs(:get_bool_option).with("rabbitmq.agents_multiplex", "false").returns(false)
       end
 
       describe "#initialize" do
@@ -617,7 +618,12 @@ module MCollective
 
       describe "#make_target" do
         context 'rabbitmq.use_reply_exchange' do
-          context 'default (false)' do
+          context 'default (false) default (false)' do
+            before :each do
+              Rabbitmq.any_instance.stubs(:get_bool_option).with("rabbitmq.use_reply_exchange", false).returns(false)
+              Rabbitmq.any_instance.stubs(:get_bool_option).with("rabbitmq.agents_multiplex", "false").returns(false)
+            end
+
             it "should create correct targets" do
               connector.make_target("test", :reply, "mcollective").should eq({
                 :name => "/temp-queue/mcollective_reply_test",
@@ -652,9 +658,10 @@ module MCollective
             end
           end
 
-          context 'true' do
+          context 'true false' do
             before :each do
               Rabbitmq.any_instance.stubs(:get_bool_option).with("rabbitmq.use_reply_exchange", false).returns(true)
+              Rabbitmq.any_instance.stubs(:get_bool_option).with("rabbitmq.agents_multiplex", "false").returns(false)
             end
 
             it "should create correct targets" do
@@ -688,6 +695,86 @@ module MCollective
                 :headers => { "reply-to" => "/topic/rspec" },
                 :name => "/exchange/mcollective_broadcast/test",
                 :id => "mcollective_broadcast_test",
+              })
+            end
+          end
+
+          context 'true true' do
+            before :each do
+              Rabbitmq.any_instance.stubs(:get_bool_option).with("rabbitmq.use_reply_exchange", false).returns(true)
+              Rabbitmq.any_instance.stubs(:get_bool_option).with("rabbitmq.agents_multiplex", "false").returns(true)
+            end
+
+            it "should create correct targets" do
+              Client.stubs(:request_sequence).returns(42)
+              connector.make_target("test", :reply, "mcollective").should eq({
+                :name => "/exchange/mcollective_reply/rspec_#{$$}_42",
+                :headers => {},
+                :id => "mcollective_test_replies",
+              })
+              connector.make_target("test", :broadcast, "mcollective").should eq({
+                :name => "/exchange/mcollective_broadcast",
+                :headers => { "reply-to" => "/exchange/mcollective_reply/rspec_#{$$}_42" },
+                :id => "mcollective_broadcast"
+              })
+              connector.make_target("test", :request, "mcollective").should eq({
+                :name => "/exchange/mcollective_broadcast",
+                :headers => { "reply-to" => "/exchange/mcollective_reply/rspec_#{$$}_42" },
+                :id => "mcollective_broadcast",
+              })
+              connector.make_target("test", :direct_request, "mcollective", nil, "rspec").should eq({
+                :headers => { "reply-to" => "/exchange/mcollective_reply/rspec_#{$$}_42" },
+                :name => "/exchange/mcollective_directed/rspec",
+                :id => nil
+              })
+              connector.make_target("test", :directed, "mcollective").should eq({
+                :name => "/exchange/mcollective_directed/rspec",
+                :headers => {},
+                :id => "mcollective_rspec_directed_to_identity",
+              })
+              connector.make_target("test", :request, "mcollective", "/topic/rspec", "rspec").should eq({
+                :headers => { "reply-to" => "/topic/rspec" },
+                :name => "/exchange/mcollective_broadcast",
+                :id => "mcollective_broadcast",
+              })
+            end
+          end
+
+          context 'false (default) true' do
+            before :each do
+              Rabbitmq.any_instance.stubs(:get_bool_option).with("rabbitmq.use_reply_exchange", false).returns(false)
+              Rabbitmq.any_instance.stubs(:get_bool_option).with("rabbitmq.agents_multiplex", "false").returns(true)
+            end
+            it "should create correct targets" do
+              connector.make_target("test", :reply, "mcollective").should eq({
+                :name => "/temp-queue/mcollective_reply_test",
+                :headers => {},
+                :id => "mcollective_test_replies",
+              })
+              connector.make_target("test", :broadcast, "mcollective").should eq({
+                :name => "/exchange/mcollective_broadcast",
+                :headers => { "reply-to" => "/temp-queue/mcollective_reply_test" },
+                :id => "mcollective_broadcast"
+              })
+              connector.make_target("test", :request, "mcollective").should eq({
+                :name => "/exchange/mcollective_broadcast",
+                :headers => { "reply-to" => "/temp-queue/mcollective_reply_test" },
+                :id => "mcollective_broadcast",
+              })
+              connector.make_target("test", :direct_request, "mcollective", nil, "rspec").should eq({
+                :headers => { "reply-to" => "/temp-queue/mcollective_reply_test" },
+                :name => "/exchange/mcollective_directed/rspec",
+                :id => nil
+              })
+              connector.make_target("test", :directed, "mcollective").should eq({
+                :name => "/exchange/mcollective_directed/rspec",
+                :headers => {},
+                :id => "mcollective_rspec_directed_to_identity",
+              })
+              connector.make_target("test", :request, "mcollective", "/topic/rspec", "rspec").should eq({
+                :headers => { "reply-to" => "/topic/rspec" },
+                :name => "/exchange/mcollective_broadcast",
+                :id => "mcollective_broadcast",
               })
             end
           end

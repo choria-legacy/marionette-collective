@@ -541,6 +541,7 @@ module MCollective
         raise("Unknown target type #{type}") unless [:directed, :broadcast, :reply, :request, :direct_request].include?(type)
         raise("Unknown collective '#{collective}' known collectives are '#{@config.collectives.join ', '}'") unless @config.collectives.include?(collective)
 
+        agents_multiplex = get_bool_option("activemq.agents_multiplex", "false")
         target = {:name => nil, :headers => {}}
 
         case type
@@ -548,10 +549,18 @@ module MCollective
             target[:name] = ["/queue/" + collective, :reply, "#{Config.instance.identity}_#{$$}", Client.request_sequence].join(".")
 
           when :broadcast
-            target[:name] = ["/topic/" + collective, agent, :agent].join(".")
+            if agents_multiplex
+              target[:name] = ["/topic/" + collective, :agents].join(".")
+            else
+              target[:name] = ["/topic/" + collective, agent, :agent].join(".")
+            end
 
           when :request
-            target[:name] = ["/topic/" + collective, agent, :agent].join(".")
+            if agents_multiplex
+              target[:name] = ["/topic/" + collective, :agents].join(".")
+            else
+              target[:name] = ["/topic/" + collective, agent, :agent].join(".")
+            end
 
           when :direct_request
             target[:name] = ["/queue/" + collective, :nodes].join(".")
