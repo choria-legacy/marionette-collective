@@ -159,10 +159,10 @@ module MCollective
     #
     # It returns a hash of times and timeouts for discovery and total run is taken from the options
     # hash which in turn is generally built using MCollective::Optionparser
-    def req(body, agent=nil, options=false, waitfor=0, &block)
+    def req(body, agent=nil, options=false, waitfor=[], &block)
       if body.is_a?(Message)
         agent = body.agent
-        waitfor = body.discovered_hosts.size || 0
+        waitfor = body.discovered_hosts || []
         @options = body.options
       end
 
@@ -174,7 +174,6 @@ module MCollective
       stat = {:starttime => Time.now.to_f, :discoverytime => 0, :blocktime => 0, :totaltime => 0}
       STDOUT.sync = true
       hosts_responded = 0
-
 
       begin
         if threaded
@@ -238,16 +237,39 @@ module MCollective
     def start_receiver(requestid, waitfor, timeout, &block)
       Log.debug("Starting response receiver with timeout of #{timeout}")
       hosts_responded = 0
+
+      if (waitfor.is_a?(Array))
+        unfinished = Hash.new(0)
+        waitfor.each {|w| unfinished[w] += 1}
+      else
+        unfinished = []
+      end
+
       begin
         Timeout.timeout(timeout) do
-          begin
+          loop do
             resp = receive(requestid)
             yield resp.payload
             hosts_responded += 1
-          end while (waitfor == 0 || hosts_responded < waitfor)
+
+            if (waitfor.is_a?(Array))
+              sender = resp.payload[:senderid]
+              if unfinished[sender] <= 1
+                unfinished.delete(sender)
+              else
+                unfinished[sender] -= 1
+              end
+
+              break if !waitfor.empty? && unfinished.empty?
+            else
+              break unless waitfor == 0 || hosts_responded < waitfor
+            end
+          end
         end
       rescue Timeout::Error => e
-        if (waitfor > hosts_responded)
+        if (waitfor.is_a?(Array) && !unfinished.empty?)
+          Log.warn("Could not receive all responses. Did not receive responses from #{unfinished.keys.join(', ')}")
+        elsif (waitfor > hosts_responded)
           Log.warn("Could not receive all responses. Expected : #{waitfor}. Received : #{hosts_responded}")
         end
       end

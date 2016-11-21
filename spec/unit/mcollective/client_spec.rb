@@ -205,24 +205,24 @@ module MCollective
 
       it "should thread the publisher and receiver if configured" do
         client.instance_variable_get(:@options)[:threaded] = true
-        client.expects(:threaded_req).with(request, 2, 0, 1)
+        client.expects(:threaded_req).with(request, 2, 0, ['rspec'])
         message.options[:threaded] = true
         client.req(message)
       end
 
       it "should not thread the publisher and receiver if configured" do
         client.instance_variable_set(:@threaded, false)
-        client.expects(:unthreaded_req).with(request, 2, 0, 1)
+        client.expects(:unthreaded_req).with(request, 2, 0, ['rspec'])
         client.req(message)
       end
 
       it "uses the publish_timeout from options when passed as an option" do
-        client.expects(:unthreaded_req).with(request, 5, 0, 1)
+        client.expects(:unthreaded_req).with(request, 5, 0, ['rspec'])
         client.req(message, nil, message.options.merge(:publish_timeout => 5))
       end
 
       it "uses the publish_timeout from config when passed as a config value" do
-        client.expects(:unthreaded_req).with(request, 10, 0, 1)
+        client.expects(:unthreaded_req).with(request, 10, 0, ['rspec'])
         client.instance_variable_get(:@config).expects(:publish_timeout).returns(10)
         client.req(message)
       end
@@ -278,50 +278,114 @@ module MCollective
     end
 
     describe "#start_receiver" do
-      it "should go into a receive loop and receive until it reaches waitfor" do
-        results = []
-        Timeout.stubs(:timeout).yields
-        message = mock
-        client.stubs(:receive).with("erfs123").returns(message)
-        message.stubs(:payload).returns("msg1", "msg2", "msg3")
-        client.start_receiver("erfs123", 3, 5) do |msg|
-          results << msg
+      describe "waitfor is a number" do
+        it "should go into a receive loop and receive until it reaches waitfor" do
+          results = []
+          Timeout.stubs(:timeout).yields
+          message = mock
+          client.stubs(:receive).with("erfs123").returns(message)
+          message.stubs(:payload).returns("msg1", "msg2", "msg3")
+          client.start_receiver("erfs123", 3, 5) do |msg|
+            results << msg
+          end
+          results.should == ["msg1", "msg2", "msg3"]
         end
-        results.should == ["msg1", "msg2", "msg3"]
+
+        it "should log a warning if a timeout occurs" do
+          results = []
+          Timeout.stubs(:timeout).yields
+          message = mock
+          client.stubs(:receive).with("erfs123").returns(message)
+          message.stubs(:payload).returns("msg1", "msg2", "timeout")
+          Log.expects(:warn).with("Could not receive all responses. Expected : 3. Received : 2")
+          responded = client.start_receiver("erfs123", 3, 5) do |msg|
+            if msg == "timeout"
+              raise Timeout::Error
+            end
+            results << msg
+          end
+          results.should == ["msg1", "msg2"]
+          responded.should == 2
+        end
+
+        it "should not log a warning if a the response count is larger or equal to the expected number of responses" do
+          results = []
+          Timeout.stubs(:timeout).yields
+          message = mock
+          client.stubs(:receive).with("erfs123").returns(message)
+          message.stubs(:payload).returns("msg1", "msg2", "timeout")
+          Log.expects(:warn).never
+          responded = client.start_receiver("erfs123", 2, 5) do |msg|
+            if msg == "timeout"
+              raise Timeout::Error
+            end
+            results << msg
+          end
+          results.should == ["msg1", "msg2"]
+          responded.should == 2
+        end
       end
 
-      it "should log a warning if a timeout occurs" do
-        results = []
-        Timeout.stubs(:timeout).yields
-        message = mock
-        client.stubs(:receive).with("erfs123").returns(message)
-        message.stubs(:payload).returns("msg1", "msg2", "timeout")
-        Log.expects(:warn).with("Could not receive all responses. Expected : 3. Received : 2")
-        responded = client.start_receiver("erfs123", 3, 5) do |msg|
-          if msg == "timeout"
-            raise Timeout::Error
+      describe "waitfor is an array" do
+        it "should go into a receive loop and receive until it matches waitfor" do
+          senders = ["sender1", "sender2", "sender3", "sender4"]
+          expected = senders.map {|s| Message.new({:callerid => "caller", :senderid => s}, nil, :type => :reply)}
+          results = []
+          Timeout.stubs(:timeout).yields
+          client.stubs(:receive).with("erfs123").returns(*expected)
+          client.start_receiver("erfs123", senders[0,3], 5) do |msg|
+            results << msg
           end
-          results << msg
+          results.should == expected[0,3].map {|m| m.payload}
         end
-        results.should == ["msg1", "msg2"]
-        responded.should == 2
-      end
 
-      it "should not log a warning if a the response count is larger or equal to the expected number of responses" do
-        results = []
-        Timeout.stubs(:timeout).yields
-        message = mock
-        client.stubs(:receive).with("erfs123").returns(message)
-        message.stubs(:payload).returns("msg1", "msg2", "timeout")
-        Log.expects(:warn).never
-        responded = client.start_receiver("erfs123", 2, 5) do |msg|
-          if msg == "timeout"
-            raise Timeout::Error
+        it "receive until it gets all expected responses" do
+          senders = ["sender1", "sender2", "sender3", "sender4"]
+          expected = senders.map {|s| Message.new({:callerid => "caller", :senderid => s}, nil, :type => :reply)}
+          results = []
+          Timeout.stubs(:timeout).yields
+          client.stubs(:receive).with("erfs123").returns(*expected)
+          client.start_receiver("erfs123", senders[1,3], 5) do |msg|
+            results << msg
           end
-          results << msg
+          results.should == expected.map {|m| m.payload}
         end
-        results.should == ["msg1", "msg2"]
-        responded.should == 2
+
+        it "should log a warning if a timeout occurs" do
+          senders = ["sender1", "sender2", "sender3"]
+          messages = ["msg1", "msg2", "timeout"]
+          expected = senders.zip(messages).map {|s, m| Message.new({:callerid => "caller", :senderid => s, :body => m}, nil, :type => :reply)}
+          results = []
+          Timeout.stubs(:timeout).yields
+          client.stubs(:receive).with("erfs123").returns(*expected)
+          Log.expects(:warn).with("Could not receive all responses. Did not receive responses from sender3")
+          responded = client.start_receiver("erfs123", senders, 5) do |msg|
+            if msg[:body] == "timeout"
+              raise Timeout::Error
+            end
+            results << msg
+          end
+          results.should == expected[0,2].map {|m| m.payload}
+          responded.should == 2
+        end
+
+        it "should not log a warning if a the response count is larger or equal to the expected number of responses" do
+          senders = ["sender1", "sender2", "sender3"]
+          messages = ["msg1", "msg2", "timeout"]
+          expected = senders.zip(messages).map {|s, m| Message.new({:callerid => "caller", :senderid => s, :body => m}, nil, :type => :reply)}
+          results = []
+          Timeout.stubs(:timeout).yields
+          client.stubs(:receive).with("erfs123").returns(*expected)
+          Log.expects(:warn).never
+          responded = client.start_receiver("erfs123", senders[0,2], 5) do |msg|
+            if msg[:body] == "timeout"
+              raise Timeout::Error
+            end
+            results << msg
+          end
+          results.should == expected[0,2].map {|m| m.payload}
+          responded.should == 2
+        end
       end
     end
 

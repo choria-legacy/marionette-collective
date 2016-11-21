@@ -869,6 +869,7 @@ module MCollective
             end
 
             @stats.noresponsefrom.concat @client.stats[:noresponsefrom]
+            @stats.unexpectedresponsefrom.concat @client.stats[:unexpectedresponsefrom]
             @stats.responses += @client.stats[:responses]
             @stats.blocktime += @client.stats[:blocktime] + sleep_time
             @stats.totaltime += @client.stats[:totaltime]
