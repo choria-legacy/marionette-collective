@@ -25,7 +25,7 @@ layout: default
 [puppet_template]: /guides/templating.html
 [puppet_lang_notification]: /puppet/latest/reference/lang_relationships.html#ordering-and-notification
 [file]: /references/latest/type.html#file
-[actionpolicy_docs]: https://docs.puppetlabs.com/mcollective/plugin_directory/authorization_action_policy.html
+[actionpolicy_docs]: /mcollective/plugin_directory/authorization_action_policy.html
 [actionpolicy]: https://github.com/puppetlabs/mcollective-actionpolicy-auth
 [server_config]: /mcollective/configure/server.html
 [client_config]: /mcollective/configure/client.html
@@ -41,12 +41,9 @@ This getting started guide will help you deploy a standard MCollective environme
 
 > ### Puppet Enterprise
 >
-> Puppet Enterprise includes MCollective, and automates the entire deployment process. See [the PE orchestration documentation][pe_orchestration] for more details; see [the PE installation instructions][pe_install] to install PE.
->
-> * Puppet Enterprise 3.0 ships with MCollective 2.2.4.
-> * Puppet Enterprise 2.8 ships with MCollective 1.2.1.
+> Puppet Enterprise includes MCollective, and automates the entire deployment process. See [the PE MCollective documentation][pe_orchestration] for more details; see [the PE installation instructions][pe_install] to install PE.
 
-[pe_orchestration]: /pe/latest/orchestration_overview.html
+[pe_orchestration]: /pe/latest/mco_overview.html
 [pe_install]: /pe/latest/install_basic.html
 
 ### What is an MCollective Deployment?
