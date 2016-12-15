@@ -369,7 +369,25 @@ module MCollective
           responded.should == 2
         end
 
-        it "should not log a warning if a the response count is larger or equal to the expected number of responses" do
+        it "should not log a warning if accepting all responses" do
+          senders = ["sender1", "sender2", "sender3"]
+          messages = ["msg1", "msg2", "timeout"]
+          expected = senders.zip(messages).map {|s, m| Message.new({:callerid => "caller", :senderid => s, :body => m}, nil, :type => :reply)}
+          results = []
+          Timeout.stubs(:timeout).yields
+          client.stubs(:receive).with("erfs123").returns(*expected)
+          Log.expects(:warn).never
+          responded = client.start_receiver("erfs123", [], 1) do |msg|
+            if msg[:body] == "timeout"
+              raise Timeout::Error
+            end
+            results << msg
+          end
+          results.should == expected[0,2].map {|m| m.payload}
+          responded.should == 2
+        end
+
+        it "should not log a warning if the response count is larger or equal to the expected number of responses" do
           senders = ["sender1", "sender2", "sender3"]
           messages = ["msg1", "msg2", "timeout"]
           expected = senders.zip(messages).map {|s, m| Message.new({:callerid => "caller", :senderid => s, :body => m}, nil, :type => :reply)}

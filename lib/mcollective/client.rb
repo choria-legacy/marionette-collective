@@ -267,8 +267,10 @@ module MCollective
           end
         end
       rescue Timeout::Error => e
-        if (waitfor.is_a?(Array) && !unfinished.empty?)
-          Log.warn("Could not receive all responses. Did not receive responses from #{unfinished.keys.join(', ')}")
+        if waitfor.is_a?(Array)
+          if !unfinished.empty?
+            Log.warn("Could not receive all responses. Did not receive responses from #{unfinished.keys.join(', ')}")
+          end
         elsif (waitfor > hosts_responded)
           Log.warn("Could not receive all responses. Expected : #{waitfor}. Received : #{hosts_responded}")
         end
