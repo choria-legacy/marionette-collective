@@ -98,4 +98,11 @@ EOS
   unless port_open_within?(mco_master, 61613, 300 )
     raise Beaker::DSL::FailTest, 'Timed out trying to access ActiveMQ'
   end
+
+  step "Add activemq to hosts" do
+    ip = fact_on(mco_master, 'ipaddress')
+    hosts.each do |h|
+      apply_manifest_on(h, "host { 'activemq': ip => '#{ip}'}")
+    end
+  end
 end

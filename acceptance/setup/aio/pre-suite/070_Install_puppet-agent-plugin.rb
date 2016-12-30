@@ -58,6 +58,7 @@ test_name 'install puppet-agent plugin' do
       on h, puppet('resource service mcollective ensure=stopped')
       on h, puppet('resource service mcollective ensure=running')
     end
+    sleep 30 # wait for mco to finish starting
   end
   unless port_open_within?(mco_master, 61613, 300 )
     raise Beaker::DSL::FailTest, 'Timed out trying to access ActiveMQ'
