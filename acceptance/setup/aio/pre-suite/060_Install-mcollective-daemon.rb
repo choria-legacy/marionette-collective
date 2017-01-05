@@ -28,7 +28,7 @@ test_name 'configure mcollective daemon' do
 main_collective = mcollective
 collectives = mcollective
 libdir = #{libdir}
-logfile = #{logdir}/mcollective.log
+logfile = #{logdir}/mcollective/mcollective.log
 loglevel = info
 daemonize = 1
 
