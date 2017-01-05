@@ -45,7 +45,7 @@ plugin.ssl_client_cert_dir = #{mco_confdir}/ssl-clients/
 
 connector = activemq
 plugin.activemq.pool.size = 1
-plugin.activemq.pool.1.host = #{mco_master}
+plugin.activemq.pool.1.host = activemq
 plugin.activemq.pool.1.port = 61613
 plugin.activemq.pool.1.user = mcollective
 plugin.activemq.pool.1.password = marionette
