@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "file_format": "This MAINTAINERS file format is described at http://pup.pt/maintainers",
+  "issues": "https://tickets.puppet.com/browse/MCO",
+  "internal_list": "https://groups.google.com/a/puppet.com/forum/?hl=en#!forum/discuss-orchestrator-maintainers",
+  "people": [
+    {
+      "github": "MikaelSmith",
+      "email": "michael.smith@puppet.com",
+      "name": "Michael Smith"
+    },
+    {
+      "github": "mruzicka",
+      "name": "Michal Růžička"
+    },
+    {
+      "github": "parisiale",
+      "email": "alessandro@puppet.com",
+      "name": "Alessandro Parisi"
+    },
+    {
+      "github": "johnduarte",
+      "email": "john.duarte@puppet.com",
+      "name": "John Duarte"
+    }
+  ]
+}
