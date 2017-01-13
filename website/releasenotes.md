@@ -8,6 +8,32 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_10_0">&nbsp;</a>
+
+## 2.10.0 - 2017/01/23
+
+### Changes since 2.9.1
+
+* rpc queries will now wait for all discovered nodes to respond, and report responses
+that came from undiscovered nodes
+* Add activemq.agents_multiplex and rabbitmq.agents_multiplex options to replace the
+per-agent destinations with a single one for all agents
+* Use publish_timeout from config
+* Output from a PQL query can be piped to STDIN for node discovery
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2017/01/23|Release *2.10.0*||
+|2016/12/30|Updates for acceptance testing|MCO-782|
+|2016/12/20|Fix broken link on plugin index page|DOCUMENT-618|
+|2016/12/15|Fix `mco ping` breakage from prior commit in MCO-777|MCO-777|
+|2016/12/08|Remove references to old PE versions||
+|2016/11/21|Wait for all expected responses to rpc, report surprises|MCO-777|
+|2016/11/16|Singletarget messaging|MCO-736|
+|2016/11/07|Gemfile cleanup||
+|2016/11/04|Use publish_timeout from config|MCO-778|
+|2016/11/01|Support PQL in STDIN discovery|MCO-776|
+
 <a name="2_9_1">&nbsp;</a>
 
 ## 2.9.1 - 2016/10/24
