@@ -30,6 +30,7 @@ layout: default
 [server_config]: /mcollective/configure/server.html
 [client_config]: /mcollective/configure/client.html
 [javaks]: http://forge.puppetlabs.com/puppetlabs/java_ks
+[choria]: http://choria.io/
 
 
 Summary
@@ -42,6 +43,10 @@ This getting started guide will help you deploy a standard MCollective environme
 > ### Puppet Enterprise
 >
 > Puppet Enterprise includes MCollective, and automates the entire deployment process. See [the PE MCollective documentation][pe_orchestration] for more details; see [the PE installation instructions][pe_install] to install PE.
+
+> ### Choria
+>
+> [The Choria project][choria] provides an alternative standard deployment with simplified setup tools.
 
 [pe_orchestration]: /pe/latest/mco_overview.html
 [pe_install]: /pe/latest/install_basic.html
@@ -244,18 +249,18 @@ To configure servers, you'll need to:
 [As mentioned above in Step 1][step1], servers need the CA, an individual certificate and key, the shared server keypair, and every authorized client certificate.
 
 * If you're using Puppet, the CA, individual cert, and individual key are already present.
-* Put a copy of the shared public key at `/etc/mcollective/server_public.pem`.
-* Put a copy of the shared private key at `/etc/mcollective/server_private.pem`.
-* Create a `/etc/mcollective/clients` directory and put a copy of every client certificate in it. You will need to maintain this directory centrally, and keep it up to date on every server as you add and delete admin users. (E.g. as a [file resource][file] with `ensure => directory, recurse => true`.)
+* Put a copy of the shared public key at `/etc/puppetlabs/mcollective/server_public.pem`.
+* Put a copy of the shared private key at `/etc/puppetlabs/mcollective/server_private.pem`.
+* Create a `/etc/puppetlabs/mcollective/clients` directory and put a copy of every client certificate in it. You will need to maintain this directory centrally, and keep it up to date on every server as you add and delete admin users. (E.g. as a [file resource][file] with `ensure => directory, recurse => true`.)
 
 ### Populate the Fact File
 
-Every MCollective server will need to populate the `/etc/mcollective/facts.yaml` file with a cache of its facts. (You can get by without this file, but doing so will limit your ability to filter requests.)
+Every MCollective server will need to populate the `/etc/puppetlabs/mcollective/facts.yaml` file with a cache of its facts. (You can get by without this file, but doing so will limit your ability to filter requests.)
 
 Make sure you include a resource like the following in the Puppet code you're using to deploy MCollective:
 
 {% highlight ruby %}
-    file{"/etc/mcollective/facts.yaml":
+    file{"/etc/puppetlabs/mcollective/facts.yaml":
       owner    => root,
       group    => root,
       mode     => 400,
@@ -266,7 +271,7 @@ Make sure you include a resource like the following in the Puppet code you're us
 
 ### Write the Server Config File
 
-The server config file is located at `/etc/mcollective/server.cfg`.
+The server config file is located at `/etc/puppetlabs/mcollective/server.cfg`.
 
 [as_resources]: /mcollective/configure/server.html#best-practices
 
@@ -280,11 +285,11 @@ This config file has many settings that should be identical across the deploymen
 
 This example template snippet shows the settings you need to use in a standard deployment. Converting it to [settings-as-resources][as_resources] would be fairly straightforward.
 
-(Note that it assumes an [`$ssldir`][ssldir] of `/var/lib/puppet/ssl`, which might differ in your Puppet setup. This template also requires variables named `$activemq_server` and `$activemq_mcollective_password`.)
+(Note that it assumes an [`$ssldir`][ssldir] of `/etc/puppetlabs/puppet/ssl`, which might differ in your Puppet setup. This template also requires variables named `$activemq_server` and `$activemq_mcollective_password`.)
 
     {% highlight erb %}
-    <% ssldir = '/var/lib/puppet/ssl' %>
-    # /etc/mcollective/server.cfg
+    <% ssldir = '/etc/puppetlabs/puppet/ssl' %>
+    # /etc/puppetlabs/mcollective/server.cfg
 
     # ActiveMQ connector settings:
     connector = activemq
@@ -302,15 +307,15 @@ This example template snippet shows the settings you need to use in a standard d
 
     # SSL security plugin settings:
     securityprovider = ssl
-    plugin.ssl_client_cert_dir = /etc/mcollective/clients
-    plugin.ssl_server_private = /etc/mcollective/server_private.pem
-    plugin.ssl_server_public = /etc/mcollective/server_public.pem
+    plugin.ssl_client_cert_dir = /etc/puppetlabs/mcollective/ssl/clients
+    plugin.ssl_server_private = /etc/puppetlabs/mcollective/ssl/server_private.pem
+    plugin.ssl_server_public = /etc/puppetlabs/mcollective/ssl/server_public.pem
 
     # Facts, identity, and classes:
     identity = <%= scope.lookupvar('::fqdn') %>
     factsource = yaml
-    plugin.yaml = /etc/mcollective/facts.yaml
-    classesfile = /var/lib/puppet/state/classes.txt
+    plugin.yaml = /etc/puppetlabs/mcollective/facts.yaml
+    classesfile = /opt/puppetlabs/puppet/cache/state/classes.txt
 
     # No additional subcollectives:
     collectives = mcollective
@@ -326,7 +331,7 @@ This example template snippet shows the settings you need to use in a standard d
     # If you turn this on, you must arrange to rotate the log file it creates.
     rpcaudit = 1
     rpcauditprovider = logfile
-    plugin.rpcaudit.logfile = /var/log/mcollective-audit.log
+    plugin.rpcaudit.logfile = /var/log/puppetlabs/mcollective-audit.log
 
     # Authorization:
     # If you turn this on now, you won't be able to issue most MCollective
@@ -340,7 +345,7 @@ This example template snippet shows the settings you need to use in a standard d
     # Logging:
     logger_type = file
     loglevel = info
-    logfile = /var/log/mcollective.log
+    logfile = /var/log/puppetlabs/mcollective.log
     keeplogs = 5
     max_log_size = 2097152
     logfacility = user
@@ -421,7 +426,7 @@ After all these steps, and following a Puppet run on each MCollective server, th
 
 ### Write the Client Config File
 
-For admin users running commands on a workstation, the client config file is located at `~/.mcollective`. For system users (e.g. for use in automated scripts), it is located at `/etc/mcollective/client.cfg`.
+For admin users running commands on a workstation, the client config file is located at `~/.mcollective`. For system users (e.g. for use in automated scripts), it is located at `/etc/puppetlabs/mcollective/client.cfg`.
 
 > See the [client configuration reference][client_config] for complete details about the client config file, including its format and available settings.
 
@@ -440,7 +445,7 @@ After receiving this partial config file, a new user should fill out the credent
 
     # ~/.mcollective
     # or
-    # /etc/mcollective/client.cfg
+    # /etc/puppetlabs/mcollective/client.cfg
 
     # ActiveMQ connector settings:
     connector = activemq
@@ -477,8 +482,8 @@ After receiving this partial config file, a new user should fill out the credent
     # These settings differ based on platform; the default config file created
     # by the package should include correct values or omit the setting if the
     # default value is fine.
-    libdir = /usr/libexec/mcollective
-    helptemplatedir = /etc/mcollective
+    libdir = /opt/puppetlabs/mcollective/plugins
+    helptemplatedir = /etc/puppetlabs/mcollective
 
     # Logging:
     logger_type = console
@@ -514,9 +519,6 @@ By default, the standard deployment allows **all** authorized clients to execute
 * With the configuration [shown above in the server config file](#server-settings-for-a-standard-deployment), ActionPolicy is opt-in **per agent.** If you don't distribute any policy files, MCollective will continue to work as before, with no additional authorization.
 * Since policy files define which servers their rules apply to (based on facts and other metadata), they can safely be distributed to all servers.
 
-[plugin_libdir]: ./plugins.html#method-2-copying-plugins-into-the-libdir
-[plugin_packages]: ./plugins.html#method-1-installing-plugins-with-native-packages
-
 ### Install Agent Plugins
 
 Agent plugins do all of MCollective's heavy lifting. All parts of an agent need to be installed on servers, and the DDL file needs to be installed on clients.
@@ -526,9 +528,7 @@ You can:
 * Install any number of pre-existing agents. See [the mcollective-plugins wiki][mcollective_plugins_wiki] for a list of the most common ones. You will probably want to install at least the `puppet`, `package`, and `service` agents.
 * [Develop your own agent plugins][agent_writing] to serve site-specific purposes. These can help with application deployments, automate routine tasks like retrying mail queues, collect complex inventory information in real time, and more. [See the documentation on writing agent plugins for more info.][agent_writing]
 
-For more information on how to install these agents, [see "Installing and Packaging MCollective Plugins."](./plugins.html) Specifically:
-    * [Installing plugins with packages][plugin_packages]
-    * [Installing plugins by copying into the libdir][plugin_libdir]
+For more information on how to install these agents, [see "Installing and Packaging MCollective Plugins."](./plugins.html).
 
 [agent_writing]: /mcollective/simplerpc/agents.html
 [mcollective_plugins_wiki]: https://docs.puppetlabs.com/mcollective/plugin_directory/
