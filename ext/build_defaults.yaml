@@ -1,15 +1,15 @@
 ---
 packaging_url: 'git://github.com/puppetlabs/packaging.git --branch=master'
 packaging_repo: 'packaging'
-default_cow: 'base-squeeze-i386.cow'
-cows: 'base-precise-i386.cow base-trusty-i386.cow'
+#default_cow: 'base-squeeze-i386.cow'
+#cows: 'base-precise-i386.cow base-trusty-i386.cow'
 pbuild_conf: '/etc/pbuilderrc'
 packager: 'puppetlabs'
 gpg_name: 'info@puppetlabs.com'
 gpg_key: '7F438280EF8D349F'
 sign_tar: FALSE
 # a space separated list of mock configs
-final_mocks: 'pl-el-6-i386 pl-el-7-x86_64'
+#final_mocks: 'pl-el-6-i386 pl-el-7-x86_64'
 yum_host: 'yum.puppetlabs.com'
 yum_repo_path: '/opt/repository/yum/'
 build_gem: TRUE
