@@ -33,9 +33,46 @@ module MCollective
 
         @stderr = StringIO.new
         @stdout = StringIO.new
+        @stdin = StringIO.new
 
         @client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting"}})
         @client.stubs(:ddl).returns(ddl)
+      end
+
+      describe "#detect_and_set_stdin_discovery" do
+        before(:each) do
+          @client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :stdin => @stdin}})
+        end
+
+        it "should do nothing when a specific discovery method is set" do
+          @client.stubs(:default_discovery_method).returns(false)
+          @client.expects(:discovery_method).never
+          @client.detect_and_set_stdin_discovery
+        end
+
+        it "should set the stdin method when something is on STDIN" do
+          @client.stubs(:default_discovery_method).returns(true)
+          @stdin.expects(:tty?).returns(false)
+          @stdin.expects(:eof?).returns(false)
+          @client.detect_and_set_stdin_discovery
+          expect(@client.discovery_method).to eq("stdin")
+          expect(@client.discovery_options).to eq(["auto"])
+        end
+
+        it "should not set STDIN discovery when interactive" do
+          @client.stubs(:default_discovery_method).returns(true)
+          @stdin.expects(:tty?).returns(true)
+          @client.detect_and_set_stdin_discovery
+          expect(@client.discovery_method).to eq("mc")
+        end
+
+        it "should not set STDIN discovery when nothing on STDIN" do
+          @client.stubs(:default_discovery_method).returns(true)
+          @stdin.expects(:tty?).returns(false)
+          @stdin.expects(:eof?).returns(true)
+          @client.detect_and_set_stdin_discovery
+          expect(@client.discovery_method).to eq("mc")
+        end
       end
 
       describe "#initialize" do
@@ -737,7 +774,7 @@ module MCollective
           msg.expects(:create_reqid).returns("823a3419a0975c3facbde121f72ab61f")
           msg.expects(:requestid=).with("823a3419a0975c3facbde121f72ab61f").times(10)
 
-          stats = {:noresponsefrom => [], :responses => 0, :blocktime => 0, :totaltime => 0, :discoverytime => 0, :requestid => "823a3419a0975c3facbde121f72ab61f"}
+          stats = {:noresponsefrom => [], :unexpectedresponsefrom => [], :responses => 0, :blocktime => 0, :totaltime => 0, :discoverytime => 0, :requestid => "823a3419a0975c3facbde121f72ab61f"}
 
           Message.expects(:new).with('req', nil, {:type => :direct_request, :agent => 'foo', :filter => nil, :options => {}, :collective => 'mcollective'}).returns(msg).times(10)
           client.expects(:new_request).returns("req")
@@ -765,7 +802,7 @@ module MCollective
           msg.expects(:create_reqid).returns("823a3419a0975c3facbde121f72ab61f")
           msg.expects(:requestid=).with("823a3419a0975c3facbde121f72ab61f").times(10)
 
-          stats = {:noresponsefrom => [], :responses => 0, :blocktime => 0, :totaltime => 0, :discoverytime => 0, :requestid => "823a3419a0975c3facbde121f72ab61f"}
+          stats = {:noresponsefrom => [], :unexpectedresponsefrom => [], :responses => 0, :blocktime => 0, :totaltime => 0, :discoverytime => 0, :requestid => "823a3419a0975c3facbde121f72ab61f"}
 
           Progress.expects(:new).never
 

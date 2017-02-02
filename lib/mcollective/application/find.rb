@@ -6,6 +6,8 @@ class MCollective::Application::Find<MCollective::Application
 
     starttime = Time.now
 
+    mc.detect_and_set_stdin_discovery
+
     nodes = mc.discover
 
     discoverytime = Time.now - starttime

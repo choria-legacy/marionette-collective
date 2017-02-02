@@ -33,6 +33,12 @@ module MCollective
 
           Helpers.extract_hosts_from_json(senders).should == ["sender1", "sender3"]
         end
+
+        it "should support puppet query output" do
+          senders = [{"certname" => "sender1"}, {"certname" => "sender3"}, {"certname" => "sender1"}].to_json
+
+          Helpers.extract_hosts_from_json(senders).should == ["sender1", "sender3"]
+        end
       end
 
       describe "#extract_hosts_from_array" do
