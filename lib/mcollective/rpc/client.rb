@@ -119,6 +119,12 @@ module MCollective
           @stdout = STDOUT
           @stdout.sync = true
         end
+
+        if initial_options[:stdin]
+          @stdin = initial_options[:stdin]
+        else
+          @stdin = STDIN
+        end
       end
 
       # Disconnects cleanly from the middleware
@@ -457,6 +463,24 @@ module MCollective
       def reset_filter
         @filter = Util.empty_filter
         agent_filter @agent
+      end
+
+      # Detects data on STDIN and sets the STDIN discovery method
+      #
+      # IF the discovery method hasn't been explicitly overridden
+      #  and we're not being run interactively,
+      #  and someone has piped us some data
+      #
+      # Then we assume it's a discovery list - this can be either:
+      #  - list of hosts in plaintext
+      #  - JSON that came from another rpc or printrpc
+      #
+      # Then we override discovery to try to grok the data on STDIN
+      def detect_and_set_stdin_discovery
+        if self.default_discovery_method && !@stdin.tty? && !@stdin.eof?
+          self.discovery_method = 'stdin'
+          self.discovery_options = 'auto'
+        end
       end
 
       # Does discovery based on the filters set, if a discovery was
@@ -845,6 +869,7 @@ module MCollective
             end
 
             @stats.noresponsefrom.concat @client.stats[:noresponsefrom]
+            @stats.unexpectedresponsefrom.concat @client.stats[:unexpectedresponsefrom]
             @stats.responses += @client.stats[:responses]
             @stats.blocktime += @client.stats[:blocktime] + sleep_time
             @stats.totaltime += @client.stats[:totaltime]

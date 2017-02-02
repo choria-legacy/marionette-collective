@@ -4,6 +4,21 @@ title: Changelog
 toc: false
 ---
 
+## Version 2.10.x
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2017/01/23|Release *2.10.0*||
+|2016/12/30|Updates for acceptance testing|MCO-782|
+|2016/12/20|Fix broken link on plugin index page|DOCUMENT-618|
+|2016/12/15|Fix `mco ping` breakage from prior commit in MCO-777|MCO-777|
+|2016/12/08|Remove references to old PE versions||
+|2016/11/21|Wait for all expected responses to rpc, report surprises|MCO-777|
+|2016/11/16|Singletarget messaging|MCO-736|
+|2016/11/07|Gemfile cleanup||
+|2016/11/04|Use publish_timeout from config|MCO-778|
+|2016/11/01|Support PQL in STDIN discovery|MCO-776|
+
 ## Version 2.9.x
 
 |Date|Description|Ticket|

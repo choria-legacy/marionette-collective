@@ -1,14 +1,15 @@
 test_name 'install activemq' do
-  amq_version = '5.11.4'
+  amq_version = '5.14.3'
+  jdk_version = '8'
   # install activemq, copy config and trust/keystore
   curl_options = '--silent --show-error --fail'
   if mco_master.platform =~ /el-|centos/ then
-    install_package mco_master, 'java-1.7.0-openjdk'
+    install_package mco_master, "java-1.#{jdk_version}.0-openjdk"
     curl_on(mco_master, "#{curl_options} -O http://apache.osuosl.org/activemq/#{amq_version}/apache-activemq-#{amq_version}-bin.tar.gz")
     on(mco_master, "cd /opt && tar xzf /root/apache-activemq-#{amq_version}-bin.tar.gz")
     activemq_confdir = "/opt/apache-activemq-#{amq_version}/conf"
   elsif mco_master.platform =~/ubuntu|debian/ then
-    install_package mco_master, 'openjdk-7-jdk'
+    install_package mco_master, "openjdk-#{jdk_version}-jdk"
     curl_on(mco_master, "#{curl_options} -O http://apache.osuosl.org/activemq/#{amq_version}/apache-activemq-#{amq_version}-bin.tar.gz")
     on(mco_master, "cd /opt && tar xzf /root/apache-activemq-#{amq_version}-bin.tar.gz")
     activemq_confdir = "/opt/apache-activemq-#{amq_version}/conf"
@@ -16,7 +17,7 @@ test_name 'install activemq' do
 
     step "Windows - Install Oracle JDK"
     oracle_base_url = 'https://download.oracle.com/otn-pub/java/jdk'
-    jdk_version_full = '8u45-b14'
+    jdk_version_full = '8u111-b14'
     jdk_version, jdk_build = jdk_version_full.split('-')
     if mco_master[:ruby_arch] == 'x64' then
       jdk_arch = 'x64'
@@ -96,5 +97,12 @@ EOS
 
   unless port_open_within?(mco_master, 61613, 300 )
     raise Beaker::DSL::FailTest, 'Timed out trying to access ActiveMQ'
+  end
+
+  step "Add activemq to hosts" do
+    ip = fact_on(mco_master, 'ipaddress')
+    hosts.each do |h|
+      apply_manifest_on(h, "host { 'activemq': ip => '#{ip}'}")
+    end
   end
 end

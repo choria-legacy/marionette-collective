@@ -11,6 +11,7 @@ module MCollective
                      :blocktime => 0,
                      :failcount => 0,
                      :noresponsefrom => [],
+                     :unexpectedresponsefrom => [],
                      :responses => 0,
                      :totaltime => 0,
                      :discovered => 0,
@@ -113,7 +114,7 @@ module MCollective
       describe "#client_stats=" do
         it "should store stats correctly" do
           data = {}
-          keys = [:noresponsefrom, :responses, :starttime, :blocktime, :totaltime, :discoverytime]
+          keys = [:noresponsefrom, :unexpectedresponsefrom, :responses, :starttime, :blocktime, :totaltime, :discoverytime]
           keys.each {|k| data[k] = k}
 
           @stats.client_stats = data
@@ -125,7 +126,7 @@ module MCollective
 
         it "should not store discovery time if it was already stored" do
           data = {}
-          keys = [:noresponsefrom, :responses, :starttime, :blocktime, :totaltime, :discoverytime]
+          keys = [:noresponsefrom, :unexpectedresponsefrom, :responses, :starttime, :blocktime, :totaltime, :discoverytime]
           keys.each {|k| data[k] = k}
 
           Time.stubs(:now).returns(Time.at(1300031826))
@@ -231,6 +232,29 @@ module MCollective
           @stats.noresponsefrom.should == ["three"]
         end
 
+        it "should calculate unexpected responses correctly" do
+          Time.stubs(:now).returns(Time.at(1300031824))
+          @stats.time_discovery(:start)
+
+          Time.stubs(:now).returns(Time.at(1300031825))
+          @stats.time_discovery(:end)
+
+          Time.stubs(:now).returns(Time.at(1300031826))
+          @stats.time_block_execution(:start)
+
+          Time.stubs(:now).returns(Time.at(1300031827))
+          @stats.time_block_execution(:end)
+
+          @stats.discovered_agents(["one", "two"])
+          @stats.node_responded("three")
+          @stats.node_responded("one")
+          @stats.node_responded("two")
+
+          @stats.finish_request
+
+          @stats.unexpectedresponsefrom.should == ["three"]
+        end
+
         it "should recover from failure correctly" do
           Time.stubs(:now).returns(Time.at(1300031824))
           @stats.time_discovery(:start)
@@ -249,6 +273,7 @@ module MCollective
           @stats.finish_request
 
           @stats.noresponsefrom.should == []
+          @stats.unexpectedresponsefrom.should == []
           @stats.totaltime.should == 0
         end
       end
@@ -282,6 +307,25 @@ module MCollective
           @stats.finish_request
 
           @stats.no_response_report.should match(Regexp.new(/No response from.+bar\s+foo/m))
+        end
+      end
+
+      describe "#unexpected_response_report" do
+        it "should create an empty report if all responding nodes were discovered" do
+          @stats.discovered_agents ["foo"]
+          @stats.node_responded "foo"
+          @stats.finish_request
+
+          @stats.unexpected_response_report.should == ""
+        end
+
+        it "should list all nodes that did not respond" do
+          @stats.discovered_agents []
+          @stats.node_responded "foo"
+          @stats.node_responded "bar"
+          @stats.finish_request
+
+          @stats.unexpected_response_report.should match(Regexp.new(/Unexpected response from.+bar\s+foo/m))
         end
       end
 

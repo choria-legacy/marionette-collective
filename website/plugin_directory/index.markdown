@@ -40,7 +40,7 @@ This directory of MCollective plugins was migrated from the Puppet Labs wiki in 
 
 ## Data
 
- * [Puppet Resource Status]() - Datasource to facilitate discovery of machines based on the state of Puppet resources
+ * [Puppet Resource Status](resources_data_plugin.html) - Datasource to facilitate discovery of machines based on the state of Puppet resources
  * [Sysctl Value](sysctl_data.html) - Datasource to retrieve values from any Linux sysctl
  * [Agent Meta Data](agent_metadata.html) - Datasource to retrieve meta data about currently installed agents for nodes
 

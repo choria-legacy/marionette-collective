@@ -401,6 +401,20 @@ version of mcollective and then schedules Puppet runs on those machines:
 Mcollective results can also be filtered using the opensource gem,
 jgrep. Mcollective data output is fully compatible with jgrep.
 
+## Using with PuppetDB
+
+Recent versions of PuppetDB has a built in query language called
+Puppet Query Language that you use via the `puppet query` command.
+
+Much like the above example of chaining RPC requests MCollective supports
+reading results from Puppet Query:
+
+{% highlight console %}
+% puppet query "inventory { facts.os.name = 'CentOS' }"| mco rpc puppetd runonce
+{% endhighlight %}
+
+This will run Puppet on all CentOS machines
+
 ## Seeing the Raw Data
 
 By default the *rpc* application will try to show human-readable data.
