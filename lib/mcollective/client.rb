@@ -330,6 +330,17 @@ module MCollective
 
         puts
       end
+
+      if stats[:unexpectedresponsefrom].size > 0
+        puts("\nUnexpected response from:\n")
+
+        stats[:unexpectedresponsefrom].each do |c|
+          puts if c % 4 == 1
+          printf("%30s", c)
+        end
+
+        puts
+      end
     end
   end
 end
