@@ -284,6 +284,7 @@ module MCollective
       stat[:blocktime] = stat[:totaltime] - stat[:discoverytime]
       stat[:responses] = hosts_responded
       stat[:noresponsefrom] = []
+      stat[:unexpectedresponsefrom] = []
       stat[:requestid] = requestid
 
       @stats = stat
