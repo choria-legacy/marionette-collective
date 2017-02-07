@@ -774,6 +774,7 @@ module MCollective
           msg.expects(:create_reqid).returns("823a3419a0975c3facbde121f72ab61f")
           msg.expects(:requestid=).with("823a3419a0975c3facbde121f72ab61f").times(10)
 
+          # These stat keys must match the values returned by a generic Client, or `--batch` will break.
           stats = {:noresponsefrom => [], :unexpectedresponsefrom => [], :responses => 0, :blocktime => 0, :totaltime => 0, :discoverytime => 0, :requestid => "823a3419a0975c3facbde121f72ab61f"}
 
           Message.expects(:new).with('req', nil, {:type => :direct_request, :agent => 'foo', :filter => nil, :options => {}, :collective => 'mcollective'}).returns(msg).times(10)
@@ -802,6 +803,7 @@ module MCollective
           msg.expects(:create_reqid).returns("823a3419a0975c3facbde121f72ab61f")
           msg.expects(:requestid=).with("823a3419a0975c3facbde121f72ab61f").times(10)
 
+          # These stat keys must match the values returned by a generic Client, or `--batch` will break.
           stats = {:noresponsefrom => [], :unexpectedresponsefrom => [], :responses => 0, :blocktime => 0, :totaltime => 0, :discoverytime => 0, :requestid => "823a3419a0975c3facbde121f72ab61f"}
 
           Progress.expects(:new).never

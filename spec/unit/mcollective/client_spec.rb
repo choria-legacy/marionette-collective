@@ -422,7 +422,8 @@ module MCollective
           :totaltime     => 10.0,
           :responses     => 5,
           :requestid     => "erfs123",
-          :noresponsefrom  => [] }
+          :noresponsefrom  => [],
+          :unexpectedresponsefrom => [] }
       end
 
       it "should update stats and return the stats hash" do

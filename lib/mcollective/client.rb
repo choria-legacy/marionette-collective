@@ -284,6 +284,7 @@ module MCollective
       stat[:blocktime] = stat[:totaltime] - stat[:discoverytime]
       stat[:responses] = hosts_responded
       stat[:noresponsefrom] = []
+      stat[:unexpectedresponsefrom] = []
       stat[:requestid] = requestid
 
       @stats = stat
@@ -323,6 +324,17 @@ module MCollective
         puts("\nNo response from:\n")
 
         stats[:noresponsefrom].each do |c|
+          puts if c % 4 == 1
+          printf("%30s", c)
+        end
+
+        puts
+      end
+
+      if stats[:unexpectedresponsefrom].size > 0
+        puts("\nUnexpected response from:\n")
+
+        stats[:unexpectedresponsefrom].each do |c|
           puts if c % 4 == 1
           printf("%30s", c)
         end
