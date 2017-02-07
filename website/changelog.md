@@ -8,6 +8,8 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2017/02/29|Release *2.10.1*||
+|2017/02/06|Fix regression in --batch option|MCO-785|
 |2017/01/23|Release *2.10.0*||
 |2016/12/30|Updates for acceptance testing|MCO-782|
 |2016/12/20|Fix broken link on plugin index page|DOCUMENT-618|

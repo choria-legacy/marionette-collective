@@ -8,6 +8,19 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_10_1">&nbsp;</a>
+
+## 2.10.1 - 2017/02/09
+
+### Changes since 2.10.0
+
+* Fixed a regression in rpc requests using the `--batch` option.
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2017/02/29|Release *2.10.1*||
+|2017/02/06|Fix regression in --batch option|MCO-785|
+
 <a name="2_10_0">&nbsp;</a>
 
 ## 2.10.0 - 2017/01/23
