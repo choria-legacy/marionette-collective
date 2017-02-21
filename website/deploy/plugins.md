@@ -10,20 +10,21 @@ Subtitle: "Installing and Packaging MCollective Plugins"
 [servers]: /mcollective/overview_components.html#servers
 [clients]: /mcollective/overview_components.html#clients
 [puppetlabs_repos]: /guides/puppetlabs_package_repositories.html
-[packages_onpage]: #method-1-installing-plugins-with-native-packages
-[libdir_onpage]: #method-2-copying-plugins-into-the-libdir
+[libdir_onpage]: #copying-plugins-into-the-libdir
 [makepackages_onpage]: #packaging-custom-plugins
 [verify_onpage]: #verifying-installed-agent-plugins
 [types_onpage]: #about-plugins--available-plugin-types
+[choria]: http://choria.io/
 
 Summary
 -----
 
 MCollective has several kinds of plugins (most notably **agents** and **applications**), all of which go in the directory specified by the `libdir` setting from the [server][server_config] and [client][client_config] config files.
 
-There are two ways to install plugins. Since not all plugins can be installed with packages yet, you'll need to be familiar with both:
+Pre-built packages are no longer provided in [the Puppet Labs apt and yum repos][puppetlabs_repos]. Installation via Puppet modules is preferred, and can be facilitated by [the Choria project][choria]. Puppet Enterprise comes with a predefined set of plugins.
 
-* [Use packages][packages_onpage]
+Not all plugins can be installed with those methods, so alternatively you can:
+
 * [Put files directly into the libdir][libdir_onpage]
 
 You may also want to:
@@ -60,26 +61,7 @@ This may seem like a lot to manage, but the general experience is:
 * It's rare to write or install custom plugins of the other types.
 
 
-Method 1: Installing Plugins With Native Packages
------
-
-Most of the agent plugins provided by Puppet Labs can be installed as native packages from [the Puppet Labs apt and yum repos][puppetlabs_repos]. For plugins that support it, this packaging makes it easier to install and upgrade. Additionally, it's possible to package your own agent plugins for easier distribution.
-
-1. [**Enable** the Puppet Labs package repos for all of your systems.][puppetlabs_repos] If you are using custom packaged plugins, ensure that the packages have been added to your local package repositories.
-2. **Identify** the group of packages you want. Each named plugin set may have several packages, which will be named `mcollective-<PLUGIN SET NAME>-<ROLE>`. The ROLE should be one of `agent`, `client`, or `common`.
-    * Note that not every plugin will have all three roles; you will have to look at the listing of packages in the repo to determine which exist.
-3. **Install** any `agent` and `common` packages for the plugin on every [server][servers] node that should have it.
-    * Since this must happen across a large number of servers, you should generally use Puppet or other configuration management to install them.
-4. **Restart** the `mcollective` server daemon on every server.
-5. **Install** any `client` and `common` packages for the plugin on every [client][clients] system that should have it.
-    * Since client systems are often admin or developer workstations, this may or may not be automatable; at the least, you should maintain a list of which plugins are in use at your site, so that your admins can keep their clients up to date.
-6. Optionally, [**verify** the installation][verify_onpage] on some proportion of your clients and servers.
-
-This package-based process cannot be used for some non-agent plugins or for older agents. For these plugins, you will need to copy files directly into the libdir (see below).
-
-
-
-Method 2: Copying Plugins Into the Libdir
+Copying Plugins Into the Libdir
 -----
 
 For older agent plugins, certain non-agent plugins (such as authorization), and most custom plugins, you will need to install by copying files directly into MCollective's `libdir`.
@@ -92,9 +74,8 @@ The default libdir created by the MCollective install process varies per platfor
 
 Platform          | Default libdir
 ------------------|---------------------------------
-Red Hat-like OSes | `/usr/libexec/mcollective`
-Debian-like OSes  | `/usr/share/mcollective/plugins`
-Other             | No default
+Windows           | `C:\ProgramData\Puppetlabs\mcollective\plugins`
+Other             | `/opt/puppetlabs/mcollective/plugins`
 
 The libdir is arranged like a standard Ruby lib directory: It always contains a single directory called `mcollective`, which contains a directory for each [type of plugin (see above)][types_onpage]; each of these directories contains any number of `.rb` and `.ddl` (and sometimes `.erb`) files.
 
@@ -102,12 +83,12 @@ In the general case, this means plugin files should be named `<LIBDIR>/mcollecti
 
 As an example, here are the platform-appropriate destinations for two of the files installed by the `package` agent:
 
-* On Red Hat-like systems:
-    * `/usr/libexec/mcollective/mcollective/agent/package.rb`
-    * `/usr/libexec/mcollective/mcollective/agent/package.ddl`
-* On Debian-like systems:
-    * `/usr/share/mcollective/plugins/mcollective/agent/package.rb`
-    * `/usr/share/mcollective/plugins/mcollective/agent/package.ddl`
+* On Windows systems:
+    * `C:\ProgramData\Puppetlabs\mcollective\plugins\mcollective\agent\package.rb`
+    * `C:\ProgramData\Puppetlabs\mcollective\plugins\mcollective\agent\package.ddl`
+* On other systems:
+    * `/opt/puppetlabs/mcollective/plugins/mcollective/agent/package.rb`
+    * `/opt/puppetlabs/mcollective/plugins/mcollective/agent/package.ddl`
 
 > **Note:** The `mcollective` directory goes _inside_ the libdir, whatever the libdir's path is. In the Red Hat case, this means the complete path contains the string `mcollective/mcollective`; be careful not to accidentally skip the second `mcollective`.
 
@@ -210,62 +191,64 @@ On Red Hat-like OSes, you would install these files in the following locations:
 
 #### Servers
 
-    /usr/libexec/mcollective/mcollective/agent/puppet.ddl
-    /usr/libexec/mcollective/mcollective/agent/puppet.rb
-    /usr/libexec/mcollective/mcollective/data/puppet_data.ddl
-    /usr/libexec/mcollective/mcollective/data/puppet_data.rb
-    /usr/libexec/mcollective/mcollective/data/resource_data.ddl
-    /usr/libexec/mcollective/mcollective/data/resource_data.rb
-    /usr/libexec/mcollective/mcollective/util/puppet_agent_mgr/common.rb
-    /usr/libexec/mcollective/mcollective/util/puppet_agent_mgr/v2/manager.rb
-    /usr/libexec/mcollective/mcollective/util/puppet_agent_mgr/v2/unix.rb
-    /usr/libexec/mcollective/mcollective/util/puppet_agent_mgr/v2/windows.rb
-    /usr/libexec/mcollective/mcollective/util/puppet_agent_mgr/v3/manager.rb
-    /usr/libexec/mcollective/mcollective/util/puppet_agent_mgr/v3/unix.rb
-    /usr/libexec/mcollective/mcollective/util/puppet_agent_mgr/v3/windows.rb
-    /usr/libexec/mcollective/mcollective/util/puppet_agent_mgr.rb
-    /usr/libexec/mcollective/mcollective/util/puppetrunner.rb
-    /usr/libexec/mcollective/mcollective/validator/puppet_resource_validator.ddl
-    /usr/libexec/mcollective/mcollective/validator/puppet_resource_validator.rb
-    /usr/libexec/mcollective/mcollective/validator/puppet_server_address_validator.ddl
-    /usr/libexec/mcollective/mcollective/validator/puppet_server_address_validator.rb
-    /usr/libexec/mcollective/mcollective/validator/puppet_tags_validator.ddl
-    /usr/libexec/mcollective/mcollective/validator/puppet_tags_validator.rb
-    /usr/libexec/mcollective/mcollective/validator/puppet_variable_validator.ddl
-    /usr/libexec/mcollective/mcollective/validator/puppet_variable_validator.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/agent/puppet.ddl
+    /opt/puppetlabs/mcollective/plugins/mcollective/agent/puppet.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/data/puppet_data.ddl
+    /opt/puppetlabs/mcollective/plugins/mcollective/data/puppet_data.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/data/resource_data.ddl
+    /opt/puppetlabs/mcollective/plugins/mcollective/data/resource_data.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/util/puppet_agent_mgr/common.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/util/puppet_agent_mgr/v2/manager.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/util/puppet_agent_mgr/v2/unix.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/util/puppet_agent_mgr/v2/windows.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/util/puppet_agent_mgr/v3/manager.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/util/puppet_agent_mgr/v3/unix.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/util/puppet_agent_mgr/v3/windows.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/util/puppet_agent_mgr.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/util/puppetrunner.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/validator/puppet_resource_validator.ddl
+    /opt/puppetlabs/mcollective/plugins/mcollective/validator/puppet_resource_validator.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/validator/puppet_server_address_validator.ddl
+    /opt/puppetlabs/mcollective/plugins/mcollective/validator/puppet_server_address_validator.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/validator/puppet_tags_validator.ddl
+    /opt/puppetlabs/mcollective/plugins/mcollective/validator/puppet_tags_validator.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/validator/puppet_variable_validator.ddl
+    /opt/puppetlabs/mcollective/plugins/mcollective/validator/puppet_variable_validator.rb
 
 
 #### Clients
 
-    /usr/libexec/mcollective/mcollective/agent/puppet.ddl
-    /usr/libexec/mcollective/mcollective/aggregate/boolean_summary.ddl
-    /usr/libexec/mcollective/mcollective/aggregate/boolean_summary.rb
-    /usr/libexec/mcollective/mcollective/application/puppet.rb
-    /usr/libexec/mcollective/mcollective/data/puppet_data.ddl
-    /usr/libexec/mcollective/mcollective/data/resource_data.ddl
-    /usr/libexec/mcollective/mcollective/util/puppet_agent_mgr/common.rb
-    /usr/libexec/mcollective/mcollective/util/puppet_agent_mgr/v2/manager.rb
-    /usr/libexec/mcollective/mcollective/util/puppet_agent_mgr/v2/unix.rb
-    /usr/libexec/mcollective/mcollective/util/puppet_agent_mgr/v2/windows.rb
-    /usr/libexec/mcollective/mcollective/util/puppet_agent_mgr/v3/manager.rb
-    /usr/libexec/mcollective/mcollective/util/puppet_agent_mgr/v3/unix.rb
-    /usr/libexec/mcollective/mcollective/util/puppet_agent_mgr/v3/windows.rb
-    /usr/libexec/mcollective/mcollective/util/puppet_agent_mgr.rb
-    /usr/libexec/mcollective/mcollective/util/puppetrunner.rb
-    /usr/libexec/mcollective/mcollective/validator/puppet_resource_validator.ddl
-    /usr/libexec/mcollective/mcollective/validator/puppet_resource_validator.rb
-    /usr/libexec/mcollective/mcollective/validator/puppet_server_address_validator.ddl
-    /usr/libexec/mcollective/mcollective/validator/puppet_server_address_validator.rb
-    /usr/libexec/mcollective/mcollective/validator/puppet_tags_validator.ddl
-    /usr/libexec/mcollective/mcollective/validator/puppet_tags_validator.rb
-    /usr/libexec/mcollective/mcollective/validator/puppet_variable_validator.ddl
-    /usr/libexec/mcollective/mcollective/validator/puppet_variable_validator.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/agent/puppet.ddl
+    /opt/puppetlabs/mcollective/plugins/mcollective/aggregate/boolean_summary.ddl
+    /opt/puppetlabs/mcollective/plugins/mcollective/aggregate/boolean_summary.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/application/puppet.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/data/puppet_data.ddl
+    /opt/puppetlabs/mcollective/plugins/mcollective/data/resource_data.ddl
+    /opt/puppetlabs/mcollective/plugins/mcollective/util/puppet_agent_mgr/common.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/util/puppet_agent_mgr/v2/manager.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/util/puppet_agent_mgr/v2/unix.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/util/puppet_agent_mgr/v2/windows.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/util/puppet_agent_mgr/v3/manager.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/util/puppet_agent_mgr/v3/unix.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/util/puppet_agent_mgr/v3/windows.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/util/puppet_agent_mgr.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/util/puppetrunner.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/validator/puppet_resource_validator.ddl
+    /opt/puppetlabs/mcollective/plugins/mcollective/validator/puppet_resource_validator.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/validator/puppet_server_address_validator.ddl
+    /opt/puppetlabs/mcollective/plugins/mcollective/validator/puppet_server_address_validator.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/validator/puppet_tags_validator.ddl
+    /opt/puppetlabs/mcollective/plugins/mcollective/validator/puppet_tags_validator.rb
+    /opt/puppetlabs/mcollective/plugins/mcollective/validator/puppet_variable_validator.ddl
+    /opt/puppetlabs/mcollective/plugins/mcollective/validator/puppet_variable_validator.rb
 
 
 Packaging Custom Plugins
 -----
 
-You can use the `mco plugin package` command to generate OS-appropriate packages for your own agent plugins. Full instructions for doing this are not currently written down; we hope to publish a guide to the packaging tool soon. <!-- todo -->
+You can use the `mco plugin package` command to generate OS-appropriate packages (limited to Red Hat and Debian-like systems) for your own agent plugins.
+
+[The Choria project][choria] can also be used with `mco plugin package` to generate Puppet modules for plugins.
 
 Note that the packaging tool uses each system's native tools to build packages --- it doesn't necessarily support building, for example, .deb and .rpm packages on a Mac.
 

@@ -23,7 +23,7 @@ layout: default
 [client_libdir]: /mcollective/configure/client.html#platform-defaults
 [deploy]: ./index.html
 [semver]: http://semver.org
-[puppet-agent]: {{puppet}}/references/about_agent.html
+[puppet-agent]: {{puppet}}/reference/about_agent.html
 
 > **Note:** This page is about installing MCollective, which is part of the larger deployment process. See the [MCollective deployment index][deploy] for the complete picture.
 >
@@ -34,12 +34,12 @@ layout: default
 To install MCollective:
 
 1.  Install and start your middleware, and configure your firewalls. See the [pre-install instructions](#pre-install) for details.
-2.  Install the `mcollective` package on servers, and then make sure the `mcollective` service is running.
-3.  Install the `mcollective-client` package on admin workstations.
+2.  Install the `puppet-agent` package on servers, and then make sure the `mcollective` service is running.
+3.  Install the `puppet-agent` package on admin workstations.
 
-Most Debian-like and Red Hat-like systems can [use the official `puppet-agent` package](#installing-with-the-official-packages) to install MCollective and other Puppet components and prerequisites.
+Most Debian-like and Red Hat-like systems, as well as Windows and macOS, can [use the official `puppet-agent` package](#installing-with-the-official-packages) to install MCollective and other Puppet components and prerequisites.
 
-If your systems can't use the official package, [check the system requirements](#system-requirements) and either [build your own](#rolling-custom-rpm-and-deb-packages) or [run from source](#running-from-source).
+If your systems can't use the official package, [check the system requirements](#system-requirements) and either [build your own](#rolling-custom-rpm-and-debian-packages) or [run from source](#running-from-source).
 
 ### Best practices
 
@@ -64,22 +64,13 @@ Our semver promises only refer to the code in a single project; it's possible fo
 
 ## System requirements
 
-MCollective can run on almost any \*nix operating system, as well as on Microsoft Windows. It requires one of the following Ruby versions:
-
--   1.9.3
--   1.8.7
-
-Ruby 2 is not officially supported. Ruby 1.8.5 can't use TLS when connecting to the middleware, but works fine over unencrypted connections. Ruby 1.8.6 has the same problem as 1.8.5, and somewhat less automated test coverage. Ruby 1.9.0 through 1.9.2 are NOT supported, and are expected to fail.
+MCollective can run on almost any \*nix operating system, as well as on Microsoft Windows. It requires Ruby 2.1 or later.
 
 MCollective also requires version **1.2.2 or higher** of the Stomp rubygem.
 
 ## Installing with the official packages
 
-Puppet provides an official pre-built [`puppet-agent`][puppet-agent] for Windows, OS X, and the most common Linux-based operating systems. This package installs MCollective along with [Puppet]({{puppet}}), its tools, and its prerequisites.
-
-### Enable repositories or add packages
-
-MCollective is included in the [`puppet-agent`][puppet-agent] package. To use the official package, you must first either [enable the Puppet Collection package repositories][enable_repos] on all systems, or import the `puppet-agent` package from our repository.
+Puppet provides an official pre-built [`puppet-agent`][puppet-agent] for Windows, macOS, and the most common Linux-based operating systems. This package installs MCollective along with [Puppet]({{puppet}}), its tools, and its prerequisites.
 
 ### Install MCollective
 
@@ -127,13 +118,13 @@ For details about the relationship and collector syntax used to restart the MCol
 
 ## Rolling custom RPM and Debian packages
 
-If you use a Linux distribution that handles RPM or Debian packages but doesn't have an official `puppet-agent` package, you can build your own `puppet-agent` package. For more information, see the [puppetlabs/puppet-agent repository on GitHub](https://github.com/puppetlabs/puppet-agent).
+If you use a system that doesn't have an official `puppet-agent` package, you can build your own `puppet-agent` package. For more information, see the [puppetlabs/puppet-agent repository on GitHub](https://github.com/puppetlabs/puppet-agent).
 
 ([↑ Back to top](#content))
 
 ## Running from source
 
-In addition to using our packages or building your own, you can also build  MCollective directly from source.
+In addition to using our packages or building your own, you can also build MCollective directly from source.
 
 ### Obtain the source
 
@@ -156,8 +147,8 @@ MCollective ships with a set of plugins that it requires for basic functionality
 
 Copy the contents of this `plugins` directory to a platform-appropriate place, and **remember the location** for your post-install configuration because you need to specify it in the `libdir` setting.
 
--   Red Hat-like platforms put plugins in `/usr/libexec/mcollective`.
--   Debian-like platforms put it in `/usr/share/mcollective/plugins`.
+-   Windows platforms put plugins in `C:\ProgramData\PuppetLabs\mcollective\plugins`.
+-   All other systems put plugins in `/opt/puppetlabs/mcollective/plugins`.
 
 Other platforms might use different conventions.
 
@@ -165,16 +156,16 @@ Other platforms might use different conventions.
 >
 > **Example:**
 >
->     # /etc/mcollective/server.cfg
+>     # /etc/puppetlabs/mcollective/server.cfg
 >     # ...
->     libdir = /usr/libexec/mcollective
+>     libdir = /opt/puppetlabs/mcollective/plugins
 >
-> -   **Good:** `/usr/libexec/mcollective/mcollective/agent/discovery.rb`
-> -   **Bad:** `/usr/libexec/mcollective/agent/discovery.rb` (This would only work if you had set a `libdir` of `/usr/libexec`.)
+> -   **Good:** `/opt/puppetlabs/mcollective/plugins/mcollective/agent/discovery.rb`
+> -   **Bad:** `/opt/puppetlabs/mcollective/plugins/agent/discovery.rb`
 
 ### Add `mcollective/bin` to the path
 
-The root user on each server must be able to execute the `mcollectived` binary. Administrative users must be able to execute the `mco` binary. You should either copy these to someplace like `/usr/local/bin` and `/usr/local/sbin`, or add the directory they live in to the appropriate users' `PATH` environment variable.
+The root user on each server must be able to execute the `mcollectived` binary. Administrative users must be able to execute the `mco` binary. You should either link these to someplace like `/usr/local/bin` and `/usr/local/sbin`, or add the directory they live in to the appropriate users' `PATH` environment variable.
 
 > **Note:** If you're using Puppet Enterprise, only the `peadmin` user can run the `mco` command. For more information, see the [PE MCollective actions]({{pe}}/orchestration_invoke_cli.html) documentation.
 
