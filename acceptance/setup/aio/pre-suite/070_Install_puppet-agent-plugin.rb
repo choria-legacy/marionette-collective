@@ -4,8 +4,12 @@ test_name 'install puppet-agent plugin' do
 
   hosts.each_with_index do |h, index|
     if h.platform =~ /windows/ then
+     # On Windows, '/' leads to a different path for Cygwin utils vs Git. Explicitly
+     # use the root drive.
+     SourcePath  = 'C:'+Beaker::DSL::InstallUtils::SourcePath
      mco_libdir = 'C:/ProgramData/PuppetLabs/mcollective/etc/plugins/mcollective'
     else
+     SourcePath  = Beaker::DSL::InstallUtils::SourcePath
      mco_libdir = '/opt/puppetlabs/mcollective/plugins/mcollective'
      git_pkg = 'git'
      if h.platform =~ /ubuntu-10/
@@ -15,7 +19,6 @@ test_name 'install puppet-agent plugin' do
     end
     on h, "mkdir -p #{mco_libdir}"
 
-    SourcePath  = Beaker::DSL::InstallUtils::SourcePath
     GitURI      = Beaker::DSL::InstallUtils::GitURI
     GitHubSig   = Beaker::DSL::InstallUtils::GitHubSig
 
