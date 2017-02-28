@@ -74,26 +74,6 @@ MANIFEST
     step "Install powershell module on master"
     install_puppet_module_via_pmt_on(master, {:module_name => "puppetlabs-powershell"})
 
-    # TODO: once PUP-5480 is addressed, this workaround step can be removed
-    step "Delete puppet cache dir on Windows hosts, because `agent` run created it with wrong permissions"
-      # NOTE: `with_puppet_running_on` triggers a `puppet agent -t` run on the
-      # Windows agents using the ADMINISTRATOR user. This creates a
-      # `C:\ProgramData\PuppetLabs\puppet\cache\client_data` directory with
-      # an owner of Administrator and a group of None. When the MCO service,
-      # running as SYSTEM, later triggers an on-demand Puppet run,
-      # a write to this directory fails with access denied since SYSTEM is not
-      # explicitly granted permissions. The catalog write occurs because MCO
-      # enables Puppet's cache terminus and therefore Puppet requires write
-      # permissions to store a JSON catalog.
-      #
-      # When MCO triggers the puppet run it will run as the SYSTEM user and will
-      # create the cache directory with an Owner of Administrators and a
-      # Group of SYSTEM.
-      windows_hosts.each do |h|
-        client_datadir = h.puppet['client_datadir']
-        on(h , puppet("resource file \"#{client_datadir}\" ensure=absent force=true"))
-      end
-
     step "Run mco puppet runonce"
       on(mco_master, "#{mco_bin} puppet runonce")
       sleep 45
