@@ -15,17 +15,11 @@ test_name 'configure mcollective daemon' do
       mco_confdir = "/etc/puppetlabs/mcollective"
       libdir = "/opt/puppetlabs/mcollective/plugins"
       logdir = "/var/log/puppetlabs"
-      puppet_cmd = "/opt/puppetlabs/bin/puppet"
       puppet_confdir = "/etc/puppetlabs/puppet"
     else
       mco_confdir = "C:/ProgramData/PuppetLabs/mcollective/etc"
       libdir = "#{mco_confdir}/plugins"
       logdir = "C:/ProgramData/PuppetLabs/mcollective/var/log"
-      if h[:ruby_arch] == 'x64' then
-        puppet_cmd = "C:/Program Files/Puppet Labs/Puppet/bin/puppet.bat"
-      else
-        puppet_cmd = "C:/Program Files (x86)/Puppet Labs/Puppet/bin/puppet.bat"
-      end
       puppet_confdir = "C:/ProgramData/PuppetLabs/puppet/etc/puppet"
     end
 
@@ -57,14 +51,6 @@ plugin.activemq.pool.1.ssl.key = #{mco_confdir}/server.key
 # Facts
 factsource = yaml
 plugin.yaml = #{mco_confdir}/facts.yaml
-
-# Plugin settings for puppet-agent
-plugin.puppet.command = "#{puppet_cmd}" agent
-plugin.puppet.splay = true
-plugin.puppet.splaylimit = 30
-plugin.puppet.config = #{puppet_confdir}/puppet.conf
-plugin.puppet.windows_service = puppet
-plugin.puppet.signal_daemon = true
 EOS
 
     create_remote_file(h,  "#{mco_confdir}/server.cfg", server_cfg)
