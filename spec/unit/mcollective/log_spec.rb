@@ -37,6 +37,7 @@ module MCollective
 
     describe "#log" do
       it "should log at the right levels" do
+        Log.configure(@logger)
         [:debug, :info, :fatal, :error, :warn].each do |level|
           @logger.expects(:log).with(level, anything, regexp_matches(/#{level} test/))
           Log.send(level, "#{level} test")
