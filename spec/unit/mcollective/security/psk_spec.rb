@@ -3,6 +3,11 @@
 require 'spec_helper'
 require 'mcollective/security/psk'
 
+module MCollective
+  # Clear the PluginManager so that security plugin tests do not conflict
+  PluginManager.clear
+end
+
 module MCollective::Security
   describe Psk do
     before do

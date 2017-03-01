@@ -129,7 +129,11 @@ EOS
     else
       targets = DEFAULT_TEST_TARGETS
     end
-    raise(USAGE) unless targets.include? 'mco_master'
+
+    if !targets.include? 'mco_master'
+      targets = targets.gsub( /([^\d]+)$/, 'mco_master.\1')
+    end
+
     cli = BeakerHostGenerator::CLI.new([targets, '--disable-default-role', '--osinfo-version', '1'])
     ENV['BEAKER_HOSTS'] = "tmp/#{targets}-#{SecureRandom.uuid}.yaml"
     FileUtils.mkdir_p('tmp')
