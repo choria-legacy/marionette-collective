@@ -9,6 +9,10 @@ test_name 'install activemq' do
     on(mco_master, "cd /opt && tar xzf /root/apache-activemq-#{amq_version}-bin.tar.gz")
     activemq_confdir = "/opt/apache-activemq-#{amq_version}/conf"
   elsif mco_master.platform =~/ubuntu|debian/ then
+    if mco_master.platform =~/ubuntu-14.04/
+      # fallback to JDK 7 on older Ubuntu
+      jdk_version = '7'
+    end
     install_package mco_master, "openjdk-#{jdk_version}-jdk"
     curl_on(mco_master, "#{curl_options} -O http://apache.osuosl.org/activemq/#{amq_version}/apache-activemq-#{amq_version}-bin.tar.gz")
     on(mco_master, "cd /opt && tar xzf /root/apache-activemq-#{amq_version}-bin.tar.gz")
