@@ -291,6 +291,22 @@ module MCollective
           results.should == ["msg1", "msg2", "msg3"]
         end
 
+        it "should support responding with the payload and the Message" do
+          results = []
+          Timeout.stubs(:timeout).yields
+
+          msg1 = mock(:payload => "msg1")
+          msg2 = mock(:payload => "msg2")
+          msg3 = mock(:payload => "msg3")
+
+          client.stubs(:receive).with("erfs123").returns(msg1, msg2, msg3)
+          client.start_receiver("erfs123", 3, 5) do |payload, message|
+            results << [payload, message]
+          end
+
+          results.should == [["msg1", msg1], ["msg2", msg2], ["msg3", msg3]]
+        end
+
         it "should log a warning if a timeout occurs" do
           results = []
           Timeout.stubs(:timeout).yields
