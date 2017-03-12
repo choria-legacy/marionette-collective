@@ -249,7 +249,13 @@ module MCollective
         Timeout.timeout(timeout) do
           loop do
             resp = receive(requestid)
-            yield resp.payload
+
+            if block.arity == 2
+              yield resp.payload, resp
+            else
+              yield resp.payload
+            end
+
             hosts_responded += 1
 
             if (waitfor.is_a?(Array))
