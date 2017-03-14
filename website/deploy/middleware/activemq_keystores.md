@@ -39,7 +39,7 @@ On your ActiveMQ server:
 
 On your CA puppet master:
 
-* Run `sudo puppet cert generate activemq.example.com`, substituting some name for your ActiveMQ server. Unlike with a puppet master, the cert's common name can be anything; it doesn't have to be the node's hostname or FQDN.
+* Run `sudo puppet cert generate activemq.example.com`, substituting some name for your ActiveMQ server. The certname must be the hostname that resolves to your ActiveMQ server.
 * Locate the ssldir by running `sudo puppet master --configprint ssldir`.
 * Retrieve the following files and copy them to a working directory on your ActiveMQ server, making sure to give unique names to the cert and private key:
     * `<ssldir>/certs/ca.pem`
