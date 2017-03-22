@@ -88,3 +88,14 @@ MASTER_TEST_TARGET
 
 BEAKER_HOSTS
     :  Path to an existing Beaker hosts file to be used.
+
+ACTIVEMQ_SOURCE
+    :  A url from which to download pre-built ActiveMQ binaries. Together with
+    ACTIVEMQ_VERSION, specifies where to get binaries. The default uses an
+    internal Puppet mirror, externally you should use http://apache.osuosl.org.
+    Note that osuosl only hosts the latest releases. Setting this will attempt
+    to fetch a package from $ACTIVEMQ_SOURCE/activemq/$ACTIVEMQ_VERSION/apache-activemq-$ACTIVEMQ_VERSION-bin.tar.gz
+    (or .zip on Windows).
+
+ACTIVEMQ_VERSION
+    :  The version of ActiveMQ requested.

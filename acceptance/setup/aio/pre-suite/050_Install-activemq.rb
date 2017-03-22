@@ -1,11 +1,17 @@
 test_name 'install activemq' do
-  amq_version = '5.14.3'
+  amq_version = ENV['ACTIVEMQ_VERSION'] || '5.14.4'
+  amq_source_url = 
+    if amq_source = ENV['ACTIVEMQ_SOURCE']
+      "#{amq_source}/activemq/#{amq_version}"
+    else
+      'http://buildsources.delivery.puppetlabs.net'
+    end
   jdk_version = '8'
   # install activemq, copy config and trust/keystore
   curl_options = '--silent --show-error --fail'
   if mco_master.platform =~ /el-|centos/ then
     install_package mco_master, "java-1.#{jdk_version}.0-openjdk"
-    curl_on(mco_master, "#{curl_options} -O http://apache.osuosl.org/activemq/#{amq_version}/apache-activemq-#{amq_version}-bin.tar.gz")
+    curl_on(mco_master, "#{curl_options} -O #{amq_source_url}/apache-activemq-#{amq_version}-bin.tar.gz")
     on(mco_master, "cd /opt && tar xzf /root/apache-activemq-#{amq_version}-bin.tar.gz")
     activemq_confdir = "/opt/apache-activemq-#{amq_version}/conf"
   elsif mco_master.platform =~/ubuntu|debian/ then
@@ -14,7 +20,7 @@ test_name 'install activemq' do
       jdk_version = '7'
     end
     install_package mco_master, "openjdk-#{jdk_version}-jdk"
-    curl_on(mco_master, "#{curl_options} -O http://apache.osuosl.org/activemq/#{amq_version}/apache-activemq-#{amq_version}-bin.tar.gz")
+    curl_on(mco_master, "#{curl_options} -O #{amq_source_url}/apache-activemq-#{amq_version}-bin.tar.gz")
     on(mco_master, "cd /opt && tar xzf /root/apache-activemq-#{amq_version}-bin.tar.gz")
     activemq_confdir = "/opt/apache-activemq-#{amq_version}/conf"
   elsif mco_master.platform =~/windows/ then
@@ -60,7 +66,7 @@ EOS
 
     step "Windows - Install activemq"
     file_path = mco_master.tmpfile('activemq.zip')
-    curl_on(mco_master, "-o #{file_path}.zip http://apache.osuosl.org/activemq/#{amq_version}/apache-activemq-#{amq_version}-bin.zip")
+    curl_on(mco_master, "-o #{file_path}.zip #{amq_source_url}/apache-activemq-#{amq_version}-bin.zip")
     on(mco_master, puppet("module install reidmv-unzip"))
     manifest = <<EOS
     unzip { "activemq":
