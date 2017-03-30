@@ -8,6 +8,31 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_10_3">&nbsp;</a>
+
+## 2.10.3 - 2017/04/04
+
+### Changes since 2.10.2
+
+* Various testing fixes
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2017/04/04|Release *2.10.3*||
+|2017/03/30|Allow M::Client users to access M::Message|MCO-790|
+
+<a name="2_10_2">&nbsp;</a>
+
+## 2.10.2 - 2017/03/09
+
+### Changes since 2.10.1
+
+* Various testing fixes
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2017/03/09|Release *2.10.2*||
+
 <a name="2_10_1">&nbsp;</a>
 
 ## 2.10.1 - 2017/02/09
