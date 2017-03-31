@@ -38,6 +38,52 @@ module MCollective
         MCollective::Log.stubs(:warn)
       end
 
+      describe "#deserialize" do
+        let(:safe_payload) {
+          {:payload => "words", :ttl => 15}
+        }
+
+        class Sock
+          attr_reader :size
+          def initialize size
+            @size = size
+          end
+
+          def ==(another_sock)
+            self.size == another_sock.size
+          end
+        end
+
+        let(:unsafe_payload) {
+          {:payload => Sock.new(10)}
+        }
+
+        it "should accept marshal by default" do
+          expect(plugin.deserialize(Marshal.dump(unsafe_payload))).to eq(unsafe_payload)
+          expect(plugin.deserialize(Marshal.dump(safe_payload))).to eq(safe_payload)
+        end
+
+        context "yaml" do
+          before do
+            pluginconf['aes.serializer'] = 'yaml'
+          end
+
+          if YAML.respond_to? :safe_load
+            it "should round-trip yaml with symbols" do
+              expect(plugin.deserialize(YAML.dump(safe_payload))).to eq(safe_payload)
+            end
+
+            it "should reject yaml with other objects" do
+              expect{ plugin.deserialize(YAML.dump(unsafe_payload)) }.to raise_error(Psych::DisallowedClass)
+            end
+          else
+            it "should raise on older Ruby" do
+              expect{ plugin.deserialize(YAML.dump(safe_payload)) }.to raise_error("YAML.safe_load not supported by Ruby #{RUBY_VERSION}. Please update to Ruby 2.1+.")
+            end
+          end
+        end
+      end
+
       describe "#decodemsg" do
         let(:body) do
         {:sslpubkey => "ssl_public_key",
