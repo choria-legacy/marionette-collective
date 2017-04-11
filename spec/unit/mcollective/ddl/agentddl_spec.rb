@@ -11,6 +11,54 @@ module MCollective
         @ddl.metadata(:name => "name", :description => "description", :author => "author", :license => "license", :version => "version", :url => "url", :timeout => "timeout")
       end
 
+      describe "#symbolize_basic_input_arguments" do
+        before(:each) do
+          @ddl.action(:test, :description => "rspec")
+          @ddl.instance_variable_set("@current_entity", :test)
+          @ddl.input(:test, :prompt => "prompt", :description => "descr",
+                     :type => :string, :optional => true, :validation => "",
+                     :maxlength => 1, :default => "default")
+        end
+
+        it "should warn when there are string and symbol inputs for the same stringified key" do
+          @ddl.input("test", :prompt => "prompt", :description => "descr",
+                     :type => :string, :optional => true, :validation => "",
+                     :maxlength => 1, :default => "default")
+
+          Log.expects(:warn).with("String and Symbol versions of input test found in the DDL for rspec, ensure your DDL keys are unique.")
+          @ddl.symbolize_basic_input_arguments(@ddl.action_interface(:test)[:input], {:test => 1, "test" => 2})
+        end
+
+        it "should use the symbol given a string argument when there is not also a matching string input" do
+          result = @ddl.symbolize_basic_input_arguments(@ddl.action_interface(:test)[:input], {"test" => 2})
+          expect(result).to eq(:test => 2)
+        end
+
+        it "should use the string given a string argument when there is also a matching string input" do
+          @ddl.input("test", :prompt => "prompt", :description => "descr",
+                     :type => :string, :optional => true, :validation => "",
+                     :maxlength => 1, :default => "default")
+
+          Log.stubs(:warn)
+          result = @ddl.symbolize_basic_input_arguments(@ddl.action_interface(:test)[:input], {"test" => 2})
+          expect(result).to eq("test" => 2)
+        end
+
+        it "should not change symbols matching symbol inputs" do
+          result = @ddl.symbolize_basic_input_arguments(@ddl.action_interface(:test)[:input], {:test => 2})
+          expect(result).to eq(:test => 2)
+        end
+
+        it "should not change strings matching strings inputs" do
+          @ddl.input("string_test", :prompt => "prompt", :description => "descr",
+                     :type => :string, :optional => true, :validation => "",
+                     :maxlength => 1, :default => "default")
+
+          result = @ddl.symbolize_basic_input_arguments(@ddl.action_interface(:test)[:input], {"string_test" => 2})
+          expect(result).to eq("string_test" => 2)
+        end
+      end
+
       describe "#input" do
         it "should validate that an :optional property is set" do
           expect { @ddl.input(:x, {:y => 1}) }.to raise_error("Input needs a :optional property")
@@ -45,20 +93,29 @@ module MCollective
 
           args.should == {:required => "specified"}
         end
+
+        it "should detect json primitive key names and consider them present as their symbol equivelants" do
+          args = {"required" => "specified"}
+
+          @ddl.set_default_input_arguments(:test, args)
+
+          args.should == {"required" => "specified"}
+        end
+
+        it "should not consider the string key equiv to the symbol one when both symbol and string keys exist" do
+          @ddl.input("required", :prompt => "prompt", :description => "descr",
+                     :type => :string, :optional => false, :validation => "",
+                     :maxlength => 1, :default => "string default")
+
+          args = {"required" => "specified"}
+          @ddl.set_default_input_arguments(:test, args)
+
+          args.should == {"required" => "specified", :required=>"default"}
+        end
       end
 
       describe "#validate_rpc_request" do
-        it "should ensure the action is known" do
-          @ddl.action(:test, :description => "rspec")
-
-          expect {
-            @ddl.validate_rpc_request(:fail, {})
-          }.to raise_error("Attempted to call action fail for rspec but it's not declared in the DDL")
-
-          @ddl.validate_rpc_request(:test, {})
-        end
-
-        it "should check all required arguments are present" do
+        before(:each) do
           @ddl.action(:test, :description => "rspec")
           @ddl.instance_variable_set("@current_entity", :test)
           @ddl.input(:optional, :prompt => "prompt", :description => "descr",
@@ -67,7 +124,17 @@ module MCollective
           @ddl.input(:required, :prompt => "prompt", :description => "descr",
                      :type => :string, :optional => false, :validation => "",
                      :maxlength => 1)
+        end
 
+        it "should ensure the action is known" do
+          expect {
+            @ddl.validate_rpc_request(:fail, {})
+          }.to raise_error("Attempted to call action fail for rspec but it's not declared in the DDL")
+
+          @ddl.validate_rpc_request(:test, {:required => "f"})
+        end
+
+        it "should check all required arguments are present" do
           @ddl.stubs(:validate_input_argument).returns(true)
 
           expect {
@@ -78,20 +145,17 @@ module MCollective
         end
 
         it "should input validate every supplied key" do
-          @ddl.action(:test, :description => "rspec")
-          @ddl.instance_variable_set("@current_entity", :test)
-          @ddl.input(:optional, :prompt => "prompt", :description => "descr",
-                     :type => :string, :optional => true, :validation => "",
-                     :maxlength => 1)
-          @ddl.input(:required, :prompt => "prompt", :description => "descr",
-                     :type => :string, :optional => false, :validation => "",
-                     :maxlength => 1)
-
-
           @ddl.expects(:validate_input_argument).with(@ddl.entities[:test][:input], :required, "f")
           @ddl.expects(:validate_input_argument).with(@ddl.entities[:test][:input], :optional, "f")
 
           @ddl.validate_rpc_request(:test, {:required => "f", :optional => "f"}).should == true
+        end
+
+        it "should input validate string keys for symbol inputs correctly" do
+          @ddl.expects(:validate_input_argument).with(@ddl.entities[:test][:input], :required, "f")
+          @ddl.expects(:validate_input_argument).with(@ddl.entities[:test][:input], :optional, "f")
+
+          @ddl.validate_rpc_request(:test, {"required" => "f", "optional" => "f"}).should == true
         end
       end
 

@@ -166,11 +166,51 @@ module MCollective
         return unless input
 
         input.keys.each do |key|
-          if !arguments.include?(key) && !input[key][:default].nil? && !input[key][:optional]
+          if key.is_a?(Symbol) && arguments.include?(key.to_s) && !input.include?(key.to_s)
+            compat_arg = key.to_s
+          else
+            compat_arg = key
+          end
+
+          if !arguments.include?(compat_arg) && !input[key][:default].nil? && !input[key][:optional]
             Log.debug("Setting default value for input '%s' to '%s'" % [key, input[key][:default]])
-            arguments[key] = input[key][:default]
+            arguments[compat_arg] = input[key][:default]
           end
         end
+      end
+
+      # Creates a new set of arguments with string arguments mapped to symbol ones
+      #
+      # This is to assist with moving to a JSON pure world where requests might come
+      # in from REST or other languages, those languages and indeed JSON itself does
+      # support symbols.
+      #
+      # It ensures a backward compatible mode where for rpcutil both of these requests
+      # are equivelant
+      #
+      #   c.get_fact(:fact => "cluster")
+      #   c.get_fact("fact" => "cluster")
+      #
+      # The case where both :fact and "fact" is in the DDL cannot be handled correctly
+      # and this code will assume the caller means "fact" in that case.  There's no
+      # way to represent such a request in JSON and just in general sounds like a bad
+      # idea, so a warning is logged which would in default client configuration appear
+      # on the clients display
+      def symbolize_basic_input_arguments(input, arguments)
+        warned = false
+
+        Hash[arguments.map do |key, value|
+          if input.include?(key.intern) && input.include?(key.to_s) && !warned
+            Log.warn("String and Symbol versions of input %s found in the DDL for %s, ensure your DDL keys are unique." % [key, @pluginname])
+            warned = true
+          end
+
+          if key.is_a?(String) && input.include?(key.intern) && !input.include?(key)
+            [key.intern, value]
+          else
+            [key, value]
+          end
+        end]
       end
 
       # Helper to use the DDL to figure out if the remote call to an
@@ -182,16 +222,17 @@ module MCollective
         end
 
         input = action_interface(action)[:input] || {}
+        compatible_args = symbolize_basic_input_arguments(input, arguments)
 
         input.keys.each do |key|
           unless input[key][:optional]
-            unless arguments.keys.include?(key)
+            unless compatible_args.include?(key)
               raise DDLValidationError, "Action #{action} needs a #{key} argument"
             end
           end
 
-          if arguments.keys.include?(key)
-            validate_input_argument(input, key, arguments[key])
+          if compatible_args.include?(key)
+            validate_input_argument(input, key, compatible_args[key])
           end
         end
 

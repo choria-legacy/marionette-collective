@@ -20,6 +20,28 @@ module MCollective
         @request = Request.new(@req, @ddl)
       end
 
+      describe "#compatible_key" do
+        it "should return the key if its a known key already" do
+          expect(@request.compatible_key(:foo)).to be(:foo)
+        end
+
+        it "should return the symbol key if the DDL defines both" do
+          @ddl.action("test", :description => "rspec")
+          @ddl.instance_variable_set("@current_entity", "test")
+          @ddl.input(:test, :prompt => "test", :description => "test", :type => :boolean, :optional => true)
+          @ddl.input("test", :prompt => "test", :description => "test", :type => :boolean, :optional => true)
+
+          expect(@request.compatible_key(:test)).to be(:test)
+          expect(@request.compatible_key("test")).to eq("test")
+        end
+
+        it "should return the stringified key if a interned version of known string data was requested" do
+          expect(@request.compatible_key(:string)).to eq(:string)
+          @req[:body][:data]["string"] = "string data"
+          expect(@request.compatible_key(:string)).to eq("string")
+        end
+      end
+
       describe "#validate!" do
         it "should validate the request using the supplied DDL" do
           @ddl.expects(:validate_rpc_request).with("test", {:foo => "bar", :process_results => true})
@@ -60,6 +82,18 @@ module MCollective
           @req.delete(:callerid)
           Request.new(@req, @ddl).caller.should == "unknown"
         end
+
+        it "should support JSON pure inputs" do
+          @req[:body] = {"action" => "test",
+                         "data"   => {"foo" => "bar", "process_results" => true},
+                         "agent"  => "tester"}
+
+          request = Request.new(@req, @ddl)
+
+          expect(request.action).to eq("test")
+          expect(request.agent).to eq("tester")
+          expect(request.data).to eq("foo" => "bar", "process_results" => true)
+        end
       end
 
       describe "#include?" do
@@ -81,6 +115,8 @@ module MCollective
 
         it "should return correct value" do
           @req[:body][:data][:process_results] = false
+          Request.new(@req, @ddl).should_respond?.should == false
+          @req[:body][:data]["process_results"] = false
           Request.new(@req, @ddl).should_respond?.should == false
         end
       end
