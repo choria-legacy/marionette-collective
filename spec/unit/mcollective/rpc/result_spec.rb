@@ -27,6 +27,34 @@ module MCollective
         end
       end
 
+      describe "#convert_data_based_on_ddl" do
+        it "should convert string data to symbol data based on the DDL" do
+          ddl = DDL.new("rspec", :agent, false)
+          ddl.metadata(:name => "name", :description => "description", :author => "author", :license => "license", :version => "version", :url => "url", :timeout => "timeout")
+          ddl.action("test", :description => "rspec")
+          ddl.instance_variable_set("@current_entity", "test")
+          ddl.output(:one, :description => "rspec one", :display_as => "One")
+
+          DDL.expects(:new).with("rspec").returns(ddl)
+
+          raw_result = {
+            "sender" => "rspec.id",
+            "statuscode" => 1,
+            "statusmsg" => "rspec status",
+            "data" => {
+              "one" => 1,
+              "two" => 2
+            }
+          }
+
+          result = Result.new("rspec", "test", raw_result)
+          expect(result.data).to eq(
+            :one => 1,
+            "two" => 2
+          )
+        end
+      end
+
       describe "#[]" do
         it "should access the results hash and return correct data" do
           @result[:foo].should == "bar"
@@ -71,17 +99,17 @@ module MCollective
 
       describe "#<=>" do
         it "should implement the Combined Comparison operator based on sender name" do
-          result_a = Result.new("tester", 
-                                "test", 
-                                { :statuscode => 0, 
-                                  :statusmsg => "OK", 
-                                  :sender => "a_rspec",  
+          result_a = Result.new("tester",
+                                "test",
+                                { :statuscode => 0,
+                                  :statusmsg => "OK",
+                                  :sender => "a_rspec",
                                   :data => {}})
-          result_b = Result.new("tester", 
-                                "test", 
-                                { :statuscode => 0, 
-                                  :statusmsg => "OK", 
-                                  :sender => "b_rspec",  
+          result_b = Result.new("tester",
+                                "test",
+                                { :statuscode => 0,
+                                  :statusmsg => "OK",
+                                  :sender => "b_rspec",
                                   :data => {}})
 
           (result_a <=> result_b).should == -1

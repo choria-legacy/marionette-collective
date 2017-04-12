@@ -39,6 +39,65 @@ module MCollective
         @client.stubs(:ddl).returns(ddl)
       end
 
+      describe "#rpc_result_from_reply" do
+        it "should support symbol style replies" do
+          raw_result = {
+            :senderid => "rspec.id",
+            :body => {
+              :statuscode => 1,
+              :statusmsg => "rspec status",
+              :data => {
+                :one => 1
+              }
+            }
+          }
+
+          result = @client.rpc_result_from_reply("rspec", "test", raw_result)
+
+          expect(result.agent).to eq("rspec")
+          expect(result.action).to eq("test")
+          expect(result[:sender]).to eq("rspec.id")
+          expect(result[:statuscode]).to eq(1)
+          expect(result[:statusmsg]).to eq("rspec status")
+          expect(result[:data]).to eq(:one => 1)
+          expect(result.results).to eq(
+            :sender => "rspec.id",
+            :statuscode => 1,
+            :statusmsg => "rspec status",
+            :data => {:one => 1}
+          )
+        end
+
+        it "should support string style replies" do
+          raw_result = {
+            "senderid" => "rspec.id",
+            "body" => {
+              "statuscode" => 1,
+              "statusmsg" => "rspec status",
+              "data" => {
+                "one" => 1,
+                "two" => 2
+              }
+            }
+          }
+
+          result = @client.rpc_result_from_reply("rspec", "test", raw_result)
+
+          expect(result.agent).to eq("rspec")
+          expect(result.action).to eq("test")
+          expect(result[:sender]).to eq("rspec.id")
+          expect(result[:statuscode]).to eq(1)
+          expect(result[:statusmsg]).to eq("rspec status")
+          expect(result[:data]).to eq("one" => 1, "two" => 2)
+          expect(result.results).to eq(
+            :sender => "rspec.id",
+            :statuscode => 1,
+            :statusmsg => "rspec status",
+            :data => {"one" => 1, "two" => 2}
+          )
+        end
+      end
+
       describe "#detect_and_set_stdin_discovery" do
         before(:each) do
           @client = Client.new("foo", {:options => {:filter => Util.empty_filter, :config => "/nonexisting", :stdin => @stdin}})

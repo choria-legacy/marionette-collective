@@ -183,7 +183,7 @@ module MCollective
       #
       # This is to assist with moving to a JSON pure world where requests might come
       # in from REST or other languages, those languages and indeed JSON itself does
-      # support symbols.
+      # not support symbols.
       #
       # It ensures a backward compatible mode where for rpcutil both of these requests
       # are equivelant
