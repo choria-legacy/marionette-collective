@@ -594,7 +594,7 @@ This setting is **not** configured in activemq.xml; it's an extra argument to th
 
 ### Increase JVM Heap if Necessary
 
-Likewise, the max heap is usually configured in the wrapper config file (`wrapper.java.maxmemory=512`) or on the command line (`-Xmx512m`).
+Likewise, the max heap is usually configured in the wrapper config file (`wrapper.java.maxmemory=512`) or on the command line (`-Xmx512m`). If you are using the default bin/activemq script you can also set the environment variable (`ACTIVEMQ_OPTS_MEMORY="-Xms256M -Xmx512M"`).
 
 ### Memory and Temp Usage for Messages (`systemUsage`)
 
