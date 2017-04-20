@@ -193,7 +193,7 @@ module MCollective
           Log.warn(e)
 
         rescue NotTargettedAtUs => e
-          Log.debug("Message does not pass filters, ignoring")
+          Log.info(e)
 
         rescue MessageNotReceived, UnexpectedMessageType => e
           Log.warn(e)
@@ -213,7 +213,7 @@ module MCollective
 
     # Deals with messages directed to agents
     def agentmsg(request)
-      Log.debug("Handling message for agent '#{request.agent}' on collective '#{request.collective}'")
+      Log.info("Handling message #{request.description}: #{request.payload[:body]}")
 
       @agents.dispatch(request, @connection) do |reply_message|
         reply(reply_message, request) if reply_message

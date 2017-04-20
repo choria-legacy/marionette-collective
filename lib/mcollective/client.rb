@@ -66,10 +66,7 @@ module MCollective
     # responses and doesn't execute any passed in code blocks for responses
     def sendreq(msg, agent, filter = {})
       request = createreq(msg, agent, filter)
-
-      Log.debug("Sending request #{request.requestid} to the #{request.agent} agent with ttl #{request.ttl} in collective #{request.collective}")
-
-      request.publish
+      publish(request)
       request.requestid
     end
 
@@ -224,12 +221,16 @@ module MCollective
       Log.debug("Starting publishing with publish timeout of #{publish_timeout}")
       begin
         Timeout.timeout(publish_timeout) do
-          Log.debug("Sending request #{request.requestid} to the #{request.agent} agent with ttl #{request.ttl} in collective #{request.collective}")
-          request.publish
+          publish(request)
         end
       rescue Timeout::Error => e
         Log.warn("Could not publish all messages. Publishing timed out.")
       end
+    end
+
+    def publish(request)
+      Log.info("Sending request #{request.requestid} for agent '#{request.agent}' with ttl #{request.ttl} in collective '#{request.collective}'")
+      request.publish
     end
 
     # Starts the response receiver routine

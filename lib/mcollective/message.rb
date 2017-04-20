@@ -130,6 +130,14 @@ module MCollective
       @base64
     end
 
+    def description
+      cid = ""
+      cid += payload[:callerid] + "@" if payload.include?(:callerid)
+      cid += payload[:senderid]
+
+      "#{requestid} for agent '#{agent}' in collective '#{collective}' from #{cid}"
+    end
+
     def encode!
       case type
         when :reply
@@ -207,17 +215,11 @@ module MCollective
       msg_age = Time.now.utc.to_i - msgtime
 
       if msg_age > ttl
-        cid = ""
-        cid += payload[:callerid] + "@" if payload.include?(:callerid)
-        cid += payload[:senderid]
-
-        if msg_age > ttl
-          PluginManager["global_stats"].ttlexpired
-
-          raise(MsgTTLExpired, "message #{requestid} from #{cid} created at #{msgtime} is #{msg_age} seconds old, TTL is #{ttl}.  Rejecting message.")
-        end
+        PluginManager["global_stats"].ttlexpired
+        raise(MsgTTLExpired, "Message #{description} created at #{msgtime} is #{msg_age} seconds old, TTL is #{ttl}. Rejecting message.")
       end
-      raise(NotTargettedAtUs, "Received message is not targetted to us") unless PluginManager["security_plugin"].validate_filter?(payload[:filter])
+
+      raise(NotTargettedAtUs, "Message #{description} does not pass filters. Ignoring message.") unless PluginManager["security_plugin"].validate_filter?(payload[:filter])
 
       @validated = true
     end
