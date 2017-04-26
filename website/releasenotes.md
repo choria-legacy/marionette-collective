@@ -10,6 +10,17 @@ will be highlighted here.
 
 <a name="2_10_3">&nbsp;</a>
 
+## 2.10.4 - 2017/04/04
+
+### Changes since 2.10.3
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2017/05/11|Release *2.10.4*||
+|2017/04/06|Switch to using YAML.safe_load|MCO-794|
+
+<a name="2_10_3">&nbsp;</a>
+
 ## 2.10.3 - 2017/04/04
 
 ### Changes since 2.10.2
