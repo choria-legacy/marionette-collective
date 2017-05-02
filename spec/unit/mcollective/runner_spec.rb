@@ -259,7 +259,7 @@ module MCollective
         it 'should log if a message was received by not directed at the server' do
           runner.expects(:receive).raises(NotTargettedAtUs)
           runner.instance_variable_set(:@exit_receiver_thread, true)
-          Log.expects(:debug).with("Message does not pass filters, ignoring")
+          Log.expects(:info)
           runner.send(:receiver_thread)
         end
 

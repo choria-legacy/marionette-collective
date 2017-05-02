@@ -371,13 +371,17 @@ module MCollective
 
         payload = mock
         payload.expects("[]").with(:filter).returns({})
+        payload.expects(:include?).with(:callerid).returns(false)
+        payload.expects("[]").with(:senderid).returns('sender')
 
-        m = Message.new(payload, "message", :type => :request)
+        m = Message.new(payload, "message", {:type => :request, :collective => 'collective',
+                                             :agent => 'rspecagent', :requestid => '1234'})
         m.instance_variable_set("@msgtime", Time.now.to_i)
 
         expect {
           m.validate
-        }.to raise_error(NotTargettedAtUs)
+        }.to raise_error(NotTargettedAtUs,
+                         "Message 1234 for agent 'rspecagent' in collective 'collective' from sender does not pass filters. Ignoring message.")
       end
 
       it "should pass for good messages" do
@@ -413,12 +417,16 @@ module MCollective
 
         MCollective::PluginManager << {:type => "global_stats", :class => stats}
 
-        m = Message.new({:callerid => "caller", :senderid => "sender"}, "message", :type => :request)
-        m.instance_variable_set("@msgtime", (Time.now.to_i - 120))
+        m = Message.new({:callerid => "caller", :senderid => "sender"}, "message",
+                        {:type => :request, :collective => 'collective',
+                         :agent => 'rspecagent', :requestid => '1234'})
+        mtime = Time.now.to_i - 120
+        m.instance_variable_set("@msgtime", mtime)
 
         expect {
           m.validate
-        }.to raise_error(MsgTTLExpired)
+        }.to raise_error(MsgTTLExpired,
+                         /Message 1234 for agent 'rspecagent' in collective 'collective' from caller@sender created at #{mtime} is 1[12][019] seconds old, TTL is 60. Rejecting message./)
       end
     end
 
