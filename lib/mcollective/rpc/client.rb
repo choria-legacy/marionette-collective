@@ -739,8 +739,13 @@ module MCollective
       end
 
       def rpc_result_from_reply(agent, action, reply)
-        Result.new(agent, action, {:sender => reply[:senderid], :statuscode => reply[:body][:statuscode],
-                                   :statusmsg => reply[:body][:statusmsg], :data => reply[:body][:data]})
+        senderid = reply.include?("senderid") ? reply["senderid"] : reply[:senderid]
+        body = reply.include?("body") ? reply["body"] : reply[:body]
+        s_code = body.include?("statuscode") ? body["statuscode"] : body[:statuscode]
+        s_msg = body.include?("statusmsg") ? body["statusmsg"] : body[:statusmsg]
+        data = body.include?("data") ? body["data"] : body[:data]
+
+        Result.new(agent, action, {:sender => senderid, :statuscode => s_code, :statusmsg => s_msg, :data => data})
       end
 
       # for requests that do not care for results just

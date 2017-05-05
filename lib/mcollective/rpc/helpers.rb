@@ -231,7 +231,6 @@ module MCollective
           result_text << ""
         else
           [result].flatten.each do |r|
-
             if flags[:verbose]
               result_text << "%-40s: %s\n" % [r[:sender], r[:statusmsg]]
 
