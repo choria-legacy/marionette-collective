@@ -59,7 +59,7 @@ module MCollective
 
   MCollective::Vendor.load_vendored
 
-  VERSION="2.10.3"
+  VERSION="2.10.4"
 
   def self.version
     VERSION
