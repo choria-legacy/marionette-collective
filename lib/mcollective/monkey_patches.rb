@@ -134,7 +134,9 @@ class OpenSSL::SSL::SSLContext
     DEFAULT_PARAMS[:options] |= OpenSSL::SSL::OP_DONT_INSERT_EMPTY_FRAGMENTS
   end
 
-  DEFAULT_PARAMS[:ciphers] << ':!SSLv2'
+  if DEFAULT_PARAMS[:ciphers]
+    DEFAULT_PARAMS[:ciphers] << ':!SSLv2'
+  end
 
   alias __mcollective_original_initialize initialize
   private :__mcollective_original_initialize
