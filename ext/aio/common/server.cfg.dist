@@ -7,7 +7,7 @@ libdir = /opt/puppetlabs/mcollective/plugins
 libdir = /usr/share/mcollective/plugins
 libdir = /usr/libexec/mcollective
 
-logfile = /var/log/puppetlabs/mcollective.log
+logfile = /var/log/puppetlabs/mcollective/mcollective.log
 loglevel = info
 daemonize = 1
 

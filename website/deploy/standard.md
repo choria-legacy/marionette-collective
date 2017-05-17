@@ -345,7 +345,7 @@ This example template snippet shows the settings you need to use in a standard d
     # Logging:
     logger_type = file
     loglevel = info
-    logfile = /var/log/puppetlabs/mcollective.log
+    logfile = /var/log/puppetlabs/mcollective/mcollective.log
     keeplogs = 5
     max_log_size = 2097152
     logfacility = user
