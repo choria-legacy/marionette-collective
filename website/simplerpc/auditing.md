@@ -35,7 +35,7 @@ module MCollective
 	    require 'pp'
 
             def audit_request(request, connection)
-                logfile = Config.instance.pluginconf["rpcaudit.logfile"] || "/var/log/mcollective-audit.log"
+                logfile = Config.instance.pluginconf["rpcaudit.logfile"] || "/var/log/puppetlabs/mcollective/mcollective-audit.log"
 
                 now = Time.now
                 now_tz = tz = now.utc? ? "Z" : now.strftime("%z")
@@ -55,7 +55,7 @@ As you can see you only need to provide one method called _audit_request_, you w
 The Logfile plugin takes a configuration option:
 
 {% highlight ini %}
-plugin.rpcaudit.logfile = /var/log/mcollective-audit.log
+plugin.rpcaudit.logfile = /var/log/puppetlabs/mcollective/mcollective-audit.log
 {% endhighlight %}
 
 We do not do log rotation of this file so you should do that yourself if you enable this plugin.
