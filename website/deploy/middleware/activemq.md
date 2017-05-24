@@ -110,10 +110,7 @@ You can also read external documentation for a more complete understanding.
 
 ### External ActiveMQ Documentation
 
-The Apache ActiveMQ documentation contains important information, but it is often incomplete, badly organized, and confusing. The Fuse documentation (a commercially supported release of ActiveMQ) is significantly better written and better organized, although it requires signing up for an email newsletter, but it may be out of sync with the most recent ActiveMQ releases.
-
 * [Apache ActiveMQ Documentation][apache_activemq_config_docs]
-* [Fuse Documentation](https://access.redhat.com/documentation/en-US/Fuse_Message_Broker/)
 
 ### Wildcards
 
@@ -262,13 +259,12 @@ When they connect, MCollective clients and servers provide a username, password,
 
 By default, ActiveMQ ignores all of these and has no particular concept of "users." Enabling authentication means ActiveMQ will only allow users with proper credentials to connect. It also gives you the option of setting up per-destination authorization (see below).
 
-You set up authentication by adding the appropriate element to the `<plugins>` element. [The Fuse documentation has a more complete description of ActiveMQ's authentication capabilities;][fuse_security] the [ActiveMQ docs version][activemq_security] is less organized and less complete. In summary:
+You set up authentication by adding the appropriate element to the `<plugins>` element. [See also the ActiveMQ docs about authentication][activemq_security]. In summary:
 
 - `simpleAuthenticationPlugin` defines users directly in activemq.xml. It's well-tested and easy. It also requires you to edit activemq.xml and restart the broker every time you add a new user. The activemq.xml file will contain sensitive passwords and must be protected.
 - `jaasAuthenticationPlugin` lets you use external text files (or even an LDAP database) to define users and groups. You need to make a `login.config` file in the ActiveMQ config directory, and possibly two more files. You can add users and groups without restarting the broker. The external users file will contain sensitive passwords and must be protected.
 - `jaasCertificateAuthenticationPlugin` ignores the username and password that MCollective presents; instead, it reads the distinguished name of the certificate and maps that to a username. It requires TLS, a `login.config` file, and two other external files. It is also impractical unless your servers are all using the same SSL certificate to connect to ActiveMQ; the currently recommended approach of re-using Puppet certificates makes this problematic, but you can probably ship credentials around and figure out a way to make it work. This is not currently well-tested with MCollective.
 
-[fuse_security]: https://access.redhat.com/documentation/en-US/Fuse_Message_Broker/5.5/html/Security_Guide/files/front.html
 [activemq_security]: http://activemq.apache.org/security.html
 
 The example below uses `simpleAuthenticationPlugin`.
@@ -440,14 +436,12 @@ You can group multiple ActiveMQ servers into networks of brokers, and they can r
 
 This is naturally more complicated than configuring a single broker.
 
-Designing your broker network's topology is beyond the scope of this reference. The [ActiveMQ Clusters guide](/mcollective/reference/integration/activemq_clusters.html) has a brief description of an example network; see [the ActiveMQ docs][NetworksOfBrokers] or [the Fuse docs][fuse_cluster] for more detailed info. For our purposes, we assume you have already decided:
+Designing your broker network's topology is beyond the scope of this reference. The [ActiveMQ Clusters guide](/mcollective/reference/integration/activemq_clusters.html) has a brief description of an example network; see [the ActiveMQ docs][NetworksOfBrokers] for more detailed info. For our purposes, we assume you have already decided:
 
 * Which ActiveMQ brokers can communicate with each other.
 * What kinds of traffic should be excluded from other brokers.
 
 [NetworksOfBrokers]: http://activemq.apache.org/networks-of-brokers.html
-[fuse_cluster]: https://access.redhat.com/documentation/en-US/Fuse_Message_Broker/5.5/html/Using_Networks_of_Brokers/files/front.html
-
 
 ### Broker Name
 
@@ -528,18 +522,12 @@ Notes:
 * If you're using TLS for OpenWire, you'll need to change the URIs to something like `static:(ssl://stomp2.example.com:61617)` --- note the change of both protocol and port.
 * The network TTL is **the number of network hops** that messages and subscriptions are allowed to pass through. You will need to adjust the TTL to match your network's topology. In a ring, it would be the number of brokers minus one; in a star, it would be two.
 * A username and password are required. The broker with the `<networkConnector>` connects to the other broker as this user. This user should have **full rights** on **all** queues and topics, unless you really know what you're doing. (See [authentication](#authentication-users-and-groups) and [authorization](#authorization-group-permissions) above.)
-* Alternately, you can set up two uni-directional connectors on both brokers; see the Fuse or ActiveMQ documentation linked above for more details.
+* Alternately, you can set up two uni-directional connectors on both brokers; see the ActiveMQ documentation linked above for more details.
 
 
 ### Destination Filtering
 
-[fuse_filtering]: https://access.redhat.com/documentation/en-US/Fuse_Message_Broker/5.5/html/Using_Networks_of_Brokers/files/FMQNetworksDestinationFiltering.html
-
 _Optional._
-
-Relevant external docs:
-
-* [Fuse filtering guide][fuse_filtering]
 
 If you want to prevent certain traffic from leaving a given datacenter, you can do so with `<excludedDestinations>` or `<dynamicallyIncludedDestinations>` elements **inside each `<networkConnector>` element.** This is mostly useful for reducing noise (which can potentially save you money, depending on network topology and datacenter locations), but it can also serve security purposes. Generally, you'll be filtering on [subcollectives][], which, as described above, begin their destination names with the name of the collective.
 
@@ -551,7 +539,7 @@ Both types of filter element can contain `<queue>` and `<topic>` elements, with 
 
 Assume a star network topology.
 
-This topology can be achieved by either having each edge broker connect to the central broker, or having the central broker connect to each edge broker. You can achieve the same filtering in both situations, but with slightly different configuration. The two examples below have similar but not identical effects; the ramifications are subtle, and we _really_ recommend reading the external ActiveMQ and Fuse documentation if you've come this far in your deployment scale.
+This topology can be achieved by either having each edge broker connect to the central broker, or having the central broker connect to each edge broker. You can achieve the same filtering in both situations, but with slightly different configuration. The two examples below have similar but not identical effects; the ramifications are subtle, and we _really_ recommend reading the external ActiveMQ documentation if you've come this far in your deployment scale.
 
 If your central broker is connecting to the UK broker, and you want it to only pass on traffic for the global `mcollective` collective and the UK-specific `uk_collective` collective:
 

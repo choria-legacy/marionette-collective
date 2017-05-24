@@ -6,7 +6,6 @@ toc: false
 [MessageFlow]: /mcollective/reference/basic/messageflow.html
 [NetworksOfBrokers]: http://activemq.apache.org/networks-of-brokers.html
 [SampleConfig]: http://github.com/puppetlabs/marionette-collective/tree/master/ext/activemq/
-[fuse_cluster]: https://access.redhat.com/documentation/en-US/Fuse_Message_Broker/5.5/html/Using_Networks_of_Brokers/files/front.html
 [activemq_network]: /mcollective/deploy/middleware/activemq.html#settings-for-networks-of-brokers
 
 Relying on existing middleware tools and not re-inventing the transport wheel ourselves means we can take advantage of a lot of the built in features they provide.  One such feature is clustering in ActiveMQ that allows for highly scalable and flexible network layouts.
@@ -51,7 +50,7 @@ ActiveMQ supports many types of cluster; we think their Network of Brokers model
 
 You will need to configure your ActiveMQ servers with everything from the ["Settings for Networks of Brokers" section of the ActiveMQ config reference][activemq_network]. Note the comments about the bi-directional connections: In the example network described above, you could either configure a pair of connectors on each datacenter broker to connect them to the NOC, or configure several pairs of connectors on the NOC broker to connect it to every datacenter. Do whichever makes sense for your own convenience and security needs.
 
-There is also a set of example config files in the [ext/activemq directory of the MCollective source][SampleConfig]; refer to these while reading the config reference. 
+There is also a set of example config files in the [ext/activemq directory of the MCollective source][SampleConfig]; refer to these while reading the config reference.
 
-See [the ActiveMQ docs][NetworksOfBrokers] or [the Fuse docs][fuse_cluster] for more detailed info about networks of brokers.
+See [the ActiveMQ docs][NetworksOfBrokers] for more detailed info about networks of brokers.
 
