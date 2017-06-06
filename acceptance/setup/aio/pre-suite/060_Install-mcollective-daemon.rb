@@ -14,7 +14,7 @@ test_name 'configure mcollective daemon' do
     unless h.platform =~/windows/ then
       mco_confdir = "/etc/puppetlabs/mcollective"
       libdir = "/opt/puppetlabs/mcollective/plugins"
-      logdir = "/var/log/puppetlabs"
+      logdir = "/var/log/puppetlabs/mcollective"
       puppet_confdir = "/etc/puppetlabs/puppet"
     else
       mco_confdir = "C:/ProgramData/PuppetLabs/mcollective/etc"
@@ -28,7 +28,7 @@ test_name 'configure mcollective daemon' do
 main_collective = mcollective
 collectives = mcollective
 libdir = #{libdir}
-logfile = #{logdir}/mcollective/mcollective.log
+logfile = #{logdir}/mcollective.log
 loglevel = info
 daemonize = 1
 
