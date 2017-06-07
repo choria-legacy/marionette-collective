@@ -99,3 +99,14 @@ ACTIVEMQ_SOURCE
 
 ACTIVEMQ_VERSION
     :  The version of ActiveMQ requested.
+
+JDK_SOURCE
+    :  A url from which to download pre-built JDK binaries for Windows (other
+    platforms use the package manager for the OS). Together with
+    JDK_VERSION_FULL, specifies where to get binaries. The default uses an
+    internal Puppet mirror, externally you should use https://download.oracle.com/otn-pub/java/jdk
+
+JDK_VERSION_FULL
+    :  The full version of JDK requested. From Oracle, this should include the
+    build number (e.g. `8u111-b14`). See the [Oracle JDK downoad page](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+    for details.
