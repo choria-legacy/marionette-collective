@@ -1,12 +1,20 @@
 test_name 'install activemq' do
   amq_version = ENV['ACTIVEMQ_VERSION'] || '5.14.4'
-  amq_source_url = 
+  amq_source_url =
     if amq_source = ENV['ACTIVEMQ_SOURCE']
       "#{amq_source}/activemq/#{amq_version}"
     else
       'http://buildsources.delivery.puppetlabs.net'
     end
   jdk_version = '8'
+  jdk_source_url =
+    if jdk_source = ENV['JDK_SOURCE'] and jdk_version_full = ENV['JDK_VERSION_FULL']
+      jdk_version, jdk_build = jdk_version_full.split('-')
+      "#{jdk_source}/#{jdk_version_full}"
+    else
+      'http://buildsources.delivery.puppetlabs.net'
+    end
+
   # install activemq, copy config and trust/keystore
   curl_options = '--silent --show-error --fail'
   if mco_master.platform =~ /el-|centos/ then
@@ -26,23 +34,19 @@ test_name 'install activemq' do
   elsif mco_master.platform =~/windows/ then
 
     step "Windows - Install Oracle JDK"
-    oracle_base_url = 'https://download.oracle.com/otn-pub/java/jdk'
-    jdk_version_full = '8u111-b14'
-    jdk_version, jdk_build = jdk_version_full.split('-')
     if mco_master[:ruby_arch] == 'x64' then
       jdk_arch = 'x64'
     else
       jdk_arch = 'i586'
     end
     if mco_master.platform =~ /2003/ then
-      fail_test "Sorry, this test pre-suite does not yet support Windows 2003"
-      admin_dir = 'Documents\ and\ Settings/Administrator'
+      fail_test "Windows 2003 is not supported"
     else
       admin_dir = 'Users/Administrator'
     end
     jdk_exe = "jdk-#{jdk_version}-windows-#{jdk_arch}.exe"
 
-    curl_on(mco_master, "-k -L -O -H 'Cookie: oraclelicense=accept-securebackup-cookie'  '#{oracle_base_url}/#{jdk_version_full}/#{jdk_exe}'")
+    curl_on(mco_master, "-k -L -O -H 'Cookie: oraclelicense=accept-securebackup-cookie'  '#{jdk_source_url}/#{jdk_exe}'")
 
     on(mco_master, "mv #{jdk_exe} /cygdrive/c/#{admin_dir}/")
     manifest = <<EOS
