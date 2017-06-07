@@ -14,6 +14,29 @@ module MCollective
         super
       end
 
+      # Introducing a new helper method to load facts from a file
+      # using safer alternate of doing a parse file following by 
+      # stripping tags
+      # We cannot use YAML.safe_load since it requires Ruby 2.1 and MCO
+      # needs to compatible with older versions.
+      def load_facts_from_file(file_name)
+        file_data = {}
+	begin
+	  file_data = Psych.parse_file(file_name)
+      	  file_data.root.each do |o|
+            if o.respond_to?(:tag=) and
+           	o.tag != nil and
+           	o.tag.start_with?("!ruby")
+              o.tag = nil
+            end
+          end
+          file_data.to_ruby
+	rescue Exception => e
+	  Log.error("Failed to read/parse file #{file_name}: #{e.class}: #{e}")
+	end
+	file_data
+      end
+
       def load_facts_from_source
         config = Config.instance
 
@@ -23,7 +46,7 @@ module MCollective
         fact_files.each do |file|
           begin
             if File.exist?(file)
-              facts.merge!(YAML.load(File.read(file)))
+              facts.merge!(load_facts_from_file(file))
             else
               raise("Can't find YAML file to load: #{file}")
             end
