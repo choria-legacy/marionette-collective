@@ -11,7 +11,9 @@ end
 
 group :dev do
   gem 'rake', '~> 10.4'
-  gem 'rubocop', '~> 0.28.0', :platforms => [:ruby] unless RUBY_VERSION =~ /^1\.8/
+  if RUBY_VERSION =~ /^2\.[0-9]\.[0-9]/
+    gem 'rubocop', '~> 0.48.1', :platforms => [:ruby]
+  end
 end
 
 group :test do
