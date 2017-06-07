@@ -14,9 +14,12 @@ class SystemUniversal
 #
 # constants
 #
-  SystemUniversal::VERSION = '2.5.2' unless SystemUniversal.send(:const_defined?, :VERSION)
+  SystemUniversal::VERSION = '2.6.5' unless SystemUniversal.send(:const_defined?, :VERSION)
   def SystemUniversal.version() SystemUniversal::VERSION end
   def version() SystemUniversal::VERSION end
+  def SystemUniversal.description
+    "universal capture of stdout and stderr and handling of child process pid for windows, *nix, etc."
+  end
 #
 # class methods
 #
@@ -25,17 +28,22 @@ class SystemUniversal
   @ppid = Process.ppid
   @pid = Process.pid
   @turd = ENV['SYSTEMU_TURD']
+  @ruby = nil
 
-  c = begin; ::RbConfig::CONFIG; rescue NameError; ::Config::CONFIG; end
-  ruby = File.join(c['bindir'], c['ruby_install_name']) << c['EXEEXT']
-  @ruby = if system(ruby, '-e', '42')
-    ruby
-  else
-    system('ruby', '-e', '42') ? 'ruby' : warn('no ruby in PATH/CONFIG')
+  def self.ruby
+    return @ruby if @ruby
+
+    c = begin; ::RbConfig::CONFIG; rescue NameError; ::Config::CONFIG; end
+    ruby = File.join(c['bindir'], c['ruby_install_name']) << c['EXEEXT']
+    @ruby = if system(ruby, '-e', '42')
+      ruby
+    else
+      system('ruby', '-e', '42') ? 'ruby' : warn('no ruby in PATH/CONFIG')
+    end
   end
 
   class << SystemUniversal
-    %w( host ppid pid ruby turd ).each{|a| attr_accessor a}
+    %w( host ppid pid turd ).each{|a| attr_accessor a}
 
     def quote(*words)
       words.map{|word| word.inspect}.join(' ')
@@ -73,7 +81,7 @@ class SystemUniversal
         thread = nil
 
         quietly{
-          IO.popen "#{ quote(@ruby) } #{ quote(c['program']) }", 'r+' do |pipe|
+          IO.popen "#{ quote(@ruby) } #{ quote(c['program']) }", 'rb+' do |pipe|
             line = pipe.gets
             case line
               when %r/^pid: \d+$/
@@ -108,11 +116,11 @@ class SystemUniversal
       end
 
       if @stdout or @stderr
-        open(c['stdout']){|f| relay f => @stdout} if @stdout
-        open(c['stderr']){|f| relay f => @stderr} if @stderr
+        open(c['stdout'], 'rb'){|f| relay f => @stdout} if @stdout
+        open(c['stderr'], 'rb'){|f| relay f => @stderr} if @stderr
         status
       else
-        [status, IO.read(c['stdout']), IO.read(c['stderr'])]
+        [status, open(c['stdout'], 'rb'){|f| f.read}, open(c['stderr'], 'rb'){|f| f.read}]
       end
     end
   end
@@ -121,9 +129,9 @@ class SystemUniversal
     SystemUniversal.quote(*args, &block)
   end
 
-  def new_thread cid, block
+  def new_thread child_pid, block
     q = Queue.new
-    Thread.new(cid) do |cid|
+    Thread.new(child_pid) do |cid|
       current = Thread.current
       current.abort_on_exception = true
       q.push current
@@ -140,7 +148,7 @@ class SystemUniversal
     config = File.expand_path(File.join(tmp, 'config'))
 
     if @stdin
-      open(stdin, 'w'){|f| relay @stdin => f}
+      open(stdin, 'wb'){|f| relay @stdin => f}
     else
       FileUtils.touch stdin
     end
@@ -155,9 +163,9 @@ class SystemUniversal
     c['stdout'] = stdout
     c['stderr'] = stderr
     c['program'] = program
-    open(config, 'w'){|f| Marshal.dump(c, f)}
+    open(config, 'wb'){|f| Marshal.dump(c, f)}
 
-    open(program, 'w'){|f| f.write child_program(config)}
+    open(program, 'wb'){|f| f.write child_program(config)}
 
     c
   end
@@ -176,7 +184,7 @@ class SystemUniversal
 
       PIPE = STDOUT.dup
       begin
-        config = Marshal.load(IO.read('#{ config }'))
+        config = Marshal.load(IO.read('#{ config }',:mode=>"rb"))
 
         argv = config['argv']
         env = config['env']
@@ -205,9 +213,9 @@ class SystemUniversal
   end
 
   def relay srcdst
-    src, dst, ignored = srcdst.to_a.first
+    src, dst, _ = srcdst.to_a.first
     if src.respond_to? 'read'
-      while((buf = src.read(8192))); dst << buf; end
+      while((buffer = src.read(8192))); dst << buffer; end
     else
       if src.respond_to?(:each_line)
         src.each_line{|buf| dst << buf}
@@ -217,11 +225,21 @@ class SystemUniversal
     end
   end
 
+  def slug_for(*args)
+    options = args.last.is_a?(Hash) ? args.pop : {}
+    join = (options[:join] || options['join'] || '_').to_s
+    string = args.flatten.compact.join(join)
+    words = string.to_s.scan(%r|[/\w]+|)
+    words.map!{|word| word.gsub %r|[^/0-9a-zA-Z_-]|, ''}
+    words.delete_if{|word| word.nil? or word.strip.empty?}
+    words.join(join).downcase.gsub('/', (join * 2))
+  end
+
   def tmpdir d = Dir.tmpdir, max = 42, &b
     i = -1 and loop{
       i += 1
 
-      tmp = File.join d, "systemu_#{ @host }_#{ @ppid }_#{ @pid }_#{ rand }_#{ i += 1 }"
+      tmp = File.join(d, slug_for("systemu_#{ @host }_#{ @ppid }_#{ @pid }_#{ rand }_#{ i += 1 }"))
 
       begin
         Dir.mkdir tmp
@@ -246,11 +264,11 @@ class SystemUniversal
 
   def getopts opts = {}
     lambda do |*args|
-      keys, default, ignored = args
+      keys, default, _ = args
       catch(:opt) do
         [keys].flatten.each do |key|
-          [key, key.to_s, key.to_s.intern].each do |key|
-            throw :opt, opts[key] if opts.has_key?(key)
+          [key, key.to_s, key.to_s.intern].each do |k|
+            throw :opt, opts[k] if opts.has_key?(k)
           end
         end
         default
@@ -273,10 +291,11 @@ if defined? JRUBY_VERSION
         StreamReader.new(stream)
       end
 
-      exit_code = process.wait_for
       field = process.get_class.get_declared_field("pid")
       field.set_accessible(true)
       pid = field.get(process)
+      thread = new_thread pid, @block if @block
+      exit_code = process.wait_for
       [
         RubyProcess::RubyStatus.new_process_status(JRuby.runtime, exit_code, pid),
         stdout.join,
