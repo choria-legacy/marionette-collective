@@ -8,6 +8,10 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2017/06/09|Release *2.10.5*||
+|2017/06/07|Fix acceptance source for JDK on Windows|MCO-808|
+|2017/05/11|Release *2.10.4*||
+|2017/04/06|Switch to using YAML.safe_load|MCO-794|
 |2017/04/04|Release *2.10.3*||
 |2017/03/30|Allow M::Client users to access M::Message|MCO-790|
 |2017/03/09|Release *2.10.2*||

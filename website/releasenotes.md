@@ -8,7 +8,18 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
-<a name="2_10_3">&nbsp;</a>
+<a name="2_10_5">&nbsp;</a>
+
+## 2.10.5 - 2017/06/09
+
+### Changes since 2.10.4
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2017/06/09|Release *2.10.5*||
+|2017/06/07|Fix acceptance source for JDK on Windows|MCO-808|
+
+<a name="2_10_4">&nbsp;</a>
 
 ## 2.10.4 - 2017/04/04
 
