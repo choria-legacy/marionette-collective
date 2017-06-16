@@ -1,6 +1,6 @@
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
-gem 'stomp', '>= 1.4.1'
+gem 'stomp', '>= 1.4.4'
 
 if RUBY_VERSION =~ /^1\.8/
   gem 'systemu', '2.6.4'
