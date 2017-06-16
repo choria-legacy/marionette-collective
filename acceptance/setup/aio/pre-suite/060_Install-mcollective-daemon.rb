@@ -38,6 +38,8 @@ plugin.ssl_server_public = #{mco_confdir}/server.crt
 plugin.ssl_client_cert_dir = #{mco_confdir}/ssl-clients/
 
 connector = activemq
+plugin.activemq.heartbeat_interval = 30
+plugin.activemq.max_hbrlck_fails = 2
 plugin.activemq.pool.size = 1
 plugin.activemq.pool.1.host = activemq
 plugin.activemq.pool.1.port = 61613
