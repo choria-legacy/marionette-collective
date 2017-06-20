@@ -3,10 +3,11 @@
 
 Gem::Specification::new do |spec|
   spec.name = "systemu"
-  spec.version = "2.5.2"
+  spec.version = "2.6.4"
   spec.platform = Gem::Platform::RUBY
   spec.summary = "systemu"
-  spec.description = "description: systemu kicks the ass"
+  spec.description = "universal capture of stdout and stderr and handling of child process pid for windows, *nix, etc."
+  spec.license = "Ruby"
 
   spec.files =
 ["LICENSE",
@@ -33,8 +34,7 @@ Gem::Specification::new do |spec|
 
   spec.test_files = nil
 
-### spec.add_dependency 'lib', '>= version'
-#### spec.add_dependency 'map'
+  
 
   spec.extensions.push(*[])
 
