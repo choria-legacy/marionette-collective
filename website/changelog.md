@@ -4,6 +4,18 @@ title: Changelog
 toc: false
 ---
 
+## Version 2.11.x
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2017/06/21|Release *2.11.0*||
+|2017/06/21|MCollective client now logs sending a request at INFO level with additional details, and server logs handling those requests at INFO level with similar details to help identify corresponding events.|MCO-784|
+|2017/06/21|The default location for mcollective server logs is moved from `/var/log/puppetlabs` to `/var/log/puppetlabs/mcollective` (on Unix). No change has been made to Windows log locations.|MCO-783|
+|2017/06/21|MCollective will consider symbols and their string representation equivalent for serializing/deserializing and accessing message keys as long as they're unambiguous.|MCO-799|
+|2017/06/21|mcollective-client is now compatible with OpenSSL 1.1.0|MCO-804|
+|2017/06/21|systemu has been upgraded to a more recent version that fixes an issue marshaling multi-byte characters.|MCO-806|
+
+
 ## Version 2.10.x
 
 |Date|Description|Ticket|
