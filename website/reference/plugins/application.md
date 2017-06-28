@@ -173,13 +173,13 @@ option :message,
 #### Argument data types
 CLI arguments can be forced to a specific type, we also have some additional special types that the default ruby option parser cant handle on its own.
 
-You can force data to be of type String, Fixnum etc:
+You can force data to be of type String, Integer etc:
 
 {% highlight ruby %}
 option :count,
   :description    => "Count",
   :arguments      => ["--count MESSAGE"],
-  :type           => Fixnum
+  :type           => Integer
 {% endhighlight %}
 
 You can force an argument to be boolean:
@@ -209,7 +209,7 @@ You can validate input passed on the CLI:
 option :count,
   :description    => "Count",
   :arguments      => ["--count MESSAGE"],
-  :type           => Fixnum,
+  :type           => Integer,
   :validate       => Proc.new {|val| val < 10 ? true : "The message count has to be below 10" }
 {% endhighlight %}
 

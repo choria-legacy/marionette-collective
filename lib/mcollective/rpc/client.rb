@@ -566,7 +566,7 @@ module MCollective
           # limit method then pass in the limit thus minimizing the amount
           # of work we do in the discover phase and speeding it up significantly
           filter = @filter.merge({'collective' => @collective})
-          if @limit_method == :first and @limit_targets.is_a?(Fixnum)
+          if @limit_method == :first and @limit_targets.is_a?(Integer)
             @discovered_agents = @client.discover(filter, discovery_timeout, @limit_targets)
           else
             @discovered_agents = @client.discover(filter, discovery_timeout)

@@ -23,7 +23,8 @@ module MCollective
       end
 
       def []=(key, val)
-        raise "Can only store String, Integer, Float or Boolean data but got #{val.class} for key #{key}" unless [String, Fixnum, Bignum, Float, TrueClass, FalseClass].include?(val.class)
+        # checks using the string representation of the class name to avoid deprecations on Bignum and Fixnum
+        raise "Can only store String, Integer, Float or Boolean data but got #{val.class} for key #{key}" unless ["String", "Integer", "Bignum", "Fixnum", "Float", "TrueClass", "FalseClass"].include?(val.class.to_s)
 
         @data[key.to_sym] = val
       end

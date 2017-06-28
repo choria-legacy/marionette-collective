@@ -125,7 +125,7 @@ module MCollective
     end
 
     def discover(filter, timeout, limit)
-      raise "Limit has to be an integer" unless limit.is_a?(Fixnum)
+      raise "Limit has to be an integer" unless limit.is_a?(Integer)
 
       force_discovery_method_by_filter(filter)
 
