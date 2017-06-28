@@ -61,7 +61,7 @@ module MCollective
             end
 
           when "timeout"
-            raise "timeout should be a positive integer or the symbol :on_thread_exit symbol" unless val.eql?(:on_thread_exit) || ( val.is_a?(Fixnum) && val>0 )
+            raise "timeout should be a positive integer or the symbol :on_thread_exit symbol" unless val.eql?(:on_thread_exit) || ( val.is_a?(Integer) && val>0 )
             @timeout = val
         end
       end
@@ -85,7 +85,7 @@ module MCollective
       # guard thread reaping the pid on completion.
       @status = systemu(@command, opts) do |cid|
         begin
-          if timeout.is_a?(Fixnum)
+          if timeout.is_a?(Integer)
             # wait for the specified timeout
             sleep timeout
           else

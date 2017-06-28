@@ -10,7 +10,7 @@ module MCollective
           when Class
             validator.is_a?(validation_type)
           when :integer
-            validator.is_a?(Fixnum)
+            validator.is_a?(Integer)
           when :float
             validator.is_a?(Float)
           when :number

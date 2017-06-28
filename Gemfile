@@ -9,6 +9,10 @@ else
   gem 'systemu'
 end
 
+if RUBY_VERSION =~ /^2\.4/
+  gem 'json', '~> 2.1.0'
+end
+
 group :dev do
   gem 'rake', '~> 10.4'
   gem 'rubocop', '~> 0.28.0', :platforms => [:ruby] unless RUBY_VERSION =~ /^1\.8/

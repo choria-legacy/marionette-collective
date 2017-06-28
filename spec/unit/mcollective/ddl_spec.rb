@@ -49,7 +49,7 @@ module MCollective
     describe "#string_to_number" do
       it "should turn valid strings into numbers" do
         ["1", "0", "9999"].each do |i|
-          DDL.string_to_number(i).class.should == Fixnum
+          expect(DDL.string_to_number(i)).to be_a(Integer)
         end
 
         ["1.1", "0.0", "9999.99"].each do |i|
