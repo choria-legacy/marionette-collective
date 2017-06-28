@@ -4,8 +4,7 @@ script: "bundle exec rake $CHECK"
 notifications:
   email: false
 rvm:
-  - 2.3.1
-  - 2.2.5
+  - 2.4.1
   - 2.1.9
   - 2.0.0
 env:
@@ -14,8 +13,6 @@ env:
 
 matrix:
   exclude:
-    - rvm: 2.2.5
-      env: "CHECK=rubocop"
     - rvm: 2.1.9
       env: "CHECK=rubocop"
     - rvm: 2.0.0
