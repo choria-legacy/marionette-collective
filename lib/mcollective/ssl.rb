@@ -142,7 +142,7 @@ module MCollective
 
     # encrypts a string, returns a hash of key, iv and data
     def aes_encrypt(plain_string)
-      cipher = OpenSSL::Cipher::Cipher.new(ssl_cipher)
+      cipher = OpenSSL::Cipher.new(ssl_cipher)
       cipher.encrypt
 
       key = cipher.random_key
@@ -156,7 +156,7 @@ module MCollective
 
     # decrypts a string given key, iv and data
     def aes_decrypt(key, crypt_string)
-      cipher = OpenSSL::Cipher::Cipher.new(ssl_cipher)
+      cipher = OpenSSL::Cipher.new(ssl_cipher)
 
       cipher.decrypt
       cipher.key = key
