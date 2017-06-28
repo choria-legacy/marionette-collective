@@ -8,6 +8,7 @@ module MCollective
     #   "bar" => "baz"}
     class Base
       def initialize
+        @mutex = Mutex.new
         @facts = {}
         @last_good_facts = {}
         @last_facts_load = 0
@@ -24,7 +25,7 @@ module MCollective
 
         cache_time = config.fact_cache_time || 300
 
-        Thread.exclusive do
+        @mutex.synchronize do
           begin
             if (Time.now.to_i - @last_facts_load > cache_time.to_i ) || force_reload?
               Log.debug("Resetting facter cache, now: #{Time.now.to_i} last-known-good: #{@last_facts_load}")
