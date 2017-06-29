@@ -23,7 +23,11 @@ module MCollective
         fact_files.each do |file|
           begin
             if File.exist?(file)
-              facts.merge!(YAML.load(File.read(file)))
+	      if YAML.respond_to? :safe_load
+                facts.merge!(YAML.safe_load(File.read(file))) 
+	      else
+                facts.merge!(YAML.load(File.read(file)))  # rubocop:disable Security/YAMLLoad
+              end
             else
               raise("Can't find YAML file to load: #{file}")
             end
