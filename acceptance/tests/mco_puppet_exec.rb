@@ -23,7 +23,7 @@ test_name "mco puppet exec" do
           content => '
             node default {
               exec { "hostname":
-                path => ["/bin", "/usr/bin", "C:/cygwin32/bin", "C:/cygwin64/bin"],
+                path => ["/bin", "/usr/bin", "C:/cygwin32/bin", "C:/cygwin64/bin", "C:/cygwin/bin"],
                 logoutput => true,
               }
             }
