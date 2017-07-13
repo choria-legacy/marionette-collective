@@ -8,6 +8,10 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2017/07/18|Release *2.11.1*||
+|2017/06/28|Use OpenSSL::Cipher instead of OpenSSL::Cipher::Cipher to avoid warnings with Ruby 2.4|MCO-813|
+|2017/06/28|Use Mutex instead of Thread.exclusive to avoid warnings with Ruby 2.4|MCO-812|
+|2017/06/28|Use Integer instead of Fixnum to avoid warnings with Ruby 2.4|MCO-811|
 |2017/06/21|Release *2.11.0*||
 |2017/06/21|MCollective client now logs sending a request at INFO level with additional details, and server logs handling those requests at INFO level with similar details to help identify corresponding events.|MCO-784|
 |2017/06/21|The default location for mcollective server logs is moved from `/var/log/puppetlabs` to `/var/log/puppetlabs/mcollective` (on Unix). No change has been made to Windows log locations.|MCO-783|

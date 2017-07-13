@@ -8,6 +8,19 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_11_1">&nbsp;</a>
+
+## 2.11.1 - 2017/07/18
+
+### Changes since 2.11.1
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2017/07/18|Release *2.11.1*||
+|2017/06/28|Use OpenSSL::Cipher instead of OpenSSL::Cipher::Cipher to avoid warnings with Ruby 2.4|MCO-813|
+|2017/06/28|Use Mutex instead of Thread.exclusive to avoid warnings with Ruby 2.4|MCO-812|
+|2017/06/28|Use Integer instead of Fixnum to avoid warnings with Ruby 2.4|MCO-811|
+
 <a name="2_11_0">&nbsp;</a>
 
 ## 2.11.0 - 2017/06/21
