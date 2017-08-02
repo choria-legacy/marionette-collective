@@ -1000,9 +1000,9 @@ module MCollective
         result = rpc_result_from_reply(@agent, action, resp)
         aggregate = aggregate_reply(result, aggregate) if aggregate
 
-        if resp[:body][:statuscode] == 0 || resp[:body][:statuscode] == 1
-          @stats.ok if resp[:body][:statuscode] == 0
-          @stats.fail if resp[:body][:statuscode] == 1
+        if result[:statuscode] == 0 || result[:statuscode] == 1
+          @stats.ok if result[:statuscode] == 0
+          @stats.fail if result[:statuscode] == 1
         else
           @stats.fail
         end
@@ -1020,8 +1020,8 @@ module MCollective
         result = rpc_result_from_reply(@agent, action, resp)
         aggregate = aggregate_reply(result, aggregate) if aggregate
 
-        @stats.ok if resp[:body][:statuscode] == 0
-        @stats.fail if resp[:body][:statuscode] != 0
+        @stats.ok if result[:statuscode] == 0
+        @stats.fail if result[:statuscode] != 0
         @stats.time_block_execution :start
 
         case block.arity
