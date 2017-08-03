@@ -175,7 +175,6 @@ module MCollective
         it "should inform the stats object correctly for passed requests" do
           response = {:senderid => "rspec", :body => {:statuscode => 0}}
 
-          @client.stubs(:rpc_result_from_reply).with("foo", "rspec", response)
           @client.stats.expects(:ok)
           @client.stats.expects(:node_responded).with("rspec")
           @client.stats.expects(:time_block_execution).with(:start)
@@ -194,7 +193,6 @@ module MCollective
           response = {:senderid => "rspec", :body => {:statuscode => 1}}
           blk = Proc.new {}
 
-          @client.stubs(:rpc_result_from_reply).with("foo", "rspec", response)
           @client.process_results_with_block("rspec", response, blk, nil)
         end
 
@@ -202,7 +200,6 @@ module MCollective
           response = {:senderid => "rspec", :body => {:statuscode => 1}}
           blk = Proc.new {|r| r.should == response}
 
-          @client.stubs(:rpc_result_from_reply).with("foo", "rspec", response)
           @client.process_results_with_block("rspec", response, blk, nil)
         end
 
@@ -220,7 +217,6 @@ module MCollective
       describe "#process_results_without_block" do
         it "should inform the stats object correctly for passed requests" do
           response = {:senderid => "rspec", :body => {:statuscode => 0}}
-          @client.stubs(:rpc_result_from_reply).with("foo", "rspec", response)
           @client.stats.expects(:ok)
           @client.stats.expects(:node_responded).with("rspec")
           @client.process_results_without_block(response, "rspec", nil)
@@ -231,11 +227,9 @@ module MCollective
           @client.stats.expects(:node_responded).with("rspec").twice
 
           response = {:senderid => "rspec", :body => {:statuscode => 1}}
-          @client.stubs(:rpc_result_from_reply).with("foo", "rspec", response)
           @client.process_results_without_block(response, "rspec", nil)
 
           response = {:senderid => "rspec", :body => {:statuscode => 3}}
-          @client.stubs(:rpc_result_from_reply).with("foo", "rspec", response)
           @client.process_results_without_block(response, "rspec", nil)
         end
 
