@@ -118,14 +118,10 @@ module MCollective
         @totaltime = @blocktime + @discoverytime
 
         # figure out who responded unexpectedly
-        rhosts = @responsesfrom.clone
-        @discovered_nodes.each {|d| rhosts.delete(d)}
-        @unexpectedresponsefrom = rhosts
+        @unexpectedresponsefrom = @responsesfrom - @discovered_nodes
 
         # figure out who we had no responses from
-        dhosts = @discovered_nodes.clone
-        @responsesfrom.each {|r| dhosts.delete(r)}
-        @noresponsefrom = dhosts
+        @noresponsefrom = @discovered_nodes - @responsesfrom
       rescue
         @totaltime = 0
         @noresponsefrom = []
