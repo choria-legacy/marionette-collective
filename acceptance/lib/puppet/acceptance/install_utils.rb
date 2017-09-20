@@ -119,44 +119,51 @@ module Puppet
       def install_repos_on(host, project, sha, repo_configs_dir)
         platform = host['platform'].with_version_codename
         platform_configs_dir = File.join(repo_configs_dir,platform)
-        tld     = sha == 'nightly' ? 'nightlies.puppetlabs.com' : 'builds.puppetlabs.lan'
+        dev_builds_url  = ENV['DEV_BUILDS_URL'] || 'http://builds.delivery.puppetlabs.net'
+        tld     = sha == 'nightly' ? 'http://nightlies.puppetlabs.com' : dev_builds_url
         project = sha == 'nightly' ? project + '-latest'        :  project
         sha     = sha == 'nightly' ? nil                        :  sha
 
-        case platform
-        when /^(fedora|el|centos)-(\d+)-(.+)$/
-          variant = (($1 == 'centos') ? 'el' : $1)
-          fedora_prefix = ((variant == 'fedora') ? 'f' : '')
-          version = $2
-          arch = $3
+        if sha.nil?
+          case platform
+          when /^(fedora|el|centos)-(\d+)-(.+)$/
+            variant = (($1 == 'centos') ? 'el' : $1)
+            fedora_prefix = ((variant == 'fedora') ? 'f' : '')
+            version = $2
+            arch = $3
 
-          repo_filename = "pl-%s%s-%s-%s%s-%s.repo" % [
-            project,
-            sha ? '-' + sha : '',
-            variant,
-            fedora_prefix,
-            version,
-            arch
-          ]
-          repo_url = "http://%s/%s/%s/repo_configs/rpm/%s" % [tld, project, sha, repo_filename]
+            repo_filename = "pl-%s%s-%s-%s%s-%s.repo" % [
+              project,
+              sha ? '-' + sha : '',
+              variant,
+              fedora_prefix,
+              version,
+              arch
+            ]
+            repo_url = "%s/%s/%s/repo_configs/rpm/%s" % [tld, project, sha, repo_filename]
 
-          on host, "curl -o /etc/yum.repos.d/#{repo_filename} #{repo_url}"
-        when /^(debian|ubuntu)-([^-]+)-(.+)$/
-          variant = $1
-          version = $2
-          arch = $3
+            on host, "curl -o /etc/yum.repos.d/#{repo_filename} #{repo_url}"
+          when /^(debian|ubuntu)-([^-]+)-(.+)$/
+            variant = $1
+            version = $2
+            arch = $3
 
-          list_filename = "pl-%s%s-%s.list" % [
-            project,
-            sha ? '-' + sha : '',
-            version
-          ]
-          list_url = "http://%s/%s/%s/repo_configs/deb/%s" % [tld, project, sha, list_filename]
+            list_filename = "pl-%s%s-%s.list" % [
+              project,
+              sha ? '-' + sha : '',
+              version
+            ]
+            list_url = "%s/%s/%s/repo_configs/deb/%s" % [tld, project, sha, list_filename]
 
-          on host, "curl -o /etc/apt/sources.list.d/#{list_filename} #{list_url}"
-          on host, "apt-get update"
+            on host, "curl -o /etc/apt/sources.list.d/#{list_filename} #{list_url}"
+            on host, "apt-get update"
+          else
+            host.logger.notify("No repository installation step for #{platform} yet...")
+          end
         else
-          host.logger.notify("No repository installation step for #{platform} yet...")
+          base_url, build_details = fetch_build_details("#{tld}/#{project}/#{sha}/artifacts/#{sha}.yaml")
+          _, repoconfig_url = host_urls(host, build_details, base_url)
+          install_repo_configs_on(host, repoconfig_url)
         end
       end
 
