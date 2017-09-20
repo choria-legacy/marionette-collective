@@ -8,6 +8,10 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2017/09/20|Release *2.11.3*||
+|2017/09/18|Speed up calculation of no responses and unexpected responses|MCO-818|
+|2017/08/15|Release *2.11.2*||
+|2017/08/02|Correctly determine reply status in all modes|MCO-815|
 |2017/07/18|Release *2.11.1*||
 |2017/06/28|Use OpenSSL::Cipher instead of OpenSSL::Cipher::Cipher to avoid warnings with Ruby 2.4|MCO-813|
 |2017/06/28|Use Mutex instead of Thread.exclusive to avoid warnings with Ruby 2.4|MCO-812|

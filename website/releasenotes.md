@@ -8,11 +8,33 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_11_3">&nbsp;</a>
+
+## 2.11.3 - 2017/09/20
+
+### Changes since 2.11.2
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2017/09/20|Release *2.11.3*||
+|2017/09/18|Speed up calculation of no responses and unexpected responses|MCO-818|
+
+<a name="2_11_2">&nbsp;</a>
+
+## 2.11.2 - 2017/08/15
+
+### Changes since 2.11.1
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2017/08/15|Release *2.11.2*||
+|2017/08/02|Correctly determine reply status in all modes|MCO-815|
+
 <a name="2_11_1">&nbsp;</a>
 
 ## 2.11.1 - 2017/07/18
 
-### Changes since 2.11.1
+### Changes since 2.11.0
 
 |Date|Description|Ticket|
 |----|-----------|------|
