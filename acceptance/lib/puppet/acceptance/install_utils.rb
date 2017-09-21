@@ -119,8 +119,8 @@ module Puppet
       def install_repos_on(host, project, sha, repo_configs_dir)
         platform = host['platform'].with_version_codename
         platform_configs_dir = File.join(repo_configs_dir,platform)
-        dev_builds_url  = ENV['DEV_BUILDS_URL'] || 'http://builds.delivery.puppetlabs.net'
-        tld     = sha == 'nightly' ? 'http://nightlies.puppetlabs.com' : dev_builds_url
+        dev_builds_url  = ENV['DEV_BUILDS_URL'] || 'https://builds.delivery.puppetlabs.net'
+        tld     = sha == 'nightly' ? 'https://nightlies.puppetlabs.com' : dev_builds_url
         project = sha == 'nightly' ? project + '-latest'        :  project
         sha     = sha == 'nightly' ? nil                        :  sha
 
