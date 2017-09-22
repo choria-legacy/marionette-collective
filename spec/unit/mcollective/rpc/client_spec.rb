@@ -156,6 +156,18 @@ module MCollective
           c = Client.new("rspec", :options => {:config => "/nonexisting", :disctimeout => 10})
           c.instance_variable_get("@discovery_timeout").should == 10
         end
+
+        it "should default to configured batch options" do
+          expect(@client.batch_size).to eq(0)
+          expect(@client.batch_sleep_time).to eq(1)
+
+          Config.instance.stubs(:default_batch_size).returns(1000)
+          Config.instance.stubs(:default_batch_sleep_time).returns(30)
+          c = Client.new("rspec", :options => {})
+
+          expect(c.batch_size).to eq(1000)
+          expect(c.batch_sleep_time).to eq(30)
+        end
       end
 
       describe "#validate_request" do

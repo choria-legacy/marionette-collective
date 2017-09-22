@@ -17,7 +17,7 @@ module MCollective
     attr_reader :default_discovery_method, :default_discovery_options
     attr_reader :publish_timeout, :threaded, :soft_shutdown, :activate_agents
     attr_reader :registration_splay, :discovery_timeout, :soft_shutdown_timeout
-    attr_reader :connection_timeout
+    attr_reader :connection_timeout, :default_batch_size, :default_batch_sleep_time
 
     def initialize
       @configured = false
@@ -125,6 +125,10 @@ module MCollective
                   @soft_shutdown_timeout = Integer(val)
                 when "activate_agents"
                   @activate_agents = Util.str_to_bool(val)
+                when "default_batch_size"
+                  @default_batch_size = Integer(val)
+                when "default_batch_sleep_time"
+                  @default_batch_sleep_time = Float(val)
                 when "topicprefix", "topicsep", "queueprefix", "rpchelptemplate", "helptemplatedir"
                   Log.warn("Use of deprecated '#{key}' option.  This option is ignored and should be removed from '#{configfile}'")
                 else
@@ -212,6 +216,8 @@ module MCollective
       @soft_shutdown_timeout = nil
       @activate_agents = true
       @connection_timeout = nil
+      @default_batch_size = 0
+      @default_batch_sleep_time = 1
     end
 
     def libdir
