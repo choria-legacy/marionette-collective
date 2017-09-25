@@ -18,7 +18,7 @@ You can configure the MCollective server daemon and client by setting options in
 
 ## Configuration Files
 
-MCollective uses two configuration files, one for the client and one for the server. 
+MCollective uses two configuration files, one for the client and one for the server.
 
 If you don't specify a client configuration file when invoking MCollective, it looks for one in these locations, in the listed order:
 
@@ -90,6 +90,8 @@ The client configuration file should be globally readable.
 |color|0|Disables the use of color in RPC results|
 |connection_timeout|3|Sets the timeout for server communication. Default: none|
 |discovery_timeout|2|Sets the timeout for discovering nodes. Default: 2|
+|default_batch_size|100|Sets the default batch size which would be used when when not supplied in the API or CLI. Default 0|
+|default_batch_sleep_time|30|Sets the default batch sleep time which would be used when when not supplied in the API or CLI. Default 1|
 
 ## Plugin Configuration
 
@@ -111,7 +113,7 @@ Common plugin options include:
 
 ## Client Setup
 
-Do not set the host, user, password, and pre-shared key in the client configuration file, since these files are generally world-readable (unlike the server configuration file, which should be readable by the root user only). 
+Do not set the host, user, password, and pre-shared key in the client configuration file, since these files are generally world-readable (unlike the server configuration file, which should be readable by the root user only).
 
 > **Note:** You can make this clearer by explicitly setting these options to 'unset' in the client configuration file, which prevents MCollective from working unless something overrides those settings.
 

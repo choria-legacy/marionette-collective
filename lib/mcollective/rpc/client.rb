@@ -71,8 +71,8 @@ module MCollective
         @discovery_options = initial_options[:discovery_options] || []
         @force_display_mode = initial_options[:force_display_mode] || false
 
-        @batch_size = initial_options[:batch_size] || 0
-        @batch_sleep_time = Float(initial_options[:batch_sleep_time] || 1)
+        @batch_size = initial_options[:batch_size] || Config.instance.default_batch_size
+        @batch_sleep_time = Float(initial_options[:batch_sleep_time] || Config.instance.default_batch_sleep_time)
         @batch_mode = determine_batch_mode(@batch_size)
 
         agent_filter agent
