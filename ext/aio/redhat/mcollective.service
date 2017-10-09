@@ -19,6 +19,7 @@ StandardError=syslog
 ExecStart=/opt/puppetlabs/puppet/bin/mcollectived --config=/etc/puppetlabs/mcollective/server.cfg --pidfile=/var/run/puppetlabs/mcollective.pid --daemonize
 ExecReload=/bin/kill -USR1 $MAINPID
 PIDFile=/var/run/puppetlabs/mcollective.pid
+KillMode=process
 
 [Install]
 WantedBy=multi-user.target
