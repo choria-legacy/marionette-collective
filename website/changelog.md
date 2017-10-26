@@ -11,7 +11,6 @@ toc: false
 |2017/10/26|Release *2.10.6*||
 |2017/09/25|Restarting the mcollective service no longer kills running agent subprocesses|MCO-816|
 |2017/06/09|Release *2.10.5*||
-|2017/06/09|Release *2.10.5*||
 |2017/06/07|Fix acceptance source for JDK on Windows|MCO-808|
 |2017/05/11|Release *2.10.4*||
 |2017/04/06|Switch to using YAML.safe_load|MCO-794|
