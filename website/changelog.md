@@ -8,6 +8,8 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2017/10/26|Release *2.11.4*||
+|2017/09/25|Restarting the mcollective service no longer kills running agent subprocesses|MCO-816|
 |2017/09/20|Release *2.11.3*||
 |2017/09/18|Speed up calculation of no responses and unexpected responses|MCO-818|
 |2017/08/15|Release *2.11.2*||
