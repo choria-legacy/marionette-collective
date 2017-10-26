@@ -8,6 +8,17 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_10_6">&nbsp;</a>
+
+## 2.10.6 - 2017/10/26
+
+### Changes since 2.10.5
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2017/10/26|Release *2.10.6*||
+|2017/09/25|Restarting the mcollective service no longer kills running agent subprocesses|MCO-816|
+
 <a name="2_10_5">&nbsp;</a>
 
 ## 2.10.5 - 2017/06/09
