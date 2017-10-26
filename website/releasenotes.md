@@ -69,6 +69,17 @@ will be highlighted here.
 |2017/06/21|mcollective-client is now compatible with OpenSSL 1.1.0|MCO-804|
 |2017/06/21|systemu has been upgraded to a more recent version that fixes an issue marshaling multi-byte characters.|MCO-806|
 
+<a name="2_10_6">&nbsp;</a>
+
+## 2.10.6 - 2017/10/26
+
+### Changes since 2.10.5
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2017/10/26|Release *2.10.6*||
+|2017/09/25|Restarting the mcollective service no longer kills running agent subprocesses|MCO-816|
+
 <a name="2_10_5">&nbsp;</a>
 
 ## 2.10.5 - 2017/06/09
