@@ -8,7 +8,21 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
-<a name="2_11.4">&nbsp;</a>
+<a name="2_12_0">&nbsp;</a>
+
+## 2.12.0 - 2017/03/20
+
+### Changes since 2.11.4
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2017/09/22|Allow default batch options to be set|MCO-818|
+|2017/09/18|Use native array math to calculate responses more quickly|MCO-818|
+|2017/08/02|Correctly determine reply status with JSON serializer|MCO-815|
+|2017/06/16|Update stomp gem to 1.4.4 to fix SSL||
+|2017/06/07|Update rubocop/securitycop scans and convert YAML.load to safe_load for facts|MCO-807|
+
+<a name="2_11_4">&nbsp;</a>
 
 ## 2.11.4 - 2017/10/26
 

@@ -4,6 +4,16 @@ title: Changelog
 toc: false
 ---
 
+## Version 2.12.x
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2017/09/22|Allow default batch options to be set|MCO-818|
+|2017/09/18|Use native array math to calculate responses more quickly|MCO-818|
+|2017/08/02|Correctly determine reply status with JSON serializer|MCO-815|
+|2017/06/16|Update stomp gem to 1.4.4 to fix SSL||
+|2017/06/07|Update rubocop/securitycop scans and convert YAML.load to safe_load for facts|MCO-807|
+
 ## Version 2.11.x
 
 |Date|Description|Ticket|
