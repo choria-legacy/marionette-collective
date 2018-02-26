@@ -10,7 +10,7 @@ will be highlighted here.
 
 <a name="2_12_0">&nbsp;</a>
 
-## 2.12.0 - 2017/03/20
+## 2.12.0 - 2018/03/20
 
 ### Changes since 2.11.4
 
