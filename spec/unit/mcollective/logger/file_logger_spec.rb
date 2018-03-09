@@ -8,6 +8,7 @@ module MCollective
   module Logger
     describe File_logger do
       let(:mock_logger) { mock('logger') }
+      let(:mock_formatter) { mock('formatter') }
 
       before :each do
         Config.instance.stubs(:loglevel).returns("error")
@@ -17,6 +18,9 @@ module MCollective
         ::Logger.stubs(:new).returns(mock_logger)
         mock_logger.stubs(:formatter=)
         mock_logger.stubs(:level=)
+
+        mock_logger.stubs(:formatter).returns(mock_formatter)
+        mock_formatter.stubs(:datetime_format=)
       end
 
       describe "#start" do
