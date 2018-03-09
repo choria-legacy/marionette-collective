@@ -15,6 +15,8 @@ module MCollective
 
         @logger = ::Logger.new(config.logfile, config.keeplogs, config.max_log_size)
         @logger.formatter = ::Logger::Formatter.new
+        # ISO-8601 with sub-second precision and offset from UTC.
+        @logger.formatter.datetime_format = "%Y-%m-%dT%H:%M:%S.%6N%:z "
 
         set_level(config.loglevel.to_sym)
       end
