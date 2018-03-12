@@ -412,8 +412,8 @@ module MCollective
 
           Message.stubs(:new)
 
-          Log.stubs(:debug)
-          Log.expects(:debug).with('Unexpected \'ERROR\' frame.  Headers: "headers" Body: "Out of cheese exception"')
+          Log.stubs(:warn)
+          Log.expects(:warn).with('Unexpected \'ERROR\' frame.  Headers: "headers" Body: "Out of cheese exception"')
 
           expect { connector.receive }.to raise_error(UnexpectedMessageType, /Received frame of type 'ERROR' expected 'MESSAGE'/)
         end
