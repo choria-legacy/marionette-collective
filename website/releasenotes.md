@@ -16,6 +16,8 @@ will be highlighted here.
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2017/03/12|Log unexpected STOMP frames at WARN level|MCO-803|
+|2017/03/09|Include offset from UTC in log messages|MCO-832|
 |2017/09/22|Allow default batch options to be set|MCO-820|
 |2017/09/18|Use native array math to calculate responses more quickly|MCO-818|
 |2017/08/02|Correctly determine reply status with JSON serializer|MCO-815|

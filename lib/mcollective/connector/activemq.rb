@@ -437,7 +437,7 @@ module MCollective
 
         # We expect all messages we get to be of STOMP frame type MESSAGE, raise on unexpected types
         if msg.command != 'MESSAGE'
-          Log.debug("Unexpected '#{msg.command}' frame.  Headers: #{msg.headers.inspect} Body: #{msg.body.inspect}")
+          Log.warn("Unexpected '#{msg.command}' frame.  Headers: #{msg.headers.inspect} Body: #{msg.body.inspect}")
           raise UnexpectedMessageType.new(exponential_back_off),
             "Received frame of type '#{msg.command}' expected 'MESSAGE'"
         end
