@@ -24,7 +24,7 @@ module MCollective
           begin
             if File.exist?(file)
 	      if YAML.respond_to? :safe_load
-                facts.merge!(YAML.safe_load(File.read(file))) 
+                facts.merge!(YAML.safe_load(File.read(file), [Symbol], [], true))
 	      else
                 facts.merge!(YAML.load(File.read(file)))  # rubocop:disable Security/YAMLLoad
               end
