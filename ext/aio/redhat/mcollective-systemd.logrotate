@@ -3,6 +3,6 @@
     notifempty
     sharedscripts
     postrotate
-      systemctl restart mcollective >/dev/null 2>&1 || true
+      if [ systemctl status mcollective.service > /dev/null 2>&1 ]; then systemctl kill --signal=WINCH --kill-who=main mcollective.service; fi
     endscript
 }

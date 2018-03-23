@@ -100,6 +100,14 @@ reload_loglevel() {
     return $RETVAL
 }
 
+reopen_logfile() {
+    echo -n "Re-opening mcollective log file: "
+    killproc ${pidopts} ${mcollectived} -SIGWINCH
+    RETVAL=$?
+    echo
+    return $RETVAL
+}
+
 rh_status() {
     status ${pidopts} ${mcollectived}
     RETVAL=$?
@@ -130,6 +138,9 @@ case "$1" in
         ;;
     reload-loglevel)
         reload_loglevel
+        ;;
+    reopen-logfile)
+        reopen_logfile
         ;;
     status)
         rh_status
