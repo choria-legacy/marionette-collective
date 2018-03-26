@@ -188,9 +188,8 @@ module MCollective
           return "bad_token", [@token_index - current_token_value.size + 1, @token_index]
         else
           if func
-            if current_token_value.match(/^.+?\((\s*'[^']*'\s*(,\s*'[^']*')*)?\)(\.[a-zA-Z0-9_]+)?((!=|<=|>=|=|>|<).+)?$/) ||
-               current_token_value.match(/^.+?\((\s*"[^"]*"\s*(,\s*"[^"]*")*)?\)(\.[a-zA-Z0-9_]+)?((!=|<=|>=|=|>|<).+)?$/) ||
-               current_token_value.match(/^.+?\((\s*[^'"]*\s*(,\s*[^'"]*)*)?\)(\.[a-zA-Z0-9_]+)?((!=|<=|>=|=|>|<).+)?$/)
+            if current_token_value.match(/^.+?\((\s*(')[^']*(')\s*(,\s*(')[^']*('))*)?\)(\.[a-zA-Z0-9_]+)?((!=|<=|>=|=|>|<).+)?$/) ||
+               current_token_value.match(/^.+?\((\s*(")[^"]*(")\s*(,\s*(")[^"]*("))*)?\)(\.[a-zA-Z0-9_]+)?((!=|<=|>=|=|>|<).+)?$/)
               return "fstatement", current_token_value
             else
               return "bad_token", [@token_index - current_token_value.size + 1, @token_index]
