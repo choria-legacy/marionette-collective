@@ -113,6 +113,12 @@ module MCollective
         token.should == ["bad_token", [0,7]]
       end
 
+      it "should identify a bad token where function parameters are not in single quotes" do
+        scanner = Scanner.new("foo(a=b)")
+        token = scanner.get_token
+        token.should == ["bad_token", [0,7]]
+      end
+
       it "should identify a bad token where there are non alphanumerical or underscore chars in the dot value" do
         scanner = Scanner.new("foo('bar').val-ue")
         token = scanner.get_token
