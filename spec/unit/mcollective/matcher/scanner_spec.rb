@@ -71,6 +71,18 @@ module MCollective
         token.should == ["fstatement", "foo('bar')"]
       end
 
+      it "should identify a function statement token with double quotes" do
+        scanner = Scanner.new('foo("bar")')
+        token = scanner.get_token
+        token.should == ["fstatement", 'foo("bar")']
+      end
+
+      it "should identify a function statement token with no quotes" do
+        scanner = Scanner.new("foo(bar)")
+        token = scanner.get_token
+        token.should == ["fstatement", "foo(bar)"]
+      end
+
       it "should identify a function statement with multiple parameters" do
         scanner = Scanner.new("foo('bar','baz')")
         token = scanner.get_token
@@ -102,7 +114,7 @@ module MCollective
       end
 
       it "should identify a bad token where function parameters are not in single quotes" do
-        scanner = Scanner.new("foo(bar)")
+        scanner = Scanner.new("foo(a=b)")
         token = scanner.get_token
         token.should == ["bad_token", [0,7]]
       end
