@@ -63,6 +63,9 @@ actual fact is numeric it will do a numerical comparison else it wil do alphabet
 % mco rpc package install zsh -F "physicalprocessorcount>=2"
 {% endhighlight %}
 
+Note that filtering on structured facts such as `os.family` requires the use of
+[Data Plugins](plugins/data.html).
+
 ## Agent, Identity and Class filters
 
 These filters all work on the same basic pattern, they just support equality or regular
