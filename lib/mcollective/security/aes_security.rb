@@ -226,7 +226,7 @@ module MCollective
         case serializer
         when "yaml"
           if YAML.respond_to? :safe_load
-            return YAML.safe_load(msg, [Symbol])
+            return YAML.safe_load(msg, [Symbol, Regexp])
           else
             raise "YAML.safe_load not supported by Ruby #{RUBY_VERSION}. Please update to Ruby 2.1+."
           end
