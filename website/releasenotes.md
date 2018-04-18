@@ -8,6 +8,16 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
+<a name="2_12_1">&nbsp;</a>
+
+## 2.12.1 - 2018/04/17
+
+### Changes since 2.12.0
+
+|Date|Description|Ticket|
+|----|-----------|------|
+|2018/03/28|Fix loading facts with aliases and symbols|MCO-833|
+
 <a name="2_12_0">&nbsp;</a>
 
 ## 2.12.0 - 2018/03/20
