@@ -8,7 +8,7 @@ This is a list of release notes for various releases, you should review these
 before upgrading as any potential problems and backward incompatible changes
 will be highlighted here.
 
-<a name="2_12_0">&nbsp;</a>
+<a name="2_12_1">&nbsp;</a>
 
 ## 2.12.1 - 2018/04/17
 
