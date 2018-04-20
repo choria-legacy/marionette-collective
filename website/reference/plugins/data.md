@@ -28,6 +28,11 @@ below:
 % mco find -S "sysctl('net.ipv4.conf.all.forwarding').value=1 and % location=dc1"
 {% endhighlight %}
 
+{% highlight console %}
+% mco find -S "fact('roles.0').value=base"
+% mco find -S "fact('system_uptime.days').value>10"
+{% endhighlight %}
+
 You could also use these data sources in your own agents or other
 plugins:
 

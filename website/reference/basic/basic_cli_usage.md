@@ -360,7 +360,13 @@ complex filters:
 
 This will search for the md5 hash of a specific file with matches
 restricted to the *development* environment.  Note that as before,
-regular expressions can also be used.
+regular expressions can also be used
+
+Structured facts require the use of data plugins.
+
+{% highlight console %}
+% mco ping -S "fact('os.family').value=/RedHat|Debian/"
+{% endhighlight %}
 
 As with agents, you can also discover which plugins are available for
 use:
@@ -377,6 +383,7 @@ Agents:
 Data Queries:
   agent           Meta data about installed MColletive Agents
   augeas_match    Allows agents and discovery to do Augeas match lookups
+  fact            Node facts
   fstat           Retrieve file stat data for a given file
   resource        Information about Puppet managed resources
   sysctl          Retrieve values for a given sysctl

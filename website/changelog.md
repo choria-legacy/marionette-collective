@@ -8,6 +8,7 @@ toc: false
 
 |Date|Description|Ticket|
 |----|-----------|------|
+|2018/03/28|Fix loading facts with aliases and symbols|MCO-833|
 |2017/03/12|Log unexpected STOMP frames at WARN level|MCO-803|
 |2017/03/09|Include offset from UTC in log messages|MCO-832|
 |2017/09/22|Allow default batch options to be set|MCO-820|
