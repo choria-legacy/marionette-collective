@@ -1,5 +1,17 @@
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
+def location_for(place)
+  if place =~ /^(git[:@][^#]*)#(.*)/
+    [{ :git => $1, :branch => $2, :require => false }]
+  elsif place =~ /^file:\/\/(.*)/
+    ['>= 0', { :path => File.expand_path($1), :require => false }]
+  else
+    [place, { :require => false }]
+  end
+end
+
+gem 'packaging', *location_for(ENV['PACKAGING_LOCATION'] || '~> 0.99.9')
+
 gem 'stomp', '>= 1.4.1'
 
 if RUBY_VERSION =~ /^1\.8/

@@ -1,12 +1,8 @@
-RAKE_ROOT = File.expand_path(File.dirname(__FILE__))
+require 'packaging'
+Pkg::Util::RakeUtils.load_packaging_tasks
 
 # Allow override of RELEASE using BUILD_NUMBER
 ENV["RELEASE"] = ENV["BUILD_NUMBER"] if ENV["BUILD_NUMBER"]
-
-begin
-  load File.join(RAKE_ROOT, 'ext', 'packaging.rake')
-rescue LoadError
-end
 
 def announce(msg='')
   STDERR.puts "================"
@@ -16,18 +12,6 @@ end
 
 def safe_system *args
   raise RuntimeError, "Failed: #{args.join(' ')}" unless system(*args)
-end
-
-def load_tools
-  unless File.directory?(File.join(RAKE_ROOT, 'ext', 'packaging'))
-    Rake::Task["package:bootstrap"].invoke
-    begin
-      load File.join(RAKE_ROOT, 'ext', 'packaging.rake')
-    rescue LoadError
-      STDERR.puts "Could not load packaging tools. exiting"
-      exit 1
-    end
-  end
 end
 
 def move_artifacts
@@ -42,21 +26,18 @@ end
 
 desc "Build documentation"
 task :doc => :clean do
-  load_tools
   Rake::Task["package:doc"].invoke
 end
 
 desc "Build a gem"
 task :gem => :clean do
-  load_tools
   Rake::Task["gem"].reenable
   Rake::Task["package:gem"].invoke
 end
 
 desc "Create a tarball for this release"
 task :package => :clean do
-  load_tools
-  announce "Creating #{@build.project}-#{@build.version}.tar.gz"
+  announce "Creating #{Pkg::Config.project}-#{Pkg::Config.version}.tar.gz"
   Rake::Task["package:tar"].invoke
   move_artifacts
 end
