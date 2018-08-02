@@ -40,19 +40,6 @@ task :clean do
   rm_rf "doc"
 end
 
-desc "Create the .debs"
-task :deb => :clean do
-  load_tools
-  announce("Building debian packages for #{@build.project}-#{@build.version}-#{@build.release}")
-  Rake::Task["package:deb"].invoke
-
-  if ENV['SIGNED'] == '1'
-    deb_flag = "-k#{ENV['SIGNWITH']}" if ENV['SIGNWITH']
-    safe_system %{/usr/bin/debsign #{deb_flag} pkg/deb/*.changes}
-  end
-  move_artifacts
-end
-
 desc "Build documentation"
 task :doc => :clean do
   load_tools
@@ -71,18 +58,6 @@ task :package => :clean do
   load_tools
   announce "Creating #{@build.project}-#{@build.version}.tar.gz"
   Rake::Task["package:tar"].invoke
-  move_artifacts
-end
-
-desc "Creates a RPM"
-task :rpm => :clean do
-  load_tools
-  announce("Building RPM for #{@build.project}-#{@build.version}-#{@build.release}")
-  Rake::Task["package:rpm"].invoke
-  Rake::Task["package:srpm"].invoke
-  if ENV['SIGNED'] == '1'
-    safe_system %{/usr/bin/rpm --sign pkg/**/*.rpm}
-  end
   move_artifacts
 end
 
