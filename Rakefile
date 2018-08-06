@@ -1,12 +1,8 @@
-RAKE_ROOT = File.expand_path(File.dirname(__FILE__))
+require 'packaging'
+Pkg::Util::RakeUtils.load_packaging_tasks
 
 # Allow override of RELEASE using BUILD_NUMBER
 ENV["RELEASE"] = ENV["BUILD_NUMBER"] if ENV["BUILD_NUMBER"]
-
-begin
-  load File.join(RAKE_ROOT, 'ext', 'packaging.rake')
-rescue LoadError
-end
 
 def announce(msg='')
   STDERR.puts "================"
@@ -16,18 +12,6 @@ end
 
 def safe_system *args
   raise RuntimeError, "Failed: #{args.join(' ')}" unless system(*args)
-end
-
-def load_tools
-  unless File.directory?(File.join(RAKE_ROOT, 'ext', 'packaging'))
-    Rake::Task["package:bootstrap"].invoke
-    begin
-      load File.join(RAKE_ROOT, 'ext', 'packaging.rake')
-    rescue LoadError
-      STDERR.puts "Could not load packaging tools. exiting"
-      exit 1
-    end
-  end
 end
 
 def move_artifacts
@@ -40,49 +24,21 @@ task :clean do
   rm_rf "doc"
 end
 
-desc "Create the .debs"
-task :deb => :clean do
-  load_tools
-  announce("Building debian packages for #{@build.project}-#{@build.version}-#{@build.release}")
-  Rake::Task["package:deb"].invoke
-
-  if ENV['SIGNED'] == '1'
-    deb_flag = "-k#{ENV['SIGNWITH']}" if ENV['SIGNWITH']
-    safe_system %{/usr/bin/debsign #{deb_flag} pkg/deb/*.changes}
-  end
-  move_artifacts
-end
-
 desc "Build documentation"
 task :doc => :clean do
-  load_tools
   Rake::Task["package:doc"].invoke
 end
 
 desc "Build a gem"
 task :gem => :clean do
-  load_tools
   Rake::Task["gem"].reenable
   Rake::Task["package:gem"].invoke
 end
 
 desc "Create a tarball for this release"
 task :package => :clean do
-  load_tools
-  announce "Creating #{@build.project}-#{@build.version}.tar.gz"
+  announce "Creating #{Pkg::Config.project}-#{Pkg::Config.version}.tar.gz"
   Rake::Task["package:tar"].invoke
-  move_artifacts
-end
-
-desc "Creates a RPM"
-task :rpm => :clean do
-  load_tools
-  announce("Building RPM for #{@build.project}-#{@build.version}-#{@build.release}")
-  Rake::Task["package:rpm"].invoke
-  Rake::Task["package:srpm"].invoke
-  if ENV['SIGNED'] == '1'
-    safe_system %{/usr/bin/rpm --sign pkg/**/*.rpm}
-  end
   move_artifacts
 end
 
