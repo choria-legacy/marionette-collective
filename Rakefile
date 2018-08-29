@@ -18,6 +18,15 @@ def move_artifacts
   mv("pkg", "build")
 end
 
+namespace :package do
+  task :bootstrap do
+    puts 'Bootstrap is no longer needed, using packaging-as-a-gem'
+  end
+  task :implode do
+    puts 'Implode is no longer needed, using packaging-as-a-gem'
+  end
+end
+
 desc "Cleanup"
 task :clean do
   rm_rf "build"
