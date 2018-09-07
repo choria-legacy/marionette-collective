@@ -37,6 +37,8 @@ toc: false
 
 The Marionette Collective, also known as **MCollective,** is a framework for building server orchestration or parallel job-execution systems. Most users programmatically execute administrative tasks on clusters of servers.
 
+> **Deprecation Note:** As of Puppet agent 5.5.4, MCollective is deprecated and will be removed in a future version of Puppet agent. If you use MCollective with Puppet Enterprise, consider [moving from MCollective to Puppet orchestrator](/docs/pe/2018.1/migrating_from_mcollective_to_orchestrator.html). If you use MCollective with open source Puppet, consider migrating MCollective agents and filters using tools like [Bolt](/docs/bolt/) and PuppetDB's [Puppet Query Language](/docs/puppetdb/latest/api/query/tutorial-pql.html).
+
 MCollective has some unique strengths for working with large numbers of servers:
 
 * Instead of relying on a static list of hosts to command, it uses metadata-based discovery and filtering. It can use a rich data source like [PuppetDB](/puppetdb/), or can perform real-time discovery across the network.
