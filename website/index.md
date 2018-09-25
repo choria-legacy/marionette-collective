@@ -4,84 +4,64 @@ title: Marionette Collective
 disqus: true
 canonical: "/mcollective/index.html"
 ---
-[Func]: https://fedorahosted.org/func/
-[Fabric]: http://fabfile.org/
-[Capistrano]: http://www.capify.org
-[Publish Subscribe Middleware]: http://en.wikipedia.org/wiki/Publish/subscribe
-[Screencasts]: /mcollective1.2/screencasts.html
-[Amazon EC2 based demo]: /mcollective1.2/ec2demo.html
-[broadcast paradigm]: /mcollective1.2/reference/basic/messageflow.html
-[UsingWithPuppet]: /mcollective1.2/reference/integration/puppet.html
-[UsingWithChef]: /mcollective1.2/reference/integration/chef.html
-[Facter]: http://code.google.com/p/mcollective-plugins/wiki/FactsRLFacter
-[Ohai]: http://code.google.com/p/mcollective-plugins/wiki/FactsOpsCodeOhai
-[WritingFactsPlugins]: /mcollective1.2/reference/plugins/facts.html
-[NodeReports]: /mcollective1.2/reference/ui/nodereports.html
-[PluginsSite]: http://code.google.com/p/mcollective-plugins/
-[SimpleRPCIntroduction]: /mcollective1.2/simplerpc/
-[SecurityOverview]: /mcollective1.2/security.html
-[SecurityWithActiveMQ]: /mcollective1.2/reference/integration/activemq_security.html
-[SSLSecurityPlugin]: /mcollective1.2/reference/plugins/security_ssl.html
-[AESSecurityPlugin]: /mcollective1.2/reference/plugins/security_aes.html
-[SimpleRPCAuthorization]: /mcollective1.2/simplerpc/authorization.html
-[SimpleRPCAuditing]: /mcollective1.2/simplerpc/auditing.html
-[ActiveMQClusters]: /mcollective1.2/reference/integration/activemq_clusters.html
-[JSONSchema]: http://json-schema.org/
-[Registration]: /mcollective1.2/reference/plugins/registration.html
-[GettingStarted]: /mcollective1.2/reference/basic/gettingstarted.html
-[Configuration]: /mcollective1.2/reference/basic/configuration.html
-[Terminology]: /mcollective1.2/terminology.html
-[devco]: http://www.devco.net/archives/tag/mcollective
-[mcollective-users]: http://groups.google.com/group/mcollective-users
-[WritingAgents]: /mcollective1.2/reference/basic/basic_agent_and_client.html
-[ActiveMQ]: /mcollective1.2/reference/integration/activemq_security.html
-[MessageFormat]: /mcollective1.2/reference/basic/messageformat.html
-[ChangeLog]: /mcollective1.2/changelog.html
 
-# {{page.title}}
-The Marionette Collective is a framework to build server
-orchestration or parallel job execution systems.
+[pubsub]: https://en.wikipedia.org/wiki/Publish/subscribe
+[Screencasts]: /mcollective/screencasts.html
+[Amazon EC2 based demo]: /mcollective/ec2demo.html
+[broadcast paradigm]: /mcollective/reference/basic/messageflow.html
+[UsingWithPuppet]: /mcollective/reference/integration/puppet.html
+[Facter]: /mcollective/plugin_directory/facter_via_yaml.html
+[WritingFactsPlugins]: /mcollective/reference/plugins/facts.html
+[NodeReports]: /mcollective/reference/ui/nodereports.html
+[PluginsSite]: /mcollective/plugin_directory/
+[SimpleRPCIntroduction]: /mcollective/simplerpc/
+[SecurityOverview]: /mcollective/security.html
+[SecurityWithActiveMQ]: /mcollective/reference/integration/activemq_security.html
+[SSLSecurityPlugin]: /mcollective/reference/plugins/security_ssl.html
+[AESSecurityPlugin]: /mcollective/reference/plugins/security_aes.html
+[SimpleRPCAuthorization]: /mcollective/simplerpc/authorization.html
+[SimpleRPCAuditing]: /mcollective/simplerpc/auditing.html
+[ActiveMQClusters]: /mcollective/reference/integration/activemq_clusters.html
+[JSON Schema]: http://json-schema.org/
+[Registration]: /mcollective/reference/plugins/registration.html
+[GettingStarted]: /mcollective/reference/basic/gettingstarted.html
+[Configuration]: /mcollective/reference/basic/configuration.html
+[Terminology]: /mcollective/terminology.html
+[devco]: https://www.devco.net/archives/tag/mcollective
+[mcollective-users]: https://groups.google.com/group/mcollective-users
+[WritingAgents]: /mcollective/reference/basic/basic_agent_and_client.html
+[ActiveMQ]: /mcollective/reference/integration/activemq_security.html
+[MessageFormat]: /mcollective/reference/basic/messageformat.html
+[ChangeLog]: /mcollective/changelog.html
+[server_config]: /mcollective/configure/server.html
+[Vagrant]: /mcollective/deploy/demo.html
 
-**Warning:**
-Puppet Enterprise 2018.1 is the last release to support Marionette Collective, also known as MCollective. While PE 2018.1 remains supported, Puppet will continue to address security issues for MCollective. Feature development has been discontinued. Future releases of PE will not include MCollective. For more information, see the [Puppet Enterprise support lifecycle](https://puppet.com/misc/puppet-enterprise-lifecycle).
+The Marionette Collective, also known as **MCollective,** is a framework for building server orchestration or parallel job-execution systems. Most users programmatically execute administrative tasks on clusters of servers.
 
-To prepare for these changes, migrate your MCollective work to [Puppet orchestrator](https://puppet.com/docs/pe/2018.1/migrating_from_mcollective_to_orchestrator.html#concept-5391) to automate tasks and create consistent, repeatable administrative processes. Use orchestrator to automate your workflows and take advantage of its integration with Puppet Enterprise console and commands, APIs, role-based access control, and event tracking.
+> **Deprecation Note:** As of Puppet agent 5.5.4, MCollective is deprecated and will be removed in a future version of Puppet agent. If you use MCollective with Puppet Enterprise, consider [moving from MCollective to Puppet orchestrator](/docs/pe/2018.1/migrating_from_mcollective_to_orchestrator.html). If you use MCollective with open source Puppet, consider migrating MCollective agents and filters using tools like [Bolt](/docs/bolt/) and PuppetDB's [Puppet Query Language](/docs/puppetdb/latest/api/query/tutorial-pql.html).
 
+MCollective has some unique strengths for working with large numbers of servers:
 
-## Overview
-Primarily we'll use it as a means of programmatic execution of Systems Administration
-actions on clusters of servers.  In this regard we operate in the same space as tools
-like [Func], [Fabric] or [Capistrano].
+* Instead of relying on a static list of hosts to command, it uses metadata-based discovery and filtering. It can use a rich data source like [PuppetDB](/puppetdb/), or can perform real-time discovery across the network.
+* Instead of directly connecting to each host (which can be resource-intensive and slow), it uses [publish/subscribe middleware][pubsub] to communicate in parallel with many hosts at once.
 
-We've attempted to think out of the box a bit designing this system by not relying on
-central inventories and tools like SSH, we're not simply a fancy SSH "for loop".  MCollective use modern tools like
-[Publish Subscribe Middleware] and modern philosophies like real time discovery of network resources using meta data
-and not hostnames.  Delivering a very scalable and very fast parallel execution environment.
+To get an immediate feel for what this means, check out the videos on the [Screencasts][] page. Then, keep reading below for further information and links.
 
-To get an immediate feel for what I am on about you can look at some of the videos on the
-[Screencasts] page and then keep reading below for further info and links.  We've also created an [Amazon EC2 based demo]
-where you can launch as many instances as you want to see how it behaves first hand.
+We've also created a [Vagrant-based demo][Vagrant], where you can easily experiment with MCollective.
 
-## What is MCollective and what does it allow you to do
+## What is MCollective, and What Does It Allow You to Do?
 
- * Interact with small to very large clusters of servers
- * Use a [broadcast paradigm] for request distribution.  All servers get all requests at the same time, requests have
-   filters attached and only servers matching the filter will act on requests.  There is no central asset database to
-   go out of sync, the network is the only source of truth.
- * Break free from ever more complex naming conventions for hostnames as a means of identity.  Use a very
-   rich set of meta data provided by each machine to address them.  Meta data comes from
-   [Puppet][UsingWithPuppet], [Chef][UsingWithChef], [Facter], [Ohai] or [plugins][WritingFactsPlugins] you provide yourself.
- * Comes with simple to use command line tools to call remote agents.
- * Ability to write [custom reports][NodeReports] about your infrastructure.
- * A number of agents to manage packages, services and other common components are [available from
-   the community][PluginsSite].
- * Allows you to write [simple RPC style agents, clients][SimpleRPCIntroduction] and Web UIs in an easy to understand language - Ruby
- * Extremely pluggable and adaptable to local needs
- * Middleware systems already have rich [authentication and authorization models][SecurityWithActiveMQ], leverage these as a first
-   line of control.  Include fine grained Authentication using [SSL][SSLSecurityPlugin] or [RSA][AESSecurityPlugin], [Authorization][SimpleRPCAuthorization] and
-   [Auditing][SimpleRPCAuditing] of requests.  You can see more details in the [Security Overview][SecurityOverview].
- * Re-use the ability of middleware to do [clustering, routing and network isolation][ActiveMQClusters]
-   to realize secure and scalable setups.
+* Interact with clusters of servers, whether in small groups or very large deployments.
+* Use a [broadcast paradigm][] to distribute requests. All servers receive all requests at the same time, requests have filters attached, and only servers matching the filter will act on requests. There is no central asset database to go out of sync, because the network is the only true source.
+* Break free from identifying devices through complex host-naming conventions, and instead use a rich set of metadata provided by each machine --- from [Puppet][UsingWithPuppet], [Facter][], or other sources --- to address them.
+* Use simple command-line tools to call remote agents.
+* Write [custom reports][NodeReports] about your infrastructure.
+* Use agent plugins to manage packages, services, and other common components [created by the community][PluginsSite].
+* Write [simple RPC style agents, clients][SimpleRPCIntroduction], and web UIs in Ruby.
+* Extremely pluggable and adaptable to local needs.
+* Leverage rich [authentication and authorization models][SecurityWithActiveMQ] in middleware systems as a first line of control.
+* Include fine-grained authentication using [SSL][SSLSecurityPlugin] or [RSA][AESSecurityPlugin], [authorization][SimpleRPCAuthorization], and [request auditing][SimpleRPCAuditing]. For more information, see the [Security Overview][SecurityOverview].
+* Re-use middleware features for [clustering, routing, and network isolation][ActiveMQClusters] to realize secure and scalable configurations.
 
 ## Pluggable Core
 We aim to provide a stable core framework that allows you to build it out into a system that meets
