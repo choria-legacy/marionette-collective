@@ -1,5 +1,13 @@
 # The Marionette Collective
 
+## Deprecation Notice
+
+This repository holds legacy code related to The Marionette Collective project.  That project has been deprecated by Puppet Inc and the code donated to the Choria Project.
+
+Please review the [Choria Project Website](https://choria.io) and specifically the [MCollective Deprecation Notice](https://choria.io/mcollective) for further information and details about the future of the MCollective project.
+
+## Overview
+
 The Marionette Collective aka. mcollective is a framework to build server orchestration or parallel job execution systems.
 
 For documentation please see https://docs.puppet.com/mcollective
@@ -96,10 +104,3 @@ Note that it may be useful to change the `loglevel` in `client.cfg` to debug iss
 `mco ping`.
 
 To enable specific plugins, you may need to set `libdir` in `server.cfg` and add plugin-specific configuration.
-
-## Contributing
-
-Please refer to [this][contributing] document.
-
-[contributing]: CONTRIBUTING.md
-[acceptance]: acceptance/README.md
