@@ -13,6 +13,7 @@ end
 gem 'packaging', *location_for(ENV['PACKAGING_LOCATION'] || '~> 0.99.9')
 
 gem 'stomp', '>= 1.4.4'
+gem 'net-ssh'
 
 if RUBY_VERSION =~ /^1\.8/
   gem 'systemu', '2.6.4'
